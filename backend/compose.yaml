@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=dhv'
+      - 'POSTGRES_PASSWORD=DHV1234!'
+      - 'POSTGRES_USER=dhv_core'
+    ports:
+      - '5432:5432'
