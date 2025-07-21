@@ -1,0 +1,28 @@
+{
+  "name": "internship-delivery-app",
+  "private": true,
+  "packageManager": "pnpm@10.8.1",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "preinstall": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm')) { console.error('❌ PLEASE USE PNPM, NOT NPM ❌'); process.exit(1) }\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=8.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "npm:rolldown-vite@latest"
+    },
+    "onlyBuiltDependencies": [
+      "oxc-resolver"
+    ]
+  }
+}

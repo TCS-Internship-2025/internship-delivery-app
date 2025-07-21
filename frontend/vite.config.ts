@@ -2,13 +2,12 @@ import { execSync } from 'child_process';
 import path from 'path';
 import reactOxc from '@vitejs/plugin-react-oxc';
 import { defineConfig } from 'vite';
-import svgr from 'vite-plugin-svgr';
 
 const COMMIT_HASH = execSync('git rev-parse --short HEAD').toString().trim();
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [reactOxc(), svgr()],
+  plugins: [reactOxc()],
   define: {
     'import.meta.env.VITE_COMMIT_HASH': JSON.stringify(COMMIT_HASH),
   },
@@ -53,12 +52,7 @@ export default defineConfig({
             if (id.includes('@tanstack/react-query')) {
               return 'vendor-query';
             }
-            if (
-              id.includes('zod') ||
-              id.includes('notistack') ||
-              id.includes('date-fns') ||
-              id.includes('vite-plugin-svgr')
-            ) {
+            if (id.includes('zod') || id.includes('notistack') || id.includes('date-fns')) {
               return 'vendor-utils';
             }
             return 'vendor-other';

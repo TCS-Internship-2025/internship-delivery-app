@@ -13,6 +13,7 @@ const primaryColor = '#6D489C';
 const primaryColorDark = '#8b71adff';
 const primaryColorSoft = '#6D489C33';
 
+// Define global themes and styles here
 export const themes = {
   light: createTheme({
     palette: {

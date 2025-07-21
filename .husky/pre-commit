@@ -1,0 +1,11 @@
+# only run lint-staged in frontend when frontend/ files are staged
+if git diff --cached --name-only | grep -q '^frontend/'; then
+  echo "> Running lint-staged in frontend…"
+  cd frontend
+  pnpm exec lint-staged
+  rc=$?
+  cd - > /dev/null
+  [ $rc -ne 0 ] && exit $rc
+fi
+
+exit 0

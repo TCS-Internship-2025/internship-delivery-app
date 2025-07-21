@@ -1,5 +1,5 @@
 {
-  "name": "bp-portal-client",
+  "name": "internship-delivery-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,8 +9,6 @@
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
-    "prepare": "husky",
-    "test": "vitest run",
     "find-unused": "knip",
     "mock:start": "mockoon-cli start --data mockoon-environment.json --port 3001"
   },
@@ -52,7 +50,6 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "eslint-plugin-react-x": "^1.52.3",
     "globals": "^16.3.0",
-    "husky": "^9.1.7",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
@@ -63,19 +60,12 @@
     "react-i18next": "^15.6.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.38.0",
-    "vite": "npm:rolldown-vite@^7.0.9",
-    "vite-plugin-svgr": "^4.3.0",
-    "vitest": "^3.2.4"
+    "vite": "npm:rolldown-vite@^7.0.9"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
       "eslint src --ext ts,tsx --report-unused-disable-directives"
     ]
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "npm:rolldown-vite@latest"
-    }
   }
 }
