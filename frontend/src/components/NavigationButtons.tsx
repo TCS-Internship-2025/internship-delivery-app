@@ -9,16 +9,9 @@ interface NavigationButtonsProps {
   nextPath?: string;
   onPrevious?: () => void;
   onNext?: () => void;
-  sendMission?: boolean;
 }
 
-export const NavigationButtons = ({
-  previousPath,
-  nextPath,
-  onPrevious,
-  onNext,
-  sendMission = false,
-}: NavigationButtonsProps) => {
+export const NavigationButtons = ({ previousPath, nextPath, onPrevious, onNext }: NavigationButtonsProps) => {
   const navigate = useNavigate();
 
   const handlePrevious = () => {
@@ -69,7 +62,7 @@ export const NavigationButtons = ({
             borderColor: 'action.disabled',
           }}
         >
-          {sendMission ? 'Send mission' : 'Continue'}
+          {'Continue'}
         </Button>
       </Box>
     </Box>

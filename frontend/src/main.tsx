@@ -20,7 +20,7 @@ import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
-import { MissionErrorPage } from './pages/Error.tsx';
+import { ErrorPage } from './pages/Error.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -66,7 +66,7 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.ERROR,
-            element: <MissionErrorPage />,
+            element: <ErrorPage />,
           },
         ],
       },
