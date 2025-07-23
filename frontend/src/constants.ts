@@ -16,3 +16,10 @@ export const ROUTES = {
   SUCCESS: 'success',
   ERROR: 'error',
 };
+
+export const PARCEL_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  SHIPPING: 'SHIPPING',
+  DELIVERED: 'DELIVERED',
+  STUCK: 'STUCK',
+};
