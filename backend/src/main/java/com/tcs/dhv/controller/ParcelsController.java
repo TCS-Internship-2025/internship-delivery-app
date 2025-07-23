@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/parcels")
 @RequiredArgsConstructor
 @Slf4j
-// @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 public class ParcelsController {
 
     private final ParcelService parcelService;
