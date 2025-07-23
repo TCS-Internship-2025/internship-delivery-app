@@ -36,15 +36,15 @@ const ReactQueryDevtools = lazy(() =>
 
 const router = createBrowserRouter([
   {
+    path: ROUTES.LOGIN,
+    element: <Login />, // Login page as a standalone route
+  },
+  {
     element: <AppLayout />,
     children: [
       {
         index: true,
         element: <Page0 />,
-      },
-      {
-        path: ROUTES.LOGIN,
-        element: <Login />,
       },
       {
         path: ROUTES.PAGE1,
