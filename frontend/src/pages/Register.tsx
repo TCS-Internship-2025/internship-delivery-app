@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import LoginIcon from '@mui/icons-material/Login';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Box from '@mui/material/Box';
@@ -14,18 +14,19 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-export const Login = () => {
+export const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     // Simple validation for demo purposes
-    if (email && password) {
-      // Redirect to main application
-      void navigate('/');
+    if (name && email && password) {
+      // Redirect to success page or main application
+      void navigate('/success');
     }
   };
 
@@ -66,17 +67,28 @@ export const Login = () => {
                   mb: 2,
                 }}
               >
-                <LoginIcon sx={{ color: 'white', fontSize: 24 }} />
+                <PersonAddIcon sx={{ color: 'white', fontSize: 24 }} />
               </Box>
               <Typography variant="h4" component="h1" fontWeight="bold" color="text.primary">
-                Welcome Back
+                Create Account
               </Typography>
               <Typography variant="body2" color="text.secondary" textAlign="center">
-                Sign in to your account to continue
+                Sign up to get started with our application
               </Typography>
             </Box>
 
-            <Box component="form" onSubmit={handleLogin} sx={{ mt: 2 }}>
+            <Box component="form" onSubmit={handleRegister} sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                label="Full Name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                sx={{ mb: 3 }}
+                autoComplete="name"
+              />
+
               <TextField
                 fullWidth
                 label="Email Address"
@@ -86,7 +98,6 @@ export const Login = () => {
                 required
                 sx={{ mb: 3 }}
                 autoComplete="email"
-                autoFocus
               />
 
               <TextField
@@ -97,7 +108,7 @@ export const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 sx={{ mb: 3 }}
-                autoComplete="current-password"
+                autoComplete="new-password"
                 slotProps={{
                   input: {
                     endAdornment: (
@@ -129,7 +140,7 @@ export const Login = () => {
                   textTransform: 'none',
                 }}
               >
-                Login
+                Sign up
               </Button>
               <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
                 <Box
@@ -143,16 +154,16 @@ export const Login = () => {
                   }}
                 />
                 <Box sx={{ mt: 1 }}>
-                  Don't have an account?{' '}
+                  Already have an account?{' '}
                   <Button
                     variant="text"
                     color="primary"
                     onClick={() => {
-                      void navigate('/register');
+                      void navigate('/login');
                     }}
                     sx={{ textTransform: 'none', fontWeight: 600 }}
                   >
-                    Sign up here
+                    Login here
                   </Button>
                 </Box>
               </Typography>
