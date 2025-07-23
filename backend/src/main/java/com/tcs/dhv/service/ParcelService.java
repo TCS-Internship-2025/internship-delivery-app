@@ -1,16 +1,36 @@
 package com.tcs.dhv.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ParcelsService {
+@Slf4j
+public class ParcelService {
 
-    // private final ParcelsRepository parcelsRepository;
+    // private final ParcelRepository parcelRepository;
 
     public void /* ParcelResponse */  createParcel(/* ParcelCreate parcelCreate, User currentUser */) {
-        // Logic to create a parcel
+        log.info("Creating parcel for user: {}", /* currentUser.getEmail() */ "user@example.com");
+
+        // TODO: Validate recipient
+
+        // TODO: Validate delivery type and location
+
+        String trackingCode = UUID.randomUUID().toString();
+
+        // TODO: Create Parcel entity and save it to the database
+
+        // TODO: Create initial status history for the parcel
+
+        // TODO: Send confirmation email to the user
+
+        log.info("Parcel created successfully with tracking code: {}", trackingCode);
+
+        // TODO: Return ParcelResponse
     }
 
     public void /* Page<ParcelResponse> */ getUserParcels(/* User currentUser */) {
