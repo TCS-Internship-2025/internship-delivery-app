@@ -1,7 +1,8 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.service.ParcelsService;
+import com.tcs.dhv.service.ParcelService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +10,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/parcels")
 @RequiredArgsConstructor
 // @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@Slf4j
 public class ParcelsController {
 
-    private final ParcelsService parcelsService;
+    private final ParcelService parcelService;
     // private final ParcelsRepository parcelsRepository;
 
     @PostMapping
