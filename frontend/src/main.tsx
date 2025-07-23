@@ -21,6 +21,7 @@ import { Page4 } from '@/pages/Page4.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
 import { ErrorPage } from './pages/Error.tsx';
+import { Login } from './pages/Login.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Page0 />,
+      },
+      {
+        path: ROUTES.LOGIN,
+        element: <Login />,
       },
       {
         path: ROUTES.PAGE1,
