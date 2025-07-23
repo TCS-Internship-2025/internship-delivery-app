@@ -10,6 +10,7 @@ import { ROUTES } from '@/constants';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
@@ -20,6 +21,7 @@ import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { Login } from './pages/Login.tsx';
 import { Register } from './pages/Register.tsx';
@@ -49,7 +51,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Page0 />,
+        element: (
+          <ProtectedRoute>
+            <Page0 />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.PAGE1,
@@ -101,7 +107,9 @@ export function setupApp() {
               </Suspense>
             )}
             <ToastProvider>
-              <RouterProvider router={router} />
+              <AuthProvider>
+                <RouterProvider router={router} />
+              </AuthProvider>
             </ToastProvider>
           </QueryClientProvider>
         </LocalizationProvider>
