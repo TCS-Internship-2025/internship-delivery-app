@@ -1,4 +1,4 @@
-import { RandomEnum, TitleEnum } from '@/constants';
+import { DeliveryEnum, PaymentEnum, TitleEnum } from '@/constants';
 import z from 'zod';
 
 import type { FieldConfig } from '@/components/FormSectionFields.tsx';
@@ -14,16 +14,18 @@ export const page1FormSchema = z.object({
   emailAddress: z.string().optional(),
 
   // Section 2 fields
-  parcelData1: z.string().min(1),
-  parcelData2: z.string().min(3),
-  parcelData3: z.string().optional(),
-  parcelData4: z.date().optional(),
-  parcelData5: z.date().optional(),
-  weight: z.string().optional(),
-  amount: z.string().optional(),
+  Name: z.string().min(1),
+  Line1: z.string().min(1),
+  Line2: z.string().optional(),
+  Building: z.string().min(1),
+  Apartment: z.string().min(1),
+  City: z.string().min(1),
+  Postal_code: z.string().min(1),
+  Country: z.string().min(1),
 
   // Section 3 fields
-  description: z.string().optional(),
+  paymentType: z.string().min(1),
+  deliveryType: z.string().min(1),
 });
 
 export type Page1FormSchema = z.infer<typeof page1FormSchema>;
@@ -37,25 +39,27 @@ export const beneficiaryFields: FieldConfig<Page1FormSchema>[][] = [
   ],
   [
     { name: 'lastName', label: 'Last name', required: true },
-    { name: 'moreData', label: 'More random stuff', type: 'select', options: RandomEnum },
+    // { name: 'moreData', label: 'More random stuff', type: 'select', options: RandomEnum },
     { name: 'emailAddress', label: 'Email address' },
   ],
 ];
 
 export const parcelFields: FieldConfig<Page1FormSchema>[][] = [
   [
-    { name: 'parcelData1', label: 'Parcel data 1' },
-    { name: 'parcelData3', label: 'Parcel data 3', type: 'select', options: RandomEnum },
-    { name: 'weight', label: 'Weight' },
-    { name: 'parcelData5', label: 'Parcel data 5', type: 'radio', options: RandomEnum, orientation: 'horizontal' },
+    { name: 'Name', label: 'Address Name', required: true },
+    { name: 'Line1', label: 'Address Line 1', required: true },
+    { name: 'Building', label: 'Building', required: true },
+    { name: 'Postal_code', label: 'ZIP/Postal Code', required: true },
   ],
   [
-    { name: 'parcelData2', label: 'Parcel data 2' },
-    { name: 'parcelData4', label: 'Parcel data 4', type: 'date' },
-    { name: 'amount', label: 'Amount' },
+    { name: 'Country', label: 'Country', required: true },
+    { name: 'Line2', label: 'Address Line 2' },
+    { name: 'Apartment', label: 'Apartment', required: true },
+    { name: 'City', label: 'City', required: true },
   ],
 ];
 
 export const descriptionField: FieldConfig<Page1FormSchema>[][] = [
-  [{ name: 'description', label: 'Other information', type: 'textarea' }],
+  [{ name: 'deliveryType', label: 'Delivery Type', type: 'select', options: DeliveryEnum, required: true }],
+  [{ name: 'paymentType', label: 'Payment Type', type: 'select', options: PaymentEnum, required: true }],
 ];

@@ -43,13 +43,13 @@ export const Page1 = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <PageContainer icon={<QuestionMark />} title="Page1">
         <form onSubmit={handleFormSubmit}>
-          <SectionContainer title="Section 1">
+          <SectionContainer title="Recipient Details">
             <SectionFields fields={beneficiaryFields} control={control} />
           </SectionContainer>
-          <SectionContainer title="Section 2">
+          <SectionContainer title="Recipient Address">
             <SectionFields fields={parcelFields} control={control} />
           </SectionContainer>
-          <SectionContainer title="Description">
+          <SectionContainer title="Shipping Options">
             <SectionFields fields={descriptionField} control={control} />
           </SectionContainer>
         </form>
