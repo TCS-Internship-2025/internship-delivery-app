@@ -18,9 +18,9 @@ interface TimelineProp {
 export default function TimelineComponent({ status }: TimelineProp) {
   return (
     <Timeline sx={{ maxWidth: '50%' }}>
-      {status.map((value, index) => {
+      {status.map((value) => {
         return (
-          <TimelineItem key={index}>
+          <TimelineItem key={value.changeMessage}>
             <TimelineOppositeContent color="textSecondary">
               {new Date(value.changeDate).toLocaleDateString()}
             </TimelineOppositeContent>
