@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../contexts/useAuth';
 
 interface ProtectedRouteProps {
   children?: ReactNode;
@@ -7,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children, redirectPath = '/login' }: ProtectedRouteProps) => {
-  const [isAuthenticated] = useState<boolean>(false); // TODO: Replace with useAuth()
+  const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to={redirectPath} replace />;
