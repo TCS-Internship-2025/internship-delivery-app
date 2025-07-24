@@ -20,7 +20,8 @@ import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
-import { MissionErrorPage } from './pages/Error.tsx';
+import { ErrorPage } from './pages/Error.tsx';
+import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -36,6 +37,7 @@ const ReactQueryDevtools = lazy(() =>
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
+    errorElement: <SiteNotFound />,
     children: [
       {
         index: true,
@@ -66,7 +68,7 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.ERROR,
-            element: <MissionErrorPage />,
+            element: <ErrorPage />,
           },
         ],
       },

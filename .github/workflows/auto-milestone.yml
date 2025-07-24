@@ -1,0 +1,58 @@
+name: Auto Assign Sprint Milestone
+
+permissions:
+  issues: write
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  assign-milestone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-assign sprint milestone
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PERSONAL_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+
+            // Sprint dates
+            const sprints = [
+              { name: 'Sprint 1', start: '2025-07-21', end: '2025-07-25' },
+              { name: 'Sprint 2', start: '2025-07-28', end: '2025-08-01' },
+              { name: 'Sprint 3', start: '2025-08-04', end: '2025-08-08' },
+              { name: 'Sprint 4', start: '2025-08-11', end: '2025-08-15' }
+            ];
+
+            // Current date
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            // Current sprint
+            const currentSprint = sprints.find(sprint =>
+              currentDate >= sprint.start && currentDate <= sprint.end
+            );
+
+            if (currentSprint) {
+              // Milestones
+              const { data: milestones } = await github.rest.issues.listMilestones({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open'
+              });
+
+              // Matching milestone
+              const milestone = milestones.find(m =>
+                m.title === currentSprint.name
+              );
+
+              if (milestone) {
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  milestone: milestone.number
+                });
+              }
+            }
