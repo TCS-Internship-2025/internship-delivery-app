@@ -1,20 +1,17 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-
-import { useAuth } from '@/contexts/useAuth';
+import { useState, type ReactNode } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 
 interface ProtectedRouteProps {
-  children: React.ReactElement;
+  children?: ReactNode;
+  redirectPath?: string;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+export const ProtectedRoute = ({ children, redirectPath = '/login' }: ProtectedRouteProps) => {
+  const [isAuthenticated] = useState<boolean>(false); // TODO: Replace with useAuth()
 
   if (!isAuthenticated) {
-    // Redirect to login if not authenticated
-    return <Navigate to="/login" replace />;
+    return <Navigate to={redirectPath} replace />;
   }
 
-  // Otherwise render the protected page/component
-  return children;
+  return <>{children ?? <Outlet />}</>;
 };
