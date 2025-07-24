@@ -12,6 +12,7 @@ import { BoxIcon } from './BoxIcon.tsx';
 export const MainHeader = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const isSlug = location.pathname.includes('/tracking');
 
   const getPageInfo = () => {
     if (location.pathname.includes(ROUTES.PAGE1)) return { title: 'Page1', progress: 25 };
@@ -26,6 +27,9 @@ export const MainHeader = () => {
   };
 
   if (isHomePage) {
+    return;
+  }
+  if (isSlug) {
     return;
   }
 
