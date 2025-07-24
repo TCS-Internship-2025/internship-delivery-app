@@ -1,37 +1,18 @@
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-import { useLoginForm } from '@/hooks/useLoginForm';
-
-import LoginIcon from '@mui/icons-material/Login';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+
+import { LoginForm } from '@/components/LoginForm';
+import { LoginHeader } from '@/components/LoginHeader';
 
 export const Login = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const { form, onSubmit, isLoading, submitError } = useLoginForm();
-  const { control, handleSubmit } = form;
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    void handleSubmit(onSubmit)(e);
+  const handleRegisterClick = () => {
+    void navigate('/register');
   };
 
   return (
@@ -54,128 +35,8 @@ export const Login = () => {
           }}
         >
           <CardContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-              <Box
-                sx={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: '50%',
-                  backgroundColor: 'primary.main',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mb: 2,
-                }}
-              >
-                <LoginIcon sx={{ color: 'white', fontSize: 24 }} />
-              </Box>
-              <Typography variant="h4" component="h1" fontWeight="bold" color="text.primary">
-                Welcome Back
-              </Typography>
-              <Typography variant="body2" color="text.secondary" textAlign="center">
-                Sign in to your account to continue
-              </Typography>
-            </Box>
-
-            {submitError && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {submitError}
-              </Alert>
-            )}
-
-            <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 2 }}>
-              <Controller
-                name="email"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Email Address"
-                    type="email"
-                    error={!!error}
-                    helperText={error?.message}
-                    sx={{ mb: 3 }}
-                    autoComplete="email"
-                    autoFocus
-                  />
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    error={!!error}
-                    helperText={error?.message}
-                    sx={{ mb: 3 }}
-                    autoComplete="current-password"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={togglePasswordVisibility}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={isLoading}
-                sx={{
-                  mt: 2,
-                  mb: 2,
-                  height: 48,
-                  borderRadius: 2,
-                  fontWeight: 600,
-                  textTransform: 'none',
-                }}
-              >
-                {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
-              </Button>
-
-              <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
-                <Box
-                  component="span"
-                  sx={{
-                    display: 'inline-block',
-                    width: '80%',
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                    mb: 1,
-                  }}
-                />
-                <Box sx={{ mt: 1 }}>
-                  Don't have an account?{' '}
-                  <Button
-                    variant="text"
-                    color="primary"
-                    onClick={() => {
-                      void navigate('/register');
-                    }}
-                    sx={{ textTransform: 'none', fontWeight: 600 }}
-                  >
-                    Sign up here
-                  </Button>
-                </Box>
-              </Typography>
-            </Box>
+            <LoginHeader />
+            <LoginForm onRegisterClick={handleRegisterClick} />
           </CardContent>
         </Card>
       </Container>
