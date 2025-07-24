@@ -11,10 +11,12 @@ import java.util.UUID;
 @Getter
 @ToString
 @NoArgsConstructor
+@Table(name = "users")
 public class User {
 
     @Id
     @Setter(AccessLevel.NONE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @NonNull
@@ -30,25 +32,25 @@ public class User {
     //not required
     private String phone;
 
-    @NonNull
-    @Column(name = "Address_id")
-    private UUID addressId;
+    @OneToOne
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
     @NonNull
-    @Column(name = "Created_at")
+    @Column(name = "created_at")
     private OffsetDateTime createdAt; //default in db
 
     @NonNull
     @Column(name = "is_verified")
-    private Boolean isVerified = false;
+    private Boolean isVerified;
 
 
     public User(@NonNull String name, @NonNull String email,
-                @NonNull String password, String phone, @NonNull UUID addressId) {
+                @NonNull String password, String phone,@NonNull Address address) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.phone = phone; // can be null
-        this.addressId = addressId;
+        this.phone = phone;
+        this.address = address;
     }
 }

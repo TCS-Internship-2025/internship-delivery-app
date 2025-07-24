@@ -1,7 +1,6 @@
 package com.tcs.dhv.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
@@ -12,11 +11,13 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
+@Table(name = "addresses")
 public class Address {
 
 
     @Id
     @Setter(AccessLevel.NONE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
 
@@ -31,6 +32,7 @@ public class Address {
     private String apartment;
 
     @NonNull
+
     private  String city;
 
     @NonNull

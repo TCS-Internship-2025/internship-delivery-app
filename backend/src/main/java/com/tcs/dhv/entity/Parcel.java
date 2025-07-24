@@ -14,34 +14,36 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Table(name = "parcels")
 public class Parcel {
 
     @Id
     @Setter(AccessLevel.NONE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @NonNull
-    @Column(name = "Sender_id")
+    @Column(name = "sender_id")
     private UUID senderId;
 
     @NonNull
-    @Column(name = "Recipient_address_id")
+    @Column(name = "recipient_address_id")
     private UUID recipientAddressId;
 
     @NonNull
-    @Column(name = "Tracking_code")
+    @Column(name = "tracking_code", unique = true)
     private Long trackingCode;
 
     @NonNull
-    @Column(name = "Delivery_type")
+    @Column(name = "delivery_type")
     private DeliveryType deliveryType;
 
     @NonNull
-    @Column(name = "Created_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @NonNull
-    @Column(name = "Updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @NonNull
@@ -49,7 +51,7 @@ public class Parcel {
     private ParcelStatus currentStatus;
 
     @NonNull
-    @Column(name = "Payment_type")
+    @Column(name = "payment_type")
     private PaymentType paymentType;
 
 

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
-import java.util.UUID;
+
 
 
 @Entity
@@ -13,15 +13,18 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
+@Table(name = "parcel_status_history")
 public class ParcelStatusHistory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // for BIGSERIAL / auto-increment
+    @Setter(AccessLevel.NONE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
-    @Column(name = "Parcel_id")
-    private UUID parcelId;
+    @ManyToOne
+    @JoinColumn(name = "parcel_id")
+    private Parcel parcel;
 
     @NonNull
     private ParcelStatus status;
@@ -29,12 +32,11 @@ public class ParcelStatusHistory {
     private String description;
 
     @NonNull
-    // set in db
     private OffsetDateTime  timestamp;
 
-    public ParcelStatusHistory(@NonNull UUID parcelId, @NonNull ParcelStatus status,
+    public ParcelStatusHistory(@NonNull Parcel parcel, @NonNull ParcelStatus status,
                                String description) {
-        this.parcelId = parcelId;
+        this.parcel = parcel;
         this.status = status;
         this.description = description;
     }
