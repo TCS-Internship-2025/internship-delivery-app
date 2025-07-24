@@ -83,7 +83,6 @@ export const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
                 sx={{ mb: 3 }}
                 autoComplete="email"
                 autoFocus
@@ -95,7 +94,6 @@ export const Login = () => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
                 sx={{ mb: 3 }}
                 autoComplete="current-password"
                 slotProps={{
