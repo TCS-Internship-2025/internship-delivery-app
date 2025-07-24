@@ -29,21 +29,25 @@ function TrackingSlug() {
     ),
   });
 
-  const { status, data, error } = useQuery({ queryKey: ['tracking', slug], queryFn: fetchTrackingData });
+  const { status, data } = useQuery({ queryKey: ['tracking', slug], queryFn: fetchTrackingData });
   async function fetchTrackingData() {
     return await httpService.get(`tracking/${slug}`, trackSchema);
   }
   if (status === 'pending') {
     return (
-      <Box>
+      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <CircularProgress />
       </Box>
     );
   }
   if (status === 'error') {
-    return <Typography>Error:{error.message}</Typography>;
+    return (
+      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
+        <Typography variant="h4">Something went wrong.</Typography>
+        <Typography variant="subtitle1">Please try again later!</Typography>
+      </Box>
+    );
   }
-  console.log(data.status);
   return (
     <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
       <Container
