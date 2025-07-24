@@ -3,18 +3,17 @@ package com.tcs.dhv.dto;
 import com.tcs.dhv.enums.DeliveryType;
 import com.tcs.dhv.enums.PaymentType;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public record ParcelResponseDto(
-        Long id,
-
+        UUID id,
         String trackingCode,
-
         String currentStatus,
-
         RecipientDto recipient,
-
-        AddressDto address,
-
+        AddressResponseDto address,
         DeliveryType deliveryType,
-
-        PaymentType paymentType
+        PaymentType paymentType,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {}
