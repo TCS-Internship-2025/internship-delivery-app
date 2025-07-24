@@ -15,4 +15,5 @@ export const ROUTES = {
   PAGE5: 'page5',
   SUCCESS: 'success',
   ERROR: 'error',
+  TRACKING: 'tracking/:slug',
 };
