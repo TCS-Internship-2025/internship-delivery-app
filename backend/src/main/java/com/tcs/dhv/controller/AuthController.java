@@ -2,8 +2,11 @@ package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.AuthResponse;
 import com.tcs.dhv.domain.dto.LoginRequest;
+import com.tcs.dhv.domain.dto.RegisterRequest;
+import com.tcs.dhv.domain.dto.UserDto;
 import com.tcs.dhv.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,5 +34,11 @@ public class AuthController {
                 .expiresIn(86400)
                 .build();
         return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDto> register(@RequestBody RegisterRequest registerRequest) {
+        UserDto created = authService.registerUser(registerRequest);
+        return new ResponseEntity<>(created,  HttpStatus.CREATED);
     }
 }
