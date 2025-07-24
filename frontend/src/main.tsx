@@ -10,6 +10,7 @@ import { ROUTES } from '@/constants';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
@@ -20,7 +21,10 @@ import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
 import { ErrorPage } from './pages/Error.tsx';
+import { Login } from './pages/Login.tsx';
+import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
@@ -36,12 +40,24 @@ const ReactQueryDevtools = lazy(() =>
 
 const router = createBrowserRouter([
   {
+    path: ROUTES.LOGIN,
+    element: <Login />, // Login page as a standalone route
+  },
+  {
+    path: ROUTES.REGISTER,
+    element: <Register />, // Register page as a standalone route
+  },
+  {
     element: <AppLayout />,
     errorElement: <SiteNotFound />,
     children: [
       {
         index: true,
-        element: <Page0 />,
+        element: (
+          <ProtectedRoute>
+            <Page0 />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.PAGE1,
@@ -93,7 +109,9 @@ export function setupApp() {
               </Suspense>
             )}
             <ToastProvider>
-              <RouterProvider router={router} />
+              <AuthProvider>
+                <RouterProvider router={router} />
+              </AuthProvider>
             </ToastProvider>
           </QueryClientProvider>
         </LocalizationProvider>
