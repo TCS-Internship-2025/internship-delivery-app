@@ -64,7 +64,7 @@ public class Parcel {
     private OffsetDateTime updatedAt;
 
     @NotNull
-    @Column(name = "current_ status")
+    @Column(name = "current_status")
     private ParcelStatus currentStatus;
 
     @NotNull
