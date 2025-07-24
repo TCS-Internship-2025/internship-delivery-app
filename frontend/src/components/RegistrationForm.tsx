@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form';
 import { useRegisterForm } from '../hooks/useRegisterForm';
-import { type RegistrationFormData } from '../utils/registrationSchemas';
+import { type RegistrationFormData } from '../utils/authZodSchemas';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';

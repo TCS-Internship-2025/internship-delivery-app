@@ -27,3 +27,8 @@ export const registrationSchema = z
   });
 
 export type RegistrationFormData = z.infer<typeof registrationSchema>;
+
+export const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string(),
+});

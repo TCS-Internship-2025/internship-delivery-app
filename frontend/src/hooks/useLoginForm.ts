@@ -1,39 +1,41 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { registrationSchema, type RegistrationFormData } from '../utils/authZodSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
-export const useRegisterForm = () => {
+import { loginSchema } from '@/utils/authZodSchemas';
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export const useLoginForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const form = useForm<RegistrationFormData>({
-    resolver: zodResolver(registrationSchema),
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
     mode: 'onChange',
     defaultValues: {
-      name: '',
       email: '',
       password: '',
-      confirmPassword: '',
     },
   });
 
-  const onSubmit = async (data: RegistrationFormData) => {
+  const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setSubmitError(null);
 
     try {
-      // TODO: Implement actual registration logic here
-      console.log('Registration data:', data);
+      // TODO: Implement actual login logic here
+      console.log('Login data:', data);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       void navigate('/');
     } catch {
-      setSubmitError('Registration failed. Please try again.');
+      setSubmitError('Login failed. Please check your credentials and try again.');
     } finally {
       setIsLoading(false);
     }

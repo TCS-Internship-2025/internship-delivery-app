@@ -1,13 +1,18 @@
 import { useState } from 'react';
+import { Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+
+import { useLoginForm } from '@/hooks/useLoginForm';
 
 import LoginIcon from '@mui/icons-material/Login';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -17,20 +22,16 @@ import Typography from '@mui/material/Typography';
 export const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simple validation for demo purposes
-    if (email && password) {
-      // Redirect to main application
-      void navigate('/');
-    }
-  };
+  const { form, onSubmit, isLoading, submitError } = useLoginForm();
+  const { control, handleSubmit } = form;
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void handleSubmit(onSubmit)(e);
   };
 
   return (
@@ -76,41 +77,59 @@ export const Login = () => {
               </Typography>
             </Box>
 
-            <Box component="form" onSubmit={handleLogin} sx={{ mt: 2 }}>
-              <TextField
-                fullWidth
-                label="Email Address"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{ mb: 3 }}
-                autoComplete="email"
-                autoFocus
+            {submitError && (
+              <Alert severity="error" sx={{ mb: 3 }}>
+                {submitError}
+              </Alert>
+            )}
+
+            <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 2 }}>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Email Address"
+                    type="email"
+                    error={!!error}
+                    helperText={error?.message}
+                    sx={{ mb: 3 }}
+                    autoComplete="email"
+                    autoFocus
+                  />
+                )}
               />
 
-              <TextField
-                fullWidth
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{ mb: 3 }}
-                autoComplete="current-password"
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={togglePasswordVisibility}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
+              <Controller
+                name="password"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    error={!!error}
+                    helperText={error?.message}
+                    sx={{ mb: 3 }}
+                    autoComplete="current-password"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={togglePasswordVisibility}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
               />
 
               <Button
@@ -118,6 +137,7 @@ export const Login = () => {
                 fullWidth
                 variant="contained"
                 size="large"
+                disabled={isLoading}
                 sx={{
                   mt: 2,
                   mb: 2,
@@ -127,8 +147,9 @@ export const Login = () => {
                   textTransform: 'none',
                 }}
               >
-                Login
+                {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
               </Button>
+
               <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
                 <Box
                   component="span"
