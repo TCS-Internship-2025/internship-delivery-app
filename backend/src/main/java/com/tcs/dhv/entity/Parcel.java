@@ -3,59 +3,62 @@ package com.tcs.dhv.entity;
 import com.tcs.dhv.enums.DeliveryType;
 import com.tcs.dhv.enums.ParcelStatus;
 import com.tcs.dhv.enums.PaymentType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
 public class Parcel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
-    private Long id;
+    private UUID id;
 
     @NonNull
-    private Long senderId;
+    @Column(name = "Sender_id")
+    private UUID senderId;
 
     @NonNull
-    private Long recipientAddressId;
+    @Column(name = "Recipient_address_id")
+    private UUID recipientAddressId;
 
     @NonNull
+    @Column(name = "Tracking_code")
     private Long trackingCode;
 
     @NonNull
+    @Column(name = "Delivery_type")
     private DeliveryType deliveryType;
 
     @NonNull
+    @Column(name = "Created_at")
     private LocalDateTime createdAt;
 
     @NonNull
-    // originally same as createdAt
+    @Column(name = "Updated_at")
     private LocalDateTime updatedAt;
 
     @NonNull
-    //should set a default
+    @Column(name = "current_ status")
     private ParcelStatus currentStatus;
 
     @NonNull
+    @Column(name = "Payment_type")
     private PaymentType paymentType;
 
 
-    public Parcel(@NonNull Long senderId, @NonNull Long recipientAddressId,
+    public Parcel(@NonNull UUID senderId, @NonNull UUID recipientAddressId,
                   @NonNull DeliveryType deliveryType, @NonNull PaymentType paymentType) {
         this.senderId = senderId;
         this.recipientAddressId = recipientAddressId;
         this.deliveryType = deliveryType;
-        this.updatedAt = this.createdAt = LocalDateTime.now();
         this.currentStatus = ParcelStatus.CREATED;
         this.paymentType = paymentType;
     }

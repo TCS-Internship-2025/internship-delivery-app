@@ -1,14 +1,15 @@
 package com.tcs.dhv.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
+
+import java.util.UUID;
 
 
 @Entity
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Setter
 @Getter
 @ToString
@@ -16,41 +17,42 @@ public class Address {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
-    private Long id;
+    private UUID id;
 
-    @NonNull
+
     private String name;
 
+    @NonNull
     private String line1;
 
     private String line2;
 
-    @NonNull
     private String building;
-
-    @NonNull
     private String apartment;
 
     @NonNull
     private  String city;
 
     @NonNull
+    private String country;
+
+    @NonNull
     private String postalCode;
 
-    @NonNull
     private Double longitude;
-
-    @NonNull
     private Double latitude;
 
-    public Address(@NonNull String name, @NonNull String building,
-                   @NonNull String apartment, @NonNull String city, @NonNull String postalCode) {
+    public Address(String name,@NonNull String line1, String line2 ,
+                    String building, String apartment,
+                   @NonNull String city, @NonNull String country, @NonNull String postalCode) {
         this.name = name;
+        this.line1 = line1;
+        this.line2 = line2;
         this.building = building;
         this.apartment = apartment;
         this.city = city;
+        this.country = country;
         this.postalCode = postalCode;
     }
 }
