@@ -18,6 +18,7 @@ public class EmailService {
         SimpleMailMessage message = template;
         assert template.getText() != null;
         message.setText(String.format(template.getText(), trackingNumber, link));
+        message.setTo(email);
 
         mailSender.send(message);
     }
