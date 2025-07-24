@@ -10,7 +10,7 @@ import { ROUTES } from '@/constants';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from '@/providers/AuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
@@ -41,11 +41,11 @@ const ReactQueryDevtools = lazy(() =>
 const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
-    element: <Login />, // Login page as a standalone route
+    element: <Login />,
   },
   {
     path: ROUTES.REGISTER,
-    element: <Register />, // Register page as a standalone route
+    element: <Register />,
   },
   {
     element: <AppLayout />,

@@ -12,6 +12,11 @@ export interface AuthContextType {
   setAuthData?: (token: string, user: User) => void;
 }
 
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+}
 export interface LoginRequest {
   email: string;
   password: string;

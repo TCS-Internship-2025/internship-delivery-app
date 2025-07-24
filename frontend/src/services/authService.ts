@@ -1,4 +1,4 @@
-import { type LoginRequest, type LoginResponse, type User } from '@/types/auth';
+import { type LoginRequest, type LoginResponse, type RegisterRequest, type User } from '@/types/auth';
 import { z } from 'zod/v4';
 
 import { httpService as baseHttpService } from './httpService';
@@ -50,7 +50,7 @@ class AuthService {
     this.token = null;
   }
 
-  saveAuthData(token: string, user: User): void {
+  saveAuthData(token: string, user: User) {
     sessionStorage.setItem(AUTH_TOKEN_KEY, token);
     sessionStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
   }
@@ -58,11 +58,10 @@ class AuthService {
   loadAuthData(): { token: string; user: User } | null {
     const token = sessionStorage.getItem(AUTH_TOKEN_KEY);
     const user = parseFromStorage(AUTH_USER_KEY, userSchema);
-
     return token && user ? { token, user } : null;
   }
 
-  clearAuthData(): void {
+  clearAuthData() {
     sessionStorage.removeItem(AUTH_TOKEN_KEY);
     sessionStorage.removeItem(AUTH_USER_KEY);
   }
@@ -71,6 +70,9 @@ class AuthService {
     return baseHttpService.post('/auth/login', loginResponseSchema, credentials);
   }
 
+  async register(credentials: RegisterRequest): Promise<LoginResponse> {
+    return baseHttpService.post('/auth/register', loginResponseSchema, credentials);
+  }
   async logout(): Promise<void> {
     try {
       await baseHttpService.post('/auth/logout', z.object({}));
