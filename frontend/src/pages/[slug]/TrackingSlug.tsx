@@ -1,8 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import z from 'zod';
 
-import { httpService } from '@/services/httpService';
+import { useTracking } from '@/hooks/useTracking';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -13,26 +11,8 @@ import TimelineComponent from '@/components/Timeline';
 
 function TrackingSlug() {
   const { slug } = useParams();
+  const { data, status } = useTracking(slug);
 
-  //probably wont be the response the backend sends
-  const trackSchema = z.object({
-    id: z.string(),
-    sender: z.string(),
-    method: z.string(),
-    address: z.string(),
-    status: z.array(
-      z.object({
-        changeDate: z.string(),
-        changeMessage: z.string(),
-        changeLocation: z.string(),
-      })
-    ),
-  });
-
-  const { status, data } = useQuery({ queryKey: ['tracking', slug], queryFn: fetchTrackingData });
-  async function fetchTrackingData() {
-    return await httpService.get(`tracking/${slug}`, trackSchema);
-  }
   if (status === 'pending') {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
