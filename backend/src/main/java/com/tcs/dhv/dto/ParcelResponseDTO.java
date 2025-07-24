@@ -6,12 +6,12 @@ import com.tcs.dhv.enums.PaymentType;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record ParcelResponseDto(
+public record ParcelResponseDTO(
         UUID id,
         String trackingCode,
         String currentStatus,
-        RecipientDto recipient,
-        AddressResponseDto address,
+        RecipientDTO recipient,
+        AddressResponseDTO address,
         DeliveryType deliveryType,
         PaymentType paymentType,
         LocalDateTime createdAt,

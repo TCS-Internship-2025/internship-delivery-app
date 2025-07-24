@@ -1,6 +1,6 @@
 package com.tcs.dhv.dto;
 
-public record AddressResponseDto(
+public record AddressResponseDTO(
         String line1,
         String line2,
         String building,

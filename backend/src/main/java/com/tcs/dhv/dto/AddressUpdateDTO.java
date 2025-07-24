@@ -1,9 +1,11 @@
 package com.tcs.dhv.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
-public record AddressRequestDto(
-        @NotBlank(message = "Line 1 of the address is required")
+public record AddressUpdateDTO(
         @Size(max = 255, message = "Line 1 cannot exceed 255 characters")
         String line1,
 
@@ -16,15 +18,12 @@ public record AddressRequestDto(
         @Size(max = 50, message = "Apartment cannot exceed 50 characters")
         String apartment,
 
-        @NotBlank(message = "City is required")
         @Size(max = 100, message = "City cannot exceed 100 characters")
         String city,
 
-        @NotBlank(message = "Postal code is required")
         @Pattern(regexp = "^\\d{4}$", message = "Hungarian postal code must be 4 digits")
         String postalCode,
 
-        @NotBlank(message = "Country is required")
         @Size(max = 100, message = "Country cannot exceed 100 characters")
         String country,
 

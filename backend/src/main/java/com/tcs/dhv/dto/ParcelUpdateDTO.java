@@ -3,9 +3,9 @@ package com.tcs.dhv.dto;
 import com.tcs.dhv.enums.DeliveryType;
 import jakarta.validation.Valid;
 
-public record ParcelUpdateDto(
+public record ParcelUpdateDTO(
         @Valid
-        AddressUpdateDto address,
+        AddressUpdateDTO address,
 
         DeliveryType deliveryType
 ){}
