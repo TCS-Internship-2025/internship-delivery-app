@@ -260,6 +260,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
               disabled={field.disabled}
               error={!!error}
               sx={field.sx}
+              helperText={field.label === 'Email' || field.label === 'Mobile phone' ? error?.message : null}
             />
           );
       }

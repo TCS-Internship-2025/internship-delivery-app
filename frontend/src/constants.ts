@@ -7,7 +7,6 @@ export const PaymentEnum = z.enum(['Sender', 'Recipient']);
 export type TitleEnum = z.infer<typeof TitleEnum>;
 export type DeliveryEnum = z.infer<typeof DeliveryEnum>;
 export type PaymentEnum = z.infer<typeof PaymentEnum>;
-
 // Constants
 export const ROUTES = {
   PAGE1: 'page1',

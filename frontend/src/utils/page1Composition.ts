@@ -8,10 +8,8 @@ export const page1FormSchema = z.object({
   title: z.string().optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  dateOfBirth: z.date().min(1),
-  moreData: z.string().optional(),
-  mobilePhone: z.string().min(1),
-  emailAddress: z.string().optional(),
+  mobilePhone: z.string().min(1, 'Mobile phone is required').regex(/^\d+$/, 'Mobile phone must contain only numbers'),
+  emailAddress: z.email('Please enter a valid email address').optional().or(z.literal('')),
 
   // Section 2 fields
   Name: z.string().min(1),
@@ -34,12 +32,10 @@ export const beneficiaryFields: FieldConfig<Page1FormSchema>[][] = [
   [
     { name: 'title', label: 'Title', type: 'select', options: TitleEnum, sx: { flex: 0.3 }, rowGroup: 'name' },
     { name: 'firstName', label: 'First name', required: true, sx: { flex: 1 }, rowGroup: 'name' },
-    { name: 'dateOfBirth', label: 'Date of birth', required: true, type: 'date' },
     { name: 'mobilePhone', label: 'Mobile phone', required: true },
   ],
   [
     { name: 'lastName', label: 'Last name', required: true },
-    // { name: 'moreData', label: 'More random stuff', type: 'select', options: RandomEnum },
     { name: 'emailAddress', label: 'Email address' },
   ],
 ];

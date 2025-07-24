@@ -1,8 +1,10 @@
 import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { useCreateParcel } from '@/hooks/useParcels';
+
+import { createParcel } from '@/apis/parcel';
 
 import QuestionMark from '@mui/icons-material/QuestionMark';
 import Box from '@mui/material/Box';
@@ -21,7 +23,7 @@ import {
 } from '@/utils/page1Composition';
 
 export const Page1 = () => {
-  const navigate = useNavigate();
+  const { mutate } = useCreateParcel(createParcel, ['parcels']);
 
   const { control, handleSubmit } = useForm<Page1FormSchema>({
     resolver: zodResolver(page1FormSchema),
@@ -31,7 +33,7 @@ export const Page1 = () => {
 
   const onSubmit = (data: Page1FormSchema) => {
     console.log('Form submitted with data:', data);
-    void navigate(`/${ROUTES.PAGE2}`);
+    mutate(data);
   };
 
   const handleFormSubmit = (event: FormEvent) => {
