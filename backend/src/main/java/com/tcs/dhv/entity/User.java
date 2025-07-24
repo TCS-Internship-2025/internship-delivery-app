@@ -1,7 +1,21 @@
 package com.tcs.dhv.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -37,16 +51,18 @@ public class User {
     private Address address;
 
     @NonNull
+    @CreationTimestamp
     @Column(name = "created_at")
-    private OffsetDateTime createdAt; //default in db
+    private OffsetDateTime createdAt;
 
     @NonNull
     @Column(name = "is_verified")
     private Boolean isVerified;
 
 
-    public User(@NonNull String name, @NonNull String email,
-                @NonNull String password, String phone,@NonNull Address address) {
+    public User(
+            @NonNull String name, @NonNull String email, @NonNull String password, String phone,@NonNull Address address
+    ){
         this.name = name;
         this.email = email;
         this.password = password;

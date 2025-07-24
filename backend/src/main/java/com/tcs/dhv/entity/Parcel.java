@@ -3,10 +3,23 @@ package com.tcs.dhv.entity;
 import com.tcs.dhv.enums.DeliveryType;
 import com.tcs.dhv.enums.ParcelStatus;
 import com.tcs.dhv.enums.PaymentType;
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -22,43 +35,48 @@ public class Parcel {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NonNull
-    @Column(name = "sender_id")
-    private UUID senderId;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
-    @NonNull
-    @Column(name = "recipient_address_id")
-    private UUID recipientAddressId;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "recipient_address_id")
+    private Address recipientAddress;
 
-    @NonNull
-    @Column(name = "tracking_code", unique = true)
-    private Long trackingCode;
+    @NotNull
+    @Column(name = "tracking_code")
+    private String trackingCode;
 
-    @NonNull
+    @NotNull
     @Column(name = "delivery_type")
     private DeliveryType deliveryType;
 
-    @NonNull
+    @NotNull
+    @CreationTimestamp
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    @NonNull
+    @NotNull
+    @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
-    @NonNull
+    @NotNull
     @Column(name = "current_ status")
     private ParcelStatus currentStatus;
 
-    @NonNull
+    @NotNull
     @Column(name = "payment_type")
     private PaymentType paymentType;
 
 
-    public Parcel(@NonNull UUID senderId, @NonNull UUID recipientAddressId,
-                  @NonNull DeliveryType deliveryType, @NonNull PaymentType paymentType) {
-        this.senderId = senderId;
-        this.recipientAddressId = recipientAddressId;
+    public Parcel(
+            @NotNull User sender, @NotNull Address recipientAddress, @NotNull DeliveryType deliveryType, @NotNull PaymentType paymentType
+    ){
+        this.sender = sender;
+        this.recipientAddress = recipientAddress;
         this.deliveryType = deliveryType;
         this.currentStatus = ParcelStatus.CREATED;
         this.paymentType = paymentType;
