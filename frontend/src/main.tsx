@@ -25,6 +25,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { Login } from './pages/Login.tsx';
 import { Register } from './pages/Register.tsx';
+import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
   },
   {
     element: <AppLayout />,
+    errorElement: <SiteNotFound />,
     children: [
       {
         index: true,
