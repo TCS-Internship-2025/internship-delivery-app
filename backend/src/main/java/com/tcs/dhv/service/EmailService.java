@@ -11,12 +11,14 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendEmail(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("noreply@tcs.interns.com");
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
+    @Autowired
+    private SimpleMailMessage template;
+
+    public void sendEmail(String email, String trackingNumber, String link) {
+        SimpleMailMessage message = template;
+        assert template.getText() != null;
+        message.setText(String.format(template.getText(), trackingNumber, link));
+
         mailSender.send(message);
     }
 

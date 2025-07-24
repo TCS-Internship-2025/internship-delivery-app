@@ -2,6 +2,7 @@ package com.tcs.dhv.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -25,5 +26,15 @@ public class MailConfig {
         props.put("mail.debug","true");
 
         return mailSender;
+    }
+
+    @Bean
+    SimpleMailMessage templateShipmentMessage(){
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("noreply@tcs.interns.com");
+        mail.setSubject("Shipment label");
+        mail.setText("Your package %s is on the way\n Click the following link to see its status: %s");
+
+        return mail;
     }
 }
