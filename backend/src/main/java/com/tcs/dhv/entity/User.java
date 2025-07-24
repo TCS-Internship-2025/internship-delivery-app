@@ -11,7 +11,6 @@ import java.util.UUID;
 @Getter
 @ToString
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class User {
 
     @Id

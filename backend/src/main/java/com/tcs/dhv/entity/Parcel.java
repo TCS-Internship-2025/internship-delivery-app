@@ -11,7 +11,6 @@ import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
