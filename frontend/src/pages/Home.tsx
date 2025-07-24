@@ -23,12 +23,7 @@ export const Home = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <form
-        onSubmit={() => {
-          handleSubmit(onSubmit);
-        }}
-        style={{ flex: 1, overflow: 'auto', minHeight: 0 }}
-      >
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} style={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
         <Container
           maxWidth={false}
           sx={{
