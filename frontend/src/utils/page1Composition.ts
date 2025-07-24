@@ -8,7 +8,7 @@ export const page1FormSchema = z.object({
   title: z.string().optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  mobilePhone: z.string().min(1, 'Mobile phone is required').regex(/^\d+$/, 'Mobile phone must contain only numbers'),
+  mobilePhone: z.string().min(4, 'Mobile phone is required').regex(/^\d+$/, 'Mobile phone must contain only numbers'),
   emailAddress: z.email('Please enter a valid email address').optional().or(z.literal('')),
 
   // Section 2 fields

@@ -8,6 +8,7 @@ import { createParcel } from '@/apis/parcel';
 
 import QuestionMark from '@mui/icons-material/QuestionMark';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { SectionFields } from '@/components/FormSectionFields.tsx';
 import { NavigationButtons } from '@/components/NavigationButtons.tsx';
@@ -23,7 +24,7 @@ import {
 } from '@/utils/page1Composition';
 
 export const Page1 = () => {
-  const { mutate } = useCreateParcel(createParcel, ['parcels']);
+  const { mutate, isPending } = useCreateParcel(createParcel, ['parcels']);
 
   const { control, handleSubmit } = useForm<Page1FormSchema>({
     resolver: zodResolver(page1FormSchema),
@@ -43,26 +44,33 @@ export const Page1 = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <PageContainer icon={<QuestionMark />} title="Page1">
-        <form onSubmit={handleFormSubmit}>
-          <SectionContainer title="Recipient Details">
-            <SectionFields fields={beneficiaryFields} control={control} />
-          </SectionContainer>
-          <SectionContainer title="Recipient Address">
-            <SectionFields fields={parcelFields} control={control} />
-          </SectionContainer>
-          <SectionContainer title="Shipping Options">
-            <SectionFields fields={descriptionField} control={control} />
-          </SectionContainer>
-        </form>
-      </PageContainer>
-
-      <NavigationButtons
-        previousPath="/"
-        onNext={() => {
-          void handleSubmit(onSubmit)();
-        }}
-      />
+      {isPending ? (
+        <Typography variant="h6" fontWeight={600} fontSize={16}>
+          Loading
+        </Typography>
+      ) : (
+        <>
+          <PageContainer icon={<QuestionMark />} title="Page1">
+            <form onSubmit={handleFormSubmit}>
+              <SectionContainer title="Recipient Details">
+                <SectionFields fields={beneficiaryFields} control={control} />
+              </SectionContainer>
+              <SectionContainer title="Recipient Address">
+                <SectionFields fields={parcelFields} control={control} />
+              </SectionContainer>
+              <SectionContainer title="Shipping Options">
+                <SectionFields fields={descriptionField} control={control} />
+              </SectionContainer>
+            </form>
+          </PageContainer>
+          <NavigationButtons
+            previousPath="/"
+            onNext={() => {
+              void handleSubmit(onSubmit)();
+            }}
+          />
+        </>
+      )}
     </Box>
   );
 };
