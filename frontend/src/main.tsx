@@ -19,16 +19,17 @@ import { Page1 } from '@/pages/Page1.tsx';
 import { Page2 } from '@/pages/Page2.tsx';
 import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
-import { Tracking } from '@/pages/Tracking.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
+import { Tracking } from '@/pages/Tracking.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
-import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
+import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
+import { LandingPage } from './pages/LandingPage.tsx';
 import { Login } from './pages/Login.tsx';
-import { Register } from './pages/Register.tsx';
 import { ParcelDetails } from './pages/ParcelDetails.tsx';
+import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
@@ -44,23 +45,19 @@ const ReactQueryDevtools = lazy(() =>
 
 const router = createBrowserRouter([
   {
-    path: ROUTES.LOGIN,
-    element: <Login />,
-  },
-  {
-    path: ROUTES.REGISTER,
-    element: <Register />,
-  },
-  {
-    element: <AppLayout />,
+    errorElement: <SiteNotFound />,
     children: [
       {
         index: true,
-        element: (
-          <ProtectedRoute>
-            <Page0 />
-          </ProtectedRoute>
-        ),
+        element: <LandingPage />,
+      },
+      {
+        path: ROUTES.LOGIN,
+        element: <Login />,
+      },
+      {
+        path: ROUTES.REGISTER,
+        element: <Register />,
       },
       {
         path: ROUTES.TRACKING,
@@ -84,31 +81,45 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: ROUTES.PAGE1,
-        element: <Page1 />,
-      },
-      {
-        path: ROUTES.PAGE2,
-        element: <Page2 />,
-      },
-      {
-        path: ROUTES.PAGE3,
-        element: <Page3 />,
-      },
-      {
-        path: ROUTES.PAGE4,
-        element: <Page4 />,
-      },
-      {
-        path: ROUTES.PAGE5,
+        element: <ProtectedRoute />,
         children: [
           {
-            path: ROUTES.SUCCESS,
-            element: <ProviderPage />,
-          },
-          {
-            path: ROUTES.ERROR,
-            element: <ErrorPage />,
+            element: <AppLayout />,
+            children: [
+              {
+                index: true,
+                element: <Page0 />,
+              },
+              {
+                path: ROUTES.PAGE1,
+                element: <Page1 />,
+              },
+              {
+                path: ROUTES.PAGE2,
+                element: <Page2 />,
+              },
+              {
+                path: ROUTES.PAGE3,
+                element: <Page3 />,
+              },
+              {
+                path: ROUTES.PAGE4,
+                element: <Page4 />,
+              },
+              {
+                path: ROUTES.PAGE5,
+                children: [
+                  {
+                    path: ROUTES.SUCCESS,
+                    element: <ProviderPage />,
+                  },
+                  {
+                    path: ROUTES.ERROR,
+                    element: <ErrorPage />,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

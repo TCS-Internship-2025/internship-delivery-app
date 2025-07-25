@@ -35,7 +35,7 @@ export const LandingPage = () => {
       }}
     >
       <Typography variant="h2" component="h1" gutterBottom>
-        Give me a name
+        SwiftParcel
       </Typography>
       <Typography variant="h5" color="text.secondary" sx={{ mb: 3 }}>
         Welcome to the best parcel service provider!
@@ -43,14 +43,14 @@ export const LandingPage = () => {
       <Box display="flex" justifyContent="space-between" gap={2}>
         <LandingPageButton
           onClick={() => {
-            void navigate(ROUTES.PAGE1); //TODO: Adjust path
+            void navigate(ROUTES.LOGIN);
           }}
         >
           Login
         </LandingPageButton>
         <LandingPageButton
           onClick={() => {
-            void navigate(ROUTES.PAGE1); //TODO: Adjust path
+            void navigate(ROUTES.TRACKING);
           }}
         >
           Track parcel
