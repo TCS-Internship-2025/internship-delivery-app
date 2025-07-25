@@ -1,9 +1,9 @@
 package com.tcs.dhv.mapper;
 
-import com.tcs.dhv.dto.ParcelRequestDTO;
-import com.tcs.dhv.dto.ParcelResponseDTO;
-import com.tcs.dhv.dto.ParcelUpdateDTO;
-import com.tcs.dhv.dto.RecipientDTO;
+import com.tcs.dhv.dto.ParcelRequestDto;
+import com.tcs.dhv.dto.ParcelResponseDto;
+import com.tcs.dhv.dto.ParcelUpdateDto;
+import com.tcs.dhv.dto.RecipientDto;
 import com.tcs.dhv.entity.Parcel;
 import com.tcs.dhv.entity.User;
 import org.mapstruct.Mapper;
@@ -26,12 +26,12 @@ public interface ParcelMapper {
     @Mapping(target = "sender", source = "sender")
     @Mapping(target = "recipientAddress", source = "dto.address")
     @Mapping(target = "trackingCode", source = "trackingCode")
-    Parcel toEntity(ParcelRequestDTO dto, User sender, String trackingCode);
+    Parcel toEntity(ParcelRequestDto dto, User sender, String trackingCode);
 
     @Mapping(target = "address", source = "recipientAddress")
     @Mapping(target = "recipient", expression = "java(createRecipient())")
     @Mapping(target = "currentStatus", expression = "java(parcel.getCurrentStatus().name())")
-    ParcelResponseDTO toResponseDTO(Parcel parcel);
+    ParcelResponseDto toResponseDTO(Parcel parcel);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sender", ignore = true)
@@ -41,10 +41,10 @@ public interface ParcelMapper {
     @Mapping(target = "currentStatus", ignore = true)
     @Mapping(target = "paymentType", ignore = true)
     @Mapping(target = "recipientAddress", ignore = true)
-    void updateEntity(@MappingTarget Parcel parcel, ParcelUpdateDTO source);
+    void updateEntity(@MappingTarget Parcel parcel, ParcelUpdateDto source);
 
-    default RecipientDTO createRecipient() {
-        return new RecipientDTO(
+    default RecipientDto createRecipient() {
+        return new RecipientDto(
                 null,
                 "TBD",
                 "TBD",

@@ -1,8 +1,8 @@
 package com.tcs.dhv.mapper;
 
-import com.tcs.dhv.dto.AddressRequestDTO;
-import com.tcs.dhv.dto.AddressResponseDTO;
-import com.tcs.dhv.dto.AddressUpdateDTO;
+import com.tcs.dhv.dto.AddressRequestDto;
+import com.tcs.dhv.dto.AddressResponseDto;
+import com.tcs.dhv.dto.AddressUpdateDto;
 import com.tcs.dhv.entity.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -13,9 +13,9 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface AddressMapper {
-    Address toEntity(AddressRequestDTO addressRequestDTO);
+    Address toEntity(AddressRequestDto addressRequestDTO);
 
-    AddressResponseDTO toResponseDTO(Address address);
+    AddressResponseDto toResponseDTO(Address address);
 
-    void updateEntity(@MappingTarget Address address, AddressUpdateDTO source);
+    void updateEntity(@MappingTarget Address address, AddressUpdateDto source);
 }

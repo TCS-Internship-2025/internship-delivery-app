@@ -1,8 +1,8 @@
 package com.tcs.dhv.service;
 
-import com.tcs.dhv.dto.ParcelRequestDTO;
-import com.tcs.dhv.dto.ParcelResponseDTO;
-import com.tcs.dhv.dto.ParcelUpdateDTO;
+import com.tcs.dhv.dto.ParcelRequestDto;
+import com.tcs.dhv.dto.ParcelResponseDto;
+import com.tcs.dhv.dto.ParcelUpdateDto;
 import com.tcs.dhv.entity.User;
 import com.tcs.dhv.mapper.ParcelMapper;
 import com.tcs.dhv.repository.ParcelRepository;
@@ -26,7 +26,7 @@ public class ParcelService {
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
 
-    public ParcelResponseDTO createParcel(final ParcelRequestDTO requestDto, final User sender) {
+    public ParcelResponseDto createParcel(final ParcelRequestDto requestDto, final User sender) {
         log.info("Creating parcel for user: {}", sender.getEmail());
 
         final var trackingCode = generateTrackingCode();
@@ -38,14 +38,14 @@ public class ParcelService {
         return parcelMapper.toResponseDTO(savedParcel);
     }
 
-    public Page<ParcelResponseDTO> getUserParcels(final UUID userId, final Pageable pageable) {
+    public Page<ParcelResponseDto> getUserParcels(final UUID userId, final Pageable pageable) {
         log.info("Retrieving parcels for user ID: {}", userId);
 
         final var parcelPage = parcelRepository.findAllBySenderId(userId, pageable);
         return parcelPage.map(parcelMapper::toResponseDTO);
     }
 
-    public ParcelResponseDTO getParcel(final UUID id) {
+    public ParcelResponseDto getParcel(final UUID id) {
         log.info("Retrieving parcel with ID: {}", id);
 
         return parcelRepository.findById(id)
@@ -56,7 +56,7 @@ public class ParcelService {
                 });
     }
 
-    public ParcelResponseDTO updateParcel(final UUID id, final ParcelUpdateDTO updateDto, final User sender) {
+    public ParcelResponseDto updateParcel(final UUID id, final ParcelUpdateDto updateDto, final User sender) {
         log.info("Updating parcel with ID: {} for user: {}", id, sender.getEmail());
 
         final var existingParcel = parcelRepository.findById(id)

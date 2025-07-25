@@ -5,14 +5,14 @@ import com.tcs.dhv.enums.PaymentType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-public record ParcelRequestDTO(
+public record ParcelRequestDto(
     @NotNull(message = "Recipient information is required")
     @Valid
-    RecipientDTO recipientDto,
+    RecipientDto recipientDto,
 
     @NotNull(message = "Address information is required")
     @Valid
-    AddressRequestDTO address,
+    AddressRequestDto address,
 
     @NotNull(message = "Payment type is required")
     PaymentType paymentType,

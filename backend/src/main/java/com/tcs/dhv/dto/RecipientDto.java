@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-public record RecipientDTO(
+public record RecipientDto(
         @Size(max = 10, message = "Recipient's title cannot exceed 10 characters")
         String title,
 
