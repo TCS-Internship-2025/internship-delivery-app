@@ -10,6 +10,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -50,22 +51,24 @@ public class User {
 
     @NotNull
     @CreationTimestamp
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @NotNull
-    @Column(name = "is_verified")
     private Boolean isVerified;
 
-
+    @Builder
     public User(
             @NotNull String name,
             @NotNull String email,
-            @NotNull String password
+            @NotNull String password,
+            String phone,
+            Address address
     ){
         this.name = name;
         this.email = email;
         this.password = password;
+        this.phone = phone;
+        this.address = address;
         this.isVerified = false;
     }
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,14 +45,20 @@ public class Recipient {
     @JoinColumn(name = "address_id",nullable = false)
     private Address address;
 
+    @Builder
     public Recipient(
             @NotNull String name,
             @NotNull String email,
-            @NotNull Address address
+            @NotNull Address address,
+            String phone,
+            Date birthDate
+
     ){
         this.name = name;
         this.email = email;
         this.address = address;
+        this.phone = phone;
+        this.birthDate = birthDate;
     }
 
 }

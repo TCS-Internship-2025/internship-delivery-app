@@ -5,6 +5,8 @@ import com.tcs.dhv.enums.ParcelStatus;
 import com.tcs.dhv.enums.PaymentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,42 +49,40 @@ public class Parcel {
     private Recipient recipient;
 
     @NotNull
-    @Column(name = "tracking_code")
     private String trackingCode;
 
     @NotNull
-    @Column(name = "delivery_type")
+    @Enumerated(EnumType.STRING)
     private DeliveryType deliveryType;
 
     @NotNull
     @CreationTimestamp
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @NotNull
     @UpdateTimestamp
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @NotNull
-    @Column(name = "current_status")
+    @Enumerated(EnumType.STRING)
     private ParcelStatus currentStatus;
 
     @NotNull
-    @Column(name = "payment_type")
+    @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
-
 
     public Parcel(
             @NotNull User sender,
             @NotNull Recipient recipient,
+            @NotNull String trackingCode,
             @NotNull DeliveryType deliveryType,
-            @NotNull PaymentType paymentType
-    ){
+            ParcelStatus currentStatus,
+            @NotNull PaymentType paymentType) {
         this.sender = sender;
         this.recipient = recipient;
+        this.trackingCode = trackingCode;
         this.deliveryType = deliveryType;
+        this.currentStatus = currentStatus != null ? currentStatus : ParcelStatus.CREATED;
         this.paymentType = paymentType;
-        this.currentStatus = ParcelStatus.CREATED;
     }
 }

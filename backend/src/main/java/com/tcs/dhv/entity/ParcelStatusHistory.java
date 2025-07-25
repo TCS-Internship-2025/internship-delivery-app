@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -50,12 +51,15 @@ public class ParcelStatusHistory {
     @CreationTimestamp
     private LocalDateTime timestamp;
 
+    @Builder
     public ParcelStatusHistory(
             @NotNull Parcel parcel,
-            @NotNull ParcelStatus status
+            @NotNull ParcelStatus status,
+            String description
     ){
         this.parcel = parcel;
         this.status = status;
+        this.description = description;
     }
 
 

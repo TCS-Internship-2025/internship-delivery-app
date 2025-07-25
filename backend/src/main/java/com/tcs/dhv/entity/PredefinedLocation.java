@@ -11,6 +11,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -43,15 +44,17 @@ public class PredefinedLocation {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
+    @Builder
     public PredefinedLocation(
             @NotNull String name,
             @NotNull DeliveryType type,
-            @NotNull Address address
+            @NotNull Address address,
+            LocationStatus status
     ){
         this.name = name;
         this.type = type;
         this.address = address;
-        this.status = LocationStatus.AVAILABLE;
+        this.status = status != null ? status : LocationStatus.AVAILABLE;
     }
 
 }
