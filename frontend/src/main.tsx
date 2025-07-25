@@ -19,12 +19,14 @@ import { Page1 } from '@/pages/Page1.tsx';
 import { Page2 } from '@/pages/Page2.tsx';
 import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
+import { ParcelPage } from '@/pages/Parcels.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
 import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { Login } from './pages/Login.tsx';
 import { Register } from './pages/Register.tsx';
+import { ParcelDetails } from './pages/ParcelDetails.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
@@ -58,6 +60,19 @@ const router = createBrowserRouter([
             <Page0 />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: ROUTES.PARCELS,
+        children: [
+          {
+            index: true,
+            element: <ParcelPage />,
+          },
+          {
+            path: ROUTES.DETAILS,
+            element: <ParcelDetails />,
+          },
+        ],
       },
       {
         path: ROUTES.PAGE1,
