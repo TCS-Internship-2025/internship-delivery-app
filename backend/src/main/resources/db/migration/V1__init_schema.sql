@@ -29,7 +29,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 --
 -- TOC entry 3519 (class 0 OID 0)
 -- Dependencies: 2
--- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
@@ -45,7 +45,7 @@ CREATE FUNCTION public.set_updated_at() RETURNS trigger
     AS $$
 BEGIN
   NEW.updated_at := NOW();
-  RETURN NEW;
+RETURN NEW;
 END;
 $$;
 
@@ -61,11 +61,11 @@ CREATE FUNCTION public.sync_current_status() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  UPDATE parcels
-     SET current_status = NEW.status,
-         updated_at     = NEW.timestamp
-   WHERE id = NEW.parcel_id;
-  RETURN NEW;
+UPDATE parcels
+SET current_status = NEW.status,
+    updated_at     = NEW.timestamp
+WHERE id = NEW.parcel_id;
+RETURN NEW;
 END;
 $$;
 
@@ -82,16 +82,16 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.addresses (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    line1 text NOT NULL,
-    line2 text,
-    building text,
-    apartment text,
-    city text NOT NULL,
-    postal_code text NOT NULL,
-    country text DEFAULT 'Hungary'::text NOT NULL,
-    latitude double precision,
-    longitude double precision
+                                  id uuid DEFAULT gen_random_uuid() NOT NULL,
+                                  line1 text NOT NULL,
+                                  line2 text,
+                                  building text,
+                                  apartment text,
+                                  city text NOT NULL,
+                                  postal_code text NOT NULL,
+                                  country text DEFAULT 'Hungary'::text NOT NULL,
+                                  latitude double precision,
+                                  longitude double precision
 );
 
 
@@ -103,11 +103,11 @@ ALTER TABLE public.addresses OWNER TO postgres;
 --
 
 CREATE TABLE public.parcel_status_history (
-    id bigint NOT NULL,
-    parcel_id uuid NOT NULL,
-    status character varying(30) NOT NULL,
-    description text,
-    "timestamp" timestamp with time zone DEFAULT now() NOT NULL
+                                              id bigint NOT NULL,
+                                              parcel_id uuid NOT NULL,
+                                              status character varying(30) NOT NULL,
+                                              description text,
+                                              "timestamp" timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
@@ -143,15 +143,15 @@ ALTER SEQUENCE public.parcel_status_history_id_seq OWNED BY public.parcel_status
 --
 
 CREATE TABLE public.parcels (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    sender_id uuid NOT NULL,
-    recipient_address_id uuid NOT NULL,
-    delivery_type character varying(20) NOT NULL,
-    tracking_code text NOT NULL,
-    payment_type character varying(20) NOT NULL,
-    current_status character varying(30) DEFAULT 'CREATED'::character varying NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
+                                id uuid DEFAULT gen_random_uuid() NOT NULL,
+                                sender_id uuid NOT NULL,
+                                recipient_address_id uuid NOT NULL,
+                                delivery_type character varying(20) NOT NULL,
+                                tracking_code text NOT NULL,
+                                payment_type character varying(20) NOT NULL,
+                                current_status character varying(30) DEFAULT 'CREATED'::character varying NOT NULL,
+                                created_at timestamp with time zone DEFAULT now() NOT NULL,
+                                updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
@@ -163,11 +163,11 @@ ALTER TABLE public.parcels OWNER TO postgres;
 --
 
 CREATE TABLE public.predefined_locations (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    name text NOT NULL,
-    type character varying(20) NOT NULL,
-    status text NOT NULL,
-    address_id uuid
+                                             id uuid DEFAULT gen_random_uuid() NOT NULL,
+                                             name text NOT NULL,
+                                             type character varying(20) NOT NULL,
+                                             status text NOT NULL,
+                                             address_id uuid
 );
 
 
@@ -179,14 +179,14 @@ ALTER TABLE public.predefined_locations OWNER TO postgres;
 --
 
 CREATE TABLE public.users (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    name text NOT NULL,
-    email text NOT NULL,
-    password text NOT NULL,
-    phone text,
-    address_id uuid,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    is_verified boolean DEFAULT false NOT NULL
+                              id uuid DEFAULT gen_random_uuid() NOT NULL,
+                              name text NOT NULL,
+                              email text NOT NULL,
+                              password text NOT NULL,
+                              phone text,
+                              address_id uuid,
+                              created_at timestamp with time zone DEFAULT now() NOT NULL,
+                              is_verified boolean DEFAULT false NOT NULL
 );
 
 
