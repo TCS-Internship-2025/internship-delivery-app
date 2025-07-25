@@ -3,6 +3,7 @@ import { ROUTES } from '@/constants';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 interface LandingPageButtonProps {
@@ -12,7 +13,21 @@ interface LandingPageButtonProps {
 
 const LandingPageButton = ({ children, onClick }: LandingPageButtonProps) => {
   return (
-    <Button variant="contained" color="primary" size="large" onClick={onClick}>
+    <Button
+      variant="contained"
+      color="primary"
+      size="large"
+      onClick={onClick}
+      sx={{
+        px: 4,
+        transition: 'box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out',
+        boxShadow: 2,
+        '&:hover': {
+          boxShadow: 4,
+          backgroundColor: 'primary.dark',
+        },
+      }}
+    >
       {children}
     </Button>
   );
@@ -32,30 +47,19 @@ export const LandingPage = () => {
         bgcolor: 'background.default',
         color: 'text.primary',
         textAlign: 'center',
+        px: 2,
       }}
     >
-      <Typography variant="h2" component="h1" gutterBottom>
-        Give me a name
+      <Typography variant="h2" component="h1" fontWeight="bold" gutterBottom>
+        SwiftSend
       </Typography>
-      <Typography variant="h5" color="text.secondary" sx={{ mb: 3 }}>
-        Welcome to the best parcel service provider!
+      <Typography variant="h6" color="text.secondary" maxWidth={500} sx={{ mb: 4 }}>
+        Fast. Reliable. Secure. Your parcels delivered anywhere, anytime.
       </Typography>
-      <Box display="flex" justifyContent="space-between" gap={2}>
-        <LandingPageButton
-          onClick={() => {
-            void navigate(ROUTES.PAGE1); //TODO: Adjust path
-          }}
-        >
-          Login
-        </LandingPageButton>
-        <LandingPageButton
-          onClick={() => {
-            void navigate(ROUTES.PAGE1); //TODO: Adjust path
-          }}
-        >
-          Track parcel
-        </LandingPageButton>
-      </Box>
+      <Stack direction="row" spacing={3}>
+        <LandingPageButton onClick={() => void navigate(ROUTES.PAGE1)}>Login</LandingPageButton>
+        <LandingPageButton onClick={() => void navigate(ROUTES.PAGE1)}>Track Parcel</LandingPageButton>
+      </Stack>
     </Box>
   );
 };
