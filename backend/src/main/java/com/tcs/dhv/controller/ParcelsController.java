@@ -1,8 +1,8 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.ParcelRequestDto;
-import com.tcs.dhv.domain.dto.ParcelResponseDto;
-import com.tcs.dhv.domain.dto.ParcelUpdateDto;
+import com.tcs.dhv.domain.dto.ParcelRequest;
+import com.tcs.dhv.domain.dto.ParcelResponse;
+import com.tcs.dhv.domain.dto.ParcelUpdate;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.service.ParcelService;
 import jakarta.validation.Valid;
@@ -26,8 +26,8 @@ public class ParcelsController {
     private final ParcelService parcelService;
 
     @PostMapping
-    public ResponseEntity<ParcelResponseDto> createParcel(
-            @Valid @RequestBody final ParcelRequestDto parcelRequest,
+    public ResponseEntity<ParcelResponse> createParcel(
+            @Valid @RequestBody final ParcelRequest parcelRequest,
             @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Creating parcel request received from user: {}", currentUser.getEmail());
@@ -40,7 +40,7 @@ public class ParcelsController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ParcelResponseDto>> getUserParcels(
+    public ResponseEntity<Page<ParcelResponse>> getUserParcels(
             final Pageable pageable,
             @AuthenticationPrincipal final User currentUser
     ) {
@@ -53,20 +53,20 @@ public class ParcelsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ParcelResponseDto> getParcel(
+    public ResponseEntity<ParcelResponse> getParcel(
             @PathVariable final UUID id,
             @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Retrieving parcel with ID: {} for user: {}", id, currentUser.getEmail());
 
-        final var parcel = parcelService.getParcel(id);
+        final var parcel = parcelService.getParcel(id, currentUser);
         return ResponseEntity.ok(parcel);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ParcelResponseDto> updateParcel(
+    public ResponseEntity<ParcelResponse> updateParcel(
             @PathVariable final UUID id,
-            @Valid @RequestBody final ParcelUpdateDto parcelUpdate,
+            @Valid @RequestBody final ParcelUpdate parcelUpdate,
             @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Updating parcel with ID: {} for user: {}", id, currentUser.getEmail());

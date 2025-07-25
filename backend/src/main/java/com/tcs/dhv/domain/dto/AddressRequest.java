@@ -2,7 +2,7 @@ package com.tcs.dhv.domain.dto;
 
 import jakarta.validation.constraints.*;
 
-public record AddressRequestDto(
+public record AddressRequest(
         @NotBlank(message = "Line 1 of the address is required")
         @Size(max = 255, message = "Line 1 cannot exceed 255 characters")
         String line1,

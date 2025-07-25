@@ -5,7 +5,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record AddressUpdateDto(
+public record AddressUpdate(
         @Size(max = 255, message = "Line 1 cannot exceed 255 characters")
         String line1,
 

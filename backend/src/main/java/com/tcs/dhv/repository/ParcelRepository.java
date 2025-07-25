@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
     Page<Parcel> findAllBySenderId(UUID userId, Pageable pageable);
+    boolean existsByTrackingCode(String trackingCode);
     // For public tracking
     Optional<Parcel> findByTrackingCode(String trackingCode);
 }
