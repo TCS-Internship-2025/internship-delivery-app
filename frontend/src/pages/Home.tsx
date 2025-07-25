@@ -22,13 +22,12 @@ export const Home = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} style={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
         <Container
           maxWidth={false}
           sx={{
             display: 'flex',
-            border: '2px dashed grey',
             height: '100%',
             width: '100%',
             flexDirection: 'column',
@@ -54,7 +53,7 @@ export const Home = () => {
           />
           <Typography variant="h5">Track Your Parcel!</Typography>
           <Typography variant="subtitle2" color="textSecondary">
-            Enter the parcel tracking number starting with "SWIFT"
+            Enter the parcel tracking number
           </Typography>
         </Container>
       </form>
