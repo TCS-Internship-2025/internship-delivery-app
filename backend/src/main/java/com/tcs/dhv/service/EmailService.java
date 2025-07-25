@@ -15,7 +15,11 @@ public class EmailService {
     @Autowired
     private SimpleMailMessage template;
 
-    public void sendEmail(String email, String trackingNumber, String link) {
+    public final void sendEmail(
+            String email,
+            String trackingNumber,
+            String link
+    ) {
         final var message = template;
         Assert.notNull(message.getText(), "Message must not be null;");
         message.setText(String.format(template.getText(), trackingNumber, link));

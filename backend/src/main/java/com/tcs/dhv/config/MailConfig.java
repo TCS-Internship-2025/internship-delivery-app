@@ -17,22 +17,22 @@ public class MailConfig {
     @Value("${MAIL_PASSWORD}")
     private String password;
 
-    private static final String host = "smtp.gmail.com";
-    private static final int port = 587;
+    private static final String HOST = "smtp.gmail.com";
+    private static final int PORT = 587;
 
     @Bean
     public JavaMailSender javaMailSender() {
         final var mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(host);
-        mailSender.setPort(port);
+        mailSender.setHost(HOST);
+        mailSender.setPort(PORT);
         mailSender.setUsername(username);
         mailSender.setPassword(password);
 
         final var props = mailSender.getJavaMailProperties();
-        props.put(Constants.mailProtocol, "smtp");
-        props.put(Constants.mailAuth, "true");
-        props.put(Constants.mailStarttlsEnable,"true");
-        props.put(Constants.mailDebug,"true");
+        props.put(Constants.MAIL_PROTOCOL, Constants.EMAIL_PROTOCOL);
+        props.put(Constants.MAIL_AUTH, Constants.TRUE);
+        props.put(Constants.MAIL_STARTTLS_ENABLE, Constants.TRUE);
+        props.put(Constants.MAIL_DEBUG, Constants.TRUE);
 
         return mailSender;
     }
@@ -41,7 +41,7 @@ public class MailConfig {
     SimpleMailMessage templateShipmentMessage(){
         final var mail = new SimpleMailMessage();
         mail.setFrom(username);
-        mail.setSubject(Constants.mailSubject);
+        mail.setSubject(Constants.MAIL_SUBJECT);
         mail.setText("Your package %s is on the way\n Click the following link to see its status: %s");
 
         return mail;
