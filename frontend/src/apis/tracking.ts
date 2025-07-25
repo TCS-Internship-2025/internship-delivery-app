@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import z from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
@@ -19,4 +20,12 @@ export const trackSchema = z.object({
 export type TrackingData = z.infer<typeof trackSchema>;
 export async function fetchTrackingData(trackingNumber: string | undefined): Promise<TrackingData> {
   return await httpService.get(`tracking/${trackingNumber}`, trackSchema);
+}
+
+export function useTracking(slug: string | undefined) {
+  return useQuery<TrackingData>({
+    queryKey: ['tracking', slug],
+    queryFn: () => fetchTrackingData(slug),
+    enabled: !!slug,
+  });
 }
