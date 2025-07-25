@@ -43,7 +43,6 @@ export const ParcelPage = () => {
           maxWidth={false}
           sx={{
             display: 'flex',
-            height: 1200,
             flexDirection: 'column',
           }}
         >

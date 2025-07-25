@@ -31,12 +31,10 @@ export const ParcelDetails = ({ parcelData }: ParcelItemProps) => {
         <Container
           maxWidth={false}
           sx={{
-            height: 1200,
             width: '100%',
             padding: 4,
             display: 'flex',
             flexDirection: 'column',
-            border: '2px dashed grey',
           }}
         >
           <Typography variant="h3" ml={2} mt={1} mb={3}>
@@ -67,18 +65,5 @@ export const ParcelDetails = ({ parcelData }: ParcelItemProps) => {
         </Container>
       </Box>
     </Box>
-
-    // <Box
-    //   sx={{
-    //     height: 20,
-    //     border: '2 solid black',
-    //     padding: 3,
-    //     margin: 3,
-    //     display: 'flex',
-    //     flexDirection: 'column',
-    //   }}
-    // >
-
-    // </Box>
   );
 };
