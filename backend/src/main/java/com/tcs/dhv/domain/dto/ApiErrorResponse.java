@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -14,6 +15,7 @@ import java.util.List;
 public class ApiErrorResponse {
     private int status;
     private String message;
+    private Instant timestamp;
     private List<FieldError> errors;
 
     @Data

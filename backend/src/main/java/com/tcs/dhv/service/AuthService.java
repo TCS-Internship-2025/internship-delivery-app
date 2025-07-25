@@ -3,9 +3,7 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.RegisterRequest;
 import com.tcs.dhv.domain.dto.UserDto;
 import com.tcs.dhv.domain.entity.User;
-import com.tcs.dhv.mapper.UserMapper;
 import com.tcs.dhv.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -15,14 +13,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +28,6 @@ public class AuthService {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
-
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -48,7 +42,7 @@ public class AuthService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
+        final var claims = new HashMap<String, Object>();
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
@@ -59,16 +53,16 @@ public class AuthService {
     }
 
     public UserDetails validateToken(String token) {
-        String username = extractUsername(token);
+        final var username = extractUsername(token);
         return userDetailsService.loadUserByUsername(username);
     }
 
     public UserDto registerUser(RegisterRequest  request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new UsernameNotFoundException("User with this email already exists");
+            throw new IllegalArgumentException("User with this email already exists");
         }
 
-        User user = User.builder()
+        final var user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -76,8 +70,8 @@ public class AuthService {
                 .verified(false)
                 .build();
 
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+        final var savedUser = userRepository.save(user);
+        return UserDto.fromEntity(savedUser);
     }
 
     private Key getSigningKey() {
@@ -85,7 +79,7 @@ public class AuthService {
     }
 
     private String extractUsername(String token) {
-        Claims claims = Jwts.parserBuilder()
+        final var claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)

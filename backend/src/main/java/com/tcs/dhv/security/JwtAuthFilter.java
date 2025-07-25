@@ -21,12 +21,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final AuthService authService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+        ) throws ServletException, IOException {
         try {
-            String token = extractToken(request);
+            final var token = extractToken(request);
             if (token != null) {
                 UserDetails userDetails = authService.validateToken(token);
 
