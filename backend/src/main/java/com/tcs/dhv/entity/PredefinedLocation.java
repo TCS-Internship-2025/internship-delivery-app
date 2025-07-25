@@ -3,6 +3,8 @@ package com.tcs.dhv.entity;
 import com.tcs.dhv.enums.DeliveryType;
 import com.tcs.dhv.enums.LocationStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,9 +37,11 @@ public class PredefinedLocation {
     private String name;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private DeliveryType type;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private LocationStatus status;
 
     @OneToOne

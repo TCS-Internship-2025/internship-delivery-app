@@ -2,6 +2,8 @@ package com.tcs.dhv.entity;
 
 import com.tcs.dhv.enums.ParcelStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,6 +44,7 @@ public class ParcelStatusHistory {
 
     @NotNull
     @Setter(AccessLevel.NONE)
+    @Enumerated(EnumType.STRING)
     private ParcelStatus status;
 
     private String description;

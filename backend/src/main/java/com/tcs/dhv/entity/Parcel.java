@@ -71,6 +71,7 @@ public class Parcel {
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
+    @Builder
     public Parcel(
             @NotNull User sender,
             @NotNull Recipient recipient,
