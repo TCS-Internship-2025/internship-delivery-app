@@ -21,8 +21,6 @@ import { Page4 } from '@/pages/Page4.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
 import { ErrorPage } from './pages/Error.tsx';
-import { LandingPage } from './pages/LandingPage.tsx';
-import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -37,49 +35,38 @@ const ReactQueryDevtools = lazy(() =>
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    errorElement: <SiteNotFound />,
+    element: <AppLayout />,
     children: [
       {
         index: true,
-        element: <LandingPage />,
+        element: <Page0 />,
       },
       {
-        path: ROUTES.APP,
-        element: <AppLayout />,
+        path: ROUTES.PAGE1,
+        element: <Page1 />,
+      },
+      {
+        path: ROUTES.PAGE2,
+        element: <Page2 />,
+      },
+      {
+        path: ROUTES.PAGE3,
+        element: <Page3 />,
+      },
+      {
+        path: ROUTES.PAGE4,
+        element: <Page4 />,
+      },
+      {
+        path: ROUTES.PAGE5,
         children: [
           {
-            index: true,
-            element: <Page0 />,
+            path: ROUTES.SUCCESS,
+            element: <ProviderPage />,
           },
           {
-            path: ROUTES.PAGE1,
-            element: <Page1 />,
-          },
-          {
-            path: ROUTES.PAGE2,
-            element: <Page2 />,
-          },
-          {
-            path: ROUTES.PAGE3,
-            element: <Page3 />,
-          },
-          {
-            path: ROUTES.PAGE4,
-            element: <Page4 />,
-          },
-          {
-            path: ROUTES.PAGE5,
-            children: [
-              {
-                path: ROUTES.SUCCESS,
-                element: <ProviderPage />,
-              },
-              {
-                path: ROUTES.ERROR,
-                element: <ErrorPage />,
-              },
-            ],
+            path: ROUTES.ERROR,
+            element: <ErrorPage />,
           },
         ],
       },
