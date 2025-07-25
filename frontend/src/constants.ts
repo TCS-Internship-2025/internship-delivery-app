@@ -18,4 +18,13 @@ export const ROUTES = {
   ERROR: 'error',
   TRACKINGSLUG: 'tracking/:slug',
   TRACKING: 'tracking',
+  PARCELS: 'my-parcels',
+  DETAILS: 'details',
+};
+
+export const PARCEL_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  SHIPPING: 'SHIPPING',
+  DELIVERED: 'DELIVERED',
+  STUCK: 'STUCK',
 };

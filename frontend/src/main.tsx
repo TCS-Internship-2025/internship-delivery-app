@@ -19,10 +19,13 @@ import { Page2 } from '@/pages/Page2.tsx';
 import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
 import { Tracking } from '@/pages/Tracking.tsx';
+import { ParcelPage } from '@/pages/Parcels.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
+import { ParcelDetails } from './pages/ParcelDetails.tsx';
+import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -38,6 +41,7 @@ const ReactQueryDevtools = lazy(() =>
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
+    errorElement: <SiteNotFound />,
     children: [
       {
         index: true,
@@ -51,7 +55,19 @@ const router = createBrowserRouter([
         path: ROUTES.TRACKINGSLUG,
         element: <TrackingSlug />,
       },
-
+      {
+        path: ROUTES.PARCELS,
+        children: [
+          {
+            index: true,
+            element: <ParcelPage />,
+          },
+          {
+            path: ROUTES.DETAILS,
+            element: <ParcelDetails />,
+          },
+        ],
+      },
       {
         path: ROUTES.PAGE1,
         element: <Page1 />,
