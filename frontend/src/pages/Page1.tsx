@@ -2,13 +2,11 @@ import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useCreateParcel } from '@/hooks/useParcels';
-
-import { createParcel } from '@/apis/parcel';
+import { useCreateParcel } from '@/apis/parcel';
 
 import QuestionMark from '@mui/icons-material/QuestionMark';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { SectionFields } from '@/components/FormSectionFields.tsx';
 import { NavigationButtons } from '@/components/NavigationButtons.tsx';
@@ -21,10 +19,10 @@ import {
   page1FormSchema,
   parcelFields,
   type Page1FormSchema,
-} from '@/utils/page1Composition';
+} from '@/utils/parcelComposition';
 
 export const Page1 = () => {
-  const { mutate, isPending } = useCreateParcel(createParcel, ['parcels']);
+  const { mutate, isPending } = useCreateParcel();
 
   const { control, handleSubmit } = useForm<Page1FormSchema>({
     resolver: zodResolver(page1FormSchema),
@@ -45,9 +43,9 @@ export const Page1 = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {isPending ? (
-        <Typography variant="h6" fontWeight={600} fontSize={16}>
-          Loading
-        </Typography>
+        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
+          <CircularProgress />
+        </Box>
       ) : (
         <>
           <PageContainer icon={<QuestionMark />} title="Page1">

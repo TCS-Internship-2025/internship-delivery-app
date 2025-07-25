@@ -250,6 +250,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
         }
 
         default:
+          console.log('Error', error);
           return (
             <TextField
               {...fieldProps}
@@ -260,7 +261,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
               disabled={field.disabled}
               error={!!error}
               sx={field.sx}
-              helperText={field.label === 'Email' || field.label === 'Mobile phone' ? error?.message : null}
+              helperText={field.label === 'Email address' || field.label === 'Mobile phone' ? error?.message : null}
             />
           );
       }

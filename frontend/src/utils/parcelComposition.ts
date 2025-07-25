@@ -8,18 +8,21 @@ export const page1FormSchema = z.object({
   title: z.string().optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  mobilePhone: z.string().min(4, 'Mobile phone is required').regex(/^\d+$/, 'Mobile phone must contain only numbers'),
-  emailAddress: z.email('Please enter a valid email address').optional().or(z.literal('')),
+  mobilePhone: z
+    .string()
+    .min(4, 'Mobile phone is required')
+    .regex(/^(?:(\+36|06)\s?)?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/, 'Please enter a valid Hungarian phone number'),
+  emailAddress: z.string().email('Please enter a valid email address').min(1),
 
   // Section 2 fields
-  Name: z.string().min(1),
-  Line1: z.string().min(1),
-  Line2: z.string().optional(),
-  Building: z.string().min(1),
-  Apartment: z.string().min(1),
-  City: z.string().min(1),
-  Postal_code: z.string().min(1),
-  Country: z.string().min(1),
+  name: z.string().min(1),
+  line1: z.string().min(1),
+  line2: z.string().optional(),
+  building: z.string().min(1),
+  apartment: z.string().min(1),
+  city: z.string().min(1),
+  postalCode: z.string().min(1),
+  country: z.string().min(1),
 
   // Section 3 fields
   paymentType: z.string().min(1),
@@ -36,22 +39,22 @@ export const beneficiaryFields: FieldConfig<Page1FormSchema>[][] = [
   ],
   [
     { name: 'lastName', label: 'Last name', required: true },
-    { name: 'emailAddress', label: 'Email address' },
+    { name: 'emailAddress', label: 'Email address', required: true },
   ],
 ];
 
 export const parcelFields: FieldConfig<Page1FormSchema>[][] = [
   [
-    { name: 'Name', label: 'Address Name', required: true },
-    { name: 'Line1', label: 'Address Line 1', required: true },
-    { name: 'Building', label: 'Building', required: true },
-    { name: 'Postal_code', label: 'ZIP/Postal Code', required: true },
+    { name: 'name', label: 'Address Name', required: true },
+    { name: 'line1', label: 'Address Line 1', required: true },
+    { name: 'building', label: 'Building', required: true },
+    { name: 'postalCode', label: 'ZIP/Postal Code', required: true },
   ],
   [
-    { name: 'Country', label: 'Country', required: true },
-    { name: 'Line2', label: 'Address Line 2' },
-    { name: 'Apartment', label: 'Apartment', required: true },
-    { name: 'City', label: 'City', required: true },
+    { name: 'country', label: 'Country', required: true },
+    { name: 'line2', label: 'Address Line 2' },
+    { name: 'apartment', label: 'Apartment', required: true },
+    { name: 'city', label: 'City', required: true },
   ],
 ];
 
