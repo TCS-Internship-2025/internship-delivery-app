@@ -19,9 +19,11 @@ import { Page1 } from '@/pages/Page1.tsx';
 import { Page2 } from '@/pages/Page2.tsx';
 import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
+import { Tracking } from '@/pages/Tracking.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { Login } from './pages/Login.tsx';
@@ -59,6 +61,14 @@ const router = createBrowserRouter([
             <Page0 />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: ROUTES.TRACKING,
+        element: <Tracking />,
+      },
+      {
+        path: ROUTES.TRACKINGSLUG,
+        element: <TrackingSlug />,
       },
       {
         path: ROUTES.PARCELS,
