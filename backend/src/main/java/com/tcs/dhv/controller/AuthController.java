@@ -24,10 +24,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid final LoginRequest loginRequest) {
         final var userDetails = authService.authenticate(
-                loginRequest.getEmail(),
-                loginRequest.getPassword()
+                loginRequest.email(),
+                loginRequest.password()
         );
 
         final var tokenValue = authService.generateToken(userDetails);
@@ -36,16 +36,16 @@ public class AuthController {
                 .expiresIn(86400)
                 .build();
 
-        log.info("Login successful for email: {}", loginRequest.getEmail());
+        log.info("Login successful for email: {}", loginRequest.email());
         return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody @Valid RegisterRequest registerRequest) {
-        log.info("Register request for email: {}", registerRequest.getEmail());
+    public ResponseEntity<UserDto> register(@RequestBody @Valid final RegisterRequest registerRequest) {
+        log.info("Register request for email: {}", registerRequest.email());
         final var created = authService.registerUser(registerRequest);
 
-        log.info("Register successful for email: {}", registerRequest.getEmail());
+        log.info("Register successful for email: {}", registerRequest.email());
         return new ResponseEntity<>(created,  HttpStatus.CREATED);
     }
 }

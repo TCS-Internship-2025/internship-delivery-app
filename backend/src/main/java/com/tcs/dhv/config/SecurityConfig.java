@@ -39,9 +39,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
-            AuthenticationProvider authenticationProvider,
-            JwtAuthFilter jwtAuthFilter
+            final HttpSecurity http,
+            final AuthenticationProvider authenticationProvider,
+            final JwtAuthFilter jwtAuthFilter
         ) throws Exception {
         http
                 .cors(withDefaults())
@@ -67,7 +67,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public AuthenticationProvider authenticationProvider(
+            final UserDetailsService userDetailsService,
+            final PasswordEncoder passwordEncoder
+    ) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);

@@ -41,7 +41,7 @@ public class AuthService {
         return userDetailsService.loadUserByUsername(email);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(final UserDetails userDetails) {
         final var claims = new HashMap<String, Object>();
         return Jwts.builder()
                 .setClaims(claims)
@@ -52,21 +52,21 @@ public class AuthService {
                 .compact();
     }
 
-    public UserDetails validateToken(String token) {
+    public UserDetails validateToken(final String token) {
         final var username = extractUsername(token);
         return userDetailsService.loadUserByUsername(username);
     }
 
-    public UserDto registerUser(RegisterRequest  request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+    public UserDto registerUser(final RegisterRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("User with this email already exists");
         }
 
         final var user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .phone(request.getPhone())
+                .name(request.name())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .phone(request.phone())
                 .verified(false)
                 .build();
 
