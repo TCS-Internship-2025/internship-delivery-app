@@ -9,6 +9,7 @@ export type DeliveryEnum = z.infer<typeof DeliveryEnum>;
 export type PaymentEnum = z.infer<typeof PaymentEnum>;
 // Constants
 export const ROUTES = {
+  APP: 'app',
   PAGE1: 'page1',
   PAGE2: 'page2',
   PAGE3: 'page3',
@@ -16,4 +17,13 @@ export const ROUTES = {
   PAGE5: 'page5',
   SUCCESS: 'success',
   ERROR: 'error',
+  PARCELS: 'my-parcels',
+  DETAILS: 'details',
+};
+
+export const PARCEL_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  SHIPPING: 'SHIPPING',
+  DELIVERED: 'DELIVERED',
+  STUCK: 'STUCK',
 };
