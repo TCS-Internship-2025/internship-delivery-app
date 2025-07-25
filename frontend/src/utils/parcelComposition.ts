@@ -10,9 +10,9 @@ export const page1FormSchema = z.object({
   lastName: z.string().min(1),
   mobilePhone: z
     .string()
-    .min(4, 'Mobile phone is required')
+    .min(1, 'Mobile phone is required')
     .regex(/^(?:(\+36|06)\s?)?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/, 'Please enter a valid Hungarian phone number'),
-  emailAddress: z.string().email('Please enter a valid email address').min(1),
+  emailAddress: z.email('Please enter a valid email address').min(1),
 
   // Section 2 fields
   name: z.string().min(1),
