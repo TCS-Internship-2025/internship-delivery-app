@@ -35,7 +35,7 @@ export const LandingPage = () => {
       }}
     >
       <Typography variant="h2" component="h1" gutterBottom>
-        Give me a name
+        SwiftParcel
       </Typography>
       <Typography variant="h5" color="text.secondary" sx={{ mb: 3 }}>
         Welcome to the best parcel service provider!
