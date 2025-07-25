@@ -43,14 +43,14 @@ export const LandingPage = () => {
       <Box display="flex" justifyContent="space-between" gap={2}>
         <LandingPageButton
           onClick={() => {
-            void navigate(ROUTES.PAGE1); //TODO: Adjust path
+            void navigate(ROUTES.LOGIN);
           }}
         >
           Login
         </LandingPageButton>
         <LandingPageButton
           onClick={() => {
-            void navigate(ROUTES.PAGE1); //TODO: Adjust path
+            void navigate(ROUTES.TRACKING);
           }}
         >
           Track parcel
