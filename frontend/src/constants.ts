@@ -8,6 +8,7 @@ export type RandomEnum = z.infer<typeof RandomEnum>;
 
 // Constants
 export const ROUTES = {
+  PAGE0: 'page0',
   PAGE1: 'page1',
   PAGE2: 'page2',
   PAGE3: 'page3',
@@ -15,5 +16,6 @@ export const ROUTES = {
   PAGE5: 'page5',
   SUCCESS: 'success',
   ERROR: 'error',
-  TRACKING: 'tracking/:slug',
+  TRACKINGSLUG: 'tracking/:slug',
+  TRACKING: 'tracking',
 };

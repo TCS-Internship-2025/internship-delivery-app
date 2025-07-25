@@ -13,7 +13,7 @@ interface FormValues {
   trackNumber: string;
 }
 
-export const Home = () => {
+export const Tracking = () => {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<FormValues>();
 

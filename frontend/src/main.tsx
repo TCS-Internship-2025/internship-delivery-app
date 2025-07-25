@@ -13,11 +13,12 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
-import { Home } from '@/pages/Home.tsx';
+import { Page0 } from '@/pages/Page0.tsx';
 import { Page1 } from '@/pages/Page1.tsx';
 import { Page2 } from '@/pages/Page2.tsx';
 import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
+import { Tracking } from '@/pages/Tracking.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
@@ -40,10 +41,14 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <Page0 />,
       },
       {
         path: ROUTES.TRACKING,
+        element: <Tracking />,
+      },
+      {
+        path: ROUTES.TRACKINGSLUG,
         element: <TrackingSlug />,
       },
 
