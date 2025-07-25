@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service
 public class EmailService {
@@ -15,8 +16,8 @@ public class EmailService {
     private SimpleMailMessage template;
 
     public void sendEmail(String email, String trackingNumber, String link) {
-        SimpleMailMessage message = template;
-        assert template.getText() != null;
+        final var message = template;
+        Assert.notNull(message.getText(), "Message must not be null;");
         message.setText(String.format(template.getText(), trackingNumber, link));
         message.setTo(email);
 

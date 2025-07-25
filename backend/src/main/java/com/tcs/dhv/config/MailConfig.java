@@ -8,8 +8,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import java.util.Properties;
-
 @Configuration
 public class MailConfig {
 
@@ -42,8 +40,8 @@ public class MailConfig {
     @Bean
     SimpleMailMessage templateShipmentMessage(){
         final var mail = new SimpleMailMessage();
-        mail.setFrom("noreply@tcs.interns.com");
-        mail.setSubject("Shipment label");
+        mail.setFrom(username);
+        mail.setSubject(Constants.mailSubject);
         mail.setText("Your package %s is on the way\n Click the following link to see its status: %s");
 
         return mail;
