@@ -42,8 +42,8 @@ public class Parcel {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "recipient_address_id")
-    private Address recipientAddress;
+    @JoinColumn(name = "recipient_id")
+    private Recipient recipient;
 
     @NotNull
     @Column(name = "tracking_code")
@@ -74,12 +74,12 @@ public class Parcel {
 
     public Parcel(
             @NotNull User sender,
-            @NotNull Address recipientAddress,
+            @NotNull Recipient recipient,
             @NotNull DeliveryType deliveryType,
             @NotNull PaymentType paymentType
     ){
         this.sender = sender;
-        this.recipientAddress = recipientAddress;
+        this.recipient = recipient;
         this.deliveryType = deliveryType;
         this.paymentType = paymentType;
         this.currentStatus = ParcelStatus.CREATED;
