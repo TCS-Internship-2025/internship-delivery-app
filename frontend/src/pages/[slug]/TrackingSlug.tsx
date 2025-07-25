@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useTracking } from '@/hooks/useTracking';
 
 import Box from '@mui/material/Box';
@@ -12,6 +13,7 @@ import TimelineComponent from '@/components/Timeline';
 function TrackingSlug() {
   const { slug } = useParams();
   const { data, status } = useTracking(slug);
+  const isSmallScreen = useSmallScreen();
 
   if (status === 'pending') {
     return (
@@ -29,37 +31,44 @@ function TrackingSlug() {
     );
   }
   return (
-    <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+    <Box sx={{ height: '100vh' }}>
       <Container
-        maxWidth={false}
         sx={{
           display: 'flex',
-          border: '2px dashed grey',
           height: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          alignItems: 'center',
+          flexDirection: isSmallScreen ? 'column' : 'row',
+          justifyContent: 'center',
+          alignItems: isSmallScreen ? 'start' : 'center',
         }}
       >
-        <Box maxWidth={'50%'}>
-          <Typography sx={{}} variant="subtitle2" color="textSecondary" fontSize={10}>
+        <Box
+          paddingLeft={isSmallScreen ? 2 : ''}
+          sx={{
+            '& > :not(:last-child)': {
+              marginBottom: (theme) => theme.spacing(0.5),
+            },
+          }}
+        >
+          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             PARCEL NUMBER
           </Typography>
-          <Typography sx={{ paddingBottom: 1 }}>{data.id}</Typography>
-          <Typography sx={{}} variant="subtitle2" color="textSecondary" fontSize={10}>
+          <Typography>{data.id}</Typography>
+          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             SENDER
           </Typography>
-          <Typography sx={{ paddingBottom: 1 }}>{data.sender}</Typography>
-          <Typography sx={{}} variant="subtitle2" color="textSecondary" fontSize={10}>
+          <Typography>{data.sender}</Typography>
+          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             DELIVERY METHOD
           </Typography>
-          <Typography sx={{ paddingBottom: 1 }}>{data.method}</Typography>
-          <Typography sx={{}} variant="subtitle2" color="textSecondary" fontSize={10}>
+          <Typography>{data.method}</Typography>
+          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             DELIVERY ADDRESS
           </Typography>
-          <Typography sx={{ paddingBottom: 1 }}>{data.address}</Typography>
+          <Typography>{data.address}</Typography>
         </Box>
-        <TimelineComponent status={data.status} />
+        <Box marginLeft={0}>
+          <TimelineComponent status={data.status} />
+        </Box>
       </Container>
     </Box>
   );
