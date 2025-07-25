@@ -16,4 +16,13 @@ export const ROUTES = {
   PAGE5: 'page5',
   SUCCESS: 'success',
   ERROR: 'error',
+  PARCELS: 'my-parcels',
+  DETAILS: 'details',
+};
+
+export const PARCEL_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  SHIPPING: 'SHIPPING',
+  DELIVERED: 'DELIVERED',
+  STUCK: 'STUCK',
 };
