@@ -23,6 +23,7 @@ import { ParcelPage } from '@/pages/Parcels.tsx';
 import { AppLayout } from '@/components/AppLayout.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { ParcelDetails } from './pages/ParcelDetails.tsx';
+import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -38,6 +39,7 @@ const ReactQueryDevtools = lazy(() =>
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
+    errorElement: <SiteNotFound />,
     children: [
       {
         index: true,

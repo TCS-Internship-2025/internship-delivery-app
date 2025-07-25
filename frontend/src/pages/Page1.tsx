@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
+import { DevTool } from '@hookform/devtools';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import QuestionMark from '@mui/icons-material/QuestionMark';
@@ -52,6 +53,7 @@ export const Page1 = () => {
           <SectionContainer title="Description">
             <SectionFields fields={descriptionField} control={control} />
           </SectionContainer>
+          <DevTool control={control} /> {/* For development purposes only */}
         </form>
       </PageContainer>
 
