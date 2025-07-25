@@ -20,42 +20,27 @@ interface TimelineProp {
 export default function TimelineComponent({ status }: TimelineProp) {
   const isSmallScreen = useSmallScreen();
   return (
-    <Timeline
-      sx={
-        isSmallScreen
-          ? {
-              [`& .${timelineItemClasses.root}:before`]: {
-                flex: 0,
-                padding: '0',
-              },
-            }
-          : {}
-      }
-    >
+    <Timeline sx={{ ...(isSmallScreen && { [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 } }) }}>
       {status.map((value) => {
         return (
           <TimelineItem key={value.changeMessage}>
-            {!isSmallScreen ? (
+            {!isSmallScreen && (
               <TimelineOppositeContent color="textSecondary">
                 {new Date(value.changeDate).toLocaleDateString()}
               </TimelineOppositeContent>
-            ) : (
-              ''
             )}
             <TimelineSeparator>
               <TimelineDot />
-              {value.changeMessage !== 'Delivered' ? <TimelineConnector /> : ''}
+              {value.changeMessage !== 'Delivered' && <TimelineConnector />}
             </TimelineSeparator>
             <TimelineContent variant="subtitle2">
               {value.changeMessage}
               <br />
               <Typography variant="caption">{value.changeLocation}</Typography>
-              {isSmallScreen ? (
+              {isSmallScreen && (
                 <Typography variant="subtitle2" color="textSecondary">
                   {new Date(value.changeDate).toLocaleDateString()}
                 </Typography>
-              ) : (
-                ''
               )}
             </TimelineContent>
           </TimelineItem>

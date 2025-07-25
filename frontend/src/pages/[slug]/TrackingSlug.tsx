@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
-import { useTracking } from '@/hooks/useTracking';
+
+import { useTracking } from '@/apis/tracking';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -42,8 +43,8 @@ function TrackingSlug() {
         }}
       >
         <Box
-          paddingLeft={isSmallScreen ? 2 : ''}
           sx={{
+            ...(isSmallScreen && { paddingLeft: 2 }),
             '& > :not(:last-child)': {
               marginBottom: (theme) => theme.spacing(0.5),
             },
