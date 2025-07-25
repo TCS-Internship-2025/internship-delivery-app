@@ -8,10 +8,10 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 
 interface LoginFormProps {
   onRegisterClick: () => void;
@@ -19,7 +19,7 @@ interface LoginFormProps {
 
 export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { form, onSubmit, isLoading, submitError } = useLoginForm();
+  const { form, onSubmit, isLoading, error } = useLoginForm();
   const { control, handleSubmit } = form;
 
   const togglePasswordVisibility = () => {
@@ -33,9 +33,9 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
 
   return (
     <>
-      {submitError && (
+      {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          {submitError}
+          {error.message}
         </Alert>
       )}
 
@@ -109,30 +109,19 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
           {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
         </Button>
 
-        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
-          <Box
-            component="span"
-            sx={{
-              display: 'inline-block',
-              width: '80%',
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-              mb: 1,
-            }}
-          />
-          <Box sx={{ mt: 1 }}>
-            Don't have an account?{' '}
-            <Button
-              variant="text"
-              color="primary"
-              onClick={onRegisterClick}
-              sx={{ textTransform: 'none', fontWeight: 600 }}
-              disabled={isLoading}
-            >
-              Sign up here
-            </Button>
-          </Box>
-        </Typography>
+        <Divider variant="middle" sx={{ mx: 8 }} />
+        <Box sx={{ mt: 1, mb: 2, textAlign: 'center', justifyContent: 'center', color: 'text.secondary' }}>
+          Don't have an account?{' '}
+          <Button
+            variant="text"
+            color="primary"
+            onClick={onRegisterClick}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
+            disabled={isLoading}
+          >
+            Sign up here
+          </Button>
+        </Box>
       </Box>
     </>
   );

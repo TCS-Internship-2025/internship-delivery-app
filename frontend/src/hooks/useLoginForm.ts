@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+
+import { useLoginMutation } from '@/apis/authApi';
 
 import { loginSchema } from '@/utils/authZodSchemas';
 
@@ -10,8 +11,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const loginMutation = useLoginMutation();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -23,28 +24,19 @@ export const useLoginForm = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    setSubmitError(null);
-
     try {
-      // TODO: Implement actual login logic here
-      console.log('Login data:', data);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await loginMutation.mutateAsync(data);
       void navigate('/');
     } catch {
-      setSubmitError('Login failed. Please check your credentials and try again.');
-    } finally {
-      setIsLoading(false);
+      // Error is now handled by TanStack Query
     }
   };
 
   return {
     form,
     onSubmit,
-    isLoading,
-    submitError,
+    isLoading: loginMutation.isPending,
+    error: loginMutation.error,
+    isError: loginMutation.isError,
   };
 };

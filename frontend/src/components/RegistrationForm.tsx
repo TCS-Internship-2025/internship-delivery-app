@@ -5,9 +5,9 @@ import { type RegistrationFormData } from '../utils/authZodSchemas';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import LinearProgress from '@mui/material/LinearProgress';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 
 import { PasswordField } from './PasswordField';
 
@@ -16,7 +16,7 @@ interface RegistrationFormProps {
 }
 
 export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
-  const { form, onSubmit, isLoading, submitError } = useRegisterForm();
+  const { form, onSubmit, isLoading, error } = useRegisterForm();
   const {
     control,
     handleSubmit,
@@ -28,9 +28,9 @@ export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
 
   return (
     <>
-      {submitError && (
+      {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          {submitError}
+          {error.message}
         </Alert>
       )}
 
@@ -127,30 +127,19 @@ export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
           )}
         </Button>
 
-        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mt: 2 }}>
-          <Box
-            component="span"
-            sx={{
-              display: 'inline-block',
-              width: '80%',
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-              mb: 1,
-            }}
-          />
-          <Box sx={{ mt: 1 }}>
-            Already have an account?{' '}
-            <Button
-              variant="text"
-              color="primary"
-              onClick={onLoginClick}
-              sx={{ textTransform: 'none', fontWeight: 600 }}
-              disabled={isLoading}
-            >
-              Login here
-            </Button>
-          </Box>
-        </Typography>
+        <Divider variant="middle" sx={{ mx: 8 }} />
+        <Box sx={{ mt: 1, alignItems: 'center', textAlign: 'center', color: 'text.secondary' }}>
+          Already have an account?{' '}
+          <Button
+            variant="text"
+            color="primary"
+            onClick={onLoginClick}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
+            disabled={isLoading}
+          >
+            Login here
+          </Button>
+        </Box>
       </Box>
     </>
   );

@@ -1,13 +1,14 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { registrationSchema, type RegistrationFormData } from '../utils/authZodSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { useRegisterMutation } from '@/apis/authApi';
+
 export const useRegisterForm = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const registerMutation = useRegisterMutation();
 
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
@@ -21,28 +22,19 @@ export const useRegisterForm = () => {
   });
 
   const onSubmit = async (data: RegistrationFormData) => {
-    setIsLoading(true);
-    setSubmitError(null);
-
     try {
-      // TODO: Implement actual registration logic here
-      console.log('Registration data:', data);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await registerMutation.mutateAsync(data);
       void navigate('/');
     } catch {
-      setSubmitError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      // Error is now handled by TanStack Query
     }
   };
 
   return {
     form,
     onSubmit,
-    isLoading,
-    submitError,
+    isLoading: registerMutation.isPending,
+    error: registerMutation.error,
+    isError: registerMutation.isError,
   };
 };
