@@ -1,5 +1,6 @@
 package com.tcs.dhv.config;
 
+import com.tcs.dhv.util.Constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,26 +19,29 @@ public class MailConfig {
     @Value("${MAIL_PASSWORD}")
     private String password;
 
+    private static final String host = "smtp.gmail.com";
+    private static final int port = 587;
+
     @Bean
     public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+        final var mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(host);
+        mailSender.setPort(port);
         mailSender.setUsername(username);
         mailSender.setPassword(password);
 
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable","true");
-        props.put("mail.debug","true");
+        final var props = mailSender.getJavaMailProperties();
+        props.put(Constants.mailProtocol, "smtp");
+        props.put(Constants.mailAuth, "true");
+        props.put(Constants.mailStarttlsEnable,"true");
+        props.put(Constants.mailDebug,"true");
 
         return mailSender;
     }
 
     @Bean
     SimpleMailMessage templateShipmentMessage(){
-        SimpleMailMessage mail = new SimpleMailMessage();
+        final var mail = new SimpleMailMessage();
         mail.setFrom("noreply@tcs.interns.com");
         mail.setSubject("Shipment label");
         mail.setText("Your package %s is on the way\n Click the following link to see its status: %s");
