@@ -2,7 +2,6 @@ package com.tcs.dhv.entity;
 
 import com.tcs.dhv.enums.DeliveryType;
 import com.tcs.dhv.enums.LocationStatus;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,7 +28,6 @@ public class PredefinedLocation {
     @Id
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_new", nullable = false)
     private UUID id;
 
     @NotNull
