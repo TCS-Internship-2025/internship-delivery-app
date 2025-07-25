@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import SendIcon from '@mui/icons-material/Send';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
@@ -22,41 +21,40 @@ export const Tracking = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} style={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
-        <Container
-          maxWidth={false}
-          sx={{
-            display: 'flex',
-            height: '100%',
-            width: '100%',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
+    <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <TextField
+          sx={{ width: '66%', marginBottom: 3 }}
+          placeholder="SWIFT1875037"
+          {...register('trackNumber', { required: true })}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton {...register('trackNumber')} type="submit">
+                    <SendIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
-        >
-          <TextField
-            sx={{ width: '66%', paddingBottom: 5 }}
-            placeholder="SWIFT1875037"
-            {...register('trackNumber', { required: true })}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton {...register('trackNumber')} type="submit">
-                      <SendIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-          <Typography variant="h5">Track Your Parcel!</Typography>
-          <Typography variant="subtitle2" color="textSecondary">
-            Enter the parcel tracking number
-          </Typography>
-        </Container>
-      </form>
-    </Box>
+        />
+        <Typography variant="h5" align="center">
+          Track Your Parcel!
+        </Typography>
+        <Typography variant="subtitle2" color="textSecondary" align="center">
+          Enter the parcel tracking number
+        </Typography>
+      </Box>
+    </form>
   );
 };
