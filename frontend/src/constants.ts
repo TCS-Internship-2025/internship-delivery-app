@@ -10,6 +10,8 @@ export type PaymentEnum = z.infer<typeof PaymentEnum>;
 // Constants
 export const ROUTES = {
   PAGE0: 'page0',
+  LOGIN: 'login',
+  REGISTER: 'register',
   APP: 'app',
   PAGE1: 'page1',
   PAGE2: 'page2',
