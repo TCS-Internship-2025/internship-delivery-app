@@ -1,6 +1,6 @@
-package com.tcs.dhv.dto;
+package com.tcs.dhv.domain.dto;
 
-import com.tcs.dhv.enums.DeliveryType;
+import com.tcs.dhv.domain.enums.DeliveryType;
 import jakarta.validation.Valid;
 
 public record ParcelUpdateDto(

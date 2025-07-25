@@ -1,12 +1,14 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
-import jakarta.persistence.Column;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -18,6 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
+
 import java.util.UUID;
 
 
@@ -25,11 +28,11 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "users")
-public class User {
+@Table(name = "parcel_status_history")
+public class ParcelStatusHistory {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -37,28 +40,23 @@ public class User {
     private UUID id;
 
     @NotNull
-    private String name;
+    @ManyToOne
+    @Setter(AccessLevel.NONE)
+    @JoinColumn(name = "parcel_id")
+    private Parcel parcel;
 
     @NotNull
-    @Column(unique = true)
-    private String email;
+    @Setter(AccessLevel.NONE)
+    @Enumerated(EnumType.STRING)
+    private ParcelStatus status;
+
+    private String description;
 
     @NotNull
-    private String password;
-
-    private String phone;
-
-    @OneToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
-
-    @NotNull
+    @Setter(AccessLevel.NONE)
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime timestamp;
 
-    @NotNull
-    @Builder.Default
-    private Boolean isVerified = false;
 
 
 }

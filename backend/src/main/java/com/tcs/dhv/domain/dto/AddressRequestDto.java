@@ -1,4 +1,4 @@
-package com.tcs.dhv.dto;
+package com.tcs.dhv.domain.dto;
 
 import jakarta.validation.constraints.*;
 

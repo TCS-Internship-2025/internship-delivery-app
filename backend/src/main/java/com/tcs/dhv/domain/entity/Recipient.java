@@ -1,11 +1,12 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,18 +15,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import java.util.UUID;
 
+import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Setter
 @Getter
 @ToString
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "addresses")
-public class Address {
+@NoArgsConstructor
+public class Recipient {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -33,26 +34,20 @@ public class Address {
     private UUID id;
 
     @NotNull
-    private String line1;
-
-    private String line2;
-
-    private String building;
-
-    private String apartment;
+    private String name;
 
     @NotNull
-    private  String city;
+    @Column(unique = true)
+    private String email;
+
+    private String phone;
+
+    private Date birthDate;
 
     @NotNull
-    @Builder.Default
-    private String country = "Hungary";
-
-    @NotNull
-    private String postalCode;
-
-    private Double longitude;
-    private Double latitude;
+    @OneToOne
+    @JoinColumn(name = "address_id",nullable = false)
+    private Address address;
 
 
 }

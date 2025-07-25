@@ -1,11 +1,11 @@
 package com.tcs.dhv.mapper;
 
-import com.tcs.dhv.dto.ParcelRequestDto;
-import com.tcs.dhv.dto.ParcelResponseDto;
-import com.tcs.dhv.dto.ParcelUpdateDto;
-import com.tcs.dhv.dto.RecipientDto;
-import com.tcs.dhv.entity.Parcel;
-import com.tcs.dhv.entity.User;
+import com.tcs.dhv.domain.dto.ParcelRequestDto;
+import com.tcs.dhv.domain.dto.ParcelResponseDto;
+import com.tcs.dhv.domain.dto.ParcelUpdateDto;
+import com.tcs.dhv.domain.dto.RecipientDto;
+import com.tcs.dhv.domain.entity.Parcel;
+import com.tcs.dhv.domain.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

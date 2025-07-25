@@ -1,9 +1,9 @@
 package com.tcs.dhv.mapper;
 
-import com.tcs.dhv.dto.AddressRequestDto;
-import com.tcs.dhv.dto.AddressResponseDto;
-import com.tcs.dhv.dto.AddressUpdateDto;
-import com.tcs.dhv.entity.Address;
+import com.tcs.dhv.domain.dto.AddressRequestDto;
+import com.tcs.dhv.domain.dto.AddressResponseDto;
+import com.tcs.dhv.domain.dto.AddressUpdateDto;
+import com.tcs.dhv.domain.entity.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;

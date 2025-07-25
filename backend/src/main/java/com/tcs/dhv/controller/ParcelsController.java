@@ -1,9 +1,9 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.dto.ParcelRequestDto;
-import com.tcs.dhv.dto.ParcelResponseDto;
-import com.tcs.dhv.dto.ParcelUpdateDto;
-import com.tcs.dhv.entity.User;
+import com.tcs.dhv.domain.dto.ParcelRequestDto;
+import com.tcs.dhv.domain.dto.ParcelResponseDto;
+import com.tcs.dhv.domain.dto.ParcelUpdateDto;
+import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.service.ParcelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
