@@ -37,6 +37,7 @@ const ReactQueryDevtools = lazy(() =>
 
 const router = createBrowserRouter([
   {
+    path: '/',
     errorElement: <SiteNotFound />,
     children: [
       {
@@ -44,10 +45,11 @@ const router = createBrowserRouter([
         element: <LandingPage />,
       },
       {
+        path: ROUTES.APP,
         element: <AppLayout />,
         children: [
           {
-            path: '/',
+            index: true,
             element: <Page0 />,
           },
           {
