@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,9 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "parcel_status_history")
 public class ParcelStatusHistory {
 
@@ -54,16 +57,6 @@ public class ParcelStatusHistory {
     @CreationTimestamp
     private LocalDateTime timestamp;
 
-    @Builder
-    public ParcelStatusHistory(
-            @NotNull Parcel parcel,
-            @NotNull ParcelStatus status,
-            String description
-    ){
-        this.parcel = parcel;
-        this.status = status;
-        this.description = description;
-    }
 
 
 }

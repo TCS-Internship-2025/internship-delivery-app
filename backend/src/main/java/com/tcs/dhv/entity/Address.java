@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,9 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "addresses")
 public class Address {
 
@@ -42,7 +45,8 @@ public class Address {
     private  String city;
 
     @NotNull
-    private String country;
+    @Builder.Default
+    private String country = "Hungary";
 
     @NotNull
     private String postalCode;
@@ -50,26 +54,5 @@ public class Address {
     private Double longitude;
     private Double latitude;
 
-    @Builder
-    public Address(
-            @NotNull String line1,
-            String line2,
-            String building,
-            String apartment,
-            @NotNull String city,
-            @NotNull String postalCode,
-            String country,
-            Double longitude,
-            Double latitude
-    ) {
-        this.line1 = line1;
-        this.line2 = line2;
-        this.building = building;
-        this.apartment = apartment;
-        this.city = city;
-        this.postalCode = postalCode;
-        this.country = country != null ? country : "Hungary";
-        this.longitude = longitude;
-        this.latitude = latitude;
-    }
+
 }

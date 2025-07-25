@@ -10,6 +10,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,8 @@ import java.util.UUID;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
 public class User {
 
@@ -54,21 +57,8 @@ public class User {
     private LocalDateTime createdAt;
 
     @NotNull
-    private Boolean isVerified;
+    @Builder.Default
+    private Boolean isVerified = false;
 
-    @Builder
-    public User(
-            @NotNull String name,
-            @NotNull String email,
-            @NotNull String password,
-            String phone,
-            Address address
-    ){
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-        this.address = address;
-        this.isVerified = false;
-    }
+
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,8 @@ import java.util.UUID;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "predefined_locations")
 public class PredefinedLocation {
 
@@ -42,23 +45,13 @@ public class PredefinedLocation {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private LocationStatus status;
+    @Builder.Default
+    private LocationStatus status = LocationStatus.AVAILABLE;
 
     @OneToOne
+    @NotNull
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
-    @Builder
-    public PredefinedLocation(
-            @NotNull String name,
-            @NotNull DeliveryType type,
-            @NotNull Address address,
-            LocationStatus status
-    ){
-        this.name = name;
-        this.type = type;
-        this.address = address;
-        this.status = status != null ? status : LocationStatus.AVAILABLE;
-    }
 
 }

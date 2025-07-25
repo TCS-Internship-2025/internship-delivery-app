@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "parcels")
 public class Parcel {
 
@@ -40,12 +43,12 @@ public class Parcel {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "recipient_id")
+    @JoinColumn(name = "recipient_id" ,nullable = false)
     private Recipient recipient;
 
     @NotNull
@@ -65,25 +68,12 @@ public class Parcel {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ParcelStatus currentStatus;
+    @Builder.Default
+    private ParcelStatus currentStatus = ParcelStatus.CREATED;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
-    @Builder
-    public Parcel(
-            @NotNull User sender,
-            @NotNull Recipient recipient,
-            @NotNull String trackingCode,
-            @NotNull DeliveryType deliveryType,
-            ParcelStatus currentStatus,
-            @NotNull PaymentType paymentType) {
-        this.sender = sender;
-        this.recipient = recipient;
-        this.trackingCode = trackingCode;
-        this.deliveryType = deliveryType;
-        this.currentStatus = currentStatus != null ? currentStatus : ParcelStatus.CREATED;
-        this.paymentType = paymentType;
-    }
+
 }

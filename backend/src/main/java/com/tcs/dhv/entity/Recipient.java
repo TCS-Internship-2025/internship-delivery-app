@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,8 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Recipient {
 
@@ -41,24 +44,10 @@ public class Recipient {
 
     private Date birthDate;
 
+    @NotNull
     @OneToOne
     @JoinColumn(name = "address_id",nullable = false)
     private Address address;
 
-    @Builder
-    public Recipient(
-            @NotNull String name,
-            @NotNull String email,
-            @NotNull Address address,
-            String phone,
-            Date birthDate
-
-    ){
-        this.name = name;
-        this.email = email;
-        this.address = address;
-        this.phone = phone;
-        this.birthDate = birthDate;
-    }
 
 }
