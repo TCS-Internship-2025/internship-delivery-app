@@ -10,6 +10,7 @@ import { ROUTES } from '@/constants';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
+import { AuthProvider } from '@/providers/AuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
@@ -18,9 +19,18 @@ import { Page1 } from '@/pages/Page1.tsx';
 import { Page2 } from '@/pages/Page2.tsx';
 import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
+import { ParcelPage } from '@/pages/Parcels.tsx';
+import { Tracking } from '@/pages/Tracking.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
+import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
+import { LandingPage } from './pages/LandingPage.tsx';
+import { Login } from './pages/Login.tsx';
+import { ParcelDetails } from './pages/ParcelDetails.tsx';
+import { Register } from './pages/Register.tsx';
+import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
@@ -35,38 +45,81 @@ const ReactQueryDevtools = lazy(() =>
 
 const router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    errorElement: <SiteNotFound />,
     children: [
       {
         index: true,
-        element: <Page0 />,
+        element: <LandingPage />,
       },
       {
-        path: ROUTES.PAGE1,
-        element: <Page1 />,
+        path: ROUTES.LOGIN,
+        element: <Login />,
       },
       {
-        path: ROUTES.PAGE2,
-        element: <Page2 />,
+        path: ROUTES.REGISTER,
+        element: <Register />,
       },
       {
-        path: ROUTES.PAGE3,
-        element: <Page3 />,
+        path: ROUTES.TRACKING,
+        element: <Tracking />,
       },
       {
-        path: ROUTES.PAGE4,
-        element: <Page4 />,
+        path: ROUTES.TRACKINGSLUG,
+        element: <TrackingSlug />,
       },
       {
-        path: ROUTES.PAGE5,
+        path: ROUTES.PARCELS,
         children: [
           {
-            path: ROUTES.SUCCESS,
-            element: <ProviderPage />,
+            index: true,
+            element: <ParcelPage />,
           },
           {
-            path: ROUTES.ERROR,
-            element: <ErrorPage />,
+            path: ROUTES.DETAILS,
+            element: <ParcelDetails />,
+          },
+        ],
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            element: <AppLayout />,
+            children: [
+              {
+                index: true,
+                element: <Page0 />,
+              },
+              {
+                path: ROUTES.PAGE1,
+                element: <Page1 />,
+              },
+              {
+                path: ROUTES.PAGE2,
+                element: <Page2 />,
+              },
+              {
+                path: ROUTES.PAGE3,
+                element: <Page3 />,
+              },
+              {
+                path: ROUTES.PAGE4,
+                element: <Page4 />,
+              },
+              {
+                path: ROUTES.PAGE5,
+                children: [
+                  {
+                    path: ROUTES.SUCCESS,
+                    element: <ProviderPage />,
+                  },
+                  {
+                    path: ROUTES.ERROR,
+                    element: <ErrorPage />,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
@@ -91,7 +144,9 @@ export function setupApp() {
               </Suspense>
             )}
             <ToastProvider>
-              <RouterProvider router={router} />
+              <AuthProvider>
+                <RouterProvider router={router} />
+              </AuthProvider>
             </ToastProvider>
           </QueryClientProvider>
         </LocalizationProvider>

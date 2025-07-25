@@ -2,12 +2,17 @@ import z from 'zod';
 
 // Zod enums
 export const TitleEnum = z.enum(['Mr', 'Mrs', 'Ms', 'Dr', 'Prof']);
-export const RandomEnum = z.enum(['option 1', 'option 2', 'option 3']);
+export const DeliveryEnum = z.enum(['Home', 'Pickup Point']);
+export const PaymentEnum = z.enum(['Sender', 'Recipient']);
 export type TitleEnum = z.infer<typeof TitleEnum>;
-export type RandomEnum = z.infer<typeof RandomEnum>;
-
+export type DeliveryEnum = z.infer<typeof DeliveryEnum>;
+export type PaymentEnum = z.infer<typeof PaymentEnum>;
 // Constants
 export const ROUTES = {
+  PAGE0: 'page0',
+  LOGIN: 'login',
+  REGISTER: 'register',
+  APP: 'app',
   PAGE1: 'page1',
   PAGE2: 'page2',
   PAGE3: 'page3',
@@ -15,4 +20,15 @@ export const ROUTES = {
   PAGE5: 'page5',
   SUCCESS: 'success',
   ERROR: 'error',
+  TRACKINGSLUG: 'tracking/:slug',
+  TRACKING: 'tracking',
+  PARCELS: 'my-parcels',
+  DETAILS: 'details',
+};
+
+export const PARCEL_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  SHIPPING: 'SHIPPING',
+  DELIVERED: 'DELIVERED',
+  STUCK: 'STUCK',
 };
