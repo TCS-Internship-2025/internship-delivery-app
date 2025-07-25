@@ -7,7 +7,7 @@ import { parseFromStorage } from '@/utils/storageParser';
 
 export const userSchema = z.object({
   id: z.string(),
-  email: z.string().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'),
+  email: z.email('Invalid email address'),
   name: z.string().optional(),
 });
 
