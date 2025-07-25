@@ -8,10 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
@@ -33,40 +33,42 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NonNull
+    @NotNull
     private String name;
 
-    @NonNull
+    @NotNull
     @Column(unique = true)
     private String email;
 
-    @NonNull
+    @NotNull
     private String password;
 
-    //not required
     private String phone;
 
     @OneToOne
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
-    @NonNull
+    @NotNull
     @CreationTimestamp
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
-    @NonNull
+    @NotNull
     @Column(name = "is_verified")
     private Boolean isVerified;
 
 
     public User(
-            @NonNull String name, @NonNull String email, @NonNull String password, String phone,@NonNull Address address
+            @NotNull String name,
+            @NotNull String email,
+            @NotNull String password,
+            @NotNull Address address
     ){
         this.name = name;
         this.email = email;
         this.password = password;
-        this.phone = phone;
         this.address = address;
+        this.isVerified = false;
     }
 }

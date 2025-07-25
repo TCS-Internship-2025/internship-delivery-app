@@ -23,10 +23,10 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Table(name = "parcels")
 public class Parcel {
 
@@ -73,12 +73,15 @@ public class Parcel {
 
 
     public Parcel(
-            @NotNull User sender, @NotNull Address recipientAddress, @NotNull DeliveryType deliveryType, @NotNull PaymentType paymentType
+            @NotNull User sender,
+            @NotNull Address recipientAddress,
+            @NotNull DeliveryType deliveryType,
+            @NotNull PaymentType paymentType
     ){
         this.sender = sender;
         this.recipientAddress = recipientAddress;
         this.deliveryType = deliveryType;
-        this.currentStatus = ParcelStatus.CREATED;
         this.paymentType = paymentType;
+        this.currentStatus = ParcelStatus.CREATED;
     }
 }

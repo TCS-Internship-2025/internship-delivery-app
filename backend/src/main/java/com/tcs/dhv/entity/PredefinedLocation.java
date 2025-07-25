@@ -15,14 +15,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
+@NoArgsConstructor
 @Table(name = "predefined_locations")
 public class PredefinedLocation {
 
@@ -45,7 +44,9 @@ public class PredefinedLocation {
     private Address address;
 
     public PredefinedLocation(
-            @NotNull String name,@NotNull DeliveryType type, Address address
+            @NotNull String name,
+            @NotNull DeliveryType type,
+            @NotNull Address address
     ){
         this.name = name;
         this.type = type;

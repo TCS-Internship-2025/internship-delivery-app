@@ -14,17 +14,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.CreationTimestamp;
+
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 
 @Entity
-@NoArgsConstructor
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
 @Table(name = "parcel_status_history")
 public class ParcelStatusHistory {
 
@@ -35,24 +36,27 @@ public class ParcelStatusHistory {
 
     @NotNull
     @ManyToOne
+    @Setter(AccessLevel.NONE)
     @JoinColumn(name = "parcel_id")
     private Parcel parcel;
 
     @NotNull
+    @Setter(AccessLevel.NONE)
     private ParcelStatus status;
 
     private String description;
 
     @NotNull
-    @UpdateTimestamp
-    private OffsetDateTime  timestamp;
+    @Setter(AccessLevel.NONE)
+    @CreationTimestamp
+    private OffsetDateTime timestamp;
 
     public ParcelStatusHistory(
-            @NotNull Parcel parcel, @NotNull ParcelStatus status, String description
+            @NotNull Parcel parcel,
+            @NotNull ParcelStatus status
     ){
         this.parcel = parcel;
         this.status = status;
-        this.description = description;
     }
 
 
