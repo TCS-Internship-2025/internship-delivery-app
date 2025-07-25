@@ -15,8 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -46,13 +45,13 @@ public class User {
     private String phone;
 
     @OneToOne
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @NotNull
     @CreationTimestamp
     @Column(name = "created_at")
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @NotNull
     @Column(name = "is_verified")
@@ -62,13 +61,11 @@ public class User {
     public User(
             @NotNull String name,
             @NotNull String email,
-            @NotNull String password,
-            @NotNull Address address
+            @NotNull String password
     ){
         this.name = name;
         this.email = email;
         this.password = password;
-        this.address = address;
         this.isVerified = false;
     }
 }

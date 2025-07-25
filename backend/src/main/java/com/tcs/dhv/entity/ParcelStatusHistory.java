@@ -15,9 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import java.time.LocalDateTime;
 
-
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 
@@ -49,7 +48,7 @@ public class ParcelStatusHistory {
     @NotNull
     @Setter(AccessLevel.NONE)
     @CreationTimestamp
-    private OffsetDateTime timestamp;
+    private LocalDateTime timestamp;
 
     public ParcelStatusHistory(
             @NotNull Parcel parcel,
