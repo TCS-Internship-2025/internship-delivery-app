@@ -2,10 +2,11 @@ import z from 'zod';
 
 // Zod enums
 export const TitleEnum = z.enum(['Mr', 'Mrs', 'Ms', 'Dr', 'Prof']);
-export const RandomEnum = z.enum(['option 1', 'option 2', 'option 3']);
+export const DeliveryEnum = z.enum(['Home', 'Pickup Point']);
+export const PaymentEnum = z.enum(['Sender', 'Recipient']);
 export type TitleEnum = z.infer<typeof TitleEnum>;
-export type RandomEnum = z.infer<typeof RandomEnum>;
-
+export type DeliveryEnum = z.infer<typeof DeliveryEnum>;
+export type PaymentEnum = z.infer<typeof PaymentEnum>;
 // Constants
 export const ROUTES = {
   PAGE0: 'page0',
