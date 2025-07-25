@@ -1,7 +1,7 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
-import com.tcs.dhv.enums.DeliveryType;
-import com.tcs.dhv.enums.LocationStatus;
+import com.tcs.dhv.domain.enums.DeliveryType;
+import com.tcs.dhv.domain.enums.LocationStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

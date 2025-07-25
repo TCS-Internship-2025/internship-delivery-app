@@ -1,9 +1,8 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
-import com.tcs.dhv.enums.DeliveryType;
-import com.tcs.dhv.enums.ParcelStatus;
-import com.tcs.dhv.enums.PaymentType;
-import jakarta.persistence.Column;
+import com.tcs.dhv.domain.enums.DeliveryType;
+import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.domain.enums.PaymentType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
