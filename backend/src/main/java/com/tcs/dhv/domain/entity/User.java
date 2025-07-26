@@ -59,6 +59,4 @@ public class User {
     @NotNull
     @Builder.Default
     private Boolean isVerified = false;
-
-
 }
