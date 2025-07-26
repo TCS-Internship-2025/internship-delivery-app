@@ -1,6 +1,7 @@
 package com.tcs.dhv.exception;
 
 import com.tcs.dhv.domain.dto.ApiErrorResponse;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,16 @@ public class GlobalExceptionHandler {
                 .message(ex.getMessage())
                 .timestamp(Instant.now())
                 .build();
-        return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(err);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidationException(ValidationException ex) {
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message(ex.getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.badRequest().body(err);
     }
 }

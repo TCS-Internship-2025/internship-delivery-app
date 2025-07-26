@@ -2,7 +2,6 @@ package com.tcs.dhv.domain.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -18,14 +17,6 @@ public record RegisterRequest(
 
         @Size(min = 8, message = "Password must be at least {min} characters")
         @NotBlank(message = "Password is required")
-        String password,
-
-        @NotBlank(message = "Phone number is required")
-        @Pattern(
-                regexp = "^\\+[1-9][0-9]{6,14}$",
-                message = "Phone number must start with + and be 7 to 15 digits"
-        )
-        String phone
-
+        String password
 ) {
 }

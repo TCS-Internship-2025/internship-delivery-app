@@ -1,9 +1,6 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.AuthResponse;
-import com.tcs.dhv.domain.dto.LoginRequest;
-import com.tcs.dhv.domain.dto.RegisterRequest;
-import com.tcs.dhv.domain.dto.UserDto;
+import com.tcs.dhv.domain.dto.*;
 import com.tcs.dhv.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +38,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody @Valid final RegisterRequest registerRequest) {
+    public ResponseEntity<RegisterResponse> registerUser(
+        @Valid @RequestBody final RegisterRequest registerRequest
+    ) {
         log.info("Register request for email: {}", registerRequest.email());
-        final var created = authService.registerUser(registerRequest);
+        final var registeredUser = authService.registerUser(registerRequest);
 
         log.info("Register successful for email: {}", registerRequest.email());
-        return new ResponseEntity<>(created,  HttpStatus.CREATED);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(new RegisterResponse(registeredUser.getName(), registeredUser.getEmail()));
     }
 }
