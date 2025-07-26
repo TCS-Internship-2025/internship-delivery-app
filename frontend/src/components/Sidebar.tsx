@@ -126,13 +126,15 @@ export const Sidebar = () => {
           <Tooltip title="Logout" arrow>
             <IconButton
               size="small"
-              color="error"
+              color="primary"
               sx={{ px: 1, borderRadius: 1 }}
-              onClick={() => console.log('Logout')}
+              onClick={() => {
+                void navigate('/login');
+              }}
             >
               <ExitToAppIcon fontSize="small" />
               <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                Logout
+                Login
               </Typography>
             </IconButton>
           </Tooltip>
