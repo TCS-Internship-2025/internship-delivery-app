@@ -45,6 +45,7 @@ public class JwtConfig {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 
+    @Bean
     public JwtService jwtService(
         @Value("${spring.application.name}") final String appName,
         final JwtEncoder jwtEncoder

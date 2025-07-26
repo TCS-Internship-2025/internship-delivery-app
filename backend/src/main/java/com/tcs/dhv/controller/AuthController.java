@@ -22,16 +22,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid final LoginRequest loginRequest) {
-        final var userDetails = authService.authenticate(
-                loginRequest.email(),
-                loginRequest.password()
-        );
-
-        final var tokenValue = authService.generateToken(userDetails);
-        final var authResponse = AuthResponse.builder()
-                .token(tokenValue)
-                .expiresIn(86400)
-                .build();
+        log.info("Login request for email: {}", loginRequest.email());
+        final var authResponse = authService.authenticate(loginRequest);
 
         log.info("Login successful for email: {}", loginRequest.email());
         return ResponseEntity.ok(authResponse);
