@@ -7,7 +7,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity
 @Setter
 @Getter
 @ToString
@@ -15,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "recipients")
+@Entity
 public class Recipient {
 
     @Id

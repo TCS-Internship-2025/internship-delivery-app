@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 @Transactional
+@Service
 public class ParcelService {
 
     private final ParcelRepository parcelRepository;

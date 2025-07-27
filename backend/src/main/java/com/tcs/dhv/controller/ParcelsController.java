@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/api/parcels")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/api/parcels")
+@RestController
 public class ParcelsController {
 
     private final ParcelService parcelService;
