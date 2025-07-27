@@ -1,16 +1,20 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.*;
+import com.tcs.dhv.domain.dto.AuthResponse;
+import com.tcs.dhv.domain.dto.LoginRequest;
+import com.tcs.dhv.domain.dto.RegisterRequest;
+import com.tcs.dhv.domain.dto.RegisterResponse;
 import com.tcs.dhv.service.AuthService;
+import com.tcs.dhv.service.EmailVerificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/auth")
@@ -19,6 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final EmailVerificationService emailVerificationService;
+
+    @Value("${email-verification.required}")
+    private boolean emailVerificationRequired;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid final LoginRequest loginRequest) {
@@ -36,9 +44,44 @@ public class AuthController {
         log.info("Register request for email: {}", registerRequest.email());
         final var registeredUser = authService.registerUser(registerRequest);
 
+        if (emailVerificationRequired) {
+            emailVerificationService.sendVerificationTokenByEmail(
+                registeredUser.getId(),
+                registeredUser.getEmail()
+            );
+        }
+
         log.info("Register successful for email: {}", registerRequest.email());
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(new RegisterResponse(registeredUser.getName(), registeredUser.getEmail()));
+            .body(new RegisterResponse(
+                registeredUser.getName(),
+                registeredUser.getEmail(),
+                registeredUser.getIsVerified()
+            ));
+    }
+
+    @PostMapping("/email/resend-verification")
+    public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) {
+        log.info("Resend verification email requested for: {}", email);
+        emailVerificationService.resendVerificationTokenByEmail(email);
+
+        log.info("Verification email successfully sent to: {}", email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/email/verify")
+    public ResponseEntity<RegisterResponse> verifyEmail(
+        @RequestParam("uid") UUID userId,
+        @RequestParam("t") String token
+    ) {
+        final var verifiedUser = emailVerificationService.verifyEmail(userId, token);
+
+        log.info("User with email {} successfully verified", verifiedUser.getEmail());
+        return ResponseEntity.ok(new RegisterResponse(
+            verifiedUser.getName(),
+            verifiedUser.getEmail(),
+            verifiedUser.getIsVerified()
+        ));
     }
 }
