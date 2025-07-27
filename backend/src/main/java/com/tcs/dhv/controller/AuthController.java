@@ -84,4 +84,18 @@ public class AuthController {
             verifiedUser.getIsVerified()
         ));
     }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponse> refreshToken(@RequestParam UUID refreshToken) {
+        log.info("Refresh token request: {}", refreshToken);
+        AuthResponse authResponse = authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> revokeToken(@RequestParam UUID refreshToken) {
+        log.info("Logout request revoking token: {}", refreshToken);
+        authService.revokeToken(refreshToken);
+        return ResponseEntity.noContent().build();
+    }
 }

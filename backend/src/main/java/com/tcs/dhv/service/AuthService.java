@@ -85,4 +85,8 @@ public class AuthService {
         final var newToken = jwtService.generateToken(refreshTokenEntity.getUser().getEmail());
         return new AuthResponse(newToken, refreshTokenEntity.getId());
     }
+
+    public void revokeToken(UUID refreshToken) {
+        refreshTokenRepository.deleteById(refreshToken);
+    }
 }
