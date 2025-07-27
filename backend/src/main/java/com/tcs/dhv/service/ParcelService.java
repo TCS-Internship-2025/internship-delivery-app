@@ -4,6 +4,7 @@ import com.tcs.dhv.domain.dto.ParcelRequest;
 import com.tcs.dhv.domain.dto.ParcelResponse;
 import com.tcs.dhv.domain.dto.ParcelUpdate;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.mapper.AddressMapper;
 import com.tcs.dhv.mapper.ParcelMapper;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +27,7 @@ public class ParcelService {
 
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
+    private final AddressMapper addressMapper;
 
     private final Random random = new Random();
 
@@ -73,8 +75,13 @@ public class ParcelService {
         }
 
         parcelMapper.updateEntity(parcel, parcelUpdate);
-        final var updatedParcel = parcelRepository.save(parcel);
 
+        if (parcelUpdate.address() != null) {
+            final var recipientAddress = parcel.getRecipient().getAddress();
+            addressMapper.updateEntity(recipientAddress, parcelUpdate.address());
+        }
+
+        final var updatedParcel = parcelRepository.save(parcel);
         log.info("Parcel with ID: {} updated successfully", id);
         return parcelMapper.toResponse(updatedParcel);
     }
