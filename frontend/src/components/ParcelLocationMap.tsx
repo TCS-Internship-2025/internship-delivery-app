@@ -41,6 +41,7 @@ interface ParcelLocationMapProps {
  * Features clickable markers that show detailed popups and allows users to select pickup locations.
  * @param setSelectedPoint - Callback function triggered when a user selects a pickup point from the popup.
  *                          Receives the selected PickupPoint object or null when deselected.
+ *                          Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
 export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) => {
