@@ -15,15 +15,12 @@ import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
 import { Page0 } from '@/pages/Page0.tsx';
-import { Page1 } from '@/pages/Page1.tsx';
-import { Page2 } from '@/pages/Page2.tsx';
-import { Page3 } from '@/pages/Page3.tsx';
-import { Page4 } from '@/pages/Page4.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
+import { SendParcel } from '@/pages/SendParcel.tsx';
 import { Tracking } from '@/pages/Tracking.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
-import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
+// import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
@@ -46,6 +43,7 @@ const ReactQueryDevtools = lazy(() =>
 const router = createBrowserRouter([
   {
     errorElement: <SiteNotFound />,
+    element: <AppLayout />,
     children: [
       {
         index: true,
@@ -81,43 +79,28 @@ const router = createBrowserRouter([
         ],
       },
       {
-        element: <ProtectedRoute />,
+        // element: <ProtectedRoute />,
+
         children: [
           {
-            element: <AppLayout />,
+            index: true,
+            element: <Page0 />,
+          },
+          {
+            path: ROUTES.SEND_PARCEL,
+            element: <SendParcel />,
+          },
+
+          {
+            path: ROUTES.PAGE5,
             children: [
               {
-                index: true,
-                element: <Page0 />,
+                path: ROUTES.SUCCESS,
+                element: <ProviderPage />,
               },
               {
-                path: ROUTES.PAGE1,
-                element: <Page1 />,
-              },
-              {
-                path: ROUTES.PAGE2,
-                element: <Page2 />,
-              },
-              {
-                path: ROUTES.PAGE3,
-                element: <Page3 />,
-              },
-              {
-                path: ROUTES.PAGE4,
-                element: <Page4 />,
-              },
-              {
-                path: ROUTES.PAGE5,
-                children: [
-                  {
-                    path: ROUTES.SUCCESS,
-                    element: <ProviderPage />,
-                  },
-                  {
-                    path: ROUTES.ERROR,
-                    element: <ErrorPage />,
-                  },
-                ],
+                path: ROUTES.ERROR,
+                element: <ErrorPage />,
               },
             ],
           },

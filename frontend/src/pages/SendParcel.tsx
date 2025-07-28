@@ -21,7 +21,7 @@ import {
   type Page1FormSchema,
 } from '@/utils/parcelComposition';
 
-export const Page1 = () => {
+export const SendParcel = () => {
   const { mutate, isPending } = useCreateParcel();
 
   const { control, handleSubmit } = useForm<Page1FormSchema>({

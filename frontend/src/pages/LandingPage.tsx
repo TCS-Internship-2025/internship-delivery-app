@@ -34,9 +34,26 @@ export const LandingPage = () => {
         textAlign: 'center',
       }}
     >
-      <Typography variant="h2" component="h1" gutterBottom>
-        SwiftParcel
-      </Typography>
+      <Box
+        sx={{
+          mb: 8,
+          maxWidth: '30rem',
+          width: '100%',
+        }}
+      >
+        <img
+          src="/logo2.png"
+          alt="Logo"
+          style={{
+            width: '100%',
+            height: 'auto',
+            display: 'block',
+            margin: '0 auto',
+            objectFit: 'contain',
+            borderRadius: '0.5em',
+          }}
+        />
+      </Box>
       <Typography variant="h5" color="text.secondary" sx={{ mb: 3 }}>
         Welcome to the best parcel service provider!
       </Typography>

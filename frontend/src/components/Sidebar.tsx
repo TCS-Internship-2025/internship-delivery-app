@@ -7,8 +7,11 @@ import { useTheme } from '@/providers/ThemeProvider.tsx';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import LogoutIcon from '@mui/icons-material/Logout';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -20,23 +23,27 @@ import { NavItem } from './NavItem.tsx';
 const SIDEBAR_WIDTH = 240;
 
 export const Sidebar = () => {
+  const isAuthenticated = false; // Force it for testing
+
   const navigate = useNavigate();
   const location = useLocation();
   const { mode, toggleTheme } = useTheme();
 
   const [activeTab, setActiveTab] = useState(0);
+  const handleLogoClick = () => {
+    void navigate('/');
+  };
 
-  const tabIndexToRoute = ['/', `/${ROUTES.PAGE1}`, `/${ROUTES.PAGE2}`, `/${ROUTES.PAGE3}`, `/${ROUTES.PAGE4}`];
+  const tabIndexToRoute = [
+    `/${ROUTES.TRACKING}`,
+    ...(isAuthenticated ? [`/${ROUTES.SEND_PARCEL}`, `/${ROUTES.PARCELS}`] : []),
+  ];
 
   useEffect(() => {
     const routeToTabIndex: Record<string, number> = {
-      '/': 0,
-      [`/${ROUTES.PAGE1}`]: 1,
-      [`/${ROUTES.PAGE2}`]: 2,
-      [`/${ROUTES.PAGE3}`]: 3,
-      [`/${ROUTES.PAGE4}`]: 4,
-      [`/${ROUTES.PAGE5}/${ROUTES.SUCCESS}`]: 5,
-      [`/${ROUTES.PAGE5}/${ROUTES.ERROR}`]: 6,
+      [`/${ROUTES.TRACKING}`]: 0,
+      [`/${ROUTES.SEND_PARCEL}`]: 1,
+      [`/${ROUTES.PARCELS}`]: 2,
     };
     const currentTabIndex = routeToTabIndex[location.pathname] ?? 0;
     setActiveTab(currentTabIndex);
@@ -61,53 +68,47 @@ export const Sidebar = () => {
       }}
     >
       <Box sx={{ p: 1, flex: 1 }}>
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-          <img
-            src="/favicon.jpg"
-            style={{
-              height: '100px',
-              width: 'auto',
-              objectFit: 'contain',
-            }}
-          />
+        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <ButtonBase onClick={handleLogoClick}>
+            <img
+              src="/logo.jpg"
+              style={{
+                height: '125px',
+                width: 'auto',
+                objectFit: 'contain',
+                borderRadius: '0.5em',
+              }}
+              alt="Logo"
+            />
+          </ButtonBase>
         </Box>
 
         <Divider variant="middle" sx={{ my: 1 }} />
 
         <Box>
           <NavItem
-            icon={<QuestionMarkIcon />}
-            label="Page 0"
+            icon={<TrackChangesIcon />}
+            label="Tracking"
             isActive={activeTab === 0}
             onClick={() => handleNavigation(0)}
           />
 
-          <Divider variant="middle" sx={{ my: 1 }} />
-
-          <NavItem
-            icon={<QuestionMarkIcon />}
-            label="Page 1"
-            isActive={activeTab === 1}
-            onClick={() => handleNavigation(1)}
-          />
-          <NavItem
-            icon={<QuestionMarkIcon />}
-            label="Page 2"
-            isActive={activeTab === 2}
-            onClick={() => handleNavigation(2)}
-          />
-          <NavItem
-            icon={<QuestionMarkIcon />}
-            label="Page 3"
-            isActive={activeTab === 3}
-            onClick={() => handleNavigation(3)}
-          />
-          <NavItem
-            icon={<QuestionMarkIcon />}
-            label="Page 4"
-            isActive={[4, 5, 6].includes(activeTab)}
-            onClick={() => handleNavigation(4)}
-          />
+          {isAuthenticated && (
+            <>
+              <NavItem
+                icon={<LocalShippingIcon />}
+                label="Send Parcel"
+                isActive={activeTab === 1}
+                onClick={() => handleNavigation(1)}
+              />
+              <NavItem
+                icon={<LocalShippingIcon />}
+                label="My Parcels"
+                isActive={activeTab === 2}
+                onClick={() => handleNavigation(2)}
+              />
+            </>
+          )}
         </Box>
       </Box>
 
@@ -122,19 +123,23 @@ export const Sidebar = () => {
               </Typography>
             </IconButton>
           </Tooltip>
-
-          <Tooltip title="Logout" arrow>
+          <Tooltip title={isAuthenticated ? 'Logout' : 'Login'} arrow>
             <IconButton
               size="small"
-              color="primary"
+              color={isAuthenticated ? 'error' : 'primary'}
               sx={{ px: 1, borderRadius: 1 }}
               onClick={() => {
-                void navigate('/login');
+                if (isAuthenticated) {
+                  // Optional: Add logout logic here
+                  void navigate('/login');
+                } else {
+                  void navigate('/login');
+                }
               }}
             >
-              <ExitToAppIcon fontSize="small" />
+              {isAuthenticated ? <LogoutIcon fontSize="small" /> : <ExitToAppIcon fontSize="small" />}
               <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                Login
+                {isAuthenticated ? 'Logout' : 'Login'}
               </Typography>
             </IconButton>
           </Tooltip>
