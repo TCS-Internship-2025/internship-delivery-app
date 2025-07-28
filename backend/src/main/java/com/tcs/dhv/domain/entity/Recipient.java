@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,16 +17,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity
 @Setter
 @Getter
 @ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "recipients")
+@Entity
 public class Recipient {
 
     @Id
@@ -42,12 +44,10 @@ public class Recipient {
 
     private String phone;
 
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @NotNull
     @OneToOne
-    @JoinColumn(name = "address_id",nullable = false)
+    @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-
-
 }

@@ -19,9 +19,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @ToString
@@ -29,6 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "predefined_locations")
+@Entity
 public class PredefinedLocation {
 
     @Id
@@ -52,6 +53,4 @@ public class PredefinedLocation {
     @NotNull
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-
-
 }

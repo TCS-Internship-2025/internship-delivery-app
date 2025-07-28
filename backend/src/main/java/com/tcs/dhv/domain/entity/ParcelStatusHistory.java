@@ -19,12 +19,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
-@Entity
 @Setter
 @Getter
 @ToString
@@ -32,6 +31,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "parcel_status_history")
+@Entity
 public class ParcelStatusHistory {
 
     @Id
@@ -56,7 +56,4 @@ public class ParcelStatusHistory {
     @Setter(AccessLevel.NONE)
     @CreationTimestamp
     private LocalDateTime timestamp;
-
-
-
 }
