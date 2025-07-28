@@ -1,14 +1,13 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
-import com.tcs.dhv.enums.DeliveryType;
-import com.tcs.dhv.enums.LocationStatus;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -19,17 +18,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+
 @Entity
-@Getter
 @Setter
+@Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "predefined_locations")
-public class PredefinedLocation {
+@Table(name = "users")
+public class User {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -40,18 +45,26 @@ public class PredefinedLocation {
     private String name;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private DeliveryType type;
+    @Column(unique = true)
+    private String email;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private LocationStatus status = LocationStatus.AVAILABLE;
+    private String password;
+
+    private String phone;
 
     @OneToOne
-    @NotNull
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id")
     private Address address;
 
+    @NotNull
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
+    @NotNull
+    @Builder.Default
+    private Boolean isVerified = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
 }
