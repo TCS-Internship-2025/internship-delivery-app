@@ -9,11 +9,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import static com.tcs.dhv.util.EmailConstants.EMAIL_PROTOCOL;
-import static com.tcs.dhv.util.EmailConstants.MAIL_PROTOCOL;
-import static com.tcs.dhv.util.EmailConstants.TRUE;
 import static com.tcs.dhv.util.EmailConstants.MAIL_AUTH;
-import static com.tcs.dhv.util.EmailConstants.MAIL_STARTTLS_ENABLE;
 import static com.tcs.dhv.util.EmailConstants.MAIL_DEBUG;
+import static com.tcs.dhv.util.EmailConstants.MAIL_PROTOCOL;
+import static com.tcs.dhv.util.EmailConstants.MAIL_STARTTLS_ENABLE;
+import static com.tcs.dhv.util.EmailConstants.TRUE;
 
 @Configuration
 public class MailConfig {
@@ -45,7 +45,7 @@ public class MailConfig {
     }
 
     @Bean
-    SimpleMailMessage templateShipmentMessage(){
+    SimpleMailMessage templateShipmentMessage() {
         final var mail = new SimpleMailMessage();
         mail.setFrom(username);
         mail.setSubject(EmailConstants.MAIL_SUBJECT);

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-@Entity
 @Setter
 @Getter
 @ToString
@@ -34,6 +33,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "users")
+@Entity
 public class User {
 
     @Id
@@ -65,6 +65,6 @@ public class User {
     @Builder.Default
     private Boolean isVerified = false;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 }
