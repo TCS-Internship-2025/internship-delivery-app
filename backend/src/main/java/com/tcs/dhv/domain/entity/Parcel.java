@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -59,11 +58,9 @@ public class Parcel {
     @Enumerated(EnumType.STRING)
     private DeliveryType deliveryType;
 
-    @NotNull
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @NotNull
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
@@ -76,6 +73,4 @@ public class Parcel {
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
-    @Version // for optimistic locking if implemented
-    private Long version;
 }
