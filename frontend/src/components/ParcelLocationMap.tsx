@@ -1,14 +1,17 @@
-import Map, { Marker, Popup } from 'react-map-gl/mapbox';
+import Map, { Marker } from 'react-map-gl/mapbox';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { useState } from 'react';
 import { mapboxAccessToken } from '@/constants';
+import type { PickupPoint } from '@/types/PickupPoint';
 
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
 import RoomIcon from '@mui/icons-material/Room';
 import Box from '@mui/material/Box';
+
+import { MapMarkerPopup } from './MapMarkerPopup';
 
 // Mock data
 // cSpell:disable
@@ -30,11 +33,12 @@ const pickupPoints = [
   { id: 'pp15', name: 'Pickup Point 15 - Blaha Lujza tér', latitude: 47.4972, longitude: 19.0704 },
 ];
 /* cSpell:enable */
-
-export const ParcelLocationMap = () => {
+interface ParcelLocationMapProps {
+  setSelectedPoint: (point: PickupPoint | null) => void;
+}
+export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useTheme();
-  const [selectedPoint, setSelectedPoint] = useState<(typeof pickupPoints)[0] | null>(null);
-
+  const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   return (
     <Box display="flex" justifyContent="center" width="100%" mt={2}>
       <Box width="80%">
@@ -56,27 +60,21 @@ export const ParcelLocationMap = () => {
               anchor="bottom"
               onClick={(e) => {
                 e.originalEvent.stopPropagation();
-                setSelectedPoint(point);
+                setSelectedMarker(point);
               }}
             >
               <RoomIcon
-                color={selectedPoint?.id === point.id ? 'error' : 'primary'}
+                color={selectedMarker?.id === point.id ? 'error' : 'primary'}
                 sx={{ fontSize: 42, cursor: 'pointer' }}
               />
             </Marker>
           ))}
-
-          {selectedPoint && (
-            <Popup
-              longitude={selectedPoint.longitude}
-              latitude={selectedPoint.latitude}
-              anchor="top"
-              closeOnClick={false}
-              onClose={() => setSelectedPoint(null)}
-              offset={30}
-            >
-              <Box sx={{ fontSize: 18, fontWeight: 'bold', padding: 1, minWidth: 150 }}>{selectedPoint.name}</Box>
-            </Popup>
+          {selectedMarker && (
+            <MapMarkerPopup
+              selectedMarker={selectedMarker}
+              setSelectedMarker={setSelectedMarker}
+              setSelectedPoint={setSelectedPoint}
+            />
           )}
         </Map>
       </Box>
