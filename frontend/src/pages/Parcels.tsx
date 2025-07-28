@@ -1,8 +1,10 @@
-import { ParcelList } from '../components/ParcelList';
+// import { ParcelList } from '../components/ParcelList';
 import { PARCEL_STATUS } from '@/constants.ts';
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+
+import { ParcelGrid } from '@/components/ParcelGrid';
 
 const DUMMY_DATA = [
   {
@@ -46,7 +48,8 @@ export const ParcelPage = () => {
             flexDirection: 'column',
           }}
         >
-          <ParcelList parcelList={DUMMY_DATA} />
+          {/* <ParcelList parcelList={DUMMY_DATA} /> */}
+          <ParcelGrid parcels={DUMMY_DATA} />
         </Container>
       </Box>
     </Box>
