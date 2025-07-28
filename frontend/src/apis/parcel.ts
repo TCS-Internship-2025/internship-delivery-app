@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/constants';
 import { queryClient } from '@/queryClient';
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod/v4';
@@ -24,12 +22,11 @@ const createParcel = (data: parcelFromSchema) => {
 };
 
 export const useCreateParcel = () => {
-  const navigate = useNavigate();
   return useMutation({
     mutationFn: createParcel,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['Parcels'] });
-      void navigate(`/${ROUTES.PAGE2}`);
+      //void navigate(`/${ROUTES.PAGE2}`);
     },
   });
 };

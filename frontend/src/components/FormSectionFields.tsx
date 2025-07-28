@@ -73,6 +73,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
                   required: field.required,
                   disabled: field.disabled,
                   error: !!error,
+                  helperText: error?.message,
                 },
               }}
             />
@@ -91,6 +92,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
                 disabled={field.disabled}
                 error={!!error}
                 sx={field.sx}
+                helperText={error?.message}
               />
             );
           }
@@ -105,6 +107,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
               select
               error={!!error}
               sx={field.sx}
+              helperText={error?.message}
             >
               {field.options.options.map((option) => (
                 <MenuItem key={option} value={option}>
@@ -263,7 +266,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
               placeholder={FIELD_PLACEHOLDERS[field.label] || ''}
               error={!!error}
               sx={field.sx}
-              helperText={field.label === 'Email address' || field.label === 'Mobile phone' ? error?.message : null}
+              helperText={error?.message}
             />
           );
       }
