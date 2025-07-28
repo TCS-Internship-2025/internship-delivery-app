@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { useFormContext } from '@/contexts/createParcelContext';
+
 import QuestionMark from '@mui/icons-material/QuestionMark';
 import Box from '@mui/material/Box';
 
@@ -14,23 +16,19 @@ import { SectionContainer } from '@/components/SectionContainer';
 
 import { beneficiaryFields, page1FormSchema, type Page1FormSchema } from '@/utils/parcelComposition';
 
-const defaultValues = {
-  title: '',
-  name: '',
-  mobilePhone: '',
-  emailAddress: '',
-};
 export const Page1 = () => {
   const navigate = useNavigate();
+  const formContext = useFormContext();
 
   const { control, handleSubmit } = useForm<Page1FormSchema>({
     resolver: zodResolver(page1FormSchema),
     mode: 'onChange',
-    defaultValues: { ...defaultValues },
+    defaultValues: formContext.getPage1Data(),
   });
 
-  const onSubmit = (/*data: Page1FormSchema*/) => {
-    // console.log('Form submitted with data:', data);
+  const onSubmit = (data: Page1FormSchema) => {
+    formContext.updateFormData({ ...data });
+
     void navigate(`/${ROUTES.PAGE2}`);
   };
 

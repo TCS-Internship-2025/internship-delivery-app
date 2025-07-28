@@ -32,6 +32,7 @@ import { ParcelDetails } from './pages/ParcelDetails.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
+import { FormProvider } from './providers/CreateParcelProvider.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
 
@@ -145,7 +146,9 @@ export function setupApp() {
             )}
             <ToastProvider>
               <AuthProvider>
-                <RouterProvider router={router} />
+                <FormProvider>
+                  <RouterProvider router={router} />
+                </FormProvider>
               </AuthProvider>
             </ToastProvider>
           </QueryClientProvider>

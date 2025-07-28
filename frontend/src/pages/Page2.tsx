@@ -1,7 +1,9 @@
-import { useCallback, useEffect /*type FormEvent */ } from 'react';
+import { useCallback, useEffect, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
-import { ROUTES } from '@/constants';
+import { parcelFormDefaultValues, ROUTES } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { useFormContext } from '@/contexts/createParcelContext';
 
 import { useCreateParcel } from '@/apis/parcel';
 
@@ -16,42 +18,32 @@ import { SectionContainer } from '@/components/SectionContainer';
 
 import { descriptionField, page2FormSchema, parcelFields, type Page2FormSchema } from '@/utils/parcelComposition';
 
-const defaultValues = {
-  name: '',
-  line1: '',
-  line2: '',
-  apartment: '',
-  city: '',
-  postalCode: '',
-  country: '',
-  building: '',
-  paymentType: '',
-  deliveryType: 'Home',
-};
 export const Page2 = () => {
-  const { isPending } = useCreateParcel();
+  const { mutate, isPending } = useCreateParcel();
+  const formContext = useFormContext();
 
   const { control, handleSubmit, watch, reset, getValues } = useForm<Page2FormSchema>({
     resolver: zodResolver(page2FormSchema),
     mode: 'onChange',
-    defaultValues: { ...defaultValues },
+    defaultValues: formContext.getPage2Data(),
   });
   const deliveryType = watch('deliveryType');
 
-  const onSubmit = (/*data: Page2FormSchema */) => {
-    // console.log('Form submitted with data:', data);
-    // mutate(data);
+  const onSubmit = (data: Page2FormSchema) => {
+    const submittedData = { ...formContext.getPage1Data(), ...data };
+    console.log('Form submitted with data:', submittedData);
+    mutate(submittedData);
   };
 
-  // const handleFormSubmit = (event: FormEvent) => {
-  //   event.preventDefault();
-  //   void handleSubmit(onSubmit)(event);
-  // };
+  const handleFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    void handleSubmit(onSubmit)(event);
+  };
 
   const handleReset = useCallback(() => {
     const currentDeliveryType = getValues('deliveryType');
     reset({
-      ...defaultValues,
+      ...parcelFormDefaultValues,
       deliveryType: currentDeliveryType,
     });
   }, [getValues, reset]);
@@ -69,7 +61,7 @@ export const Page2 = () => {
       ) : (
         <>
           <PageContainer icon={<QuestionMark />} title="Parcel Data">
-            <form>
+            <form onSubmit={handleFormSubmit}>
               <SectionContainer title="Preferences">
                 <SectionFields fields={descriptionField} control={control} />
               </SectionContainer>

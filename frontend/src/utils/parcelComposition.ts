@@ -3,11 +3,19 @@ import z from 'zod';
 
 import type { FieldConfig } from '@/components/FormSectionFields.tsx';
 
+export const MIN_BIRTH_DATE = new Date('1900-01-01');
+export const MAX_BIRTH_DATE = new Date();
+MAX_BIRTH_DATE.setFullYear(MAX_BIRTH_DATE.getFullYear() - 18);
+
 export const page1FormSchema = z.object({
   // Section 1 fields
   title: z.string().optional(),
   name: z.string().min(1, 'Full name is required'),
-  dateOfBirth: z.date('Date of birth is required').min(1),
+  dateOfBirth: z
+    .date('Date of birth is required')
+    .min(MIN_BIRTH_DATE, 'Date of birth cannot be before January 1, 1900')
+    .max(MAX_BIRTH_DATE, 'You must be at least 18 years old')
+    .nullable(),
   mobilePhone: z
     .string()
     .min(1, 'Mobile phone is required')
@@ -17,7 +25,7 @@ export const page1FormSchema = z.object({
 
 export const page2FormSchema = z.object({
   // Section 2 fields
-  name: z.string().min(1, 'Address Name is required'),
+  addressName: z.string().min(1, 'Address Name is required'),
   line1: z.string().min(1, 'Address Line 1 is required'),
   line2: z.string().optional(),
   building: z.string().min(1, 'Building is required'),
@@ -40,13 +48,13 @@ export const beneficiaryFields: FieldConfig<Page1FormSchema>[][] = [
     { name: 'name', label: 'Full name', required: true, sx: { flex: 1 }, rowGroup: 'name' },
     { name: 'mobilePhone', label: 'Mobile phone', required: true },
     { name: 'emailAddress', label: 'Email address', required: true },
-    { name: 'dateOfBirth', label: 'Date of birth', required: true, type: 'date' },
+    { name: 'dateOfBirth', label: 'Date of birth', type: 'date' },
   ],
 ];
 
 export const parcelFields: FieldConfig<Page2FormSchema>[][] = [
   [
-    { name: 'name', label: 'Address Name', required: true },
+    { name: 'addressName', label: 'Address Name', required: true },
     { name: 'building', label: 'Building', required: true },
     { name: 'postalCode', label: 'ZIP/Postal Code', required: true },
     { name: 'line1', label: 'Address Line 1', required: true },

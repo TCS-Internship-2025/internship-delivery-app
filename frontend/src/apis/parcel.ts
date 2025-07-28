@@ -4,20 +4,28 @@ import { z } from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
 
-import { page1FormSchema as parcelFormSchema } from '@/utils/parcelComposition';
+import { page1FormSchema, page2FormSchema } from '@/utils/parcelComposition';
+
+export const FullParcelFormSchema = page1FormSchema.extend(page2FormSchema.shape);
 
 // For GET requests
-export const ParcelSchema = parcelFormSchema.extend({
+export const ParcelSchema = FullParcelFormSchema.extend({
   id: z.number(),
 });
 export const CreateParcelResponseSchema = z.object({
   message: z.string(),
-  parcel: parcelFormSchema,
+  parcel: FullParcelFormSchema.extend({
+    dateOfBirth: z
+      .string()
+      .transform((str) => new Date(str))
+      .nullable(),
+  }),
 });
-export type parcelFromSchema = z.infer<typeof parcelFormSchema>;
+
+export type ParcelFormSchema = z.infer<typeof FullParcelFormSchema>;
 export type CreateParcelResponseSchema = z.infer<typeof CreateParcelResponseSchema>;
 
-const createParcel = (data: parcelFromSchema) => {
+const createParcel = (data: ParcelFormSchema) => {
   return httpService.post('/createParcel', CreateParcelResponseSchema, data);
 };
 
@@ -27,6 +35,9 @@ export const useCreateParcel = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['Parcels'] });
       //void navigate(`/${ROUTES.PAGE2}`);
+    },
+    onError: (error) => {
+      console.log(error);
     },
   });
 };
