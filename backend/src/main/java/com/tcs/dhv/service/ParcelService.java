@@ -21,9 +21,15 @@ import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class ParcelService {
+
+    private static final String TRACKING_CODE_COUNTRY_PREFIX = "HU";
+    private static final int TRACKING_CODE_LETTER_COUNT = 2;
+    private static final char ALPHABET_START = 'A';
+    private static final int ALPHABET_SIZE = 26;
+    private static final long TRACKING_NUMBER_MIN = 1_000_000_000L;
+    private static final long TRACKING_NUMBER_MAX = 10_000_000_000L;
 
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
@@ -31,6 +37,7 @@ public class ParcelService {
 
     private final Random random = new Random();
 
+    @Transactional
     public ParcelResponse createParcel(final ParcelRequest parcelRequest, final User sender) {
         log.info("Creating parcel for user: {}", sender.getEmail());
 
@@ -64,6 +71,7 @@ public class ParcelService {
         return parcelMapper.toResponse(parcel);
     }
 
+    @Transactional
     public ParcelResponse updateParcel(final UUID id, final ParcelUpdate parcelUpdate, final User sender) {
         log.info("Updating parcel with ID: {} for user: {}", id, sender.getEmail());
 
@@ -86,6 +94,7 @@ public class ParcelService {
         return parcelMapper.toResponse(updatedParcel);
     }
 
+    @Transactional
     public void deleteParcel(final UUID id, final User sender) {
         log.info("Deleting parcel with ID: {} for user: {}", id, sender.getEmail());
 
@@ -104,11 +113,11 @@ public class ParcelService {
         String code;
         do {
             final var letters = new StringBuilder();
-            for (var i = 0; i < 2; i++) {
-                letters.append((char) ('A' + random.nextInt(26)));
+            for (var i = 0; i < TRACKING_CODE_LETTER_COUNT; i++) {
+                letters.append((char) (ALPHABET_START + random.nextInt(ALPHABET_SIZE)));
             }
-            final var number = random.nextLong(1_000_000_000L, 10_000_000_000L);
-            code = "HU" + number + letters;
+            final var number = random.nextLong(TRACKING_NUMBER_MIN, TRACKING_NUMBER_MAX);
+            code = TRACKING_CODE_COUNTRY_PREFIX + number + letters;
         } while (parcelRepository.existsByTrackingCode(code));
         return code;
     }
