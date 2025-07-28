@@ -16,8 +16,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { MAX_BIRTH_DATE, MIN_BIRTH_DATE } from '@/utils/parcelComposition';
-
 /**
  * This component acts as a "form builder", which renders desired fields based on the provided configuration.
  * Example usage: FieldConfig<your form schema>[][] --> each array represents a column of fields
@@ -48,6 +46,8 @@ export interface FieldConfig<T extends FieldValues = FieldValues> {
   max?: number;
   rowGroup?: string;
   maxRows?: number;
+  minDate?: Date;
+  maxDate?: Date;
 }
 
 interface FormFieldProps<T extends FieldValues = FieldValues> {
@@ -67,8 +67,8 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
             <DatePicker
               value={fieldProps.value as Date | null}
               onChange={(date) => fieldProps.onChange(date)}
-              minDate={MIN_BIRTH_DATE}
-              maxDate={MAX_BIRTH_DATE}
+              minDate={field.minDate}
+              maxDate={field.maxDate}
               slotProps={{
                 textField: {
                   variant: 'outlined',

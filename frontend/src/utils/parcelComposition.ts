@@ -48,7 +48,7 @@ export const beneficiaryFields: FieldConfig<Page1FormSchema>[][] = [
     { name: 'name', label: 'Full name', required: true, sx: { flex: 1 }, rowGroup: 'name' },
     { name: 'mobilePhone', label: 'Mobile phone', required: true },
     { name: 'emailAddress', label: 'Email address', required: true },
-    { name: 'dateOfBirth', label: 'Date of birth', type: 'date' },
+    { name: 'dateOfBirth', label: 'Date of birth', type: 'date', minDate: MIN_BIRTH_DATE, maxDate: MAX_BIRTH_DATE },
   ],
 ];
 

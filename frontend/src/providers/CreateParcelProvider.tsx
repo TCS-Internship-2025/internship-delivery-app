@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { parcelFormDefaultValues, recipientFormDefaultValues } from '@/constants';
 
 import { FormContext, type FormContextValue, type FormData } from '@/contexts/createParcelContext';
@@ -16,7 +16,7 @@ interface FormProviderProps {
   initialData?: Partial<FormData>;
 }
 
-export const FormProvider: React.FC<FormProviderProps> = ({ children, initialData }) => {
+export const FormProvider = ({ children, initialData }: FormProviderProps) => {
   const [formData, setFormData] = useState<FormData>({
     ...defaultFormData,
     ...initialData,

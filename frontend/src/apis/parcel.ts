@@ -36,8 +36,5 @@ export const useCreateParcel = () => {
       await queryClient.invalidateQueries({ queryKey: ['Parcels'] });
       //void navigate(`/${ROUTES.PAGE2}`);
     },
-    onError: (error) => {
-      console.log(error);
-    },
   });
 };
