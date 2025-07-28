@@ -2,18 +2,20 @@ import { useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 
 import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-import { themeQuartz } from 'ag-grid-community';
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, ICellRendererParams } from 'ag-grid-community';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 
-const myTheme = themeQuartz.withParams({
-  spacing: 12,
-  rowHeight: 10,
-  fontSize: 20,
-  backgroundColor: 'blue',
-});
+import { getParcelChipData } from '@/utils/parcelChipData';
+
+const StatusChipRenderer = (params: ICellRendererParams<ParcelData, string>) => {
+  const chipData = getParcelChipData(params.value ?? '');
+
+  return <Chip {...chipData} sx={{ alignSelf: 'center', py: 2.5, px: 1, fontSize: 20 }} />;
+};
 
 const colDefs: ColDef<ParcelData>[] = [
   {
@@ -45,6 +47,12 @@ const colDefs: ColDef<ParcelData>[] = [
     headerName: 'Status',
     sortable: true,
     filter: true,
+    cellRenderer: StatusChipRenderer,
+    cellStyle: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   },
 ];
 
@@ -67,7 +75,17 @@ export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
   const [rowData] = useState(parcels ?? undefined);
 
   return (
-    <Box sx={{ width: '80%', height: '400px', margin: 'auto' }}>
+    <Box
+      className="ag-theme-quartz"
+      sx={{
+        width: '70%',
+        height: 800,
+        margin: '40px auto',
+        '--ag-row-height': '56px',
+        '--ag-font-size': '24px',
+        '--ag-grid-size': '10px',
+      }}
+    >
       <AgGridReact
         rowData={rowData}
         columnDefs={colDefs}
@@ -77,8 +95,10 @@ export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
           filter: true,
           flex: 1,
         }}
-        theme={myTheme}
-        //TODO: theme
+        theme="legacy"
+        pagination={true}
+        paginationPageSize={10}
+        paginationPageSizeSelector={[10, 20]}
       />
     </Box>
   );
