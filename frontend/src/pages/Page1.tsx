@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import { useCallback, useEffect, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -24,11 +24,15 @@ import {
 export const Page1 = () => {
   const { mutate, isPending } = useCreateParcel();
 
-  const { control, handleSubmit } = useForm<Page1FormSchema>({
+  const { control, handleSubmit, watch, resetField, getValues } = useForm<Page1FormSchema>({
     resolver: zodResolver(page1FormSchema),
     mode: 'onChange',
-    defaultValues: {},
+    defaultValues: {
+      mobilePhone: '',
+    },
   });
+
+  const deliveryType = watch('deliveryType');
 
   const onSubmit = (data: Page1FormSchema) => {
     console.log('Form submitted with data:', data);
@@ -39,6 +43,28 @@ export const Page1 = () => {
     event.preventDefault();
     void handleSubmit(onSubmit)(event);
   };
+
+  const clearAllParcelFields = useCallback(() => {
+    const fieldNames = parcelFields.flat().map((field) => field.name);
+
+    let hasNonEmptyFields = false;
+
+    fieldNames.forEach((fieldName) => {
+      const currentValue = getValues(fieldName);
+      if (currentValue && currentValue !== '') {
+        hasNonEmptyFields = true;
+        resetField(fieldName);
+      }
+    });
+
+    if (hasNonEmptyFields) {
+      console.log('changing');
+    }
+  }, [resetField, getValues]);
+
+  useEffect(() => {
+    clearAllParcelFields();
+  }, [deliveryType, clearAllParcelFields]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -53,12 +79,18 @@ export const Page1 = () => {
               <SectionContainer title="Recipient Details">
                 <SectionFields fields={beneficiaryFields} control={control} />
               </SectionContainer>
-              <SectionContainer title="Recipient Address">
-                <SectionFields fields={parcelFields} control={control} />
-              </SectionContainer>
               <SectionContainer title="Shipping Options">
                 <SectionFields fields={descriptionField} control={control} />
               </SectionContainer>
+              {deliveryType === 'Home' && (
+                <SectionContainer title="Recipient Address">
+                  <SectionFields fields={parcelFields} control={control} />
+                </SectionContainer>
+              )}
+              {deliveryType === 'Pickup Point' && (
+                // Map generation will Happen here
+                <p> Map here </p>
+              )}
             </form>
           </PageContainer>
           <NavigationButtons

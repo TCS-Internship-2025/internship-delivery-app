@@ -32,3 +32,8 @@ export const PARCEL_STATUS = {
   DELIVERED: 'DELIVERED',
   STUCK: 'STUCK',
 };
+
+export const FIELD_PLACEHOLDERS: Record<string, string> = {
+  'Mobile phone': '+36 111 111 1111',
+  'Email address': 'email@example.com',
+};

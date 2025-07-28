@@ -1,4 +1,5 @@
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form';
+import { FIELD_PLACEHOLDERS } from '@/constants';
 import type { ZodEnum } from 'zod';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -259,6 +260,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
               label={field.label}
               required={field.required}
               disabled={field.disabled}
+              placeholder={FIELD_PLACEHOLDERS[field.label] || ''}
               error={!!error}
               sx={field.sx}
               helperText={field.label === 'Email address' || field.label === 'Mobile phone' ? error?.message : null}
