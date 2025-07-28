@@ -1,24 +1,23 @@
 package com.tcs.dhv.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
-    @Autowired
-    private SimpleMailMessage template;
+    private final SimpleMailMessage template;
 
     public final void sendEmail(
-            String email,
-            String trackingNumber,
-            String link
+        String email,
+        String trackingNumber,
+        String link
     ) {
         final var message = template;
         Assert.notNull(message.getText(), "Message must not be null;");

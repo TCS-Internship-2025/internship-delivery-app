@@ -1,6 +1,9 @@
 package com.tcs.dhv.util;
 
-public class Constants {
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public class EmailConstants {
     public static final String MAIL_PROTOCOL = "mail.transport.protocol";
     public static final String MAIL_AUTH = "mail.smtp.auth";
     public static final String MAIL_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
