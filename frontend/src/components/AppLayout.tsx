@@ -4,12 +4,12 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
 import { MainHeader } from './MainHeader.tsx';
-import { Sidebar } from './Navbar.tsx';
+import { Navbar } from './Navbar.tsx';
 
 export const AppLayout = () => {
   return (
     <Box display="flex" height={'100vh'} gap={2} flexDirection="column">
-      <Sidebar />
+      <Navbar />
       <Box component="main" flexGrow={1} display="flex" mt={'60px'}>
         <MainHeader />
         <Paper
