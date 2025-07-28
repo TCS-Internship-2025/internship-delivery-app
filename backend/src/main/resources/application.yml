@@ -29,6 +29,17 @@ spring:
     baseline-version: 1
     clean-disabled: true
 
+  mail:
+    host: localhost
+    port: 1025
+    username: tcsinternshipdeliveryapp@gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
   docker:
     compose:
       enabled: false
@@ -36,3 +47,17 @@ spring:
 logging:
   level:
     org.flywaydb: DEBUG
+
+jwt:
+  private-key: classpath:jwt/app.key
+  public-key: classpath:jwt/app.pub
+  ttl: 15m
+
+auth:
+  refresh-token-ttl: 24h
+
+email-verification:
+  required: true
+
+app:
+  base-url: http://localhost:8080
