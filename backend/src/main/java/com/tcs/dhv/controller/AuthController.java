@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@RestController
-@RequestMapping(path = "/api/auth")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@RequestMapping(path = "/api/auth")
+@RestController
 public class AuthController {
 
     private final AuthService authService;
@@ -29,7 +29,7 @@ public class AuthController {
     private boolean emailVerificationRequired;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody @Valid final LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> login(@Valid  @RequestBody final LoginRequest loginRequest) {
         log.info("Login request for email: {}", loginRequest.email());
         final var authResponse = authService.authenticate(loginRequest);
 

@@ -44,13 +44,13 @@ public class AuthService {
                 loginRequest.password())
         );
 
-        String email = authentication.getName();
-        String token = jwtService.generateToken(loginRequest.email());
+        final var email = authentication.getName();
+        final var token = jwtService.generateToken(loginRequest.email());
 
-        User user = userRepository.findByEmail(email)
+        final var user = userRepository.findByEmail(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email"));
 
-        RefreshToken refreshToken = new RefreshToken();
+        final var refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setExpiresAt(Instant.now().plus(refreshTokenTtl));
         refreshTokenRepository.save(refreshToken);
@@ -66,7 +66,7 @@ public class AuthService {
             throw new ValidationException("Username or Email already exists");
         }
 
-        User user = User.builder()
+        final var user = User.builder()
             .email(registerRequest.email())
             .name(registerRequest.name())
             .password(passwordEncoder.encode(registerRequest.password()))

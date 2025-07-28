@@ -45,9 +45,9 @@ public class OtpService {
     }
 
     private String generateOtp(String characters, Integer length) {
-        StringBuilder otp = new StringBuilder(length);
+        final var otp = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            int index = SECURE_RANDOM.nextInt(characters.length());
+            final int index = SECURE_RANDOM.nextInt(characters.length());
             otp.append(characters.charAt(index));
         }
         return otp.toString();

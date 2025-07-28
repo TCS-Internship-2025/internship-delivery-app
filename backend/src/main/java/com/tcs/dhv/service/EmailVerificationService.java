@@ -15,9 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class EmailVerificationService {
 
     private final OtpService otpService;
@@ -27,12 +27,15 @@ public class EmailVerificationService {
     @Value("${spring.mail.username}")
     private String fromAddress;
 
+    @Value("${app.base-url}")
+    private String appBaseUrl;
+
     @Async
     public void sendVerificationTokenByEmail(UUID userId, String email) {
         final var token = otpService.generateAndStoreOtp(userId);
 
-        final var emailVerificationUrl = "http://localhost:8080/api/auth/email/verify?uid=%s&t=%s"
-            .formatted(userId, token);
+        final var emailVerificationUrl = "%s/api/auth/email/verify?uid=%s&t=%s"
+            .formatted(appBaseUrl, userId, token);
 
         final var emailText = """
             Hello,
@@ -48,7 +51,7 @@ public class EmailVerificationService {
             DHV Team
             """.formatted(emailVerificationUrl);
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        final var message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Email Verification Token");
         message.setFrom(fromAddress);
@@ -59,7 +62,7 @@ public class EmailVerificationService {
     }
 
     public void resendVerificationTokenByEmail(String email) {
-        User user = userRepository.findByEmail(email)
+        final var user = userRepository.findByEmail(email)
             .filter(usr -> !usr.getIsVerified())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,

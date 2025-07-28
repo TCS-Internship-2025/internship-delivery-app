@@ -7,16 +7,15 @@ import lombok.Builder;
 
 @Builder
 public record RegisterRequest(
+    @NotBlank(message = "Name must be provided")
+    String name,
 
-        @NotBlank(message = "Name must be provided")
-        String name,
+    @Email(message = "Email must be valid")
+    @NotBlank(message = "Email is required")
+    String email,
 
-        @Email(message = "Email must be valid")
-        @NotBlank(message = "Email is required")
-        String email,
-
-        @Size(min = 8, message = "Password must be at least {min} characters")
-        @NotBlank(message = "Password is required")
-        String password
+    @Size(min = 8, message = "Password must be at least {min} characters")
+    @NotBlank(message = "Password is required")
+    String password
 ) {
 }

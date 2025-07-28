@@ -19,10 +19,10 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 
-@Configuration
 @Setter
 @Getter
 @ConfigurationProperties(prefix = "jwt")
+@Configuration
 public class JwtConfig {
 
     private RSAPrivateKey privateKey;
