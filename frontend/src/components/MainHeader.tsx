@@ -1,35 +1,35 @@
-// import { useLocation } from 'react-router-dom';
-// import { ROUTES } from '@/constants';
+import { useLocation } from 'react-router-dom';
+import { ROUTES } from '@/constants';
 
-// import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from '@mui/icons-material/Person';
 import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 
-// import Typography from '@mui/material/Typography';
-
-// import { BoxIcon } from './BoxIcon.tsx';
+import { BoxIcon } from './BoxIcon.tsx';
 
 export const MainHeader = () => {
-  // const location = useLocation();
-  // const isHomePage = location.pathname === '/';
-  // const isSlug = location.pathname.includes('/tracking');
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  const isSlug = location.pathname.includes('/tracking');
 
-  // const getPageInfo = () => {
-  //   if (location.pathname.includes(ROUTES.SEND_PARCEL)) return { title: 'Send Parcel', progress: 25 };
-  //   if (location.pathname.includes(ROUTES.PARCELS)) return { title: 'My Parcels', progress: 100 };
-  //   if (location.pathname.includes(`${ROUTES.PAGE5}/${ROUTES.SUCCESS}`))
-  //     return { title: 'Something was successful', progress: 100 };
-  //   if (location.pathname.includes(`${ROUTES.PAGE5}/${ROUTES.ERROR}`))
-  //     return { title: 'Technical error', progress: 100 };
-  //   return { title: 'Pending ...' };
-  // };
-
-  // if (isHomePage) {
-  //   return;
-  // }
-  // if (isSlug) {
-  //   return;
-  // }
+  const getPageInfo = () => {
+    if (location.pathname.includes(ROUTES.SEND_PARCEL)) return { title: 'Send Parcel', progress: 25 };
+    if (location.pathname.includes(ROUTES.PARCELS)) return { title: 'My Parcels', progress: 100 };
+    if (location.pathname.includes(`${ROUTES.PAGE5}/${ROUTES.SUCCESS}`))
+      return { title: 'Something was successful', progress: 100 };
+    if (location.pathname.includes(`${ROUTES.PAGE5}/${ROUTES.ERROR}`))
+      return { title: 'Technical error', progress: 100 };
+    return { title: 'Pending ...' };
+  };
+  const pageInfo = getPageInfo();
+  if (isHomePage) {
+    return;
+  }
+  if (isSlug) {
+    return;
+  }
 
   return (
     <Paper
@@ -49,7 +49,7 @@ export const MainHeader = () => {
           py: 2,
         }}
       >
-        {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography variant="body2" color="text.secondary" fontWeight={500}>
             Something
           </Typography>
@@ -81,10 +81,10 @@ export const MainHeader = () => {
           <Typography variant="body2" color="text.secondary">
             {'more extra stuff'}
           </Typography>
-        </Box> */}
+        </Box>
       </Box>
 
-      {/* <LinearProgress
+      <LinearProgress
         variant={typeof pageInfo.progress === 'number' ? 'determinate' : 'indeterminate'}
         value={typeof pageInfo.progress === 'number' ? pageInfo.progress : undefined}
         sx={{
@@ -96,7 +96,7 @@ export const MainHeader = () => {
             bgcolor: 'primary.main',
           },
         }}
-      /> */}
+      />
     </Paper>
   );
 };

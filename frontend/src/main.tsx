@@ -20,7 +20,7 @@ import { SendParcel } from '@/pages/SendParcel.tsx';
 import { Tracking } from '@/pages/Tracking.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
-// import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
+// import { ProtectedRoute } from '@/components/ProtectedRoute.tsx'; commented out for testing
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
