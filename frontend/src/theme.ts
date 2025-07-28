@@ -166,7 +166,7 @@ export const themes = {
       warning: { main: yellow[700] },
       info: { main: blue[200] },
       background: {
-        default: '#0A0F0A',
+        default: '#1A1F1A',
         paper: '#1A1F1A',
       },
       text: {
