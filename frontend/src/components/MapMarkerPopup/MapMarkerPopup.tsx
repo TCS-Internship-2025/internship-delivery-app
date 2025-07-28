@@ -5,6 +5,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+import './MapMarkerPopup.css';
+
 interface MapMarkerPopupProps {
   selectedMarker: PickupPoint;
   setSelectedMarker: (point: PickupPoint | null) => void;
@@ -19,7 +21,8 @@ export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedP
       anchor="top"
       closeOnClick={false}
       onClose={() => setSelectedMarker(null)}
-      offset={30}
+      offset={10}
+      className="themed-popup"
     >
       <Box
         sx={{
@@ -34,7 +37,7 @@ export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedP
           gap: 1.5,
         }}
       >
-        <Typography variant="subtitle1" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+        <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
           {selectedMarker.name}
         </Typography>
         <Button

@@ -11,7 +11,7 @@ import { useTheme } from '@/providers/ThemeProvider.tsx';
 import RoomIcon from '@mui/icons-material/Room';
 import Box from '@mui/material/Box';
 
-import { MapMarkerPopup } from './MapMarkerPopup';
+import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 
 // Mock data
 // cSpell:disable
