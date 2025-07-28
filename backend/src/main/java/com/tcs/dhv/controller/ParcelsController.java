@@ -8,8 +8,6 @@ import com.tcs.dhv.service.ParcelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -47,16 +46,13 @@ public class ParcelsController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ParcelResponse>> getUserParcels(
-        final Pageable pageable,
-        @AuthenticationPrincipal final User currentUser
-    ) {
-        log.info("Retrieving parcels for user: {} with pagination: {}", currentUser.getEmail(), pageable);
+    public ResponseEntity<List<ParcelResponse>> getUserParcels(@AuthenticationPrincipal final User currentUser) {
+        log.info("Retrieving parcels for user: {}", currentUser.getEmail());
 
-        final var parcelPage = parcelService.getUserParcels(currentUser.getId(), pageable);
+        final var parcels = parcelService.getUserParcels(currentUser.getId());
 
-        log.info("Retrieved {} parcels for user: {}", parcelPage.getContent().size(), currentUser.getEmail());
-        return ResponseEntity.ok(parcelPage);
+        log.info("Retrieved {} parcels for user: {}", parcels.size(), currentUser.getEmail());
+        return ResponseEntity.ok(parcels);
     }
 
     @GetMapping("/{id}")

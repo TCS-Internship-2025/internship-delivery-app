@@ -11,11 +11,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -50,11 +49,13 @@ public class ParcelService {
         return parcelMapper.toResponse(savedParcel);
     }
 
-    public Page<ParcelResponse> getUserParcels(final UUID userId, final Pageable pageable) {
+    public List<ParcelResponse> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user ID: {}", userId);
 
-        final var parcelPage = parcelRepository.findAllBySenderId(userId, pageable);
-        return parcelPage.map(parcelMapper::toResponse);
+        final var parcels = parcelRepository.findAllBySenderId(userId);
+        return parcels.stream()
+            .map(parcelMapper::toResponse)
+            .toList();
     }
 
     public ParcelResponse getParcel(final UUID id, final User sender) {
