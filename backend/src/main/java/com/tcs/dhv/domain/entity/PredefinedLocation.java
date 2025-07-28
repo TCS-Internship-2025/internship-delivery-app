@@ -1,6 +1,7 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
-import com.tcs.dhv.enums.ParcelStatus;
+import com.tcs.dhv.domain.enums.DeliveryType;
+import com.tcs.dhv.domain.enums.LocationStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -8,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -18,21 +19,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
-
 import java.util.UUID;
 
-
 @Entity
-@Setter
 @Getter
+@Setter
 @ToString
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "parcel_status_history")
-public class ParcelStatusHistory {
+@Builder
+@Table(name = "predefined_locations")
+public class PredefinedLocation {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -40,23 +37,21 @@ public class ParcelStatusHistory {
     private UUID id;
 
     @NotNull
-    @ManyToOne
-    @Setter(AccessLevel.NONE)
-    @JoinColumn(name = "parcel_id")
-    private Parcel parcel;
+    private String name;
 
     @NotNull
-    @Setter(AccessLevel.NONE)
     @Enumerated(EnumType.STRING)
-    private ParcelStatus status;
-
-    private String description;
+    private DeliveryType type;
 
     @NotNull
-    @Setter(AccessLevel.NONE)
-    @CreationTimestamp
-    private LocalDateTime timestamp;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private LocationStatus status = LocationStatus.AVAILABLE;
 
+    @OneToOne
+    @NotNull
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
 
 }
