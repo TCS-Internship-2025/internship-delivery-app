@@ -17,6 +17,18 @@ export const themes = {
   light: createTheme({
     typography: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      h6: {
+        fontWeight: 600,
+      },
+      subtitle1: {
+        fontWeight: 500,
+      },
+      body2: {
+        color: '#6B7280',
+      },
+      caption: {
+        color: '#9CA3AF',
+      },
     },
     palette: {
       mode: 'light',
@@ -47,6 +59,28 @@ export const themes = {
       },
     },
     components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8,
+            textTransform: 'none',
+            fontWeight: 500,
+            transition: 'all 0.2s ease-in-out',
+            '&:hover': {
+              transform: 'translateY(-1px)',
+              boxShadow: '0 4px 12px rgba(64, 145, 108, 0.3)',
+            },
+          },
+        },
+      },
+
+      MuiDivider: {
+        styleOverrides: {
+          root: {
+            borderColor: '#E5E7EB',
+          },
+        },
+      },
       MuiInputLabel: {
         styleOverrides: {
           asterisk: {
@@ -79,11 +113,38 @@ export const themes = {
           },
         },
       },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 8,
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': {
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: primaryColor,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   }),
   dark: createTheme({
     typography: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      h6: {
+        fontWeight: 600,
+      },
+      subtitle1: {
+        fontWeight: 500,
+      },
+      body2: {
+        color: '#9CA3AF',
+      },
+      caption: {
+        color: '#6B7280',
+      },
     },
     palette: {
       mode: 'dark',
@@ -114,6 +175,28 @@ export const themes = {
       },
     },
     components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8,
+            textTransform: 'none',
+            fontWeight: 500,
+            transition: 'all 0.2s ease-in-out',
+            '&:hover': {
+              transform: 'translateY(-1px)',
+              boxShadow: '0 4px 12px rgba(82, 183, 136, 0.3)',
+            },
+          },
+        },
+      },
+
+      MuiDivider: {
+        styleOverrides: {
+          root: {
+            borderColor: '#374151',
+          },
+        },
+      },
       MuiInputLabel: {
         styleOverrides: {
           asterisk: {
@@ -140,6 +223,21 @@ export const themes = {
                     backgroundColor: (theme) => theme.palette.primary.light,
                     color: (theme) => theme.palette.primary.main,
                   },
+                },
+              },
+            },
+          },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 8,
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': {
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#52b788',
                 },
               },
             },
