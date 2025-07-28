@@ -39,14 +39,14 @@ public class EmailVerificationService {
 
         final var emailText = """
             Hello,
-
+            
             Please verify your email by clicking the link below:
             %s
-
+            
             This link will expire in 15 minutes.
-
+            
             If you did not request this, please ignore this email.
-
+            
             Regards,
             DHV Team
             """.formatted(emailVerificationUrl);
