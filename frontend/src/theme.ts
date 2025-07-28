@@ -1,4 +1,4 @@
-import { blue, green, grey, red, yellow } from '@mui/material/colors';
+import { blue, green, red, yellow } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
@@ -9,19 +9,27 @@ declare module '@mui/material/styles' {
 }
 
 const white = '#FFFFFF';
-const primaryColor = '#6D489C';
-const primaryColorDark = '#8b71adff';
-const primaryColorSoft = '#6D489C33';
+const primaryColor = '#40916c';
+const primaryColorDark = '#2d6a4f';
 
 // Define global themes and styles here
 export const themes = {
   light: createTheme({
+    typography: {
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    },
     palette: {
       mode: 'light',
       primary: {
         main: primaryColor,
-        light: primaryColorSoft,
+        light: '#74c69d',
+        dark: '#2d6a4f',
         contrastText: white,
+      },
+      secondary: {
+        main: '#52b788',
+        light: '#74c69d',
+        dark: '#40916c',
       },
       success: {
         main: green[600],
@@ -30,12 +38,12 @@ export const themes = {
       warning: { main: yellow[700] },
       info: { main: blue[500] },
       background: {
-        default: grey[100],
+        default: '#F8FBF8',
         paper: white,
       },
       text: {
-        primary: '#000000',
-        secondary: '#666666',
+        primary: '#1A1A1A',
+        secondary: '#4A4A4A',
       },
     },
     components: {
@@ -74,26 +82,35 @@ export const themes = {
     },
   }),
   dark: createTheme({
+    typography: {
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    },
     palette: {
       mode: 'dark',
       primary: {
-        main: primaryColorDark,
-        light: primaryColorSoft,
+        main: '#52b788',
+        light: '#74c69d',
+        dark: primaryColorDark,
         contrastText: white,
       },
+      secondary: {
+        main: '#74c69d',
+        light: '#95d5b2',
+        dark: '#52b788',
+      },
       success: {
-        main: green[200],
+        main: green[400],
       },
       error: { main: red[300] },
       warning: { main: yellow[700] },
       info: { main: blue[200] },
       background: {
-        default: grey[900],
-        paper: '#1E1E1E',
+        default: '#0A0F0A',
+        paper: '#1A1F1A',
       },
       text: {
-        primary: white,
-        secondary: '#B3B3B3',
+        primary: '#E8F5E8',
+        secondary: '#797979ff',
       },
     },
     components: {
