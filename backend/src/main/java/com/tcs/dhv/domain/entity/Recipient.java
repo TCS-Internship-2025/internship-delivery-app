@@ -1,4 +1,4 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,20 +16,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
-
-@Entity
 @Setter
 @Getter
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-@Table(name = "users")
-public class User {
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "recipients")
+@Entity
+public class Recipient {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -43,22 +42,12 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @NotNull
-    private String password;
-
     private String phone;
 
+    private LocalDate birthDate;
+
+    @NotNull
     @OneToOne
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-
-    @NotNull
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @NotNull
-    @Builder.Default
-    private Boolean isVerified = false;
-
-
 }
