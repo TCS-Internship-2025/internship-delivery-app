@@ -32,3 +32,5 @@ export const PARCEL_STATUS = {
   DELIVERED: 'DELIVERED',
   STUCK: 'STUCK',
 };
+
+export const mapboxAccessToken: string = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string;
