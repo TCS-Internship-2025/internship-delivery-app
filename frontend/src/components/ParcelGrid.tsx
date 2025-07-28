@@ -112,7 +112,7 @@ export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
         '--ag-grid-size': '10px',
       }}
     >
-      <Button onClick={handleDetails} disabled={!isRowSelected} sx={{ fontSize: 16, my: 2 }}>
+      <Button onClick={handleDetails} disabled={!isRowSelected} variant="contained" sx={{ fontSize: 16, my: 2 }}>
         See details
       </Button>
       <AgGridReact
