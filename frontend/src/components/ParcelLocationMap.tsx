@@ -8,7 +8,7 @@ import type { PickupPoint } from '@/types/PickupPoint';
 
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
-import RoomIcon from '@mui/icons-material/Room';
+import LocationPinIcon from '@mui/icons-material/LocationPin';
 import Box from '@mui/material/Box';
 
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
@@ -63,7 +63,7 @@ export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) 
                 setSelectedMarker(point);
               }}
             >
-              <RoomIcon
+              <LocationPinIcon
                 color={selectedMarker?.id === point.id ? 'error' : 'primary'}
                 sx={{ fontSize: 42, cursor: 'pointer' }}
               />
