@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AgGridReact } from 'ag-grid-react';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-import type { ColDef, ICellRendererParams } from 'ag-grid-community';
+import type { ColDef, ICellRendererParams, RowSelectionOptions } from 'ag-grid-community';
 
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 
 import { getParcelChipData } from '@/utils/parcelChipData';
@@ -73,20 +75,48 @@ export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
   // TODO: Error handling
 
   const [rowData] = useState(parcels ?? undefined);
+  const [isRowSelected, setIsRowSelected] = useState(false);
+  const gridRef = useRef<AgGridReact<ParcelData>>(null);
+  const navigate = useNavigate();
+
+  const rowSelection: RowSelectionOptions = useMemo(() => {
+    return {
+      mode: 'singleRow',
+      checkboxes: false,
+      enableClickSelection: true,
+    };
+  }, []);
+
+  const handleDetails = () => {
+    const selected = gridRef.current?.api.getSelectedRows();
+    if (selected?.length) {
+      console.log('Selected row:', selected[0]);
+      void navigate(`details/${selected[0].parcelId}`);
+    }
+  };
+
+  const handleSelection = () => {
+    const selected = gridRef.current?.api.getSelectedRows() ?? [];
+    setIsRowSelected(selected.length > 0);
+  };
 
   return (
     <Box
       className="ag-theme-quartz"
       sx={{
-        width: '70%',
+        width: '75%',
         height: 800,
-        margin: '40px auto',
+        margin: '20px auto 0',
         '--ag-row-height': '56px',
-        '--ag-font-size': '24px',
+        '--ag-font-size': '22px',
         '--ag-grid-size': '10px',
       }}
     >
+      <Button onClick={handleDetails} disabled={!isRowSelected} sx={{ fontSize: 16, my: 2 }}>
+        See details
+      </Button>
       <AgGridReact
+        ref={gridRef}
         rowData={rowData}
         columnDefs={colDefs}
         defaultColDef={{
@@ -96,6 +126,8 @@ export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
           flex: 1,
         }}
         theme="legacy"
+        rowSelection={rowSelection}
+        onRowSelected={handleSelection}
         pagination={true}
         paginationPageSize={10}
         paginationPageSizeSelector={[10, 20]}

@@ -23,7 +23,7 @@ export const ROUTES = {
   TRACKINGSLUG: 'tracking/:slug',
   TRACKING: 'tracking',
   PARCELS: 'my-parcels',
-  DETAILS: 'details',
+  DETAILS: 'details/:parcelId',
 };
 
 export const PARCEL_STATUS = {

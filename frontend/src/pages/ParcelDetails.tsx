@@ -49,11 +49,7 @@ export const ParcelDetails = ({ parcelData }: ParcelItemProps) => {
           <Typography variant="body1" fontSize={28} ml={6}>
             Payment type: {parcelData?.payment}
           </Typography>
-          <Chip
-            color={parcelChipData.color}
-            label={parcelChipData.label}
-            sx={{ alignSelf: 'flex-start', fontSize: 24, padding: 3, mt: 6, ml: 10 }}
-          />
+          <Chip {...parcelChipData} sx={{ alignSelf: 'flex-start', fontSize: 24, padding: 3, mt: 6, ml: 10 }} />
           <Button
             variant="outlined"
             color="primary"
