@@ -42,7 +42,4 @@ public class ParcelStatusHistory {
     @Setter(AccessLevel.NONE)
     @CreationTimestamp
     private LocalDateTime timestamp;
-
-
-
 }

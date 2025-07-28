@@ -7,12 +7,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ParcelResponse(
-        UUID id,
-        String trackingCode,
-        String currentStatus,
-        RecipientDto recipient,
-        DeliveryType deliveryType,
-        PaymentType paymentType,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
-) {}
+    UUID id,
+    String trackingCode,
+    String currentStatus,
+    RecipientDto recipient,
+    DeliveryType deliveryType,
+    PaymentType paymentType,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {
+}

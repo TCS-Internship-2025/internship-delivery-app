@@ -34,7 +34,7 @@ public class Parcel {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "recipient_id" ,nullable = false)
+    @JoinColumn(name = "recipient_id", nullable = false)
     private Recipient recipient;
 
     @NotNull
@@ -63,5 +63,4 @@ public class Parcel {
 
     @Version // for optimistic locking if implemented
     private Long version;
-
 }

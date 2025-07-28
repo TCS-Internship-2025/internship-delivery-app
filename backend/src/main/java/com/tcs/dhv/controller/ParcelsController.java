@@ -27,8 +27,8 @@ public class ParcelsController {
 
     @PostMapping
     public ResponseEntity<ParcelResponse> createParcel(
-            @Valid @RequestBody final ParcelRequest parcelRequest,
-            @AuthenticationPrincipal final User currentUser
+        @Valid @RequestBody final ParcelRequest parcelRequest,
+        @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Creating parcel request received from user: {}", currentUser.getEmail());
 
@@ -41,8 +41,8 @@ public class ParcelsController {
 
     @GetMapping
     public ResponseEntity<Page<ParcelResponse>> getUserParcels(
-            final Pageable pageable,
-            @AuthenticationPrincipal final User currentUser
+        final Pageable pageable,
+        @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Retrieving parcels for user: {} with pagination: {}", currentUser.getEmail(), pageable);
 
@@ -54,8 +54,8 @@ public class ParcelsController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ParcelResponse> getParcel(
-            @PathVariable final UUID id,
-            @AuthenticationPrincipal final User currentUser
+        @PathVariable final UUID id,
+        @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Retrieving parcel with ID: {} for user: {}", id, currentUser.getEmail());
 
@@ -65,9 +65,9 @@ public class ParcelsController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ParcelResponse> updateParcel(
-            @PathVariable final UUID id,
-            @Valid @RequestBody final ParcelUpdate parcelUpdate,
-            @AuthenticationPrincipal final User currentUser
+        @PathVariable final UUID id,
+        @Valid @RequestBody final ParcelUpdate parcelUpdate,
+        @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Updating parcel with ID: {} for user: {}", id, currentUser.getEmail());
 
@@ -77,8 +77,8 @@ public class ParcelsController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcel(
-            @PathVariable final UUID id,
-            @AuthenticationPrincipal final User currentUser
+        @PathVariable final UUID id,
+        @AuthenticationPrincipal final User currentUser
     ) {
         log.info("Deleting parcel with ID: {} for user: {}", id, currentUser.getEmail());
 

@@ -4,8 +4,9 @@ import com.tcs.dhv.domain.enums.DeliveryType;
 import jakarta.validation.Valid;
 
 public record ParcelUpdate(
-        @Valid
-        AddressUpdate address,
+    @Valid
+    AddressUpdate address,
 
-        DeliveryType deliveryType
-){}
+    DeliveryType deliveryType
+) {
+}

@@ -39,6 +39,4 @@ public class PredefinedLocation {
     @NotNull
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-
-
 }

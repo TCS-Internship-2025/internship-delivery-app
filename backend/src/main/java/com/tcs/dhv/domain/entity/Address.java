@@ -33,7 +33,7 @@ public class Address {
     private String apartment;
 
     @NotNull
-    private  String city;
+    private String city;
 
     @NotNull
     @Builder.Default
@@ -44,6 +44,4 @@ public class Address {
 
     private Double longitude;
     private Double latitude;
-
-
 }

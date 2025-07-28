@@ -15,4 +15,5 @@ public record ParcelRequest(
 
     @NotNull(message = "Delivery type is required")
     DeliveryType deliveryType
-){}
+) {
+}

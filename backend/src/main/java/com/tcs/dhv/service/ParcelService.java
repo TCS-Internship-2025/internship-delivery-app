@@ -54,7 +54,7 @@ public class ParcelService {
         log.info("Retrieving parcel with ID: {}", id);
 
         final var parcel = parcelRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
         if (!parcel.getSender().getId().equals(sender.getId())) {
             throw new AccessDeniedException("Access denied");
@@ -68,7 +68,7 @@ public class ParcelService {
         log.info("Updating parcel with ID: {} for user: {}", id, sender.getEmail());
 
         final var parcel = parcelRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
         if (!parcel.getSender().getId().equals(sender.getId())) {
             throw new AccessDeniedException("Access denied");
@@ -90,7 +90,7 @@ public class ParcelService {
         log.info("Deleting parcel with ID: {} for user: {}", id, sender.getEmail());
 
         final var parcel = parcelRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
         if (!parcel.getSender().getId().equals(sender.getId())) {
             throw new AccessDeniedException("Access denied");
