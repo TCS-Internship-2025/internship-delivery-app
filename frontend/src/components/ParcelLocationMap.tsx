@@ -36,6 +36,13 @@ const pickupPoints = [
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
 }
+/**
+ * Interactive map component displaying pickup points across Budapest.
+ * Features clickable markers that show detailed popups and allows users to select pickup locations.
+ * @param setSelectedPoint - Callback function triggered when a user selects a pickup point from the popup.
+ *                          Receives the selected PickupPoint object or null when deselected.
+ * @returns Mapbox map component with interactive pickup point markers and selection functionality
+ */
 export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useTheme();
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
