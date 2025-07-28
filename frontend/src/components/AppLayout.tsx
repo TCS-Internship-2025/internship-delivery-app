@@ -4,13 +4,13 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
 import { MainHeader } from './MainHeader.tsx';
-import { Sidebar } from './Sidebar.tsx';
+import { Sidebar } from './Navbar.tsx';
 
 export const AppLayout = () => {
   return (
-    <Box display="flex" height="100vh" p={1} gap={2} bgcolor={'background.default'}>
+    <Box display="flex" height={'100vh'} gap={2} flexDirection="column">
       <Sidebar />
-      <Box component="main" flexGrow={1} display="flex" flexDirection="column" gap={1}>
+      <Box component="main" flexGrow={1} display="flex" mt={'60px'}>
         <MainHeader />
         <Paper
           elevation={1}
