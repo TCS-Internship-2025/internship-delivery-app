@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import type { Page1FormSchema, Page2FormSchema } from './utils/parcelComposition';
+import type { ParcelFormSchema, RecipientFormSchema } from './utils/parcelComposition';
 
 // Zod enums
 export const TitleEnum = z.enum(['Mr', 'Mrs', 'Ms', 'Dr', 'Prof']);
@@ -40,7 +40,7 @@ export const FIELD_PLACEHOLDERS: Record<string, string> = {
   'Email address': 'email@example.com',
 };
 
-export const recipientFormDefaultValues: Page1FormSchema = {
+export const recipientFormDefaultValues: RecipientFormSchema = {
   title: '',
   name: '',
   mobilePhone: '',
@@ -48,7 +48,7 @@ export const recipientFormDefaultValues: Page1FormSchema = {
   dateOfBirth: null,
 };
 
-export const parcelFormDefaultValues: Page2FormSchema = {
+export const parcelFormDefaultValues: ParcelFormSchema = {
   addressName: '',
   line1: '',
   line2: '',

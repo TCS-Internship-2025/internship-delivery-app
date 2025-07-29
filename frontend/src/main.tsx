@@ -11,15 +11,16 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 import { AuthProvider } from '@/providers/AuthProvider';
+import { FormProvider } from '@/providers/FormProvider.tsx';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
 import { Page0 } from '@/pages/Page0.tsx';
-import { Page1 } from '@/pages/Page1.tsx';
-import { Page2 } from '@/pages/Page2.tsx';
 import { Page3 } from '@/pages/Page3.tsx';
 import { Page4 } from '@/pages/Page4.tsx';
+import { ParcelForm } from '@/pages/ParcelForm.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
+import { RecipientForm } from '@/pages/RecipientForm.tsx';
 import { Tracking } from '@/pages/Tracking.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
@@ -32,7 +33,6 @@ import { ParcelDetails } from './pages/ParcelDetails.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
-import { FormProvider } from './providers/CreateParcelProvider.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
 
@@ -93,11 +93,11 @@ const router = createBrowserRouter([
               },
               {
                 path: ROUTES.PAGE1,
-                element: <Page1 />,
+                element: <RecipientForm />,
               },
               {
                 path: ROUTES.PAGE2,
-                element: <Page2 />,
+                element: <ParcelForm />,
               },
               {
                 path: ROUTES.PAGE3,

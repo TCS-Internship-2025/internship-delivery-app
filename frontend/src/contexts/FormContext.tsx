@@ -1,17 +1,17 @@
 import { createContext, useContext } from 'react';
 
-import type { ParcelFormSchema } from '@/apis/parcel';
+import type { FullFormSchema } from '@/apis/parcel';
 
-import type { Page1FormSchema, Page2FormSchema } from '@/utils/parcelComposition';
+import type { ParcelFormSchema, RecipientFormSchema } from '@/utils/parcelComposition';
 
-export type FormData = ParcelFormSchema;
+export type FormData = FullFormSchema;
 
 export interface FormContextValue {
   formData: FormData;
   updateFormData: (data: Partial<FormData>) => void;
   resetForm: () => void;
-  getPage1Data: () => Page1FormSchema;
-  getPage2Data: () => Page2FormSchema;
+  getRecipientFormData: () => RecipientFormSchema;
+  getParcelFormData: () => ParcelFormSchema;
 }
 
 export const FormContext = createContext<FormContextValue | undefined>(undefined);

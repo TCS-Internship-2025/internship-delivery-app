@@ -3,7 +3,7 @@ import { parcelFormDefaultValues, recipientFormDefaultValues } from '@/constants
 
 import { FormContext, type FormContextValue, type FormData } from '@/contexts/FormContext';
 
-import type { Page1FormSchema, Page2FormSchema } from '@/utils/parcelComposition';
+import type { ParcelFormSchema, RecipientFormSchema } from '@/utils/parcelComposition';
 
 const defaultFormData: FormData = {
   ...recipientFormDefaultValues,
@@ -30,7 +30,7 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
     setFormData(defaultFormData);
   }, []);
 
-  const getPage1Data = useCallback((): Page1FormSchema => {
+  const getRecipientFormData = useCallback((): RecipientFormSchema => {
     return {
       title: formData.title,
       name: formData.name,
@@ -40,7 +40,7 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
     };
   }, [formData]);
 
-  const getPage2Data = useCallback((): Page2FormSchema => {
+  const getParcelFormData = useCallback((): ParcelFormSchema => {
     return {
       addressName: formData.addressName,
       line1: formData.line1,
@@ -60,10 +60,10 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
       formData,
       updateFormData,
       resetForm,
-      getPage1Data,
-      getPage2Data,
+      getRecipientFormData,
+      getParcelFormData,
     }),
-    [formData, updateFormData, resetForm, getPage1Data, getPage2Data]
+    [formData, updateFormData, resetForm, getRecipientFormData, getParcelFormData]
   );
 
   return <FormContext.Provider value={contextValue}>{children}</FormContext.Provider>;

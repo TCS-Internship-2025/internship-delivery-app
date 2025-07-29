@@ -14,19 +14,19 @@ import { NavigationButtons } from '@/components/NavigationButtons.tsx';
 import { PageContainer } from '@/components/PageContainer';
 import { SectionContainer } from '@/components/SectionContainer';
 
-import { beneficiaryFields, page1FormSchema, type Page1FormSchema } from '@/utils/parcelComposition';
+import { recipientFields, recipientFormSchema, type RecipientFormSchema } from '@/utils/parcelComposition';
 
-export const Page1 = () => {
+export const RecipientForm = () => {
   const navigate = useNavigate();
   const formContext = useFormContext();
 
-  const { control, handleSubmit } = useForm<Page1FormSchema>({
-    resolver: zodResolver(page1FormSchema),
+  const { control, handleSubmit } = useForm<RecipientFormSchema>({
+    resolver: zodResolver(recipientFormSchema),
     mode: 'onChange',
-    defaultValues: formContext.getPage1Data(),
+    defaultValues: formContext.getRecipientFormData(),
   });
 
-  const onSubmit = (data: Page1FormSchema) => {
+  const onSubmit = (data: RecipientFormSchema) => {
     formContext.updateFormData({ ...data });
 
     void navigate(`/${ROUTES.PAGE2}`);
@@ -42,7 +42,7 @@ export const Page1 = () => {
       <PageContainer icon={<QuestionMark />} title="Recipient Details">
         <form onSubmit={handleFormSubmit}>
           <SectionContainer title="Information">
-            <SectionFields fields={beneficiaryFields} control={control} />
+            <SectionFields fields={recipientFields} control={control} />
           </SectionContainer>
         </form>
       </PageContainer>

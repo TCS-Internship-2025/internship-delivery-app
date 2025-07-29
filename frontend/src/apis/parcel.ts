@@ -4,17 +4,17 @@ import { z } from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
 
-import { page1FormSchema, page2FormSchema } from '@/utils/parcelComposition';
+import { parcelFormSchema, recipientFormSchema } from '@/utils/parcelComposition';
 
-export const FullParcelFormSchema = page1FormSchema.extend(page2FormSchema.shape);
+export const fullFormSchema = recipientFormSchema.extend(parcelFormSchema.shape);
 
 // For GET requests
-export const ParcelSchema = FullParcelFormSchema.extend({
+export const getParcelDataSchema = fullFormSchema.extend({
   id: z.number(),
 });
-export const CreateParcelResponseSchema = z.object({
+export const createParcelResponseSchema = z.object({
   message: z.string(),
-  parcel: FullParcelFormSchema.extend({
+  parcel: fullFormSchema.extend({
     dateOfBirth: z
       .string()
       .transform((str) => new Date(str))
@@ -22,11 +22,12 @@ export const CreateParcelResponseSchema = z.object({
   }),
 });
 
-export type ParcelFormSchema = z.infer<typeof FullParcelFormSchema>;
-export type CreateParcelResponseSchema = z.infer<typeof CreateParcelResponseSchema>;
+export type FullFormSchema = z.infer<typeof fullFormSchema>;
+export type GetParcelDataSchema = z.infer<typeof getParcelDataSchema>;
+export type CreateParcelResponseSchema = z.infer<typeof createParcelResponseSchema>;
 
-const createParcel = (data: ParcelFormSchema) => {
-  return httpService.post('/createParcel', CreateParcelResponseSchema, data);
+const createParcel = (data: FullFormSchema) => {
+  return httpService.post('/createParcel', createParcelResponseSchema, data);
 };
 
 export const useCreateParcel = () => {

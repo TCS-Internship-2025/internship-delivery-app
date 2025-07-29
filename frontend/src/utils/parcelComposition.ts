@@ -7,7 +7,7 @@ export const MIN_BIRTH_DATE = new Date('1900-01-01');
 export const MAX_BIRTH_DATE = new Date();
 MAX_BIRTH_DATE.setFullYear(MAX_BIRTH_DATE.getFullYear() - 18);
 
-export const page1FormSchema = z.object({
+export const recipientFormSchema = z.object({
   // Section 1 fields
   title: z.string().optional(),
   name: z.string().min(1, 'Full name is required'),
@@ -23,7 +23,7 @@ export const page1FormSchema = z.object({
   emailAddress: z.email('Please enter a valid email address').min(1),
 });
 
-export const page2FormSchema = z.object({
+export const parcelFormSchema = z.object({
   // Section 2 fields
   addressName: z.string().min(1, 'Address Name is required'),
   line1: z.string().min(1, 'Address Line 1 is required'),
@@ -39,10 +39,10 @@ export const page2FormSchema = z.object({
   deliveryType: z.string().min(1, 'Payment Type is required'),
 });
 
-export type Page1FormSchema = z.infer<typeof page1FormSchema>;
-export type Page2FormSchema = z.infer<typeof page2FormSchema>;
+export type RecipientFormSchema = z.infer<typeof recipientFormSchema>;
+export type ParcelFormSchema = z.infer<typeof parcelFormSchema>;
 
-export const beneficiaryFields: FieldConfig<Page1FormSchema>[][] = [
+export const recipientFields: FieldConfig<RecipientFormSchema>[][] = [
   [
     { name: 'title', label: 'Title', type: 'select', options: TitleEnum, sx: { flex: 0.3 }, rowGroup: 'name' },
     { name: 'name', label: 'Full name', required: true, sx: { flex: 1 }, rowGroup: 'name' },
@@ -52,7 +52,7 @@ export const beneficiaryFields: FieldConfig<Page1FormSchema>[][] = [
   ],
 ];
 
-export const parcelFields: FieldConfig<Page2FormSchema>[][] = [
+export const parcelFields: FieldConfig<ParcelFormSchema>[][] = [
   [
     { name: 'addressName', label: 'Address Name', required: true },
     { name: 'building', label: 'Building', required: true },
@@ -67,7 +67,7 @@ export const parcelFields: FieldConfig<Page2FormSchema>[][] = [
   ],
 ];
 
-export const descriptionField: FieldConfig<Page2FormSchema>[][] = [
+export const shippingOptionsField: FieldConfig<ParcelFormSchema>[][] = [
   [{ name: 'deliveryType', label: 'Delivery Type', type: 'select', options: DeliveryEnum, required: true }],
   [{ name: 'paymentType', label: 'Payment Type', type: 'select', options: PaymentEnum, required: true }],
 ];

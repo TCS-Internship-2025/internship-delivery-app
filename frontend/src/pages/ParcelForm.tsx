@@ -16,21 +16,21 @@ import { NavigationButtons } from '@/components/NavigationButtons.tsx';
 import { PageContainer } from '@/components/PageContainer';
 import { SectionContainer } from '@/components/SectionContainer';
 
-import { descriptionField, page2FormSchema, parcelFields, type Page2FormSchema } from '@/utils/parcelComposition';
+import { parcelFields, parcelFormSchema, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
 
-export const Page2 = () => {
+export const ParcelForm = () => {
   const { mutate, isPending } = useCreateParcel();
   const formContext = useFormContext();
 
-  const { control, handleSubmit, watch, reset, getValues } = useForm<Page2FormSchema>({
-    resolver: zodResolver(page2FormSchema),
+  const { control, handleSubmit, watch, reset, getValues } = useForm<ParcelFormSchema>({
+    resolver: zodResolver(parcelFormSchema),
     mode: 'onChange',
-    defaultValues: formContext.getPage2Data(),
+    defaultValues: formContext.getParcelFormData(),
   });
   const deliveryType = watch('deliveryType');
 
-  const onSubmit = (data: Page2FormSchema) => {
-    const submittedData = { ...formContext.getPage1Data(), ...data };
+  const onSubmit = (data: ParcelFormSchema) => {
+    const submittedData = { ...formContext.getRecipientFormData(), ...data };
     console.log('Form submitted with data:', submittedData);
     mutate(submittedData);
   };
@@ -63,7 +63,7 @@ export const Page2 = () => {
           <PageContainer icon={<QuestionMark />} title="Parcel Data">
             <form onSubmit={handleFormSubmit}>
               <SectionContainer title="Preferences">
-                <SectionFields fields={descriptionField} control={control} />
+                <SectionFields fields={shippingOptionsField} control={control} />
               </SectionContainer>
               {deliveryType === 'Home' && (
                 <SectionContainer title="Recipient Address">
