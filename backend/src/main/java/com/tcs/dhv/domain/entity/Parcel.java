@@ -47,22 +47,12 @@ public class Parcel {
     private User sender;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "recipient_id", nullable = false)
-    private Recipient recipient;
-
-    @NotNull
     private String trackingCode;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private DeliveryType deliveryType;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "recipient_id", nullable = false)
+    private Recipient recipient;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -71,6 +61,15 @@ public class Parcel {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    private DeliveryType deliveryType;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

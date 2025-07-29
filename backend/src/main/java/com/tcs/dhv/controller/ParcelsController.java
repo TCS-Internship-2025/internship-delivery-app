@@ -1,6 +1,6 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.ParcelRequest;
+import com.tcs.dhv.domain.dto.ParcelCreate;
 import com.tcs.dhv.domain.dto.ParcelResponse;
 import com.tcs.dhv.domain.dto.ParcelUpdate;
 import com.tcs.dhv.service.ParcelService;
@@ -32,14 +32,14 @@ public class ParcelsController {
 
     @PostMapping
     public ResponseEntity<ParcelResponse> createParcel(
-        @Valid @RequestBody final ParcelRequest parcelRequest,
+        @Valid @RequestBody final ParcelCreate parcelCreate,
         final Authentication authentication
     ) {
         log.info("Creating parcel request received from user: {}", authentication.getName());
 
-        final var parcelResponse = parcelService.createParcel(parcelRequest, authentication.getName());
+        final var parcelResponse = parcelService.createParcel(parcelCreate, authentication.getName());
 
-        log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
+        log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.getId(), authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(parcelResponse);
     }
