@@ -12,6 +12,7 @@ interface ThemeContextType {
   mode: ThemeMode;
   theme: Theme;
   toggleTheme: () => void;
+  mapboxStyle: string;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -57,7 +58,16 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  const contextValue = useMemo(() => ({ mode, theme: themes[mode], toggleTheme }), [mode, toggleTheme]);
+  const contextValue = useMemo(() => {
+    const mapboxStyle =
+      mode === 'dark' ? 'mapbox://styles/mapbox/navigation-night-v1' : 'mapbox://styles/mapbox/navigation-day-v1';
+    return {
+      mode,
+      theme: themes[mode],
+      toggleTheme,
+      mapboxStyle,
+    };
+  }, [mode, toggleTheme]);
 
   return (
     <ThemeContext.Provider value={contextValue}>
