@@ -1,28 +1,49 @@
-import { useNavigate } from 'react-router-dom';
-import { PARCEL_STATUS } from '@/constants';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { useGetParcelById } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
 
-const DUMMY_PARCEL_DATA = {
-  parcelId: 14,
-  address: 'Budapest',
-  delivery: 'Home',
-  payment: 'sender',
-  status: PARCEL_STATUS.SCHEDULED,
-};
-
 export const ParcelDetails = () => {
+  const { id } = useParams();
+  const { data, status } = useGetParcelById(id);
   const navigate = useNavigate();
+
+  if (status === 'pending') {
+    return (
+      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (status === 'error') {
+    return (
+      <Box
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'center'}
+        height={'100%'}
+        flexDirection={'column'}
+        mt={10}
+      >
+        <Typography variant="h4">Something went wrong.</Typography>
+        <Typography variant="subtitle1">Please try again later!</Typography>
+      </Box>
+    );
+  }
 
   function handleBack() {
     void navigate('..');
   }
 
   function handleDelete() {
+    // TODO: delete request
     console.log('deleted');
   }
 
@@ -38,7 +59,7 @@ export const ParcelDetails = () => {
             flexDirection: 'column',
           }}
         >
-          <ParcelDetailsContent parcelData={DUMMY_PARCEL_DATA} />
+          <ParcelDetailsContent parcelData={data} />
           <Box alignSelf="center" mt={{ xs: 8, md: 15 }}>
             <Button
               variant="outlined"
