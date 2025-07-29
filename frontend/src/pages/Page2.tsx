@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { parcelFormDefaultValues, ROUTES } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useFormContext } from '@/contexts/createParcelContext';
+import { useFormContext } from '@/contexts/FormContext';
 
 import { useCreateParcel } from '@/apis/parcel';
 

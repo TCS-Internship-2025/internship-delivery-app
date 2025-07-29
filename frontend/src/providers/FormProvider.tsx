@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { parcelFormDefaultValues, recipientFormDefaultValues } from '@/constants';
 
-import { FormContext, type FormContextValue, type FormData } from '@/contexts/createParcelContext';
+import { FormContext, type FormContextValue, type FormData } from '@/contexts/FormContext';
 
 import type { Page1FormSchema, Page2FormSchema } from '@/utils/parcelComposition';
 
