@@ -29,17 +29,6 @@ export const ParcelForm = () => {
   });
   const deliveryType = watch('deliveryType');
 
-  const onSubmit = (data: ParcelFormSchema) => {
-    const submittedData = { ...formContext.getRecipientFormData(), ...data };
-    console.log('Form submitted with data:', submittedData);
-    mutate(submittedData);
-  };
-
-  const handleFormSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    void handleSubmit(onSubmit)(event);
-  };
-
   const handleReset = useCallback(() => {
     const currentDeliveryType = getValues('deliveryType');
     reset({
@@ -51,6 +40,18 @@ export const ParcelForm = () => {
   useEffect(() => {
     handleReset();
   }, [handleReset, deliveryType]);
+
+  const onSubmit = (data: ParcelFormSchema) => {
+    const submittedData = { ...formContext.getRecipientFormData(), ...data };
+    console.log('Form submitted with data:', submittedData);
+    mutate(submittedData);
+    handleReset();
+  };
+
+  const handleFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    void handleSubmit(onSubmit)(event);
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
