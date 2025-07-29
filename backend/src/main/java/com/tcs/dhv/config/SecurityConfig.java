@@ -30,8 +30,19 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     public static final String[] PUBLIC_ENDPOINTS = {
-            "/api/auth/**",
-            "/api/tracking/**"
+        "/api/auth/**",
+        "/api/tracking/**",
+        "/api/parcels",
+        "/api/parcels/**",
+
+        //OPENAPI/SWAGGER
+        "/v3/api-docs",
+        "/v3/api-docs.yaml",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/swagger-resources/**",
+        "/webjars/**"
     };
 
     @Value("${dhv.client-url}")
@@ -53,32 +64,32 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            final HttpSecurity http,
-            final CorsConfigurationSource corsConfigurationSource
+        final HttpSecurity http,
+        final CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(PUBLIC_ENDPOINTS)
-                )
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
-                    auth.anyRequest().authenticated();
-                })
-                .sessionManagement(SecurityConfig::getSessionManagementConfig)
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(withDefaults())
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(PUBLIC_ENDPOINTS)
+            )
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
+                auth.anyRequest().authenticated();
+            })
+            .sessionManagement(SecurityConfig::getSessionManagementConfig)
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(withDefaults())
+                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            );
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
-            final AuthenticationConfiguration configuration
+        final AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
     }
@@ -89,9 +100,8 @@ public class SecurityConfig {
     }
 
     private static void getSessionManagementConfig(
-            final SessionManagementConfigurer<HttpSecurity> session
+        final SessionManagementConfigurer<HttpSecurity> session
     ) {
         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
-

@@ -1,0 +1,86 @@
+package com.tcs.dhv.config;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.models.Paths;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import java.util.List;
+
+@Configuration
+@SecurityScheme(
+    name = "Bearer Authentication",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    description = """
+        # JWT Bearer token authentication.
+        """
+)
+@OpenAPIDefinition(
+    info = @Info(
+        title = "DHV Parcel Management API",
+        version = "1.0",
+        description = """
+            This API allows users to manage parcels, and perform authentication operations.
+            
+            ## Authentication Endpoints
+            
+            The authentication endpoints is open for everyone.
+            
+            ## Parcel Endpoints
+            
+            These endpoints require JWT token authorization to view.
+            """
+    ),
+    security = @SecurityRequirement(name = "bearerAuth")
+)
+public class OpenApiConfig {
+    @Bean
+    public OpenApiCustomizer operationOrderCustomizer(){
+        return openApi ->{
+            final var authOperationOrder = List.of(
+                "/api/auth/login",
+                "/api/auth/register",
+                "/api/auth/logout",
+                "/api/auth/email/resend-verification",
+                "/api/auth/refresh-token",
+                "/api/auth/email/verify"
+            );
+
+            final var parcelPaths = List.of(
+                "/api/parcels",
+                "/api/parcels/{id}"
+            );
+
+            final var reorderedPaths = new Paths();
+
+            authOperationOrder.forEach(path -> {
+                final var pathItem = openApi.getPaths().get(path);
+                if (pathItem != null) {
+                    reorderedPaths.addPathItem(path, pathItem);
+                }
+            });
+
+            parcelPaths.forEach(path -> {
+                final var pathItem = openApi.getPaths().get(path);
+                if (pathItem != null) {
+                    reorderedPaths.addPathItem(path, pathItem);
+                }
+            });
+
+            // Add any remaining paths
+            openApi.getPaths().forEach((path, pathItem) -> {
+                if (!reorderedPaths.containsKey(path)) {
+                    reorderedPaths.addPathItem(path, pathItem);
+                }
+            });
+
+            openApi.setPaths(reorderedPaths);
+        };
+    }
+}
