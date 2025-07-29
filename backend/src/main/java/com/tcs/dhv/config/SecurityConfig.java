@@ -1,5 +1,6 @@
 package com.tcs.dhv.config;
 
+import com.tcs.dhv.security.ApiKeyFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -30,8 +32,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     public static final String[] PUBLIC_ENDPOINTS = {
-            "/api/auth/**",
-            "/api/tracking/**"
+            "/api/auth/**"
     };
 
     @Value("${dhv.client-url}")
@@ -54,8 +55,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             final HttpSecurity http,
-            final CorsConfigurationSource corsConfigurationSource
-    ) throws Exception {
+            final CorsConfigurationSource corsConfigurationSource,
+            final ApiKeyFilter apiKeyFilter) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf
@@ -66,6 +67,7 @@ public class SecurityConfig {
                     auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
                     auth.anyRequest().authenticated();
                 })
+                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(SecurityConfig::getSessionManagementConfig)
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(withDefaults())

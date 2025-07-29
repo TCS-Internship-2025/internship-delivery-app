@@ -64,5 +64,3 @@ app:
 
 dhv:
   client-url: http://localhost:3000
-DB_PASSWORD:
-  12345678
