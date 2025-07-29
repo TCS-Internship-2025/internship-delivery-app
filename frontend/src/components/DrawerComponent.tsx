@@ -16,17 +16,7 @@ export default function DrawerComponent({
   return (
     <>
       <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleDrawerClick}
-          edge="start"
-          sx={[
-            {
-              mr: 2,
-            },
-          ]}
-        >
+        <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerClick} edge="start" sx={{ mr: 2 }}>
           {open ? <ArrowBackIcon /> : <MenuIcon />}
         </IconButton>
       </Toolbar>
@@ -36,9 +26,9 @@ export default function DrawerComponent({
         sx={{
           '& .MuiDrawer-paper': {
             height: 'auto',
-            top: '64px',
             width: '100%',
             boxSizing: 'border-box',
+            top: 64,
           },
         }}
         variant="persistent"

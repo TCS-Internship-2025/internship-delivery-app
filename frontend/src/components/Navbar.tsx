@@ -68,7 +68,7 @@ export const Navbar = () => {
         flexDirection: 'row',
         justifyContent: 'space-between',
         zIndex: 50,
-        height: '64px',
+        height: 64,
       }}
     >
       {!isSmallScreen ? (
@@ -78,10 +78,10 @@ export const Navbar = () => {
               <img
                 src="/logo.jpg"
                 style={{
-                  height: '50px',
+                  height: 50,
                   width: 'auto',
                   objectFit: 'contain',
-                  borderRadius: '0.5em',
+                  borderRadius: 0.5,
                 }}
                 alt="Logo"
               />

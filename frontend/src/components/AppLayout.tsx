@@ -9,7 +9,7 @@ export const AppLayout = () => {
   return (
     <Box display="flex" height={'100vh'} gap={2} flexDirection="column">
       <Navbar />
-      <Box component="main" flexGrow={1} display="flex" mt={'60px'}>
+      <Box component="main" flexGrow={1} display="flex" mt={9}>
         <Paper
           elevation={1}
           sx={{

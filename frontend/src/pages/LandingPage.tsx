@@ -37,7 +37,7 @@ export const LandingPage = () => {
       <Box
         sx={{
           mb: 8,
-          maxWidth: '30rem',
+          maxWidth: 400,
           width: '100%',
         }}
       >
@@ -50,7 +50,7 @@ export const LandingPage = () => {
             display: 'block',
             margin: '0 auto',
             objectFit: 'contain',
-            borderRadius: '0.5em',
+            borderRadius: 0.5,
           }}
         />
       </Box>
