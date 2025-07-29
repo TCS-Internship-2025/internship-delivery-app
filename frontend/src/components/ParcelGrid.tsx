@@ -71,7 +71,6 @@ interface ParcelGridProps {
 }
 
 export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
-  // if (!parcels) throw new Error();
   // TODO: Error handling
 
   const [rowData] = useState(parcels ?? undefined);
