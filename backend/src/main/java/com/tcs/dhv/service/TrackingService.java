@@ -26,7 +26,7 @@ public class TrackingService {
     private final TrackingMapper trackingMapper;
 
     public TrackingResponse getTrackingDetails(TrackingRequest trackingRequest) {
-        log.info("Getting tracking data of parcel with tracking code : " + trackingRequest.trackingCode());
+        log.info("Getting tracking data of parcel with tracking code : {}", trackingRequest.trackingCode());
 
         Parcel parcel = parcelRepository.findByTrackingCode(trackingRequest.trackingCode())
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingRequest.trackingCode()));
