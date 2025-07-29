@@ -46,3 +46,6 @@ Thumbs.db
 
 .env
 .package-lock.json
+
+#JWT
+jwt/
