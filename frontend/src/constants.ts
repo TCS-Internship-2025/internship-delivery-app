@@ -35,6 +35,9 @@ export const PARCEL_STATUS = {
   STUCK: 'STUCK',
 };
 
+
+export const mapboxAccessToken: string = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string;
+
 export const FIELD_PLACEHOLDERS: Record<string, string> = {
   'Mobile phone': '+36 111 111 1111',
   'Email address': 'email@example.com',
