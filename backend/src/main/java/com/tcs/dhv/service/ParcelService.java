@@ -3,6 +3,7 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.ParcelRequest;
 import com.tcs.dhv.domain.dto.ParcelResponse;
 import com.tcs.dhv.domain.dto.ParcelUpdate;
+import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.mapper.AddressMapper;
 import com.tcs.dhv.mapper.ParcelMapper;
 import com.tcs.dhv.mapper.RecipientMapper;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -51,17 +54,30 @@ public class ParcelService {
         final var sender = userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
 
-        final var address = addressMapper.toEntity(parcelRequest.recipient().address());
-        final var savedAddress = addressRepository.save(address);
+        Optional<Recipient> existingRecipient = recipientRepository.findByEmail(parcelRequest.recipient().email());
 
-        final var recipient = recipientMapper.toEntity(parcelRequest.recipient());
-        recipient.setAddress(savedAddress);
-        final var savedRecipient = recipientRepository.save(recipient);
+        final Recipient recipient;
+        if (existingRecipient.isPresent()) {
+            log.info("Using existing recipient for email: {}", parcelRequest.recipient().email());
+            recipient = existingRecipient.get();
+        } else {
+            log.info("Creating new recipient for email: {}", parcelRequest.recipient().email());
+            final var address = addressMapper.toEntity(parcelRequest.recipient().address());
+            final var savedAddress = addressRepository.save(address);
+
+            recipient = recipientMapper.toEntity(parcelRequest.recipient());
+            recipient.setAddress(savedAddress);
+            recipientRepository.save(recipient);
+        }
 
         final var trackingCode = generateTrackingCode();
         final var parcel = parcelMapper.toEntity(parcelRequest, sender, trackingCode);
-        parcel.setRecipient(savedRecipient);
+        log.info("Parcel createdAt: {}, updatedAt: {}", parcel.getCreatedAt(), parcel.getUpdatedAt());
+        parcel.setRecipient(recipient);
+        parcel.setCreatedAt(LocalDateTime.now());
+        parcel.setUpdatedAt(LocalDateTime.now());
         final var savedParcel = parcelRepository.save(parcel);
+        log.info("Parcel createdAt: {}, updatedAt: {}", savedParcel.getCreatedAt(), savedParcel.getUpdatedAt());
 
         log.info("Parcel created with tracking code: {}", trackingCode);
         return parcelMapper.toResponse(savedParcel);

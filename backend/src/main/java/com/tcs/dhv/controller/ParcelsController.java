@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +45,7 @@ public class ParcelsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ParcelResponse>> getUserParcels(@AuthenticationPrincipal final Authentication authentication) {
+    public ResponseEntity<List<ParcelResponse>> getUserParcels(final Authentication authentication) {
         log.info("Retrieving parcels for user: {}", authentication.getName());
 
         final var parcels = parcelService.getUserParcels(authentication.getName());
@@ -58,7 +57,7 @@ public class ParcelsController {
     @GetMapping("/{id}")
     public ResponseEntity<ParcelResponse> getParcel(
         @PathVariable final UUID id,
-        @AuthenticationPrincipal final Authentication authentication
+        final Authentication authentication
     ) {
         log.info("Retrieving parcel with ID: {} for user: {}", id, authentication.getName());
 
@@ -70,7 +69,7 @@ public class ParcelsController {
     public ResponseEntity<ParcelResponse> updateParcel(
         @PathVariable final UUID id,
         @Valid @RequestBody final ParcelUpdate parcelUpdate,
-        @AuthenticationPrincipal final Authentication authentication
+        final Authentication authentication
     ) {
         log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
 
@@ -81,7 +80,7 @@ public class ParcelsController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcel(
         @PathVariable final UUID id,
-        @AuthenticationPrincipal final Authentication authentication
+        final Authentication authentication
     ) {
         log.info("Deleting parcel with ID: {} for user: {}", id, authentication.getName());
 
