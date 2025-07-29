@@ -17,25 +17,22 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.UUID;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class EmailService {
 
     private final JavaMailSender mailSender;
-
     private final SimpleMailMessage template;
-
     private final OtpService otpService;
     private final UserRepository userRepository;
-
 
     @Value("${app.base-url}")
     private String appBaseUrl;
 
     public final void sendStatusByEmail(
-        String email,
-        String trackingNumber,
-        String link
+        final String email,
+        final String trackingNumber,
+        final String link
     ) {
         final var message = template;
         Assert.notNull(message.getText(), "Message must not be null;");
@@ -47,13 +44,13 @@ public class EmailService {
 
     @Async
     public void sendVerificationTokenByEmail(
-        UUID userId,
-        String email
+        final UUID userId,
+        final String email
     ) {
         final var token = otpService.generateAndStoreOtp(userId);
 
         final var emailVerificationUrl = "%s/api/auth/email/verify?uid=%s&t=%s"
-                .formatted(appBaseUrl, userId, token);
+            .formatted(appBaseUrl, userId, token);
 
         final var emailText = """
             Hello,
@@ -80,39 +77,39 @@ public class EmailService {
 
     public void resendVerificationTokenByEmail(String email) {
         final var user = userRepository.findByEmail(email)
-                .filter(usr -> !usr.getIsVerified())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Email not found or already verified"
-                ));
+            .filter(usr -> !usr.getIsVerified())
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Email not found or already verified"
+            ));
 
         sendVerificationTokenByEmail(user.getId(), user.getEmail());
     }
 
     @Transactional
     public User verifyEmail(
-        UUID userId,
-        String token
+        final UUID userId,
+        final String token
     ) {
         if (!otpService.isOtpValid(userId, token)) {
             throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "Token expired of invalid"
+                HttpStatus.FORBIDDEN,
+                "Token expired of invalid"
             );
         }
         otpService.deleteOtp(userId);
 
         final var user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "User account has been deleted"
-                        ));
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User account has been deleted"
+                ));
 
         if (user.getIsVerified()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Email is already verified"
+                HttpStatus.BAD_REQUEST,
+                "Email is already verified"
             );
         }
 
