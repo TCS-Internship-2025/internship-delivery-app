@@ -1,8 +1,6 @@
 package com.tcs.dhv.service;
 
-import com.tcs.dhv.domain.dto.ParcelCreate;
-import com.tcs.dhv.domain.dto.ParcelResponse;
-import com.tcs.dhv.domain.dto.ParcelUpdate;
+import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.domain.entity.User;
@@ -17,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -41,39 +40,39 @@ public class ParcelService {
     private final Random random = new Random();
 
     @Transactional
-    public ParcelResponse createParcel(final ParcelCreate parcelCreate, final String userEmail) {
+    public ParcelDto createParcel(final ParcelDto parcelDto, final String userEmail) {
         log.info("Creating parcel for user: {}", userEmail);
 
         final var sender = getUserByEmail(userEmail);
 
-        final var existingRecipient = recipientRepository.findByEmail(parcelCreate.getRecipient().getEmail());
+        final var existingRecipient = recipientRepository.findByEmail(parcelDto.recipient().email());
 
         final Recipient recipient;
         if (existingRecipient.isPresent()) {
-            log.info("Using existing recipient for email: {}", parcelCreate.getRecipient().getEmail());
+            log.info("Using existing recipient for email: {}", parcelDto.recipient().email());
             recipient = existingRecipient.get();
         } else {
-            log.info("Creating new recipient for email: {}", parcelCreate.getRecipient().getEmail());
-            final var address = parcelCreate.getRecipient().getAddress().toEntity();
+            log.info("Creating new recipient for email: {}", parcelDto.recipient().email());
+            final var address = parcelDto.recipient().address().toEntity();
             final var savedAddress = addressRepository.save(address);
 
-            recipient = parcelCreate.getRecipient().toEntity();
+            recipient = parcelDto.recipient().toEntity();
             recipient.setAddress(savedAddress);
             recipientRepository.save(recipient);
         }
 
         final var trackingCode = generateTrackingCode();
 
-        final var parcel = parcelCreate.toEntity(sender, trackingCode);
+        final var parcel = parcelDto.toEntity(sender, trackingCode);
         parcel.setRecipient(recipient);
 
-        final var savedParcel = parcelRepository.save(parcel);
+        final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
 
-        return ParcelResponse.fromEntity(savedParcel);
+        return ParcelDto.fromEntity(savedParcel);
     }
 
-    public List<ParcelResponse> getUserParcels(final String userEmail) {
+    public List<ParcelDto> getUserParcels(final String userEmail) {
         log.info("Retrieving parcels for user: {}", userEmail);
 
         final var sender = getUserByEmail(userEmail);
@@ -81,11 +80,11 @@ public class ParcelService {
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
 
         return parcels.stream()
-            .map(ParcelResponse::fromEntity)
+            .map(ParcelDto::fromEntity)
             .toList();
     }
 
-    public ParcelResponse getParcel(final UUID id, final String userEmail) {
+    public ParcelDto getParcel(final UUID id, final String userEmail) {
         log.info("Retrieving parcel with ID: {}", id);
 
         final var sender = getUserByEmail(userEmail);
@@ -93,11 +92,11 @@ public class ParcelService {
         final var parcel = getParcelEntity(id, sender);
 
         log.info("Parcel with ID: {} retrieved successfully for user: {}", id, userEmail);
-        return ParcelResponse.fromEntity(parcel);
+        return ParcelDto.fromEntity(parcel);
     }
 
     @Transactional
-    public ParcelResponse updateParcel(final UUID id, final ParcelUpdate parcelUpdate, final String userEmail) {
+    public ParcelDto updateParcel(final UUID id, final ParcelDto parcelUpdate, final String userEmail) {
         log.info("Updating parcel with ID: {} for user: {}", id, userEmail);
 
         final var sender = getUserByEmail(userEmail);
@@ -105,10 +104,11 @@ public class ParcelService {
         final var parcel = getParcelEntity(id, sender);
 
         parcelUpdate.updateEntity(parcel);
+        parcel.setUpdatedAt(LocalDateTime.now());
 
-        final var updatedParcel = parcelRepository.save(parcel);
+        final var updatedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel with ID: {} updated successfully", id);
-        return ParcelResponse.fromEntity(updatedParcel);
+        return ParcelDto.fromEntity(updatedParcel);
     }
 
     @Transactional

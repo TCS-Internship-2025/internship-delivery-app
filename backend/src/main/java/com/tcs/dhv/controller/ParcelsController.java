@@ -1,8 +1,6 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.ParcelCreate;
-import com.tcs.dhv.domain.dto.ParcelResponse;
-import com.tcs.dhv.domain.dto.ParcelUpdate;
+import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.service.ParcelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,21 +29,21 @@ public class ParcelsController {
     private final ParcelService parcelService;
 
     @PostMapping
-    public ResponseEntity<ParcelResponse> createParcel(
-        @Valid @RequestBody final ParcelCreate parcelCreate,
+    public ResponseEntity<ParcelDto> createParcel(
+        @Valid @RequestBody final ParcelDto parcelDto,
         final Authentication authentication
     ) {
         log.info("Creating parcel request received from user: {}", authentication.getName());
 
-        final var parcelResponse = parcelService.createParcel(parcelCreate, authentication.getName());
+        final var parcelResponse = parcelService.createParcel(parcelDto, authentication.getName());
 
-        log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.getId(), authentication.getName());
+        log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(parcelResponse);
     }
 
     @GetMapping
-    public ResponseEntity<List<ParcelResponse>> getUserParcels(final Authentication authentication) {
+    public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
         log.info("Retrieving parcels for user: {}", authentication.getName());
 
         final var parcels = parcelService.getUserParcels(authentication.getName());
@@ -55,7 +53,7 @@ public class ParcelsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ParcelResponse> getParcel(
+    public ResponseEntity<ParcelDto> getParcel(
         @PathVariable final UUID id,
         final Authentication authentication
     ) {
@@ -66,9 +64,9 @@ public class ParcelsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ParcelResponse> updateParcel(
+    public ResponseEntity<ParcelDto> updateParcel(
         @PathVariable final UUID id,
-        @Valid @RequestBody final ParcelUpdate parcelUpdate,
+        @Valid @RequestBody final ParcelDto parcelUpdate,
         final Authentication authentication
     ) {
         log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
