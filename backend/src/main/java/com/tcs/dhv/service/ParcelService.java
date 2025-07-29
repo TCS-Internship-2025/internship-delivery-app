@@ -3,7 +3,9 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.ParcelRequest;
 import com.tcs.dhv.domain.dto.ParcelResponse;
 import com.tcs.dhv.domain.dto.ParcelUpdate;
+import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.Recipient;
+import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.mapper.AddressMapper;
 import com.tcs.dhv.mapper.ParcelMapper;
 import com.tcs.dhv.mapper.RecipientMapper;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -51,10 +52,9 @@ public class ParcelService {
     public ParcelResponse createParcel(final ParcelRequest parcelRequest, final String userEmail) {
         log.info("Creating parcel for user: {}", userEmail);
 
-        final var sender = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
+        final var sender = getUserByEmail(userEmail);
 
-        Optional<Recipient> existingRecipient = recipientRepository.findByEmail(parcelRequest.recipient().email());
+        final var existingRecipient = recipientRepository.findByEmail(parcelRequest.recipient().email());
 
         final Recipient recipient;
         if (existingRecipient.isPresent()) {
@@ -71,25 +71,25 @@ public class ParcelService {
         }
 
         final var trackingCode = generateTrackingCode();
+
         final var parcel = parcelMapper.toEntity(parcelRequest, sender, trackingCode);
-        log.info("Parcel createdAt: {}, updatedAt: {}", parcel.getCreatedAt(), parcel.getUpdatedAt());
         parcel.setRecipient(recipient);
         parcel.setCreatedAt(LocalDateTime.now());
         parcel.setUpdatedAt(LocalDateTime.now());
-        final var savedParcel = parcelRepository.save(parcel);
-        log.info("Parcel createdAt: {}, updatedAt: {}", savedParcel.getCreatedAt(), savedParcel.getUpdatedAt());
 
+        final var savedParcel = parcelRepository.save(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
+
         return parcelMapper.toResponse(savedParcel);
     }
 
     public List<ParcelResponse> getUserParcels(final String userEmail) {
         log.info("Retrieving parcels for user: {}", userEmail);
 
-        final var sender = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
+        final var sender = getUserByEmail(userEmail);
 
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
+
         return parcels.stream()
             .map(parcelMapper::toResponse)
             .toList();
@@ -98,15 +98,9 @@ public class ParcelService {
     public ParcelResponse getParcel(final UUID id, final String userEmail) {
         log.info("Retrieving parcel with ID: {}", id);
 
-        final var parcel = parcelRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+        final var sender = getUserByEmail(userEmail);
 
-        final var sender = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
-
-        if (!parcel.getSender().getId().equals(sender.getId())) {
-            throw new AccessDeniedException("Access denied");
-        }
+        final var parcel = getParcelEntity(id, sender);
 
         log.info("Parcel with ID: {} retrieved successfully for user: {}", id, userEmail);
         return parcelMapper.toResponse(parcel);
@@ -116,15 +110,9 @@ public class ParcelService {
     public ParcelResponse updateParcel(final UUID id, final ParcelUpdate parcelUpdate, final String userEmail) {
         log.info("Updating parcel with ID: {} for user: {}", id, userEmail);
 
-        final var parcel = parcelRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+        final var sender = getUserByEmail(userEmail);
 
-        final var sender = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
-
-        if (!parcel.getSender().getId().equals(sender.getId())) {
-            throw new AccessDeniedException("Access denied");
-        }
+        final var parcel = getParcelEntity(id, sender);
 
         parcelMapper.updateEntity(parcel, parcelUpdate);
 
@@ -142,15 +130,9 @@ public class ParcelService {
     public void deleteParcel(final UUID id, final String userEmail) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userEmail);
 
-        final var parcel = parcelRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+        final var sender = getUserByEmail(userEmail);
 
-        final var sender = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
-
-        if (!parcel.getSender().getId().equals(sender.getId())) {
-            throw new AccessDeniedException("Access denied");
-        }
+        final var parcel = getParcelEntity(id, sender);
 
         parcelRepository.delete(parcel);
         log.info("Parcel with ID: {} deleted successfully", id);
@@ -167,5 +149,21 @@ public class ParcelService {
             code = TRACKING_CODE_COUNTRY_PREFIX + number + letters;
         } while (parcelRepository.existsByTrackingCode(code));
         return code;
+    }
+
+    private Parcel getParcelEntity(final UUID id, final User sender) {
+        final var parcel = parcelRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+
+        if (!parcel.getSender().getId().equals(sender.getId())) {
+            throw new AccessDeniedException("Access denied");
+        }
+
+        return parcel;
+    }
+
+    private User getUserByEmail(final String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
     }
 }
