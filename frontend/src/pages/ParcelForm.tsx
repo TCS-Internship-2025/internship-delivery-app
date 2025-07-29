@@ -78,7 +78,7 @@ export const ParcelForm = () => {
             </form>
           </PageContainer>
           <NavigationButtons
-            previousPath={`/${ROUTES.PAGE1}`}
+            previousPath={`/${ROUTES.RECIPIENT_FORM}`}
             onNext={() => {
               void handleSubmit(onSubmit)();
             }}
