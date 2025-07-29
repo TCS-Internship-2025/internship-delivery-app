@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import type { ParcelFormSchema, RecipientFormSchema } from './utils/parcelComposition';
+
 // Zod enums
 export const TitleEnum = z.enum(['Mr', 'Mrs', 'Ms', 'Dr', 'Prof']);
 export const DeliveryEnum = z.enum(['Home', 'Pickup Point']);
@@ -31,4 +33,30 @@ export const PARCEL_STATUS = {
   SHIPPING: 'SHIPPING',
   DELIVERED: 'DELIVERED',
   STUCK: 'STUCK',
+};
+
+export const FIELD_PLACEHOLDERS: Record<string, string> = {
+  'Mobile phone': '+36 111 111 1111',
+  'Email address': 'email@example.com',
+};
+
+export const recipientFormDefaultValues: RecipientFormSchema = {
+  title: '',
+  name: '',
+  mobilePhone: '',
+  emailAddress: '',
+  dateOfBirth: null,
+};
+
+export const parcelFormDefaultValues: ParcelFormSchema = {
+  addressName: '',
+  line1: '',
+  line2: '',
+  apartment: '',
+  city: '',
+  postalCode: '',
+  country: '',
+  building: '',
+  paymentType: '',
+  deliveryType: 'Home',
 };
