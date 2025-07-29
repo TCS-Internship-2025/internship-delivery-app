@@ -35,7 +35,7 @@ export const Navbar = () => {
     void navigate('/');
   };
 
-  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.PARCEL_FORM, ROUTES.PARCELS], []);
+  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
 
   const currentIndex = routes.indexOf(location.pathname);
   const activeTab = currentIndex !== -1 ? currentIndex : 0;
