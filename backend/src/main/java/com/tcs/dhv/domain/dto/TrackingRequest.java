@@ -1,11 +1,12 @@
 package com.tcs.dhv.domain.dto;
 
+import com.tcs.dhv.validation.TrackingCode;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+
 
 public record TrackingRequest(
-        @NotBlank
-        @Pattern(regexp = "^HU\\d{10}[A-Z]{2}$", message = "Invalid tracking code format")
+        @NotBlank(message = "Tracking code is required")
+        @TrackingCode
         String trackingCode
 ) {
 }
