@@ -58,6 +58,7 @@ public class User {
     private Address address;
 
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @NotNull

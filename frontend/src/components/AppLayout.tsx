@@ -3,15 +3,13 @@ import { Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
-import { MainHeader } from './MainHeader.tsx';
-import { Sidebar } from './Sidebar.tsx';
+import { Navbar } from './Navbar.tsx';
 
 export const AppLayout = () => {
   return (
-    <Box display="flex" height="100vh" p={1} gap={2} bgcolor={'background.default'}>
-      <Sidebar />
-      <Box component="main" flexGrow={1} display="flex" flexDirection="column" gap={1}>
-        <MainHeader />
+    <Box display="flex" height={'100vh'} gap={2} flexDirection="column">
+      <Navbar />
+      <Box component="main" flexGrow={1} display="flex" mt={9}>
         <Paper
           elevation={1}
           sx={{

@@ -26,5 +26,6 @@
   "indenticator.hover.highlight": true,
   "indenticator.showHover": true,
   "indenticator.inner.color.dark": "#ff8400",
-  "indenticator.style": "inset"
+  "indenticator.style": "inset",
+  "cSpell.words": ["mapbox"]
 }

@@ -1,0 +1,13 @@
+.mapboxgl-popup-content {
+  background: var(--mui-palette-primary-main) !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: var(--mui-palette-primary-main) !important;
+}
+
+.mapboxgl-popup-close-button {
+  color: var(--mui-palette-error-main) !important;
+}
