@@ -1,7 +1,7 @@
-package com.tcs.dhv.entity;
+package com.tcs.dhv.domain.entity;
 
-import com.tcs.dhv.enums.DeliveryType;
-import com.tcs.dhv.enums.LocationStatus;
+import com.tcs.dhv.domain.enums.DeliveryType;
+import com.tcs.dhv.domain.enums.LocationStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,9 +19,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @ToString
@@ -29,6 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "predefined_locations")
+@Entity
 public class PredefinedLocation {
 
     @Id
@@ -52,6 +53,4 @@ public class PredefinedLocation {
     @NotNull
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-
-
 }
