@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
@@ -28,33 +28,25 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { mode, toggleTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState(0);
+  const [open, setOpen] = useState<boolean>(false);
+  const isSmallScreen = useSmallScreen();
+
   const handleLogoClick = () => {
     void navigate('/');
   };
 
-  const tabIndexToRoute = [
-    `/${ROUTES.TRACKING}`,
-    ...(isAuthenticated ? [`/${ROUTES.SEND_PARCEL}`, `/${ROUTES.PARCELS}`] : []),
-  ];
-  const isSmallScreen = useSmallScreen();
-  useEffect(() => {
-    const routeToTabIndex: Record<string, number> = {
-      [`/${ROUTES.TRACKING}`]: 0,
-      [`/${ROUTES.SEND_PARCEL}`]: 1,
-      [`/${ROUTES.PARCELS}`]: 2,
-    };
-    const currentTabIndex = routeToTabIndex[location.pathname] ?? 0;
-    setActiveTab(currentTabIndex);
-  }, [location.pathname]);
-  const [open, setOpen] = useState<boolean>(false);
+  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.SEND_PARCEL, ROUTES.PARCELS], []);
+
+  const currentIndex = routes.indexOf(location.pathname);
+  const activeTab = currentIndex !== -1 ? currentIndex : 0;
+
   const handleDrawerClick = () => {
     setOpen(!open);
   };
+
   const handleNavigation = (index: number) => {
     setOpen(false);
-    setActiveTab(index);
-    void navigate(tabIndexToRoute[index]);
+    void navigate(routes[index]);
   };
 
   return (
@@ -195,7 +187,7 @@ export const Navbar = () => {
             sx={{ px: 1, borderRadius: 1 }}
             onClick={() => {
               if (isAuthenticated) {
-                // Optional: Add logout logic here
+                //duplicated for testing until having the logout API
                 void navigate('/login');
               } else {
                 void navigate('/login');
