@@ -3,6 +3,7 @@ package com.tcs.dhv.domain.dto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.domain.enums.DeliveryType;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.domain.enums.PaymentType;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public record ParcelDto(
     UUID id,
     String trackingCode,
     RecipientDto recipient,
-    String currentStatus,
+    ParcelStatus currentStatus,
     DeliveryType deliveryType,
     PaymentType paymentType,
     LocalDateTime createdAt,
@@ -23,7 +24,7 @@ public record ParcelDto(
             parcel.getId(),
             parcel.getTrackingCode(),
             RecipientDto.fromEntity(parcel.getRecipient()),
-            parcel.getCurrentStatus().name(),
+            parcel.getCurrentStatus(),
             parcel.getDeliveryType(),
             parcel.getPaymentType(),
             parcel.getCreatedAt(),
@@ -39,10 +40,5 @@ public record ParcelDto(
             .paymentType(paymentType)
             .deliveryType(deliveryType)
             .build();
-    }
-
-    public void updateEntity(final Parcel parcel) {
-        if (deliveryType != null) parcel.setDeliveryType(deliveryType);
-        if (recipient != null) recipient.updateEntity(parcel.getRecipient());
     }
 }

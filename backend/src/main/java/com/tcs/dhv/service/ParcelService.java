@@ -7,7 +7,6 @@ import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.RecipientRepository;
-import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -35,7 +33,7 @@ public class ParcelService {
     private final ParcelRepository parcelRepository;
     private final AddressRepository addressRepository;
     private final RecipientRepository recipientRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final Random random = new Random();
 
@@ -43,7 +41,7 @@ public class ParcelService {
     public ParcelDto createParcel(final ParcelDto parcelDto, final String userEmail) {
         log.info("Creating parcel for user: {}", userEmail);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = userService.getUserByEmail(userEmail);
 
         final var existingRecipient = recipientRepository.findByEmail(parcelDto.recipient().email());
 
@@ -75,7 +73,7 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final String userEmail) {
         log.info("Retrieving parcels for user: {}", userEmail);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = userService.getUserByEmail(userEmail);
 
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
 
@@ -87,37 +85,22 @@ public class ParcelService {
     public ParcelDto getParcel(final UUID id, final String userEmail) {
         log.info("Retrieving parcel with ID: {}", id);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = userService.getUserByEmail(userEmail);
 
-        final var parcel = getParcelEntity(id, sender);
+        final var parcel = getParcelByIdAndUser(id, sender);
 
         log.info("Parcel with ID: {} retrieved successfully for user: {}", id, userEmail);
         return ParcelDto.fromEntity(parcel);
     }
 
-    @Transactional
-    public ParcelDto updateParcel(final UUID id, final ParcelDto parcelUpdate, final String userEmail) {
-        log.info("Updating parcel with ID: {} for user: {}", id, userEmail);
-
-        final var sender = getUserByEmail(userEmail);
-
-        final var parcel = getParcelEntity(id, sender);
-
-        parcelUpdate.updateEntity(parcel);
-        parcel.setUpdatedAt(LocalDateTime.now());
-
-        final var updatedParcel = parcelRepository.saveAndFlush(parcel);
-        log.info("Parcel with ID: {} updated successfully", id);
-        return ParcelDto.fromEntity(updatedParcel);
-    }
 
     @Transactional
     public void deleteParcel(final UUID id, final String userEmail) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userEmail);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = userService.getUserByEmail(userEmail);
 
-        final var parcel = getParcelEntity(id, sender);
+        final var parcel = getParcelByIdAndUser(id, sender);
 
         parcelRepository.delete(parcel);
         log.info("Parcel with ID: {} deleted successfully", id);
@@ -136,7 +119,7 @@ public class ParcelService {
         return code;
     }
 
-    private Parcel getParcelEntity(final UUID id, final User sender) {
+    public Parcel getParcelByIdAndUser(final UUID id, final User sender) {
         final var parcel = parcelRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
@@ -147,8 +130,4 @@ public class ParcelService {
         return parcel;
     }
 
-    private User getUserByEmail(final String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
-    }
 }

@@ -1,6 +1,8 @@
 package com.tcs.dhv.controller;
 
+import com.tcs.dhv.domain.dto.AddressChangeDto;
 import com.tcs.dhv.domain.dto.ParcelDto;
+import com.tcs.dhv.service.AddressChangeService;
 import com.tcs.dhv.service.ParcelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class ParcelsController {
 
     private final ParcelService parcelService;
+    private final AddressChangeService addressChangeService;
 
     @PostMapping
     public ResponseEntity<ParcelDto> createParcel(
@@ -63,18 +65,6 @@ public class ParcelsController {
         return ResponseEntity.ok(parcel);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ParcelDto> updateParcel(
-        @PathVariable final UUID id,
-        @Valid @RequestBody final ParcelDto parcelUpdate,
-        final Authentication authentication
-    ) {
-        log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
-
-        final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, authentication.getName());
-        return ResponseEntity.ok(updatedParcel);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcel(
         @PathVariable final UUID id,
@@ -84,5 +74,19 @@ public class ParcelsController {
 
         parcelService.deleteParcel(id, authentication.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/address-change")
+    public ResponseEntity<Void> changeAddress(
+        @PathVariable final UUID id,
+        @Valid @RequestBody final AddressChangeDto requestDto,
+        final Authentication authentication
+    ) {
+        log.info("Address change for parcel {} by user: {}", id, authentication.getName());
+
+        addressChangeService.changeAddress(id, requestDto, authentication.getName());
+
+        log.info("Address changed successfully for parcel: {}", id);
+        return ResponseEntity.ok().build();
     }
 }
