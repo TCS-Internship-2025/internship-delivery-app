@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
-    "find-unused": "knip",
+    "find-unused": "knip --production",
     "mock:start": "mockoon-cli start --data mockoon-environment.json --port 3001"
   },
   "dependencies": {
@@ -63,7 +63,7 @@
     "react-i18next": "^15.6.1",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.38.0",
-    "vite": "npm:rolldown-vite@latest"
+    "vite": "npm:rolldown-vite@^7.0.11"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

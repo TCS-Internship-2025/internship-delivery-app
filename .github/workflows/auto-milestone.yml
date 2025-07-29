@@ -20,10 +20,10 @@ jobs:
 
             // Sprint dates
             const sprints = [
-              { name: 'Sprint 1', start: '2025-07-21', end: '2025-07-25' },
-              { name: 'Sprint 2', start: '2025-07-28', end: '2025-08-01' },
-              { name: 'Sprint 3', start: '2025-08-04', end: '2025-08-08' },
-              { name: 'Sprint 4', start: '2025-08-11', end: '2025-08-15' }
+              { name: 'Sprint 1', start: '2025-07-23', end: '2025-07-29' },
+              { name: 'Sprint 2', start: '2025-07-30', end: '2025-08-05' },
+              { name: 'Sprint 3', start: '2025-08-06', end: '2025-08-12' },
+              { name: 'Sprint 4', start: '2025-08-13', end: '2025-08-19' }
             ];
 
             // Current date
