@@ -28,7 +28,7 @@ export const ParcelDetails = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+      <Box sx={{ flex: 1, overflow: 'auto' }}>
         <Container
           maxWidth={false}
           sx={{
@@ -39,7 +39,7 @@ export const ParcelDetails = () => {
           }}
         >
           <ParcelDetailsContent parcelData={DUMMY_PARCEL_DATA} />
-          <Box sx={{ alignSelf: 'center', mt: 15 }}>
+          <Box alignSelf="center" mt={{ xs: 8, md: 15 }}>
             <Button
               variant="outlined"
               color="primary"

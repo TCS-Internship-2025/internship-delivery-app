@@ -103,16 +103,17 @@ export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
   return (
     <Box
       className="ag-theme-quartz"
+      width={{ xs: '100%', md: '75%' }}
+      height={{ xs: 500, md: 850 }}
+      ml="auto"
+      mr="auto"
       sx={{
-        width: '75%',
-        height: 800,
-        margin: '20px auto 0',
         '--ag-row-height': '56px',
         '--ag-font-size': '22px',
         '--ag-grid-size': '10px',
       }}
     >
-      <Button onClick={handleDetails} disabled={!isRowSelected} variant="contained" sx={{ fontSize: 16, my: 2 }}>
+      <Button onClick={handleDetails} disabled={!isRowSelected} variant="contained" sx={{ fontSize: 16, my: 3 }}>
         See details
       </Button>
       <AgGridReact
