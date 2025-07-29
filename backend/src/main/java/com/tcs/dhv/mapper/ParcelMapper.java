@@ -5,40 +5,45 @@ import com.tcs.dhv.domain.dto.ParcelResponse;
 import com.tcs.dhv.domain.dto.ParcelUpdate;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import com.tcs.dhv.domain.enums.ParcelStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Mapper(
-    componentModel = "spring",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {AddressMapper.class, RecipientMapper.class}
-)
-public interface ParcelMapper {
+@RequiredArgsConstructor
+@Component
+public class ParcelMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "currentStatus", constant = "CREATED")
-    @Mapping(target = "sender", source = "sender")
-    @Mapping(target = "recipient", source = "dto.recipient")
-    @Mapping(target = "trackingCode", source = "trackingCode")
-    @Mapping(target = "paymentType", source = "dto.paymentType")
-    @Mapping(target = "deliveryType", source = "dto.deliveryType")
-    Parcel toEntity(ParcelRequest dto, User sender, String trackingCode);
+    private final RecipientMapper recipientMapper;
 
-    @Mapping(target = "recipient", source = "recipient")
-    @Mapping(target = "currentStatus", expression = "java(parcel.getCurrentStatus().name())")
-    ParcelResponse toResponse(Parcel parcel);
+    public Parcel toEntity(ParcelRequest dto, User sender, String trackingCode) {
+        return Parcel.builder()
+            .sender(sender)
+            .trackingCode(trackingCode)
+            .paymentType(dto.paymentType())
+            .deliveryType(dto.deliveryType())
+            .currentStatus(ParcelStatus.CREATED)
+            .build();
+    }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "sender", ignore = true)
-    @Mapping(target = "recipient", ignore = true)
-    @Mapping(target = "trackingCode", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "currentStatus", ignore = true)
-    @Mapping(target = "paymentType", ignore = true)
-    void updateEntity(@MappingTarget Parcel parcel, ParcelUpdate source);
+    public ParcelResponse toResponse(Parcel parcel) {
+        return new ParcelResponse(
+            parcel.getId(),
+            parcel.getTrackingCode(),
+            parcel.getCurrentStatus().name(),
+            recipientMapper.toDto(parcel.getRecipient()),
+            parcel.getDeliveryType(),
+            parcel.getPaymentType(),
+            parcel.getCreatedAt(),
+            parcel.getUpdatedAt()
+        );
+    }
+
+    public void updateEntity(Parcel parcel, ParcelUpdate update) {
+        if (update.deliveryType() != null) {
+            parcel.setDeliveryType(update.deliveryType());
+        }
+        if (update.address() != null) {
+            recipientMapper.updateEntity(parcel.getRecipient(), update.address());
+        }
+    }
 }
