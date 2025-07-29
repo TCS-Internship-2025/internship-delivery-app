@@ -57,8 +57,8 @@ public class User {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @NotNull
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @NotNull
