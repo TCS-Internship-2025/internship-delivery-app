@@ -1,5 +1,6 @@
 package com.tcs.dhv.controller;
 
+import com.tcs.dhv.domain.dto.AddressChangeDto;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.entity.ParcelStatusHistory;
 import com.tcs.dhv.domain.enums.ParcelStatus;
@@ -34,8 +35,7 @@ public class ParcelsController {
     private final ParcelService parcelService;
     private final EmailService emailService;
     private final ParcelStatusHistoryService  parcelStatusHistoryService;
-
-
+    private final AddressChangeService addressChangeService;
 
     @PostMapping
     public ResponseEntity<ParcelDto> createParcel(
@@ -79,23 +79,6 @@ public class ParcelsController {
         return ResponseEntity.ok(parcel);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ParcelDto> updateParcel(
-        @PathVariable final UUID id,
-        @Valid @RequestBody final ParcelDto parcelUpdate,
-        final Authentication authentication
-    ) {
-        log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
-
-        final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, UUID.fromString(authentication.getName()));
-
-        if(updatedParcel.currentStatus().equals(ParcelStatus.DELIVERED.toString())){
-            emailService.sendDeliveryCompleteEmail(updatedParcel.recipient().email(), updatedParcel.trackingCode());
-            log.info("Delivery completion email sent to email: {}", updatedParcel.recipient().email());
-        }
-        return ResponseEntity.ok(updatedParcel);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcel(
         @PathVariable final UUID id,
@@ -105,5 +88,22 @@ public class ParcelsController {
 
         parcelService.deleteParcel(id, UUID.fromString(authentication.getName()));
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/address-change")
+    public ResponseEntity<Void> changeAddress(
+        @PathVariable final UUID id,
+        @Valid @RequestBody final AddressChangeDto requestDto,
+        final Authentication authentication
+    ) {
+        log.info("Address change for parcel {} by user: {}", id, authentication.getName());
+
+        addressChangeService.changeAddress(id, requestDto, authentication.getName());
+
+        emailService.sendDeliveryCompleteEmail(updatedParcel.recipient().email(), updatedParcel.trackingCode());
+        log.info("Delivery completion email sent to email: {}", updatedParcel.recipient().email());
+
+        log.info("Address changed successfully for parcel: {}", id);
+        return ResponseEntity.ok().build();
     }
 }
