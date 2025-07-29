@@ -15,7 +15,7 @@ export const MainHeader = () => {
   const isSlug = location.pathname.includes('/tracking');
 
   const getPageInfo = () => {
-    if (location.pathname.includes(ROUTES.SEND_PARCEL)) return { title: 'Send Parcel', progress: 25 };
+    if (location.pathname.includes(ROUTES.PARCEL_FORM)) return { title: 'Send Parcel', progress: 25 };
     if (location.pathname.includes(ROUTES.PARCELS)) return { title: 'My Parcels', progress: 100 };
     if (location.pathname.includes(`${ROUTES.PAGE5}/${ROUTES.SUCCESS}`))
       return { title: 'Something was successful', progress: 100 };

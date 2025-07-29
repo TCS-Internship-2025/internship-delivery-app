@@ -26,7 +26,7 @@ export const LandingPage = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        height: '90vh',
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: 'background.default',

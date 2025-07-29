@@ -35,7 +35,7 @@ export const Navbar = () => {
     void navigate('/');
   };
 
-  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.SEND_PARCEL, ROUTES.PARCELS], []);
+  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.PARCEL_FORM, ROUTES.PARCELS], []);
 
   const currentIndex = routes.indexOf(location.pathname);
   const activeTab = currentIndex !== -1 ? currentIndex : 0;
@@ -86,22 +86,22 @@ export const Navbar = () => {
               <NavItem
                 icon={<TrackChangesIcon />}
                 label="Tracking"
-                isActive={activeTab === 0}
-                onClick={() => handleNavigation(0)}
+                isActive={activeTab === 1}
+                onClick={() => handleNavigation(1)}
               />
               {isAuthenticated && (
                 <>
                   <NavItem
                     icon={<LocalShippingIcon />}
                     label="Send Parcel"
-                    isActive={activeTab === 1}
-                    onClick={() => handleNavigation(1)}
+                    isActive={activeTab === 2}
+                    onClick={() => handleNavigation(2)}
                   />
                   <NavItem
                     icon={<LocalShippingIcon />}
                     label="My Parcels"
-                    isActive={activeTab === 2}
-                    onClick={() => handleNavigation(2)}
+                    isActive={activeTab === 3}
+                    onClick={() => handleNavigation(3)}
                   />
                 </>
               )}

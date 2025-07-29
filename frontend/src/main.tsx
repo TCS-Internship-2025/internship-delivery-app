@@ -15,21 +15,12 @@ import { FormProvider } from '@/providers/FormProvider.tsx';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
-import { Page0 } from '@/pages/Page0.tsx';
-
-import { ParcelPage } from '@/pages/Parcels.tsx';
-import { SendParcel } from '@/pages/SendParcel.tsx';
-
-import { Page3 } from '@/pages/Page3.tsx';
-import { Page4 } from '@/pages/Page4.tsx';
 import { ParcelForm } from '@/pages/ParcelForm.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
 import { RecipientForm } from '@/pages/RecipientForm.tsx';
-
 import { Tracking } from '@/pages/Tracking.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
-// import { ProtectedRoute } from '@/components/ProtectedRoute.tsx'; commented out for testing
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
@@ -52,12 +43,7 @@ const ReactQueryDevtools = lazy(() =>
 const router = createBrowserRouter([
   {
     errorElement: <SiteNotFound />,
-    element: <AppLayout />,
     children: [
-      {
-        index: true,
-        element: <LandingPage />,
-      },
       {
         path: ROUTES.LOGIN,
         element: <Login />,
@@ -66,71 +52,58 @@ const router = createBrowserRouter([
         path: ROUTES.REGISTER,
         element: <Register />,
       },
+
       {
-        path: ROUTES.TRACKING,
-        element: <Tracking />,
-      },
-      {
-        path: ROUTES.TRACKINGSLUG,
-        element: <TrackingSlug />,
-      },
-      {
-        path: ROUTES.PARCELS,
         children: [
           {
-            index: true,
-            element: <ParcelPage />,
-          },
-          {
-            path: ROUTES.DETAILS,
-            element: <ParcelDetails />,
-          },
-        ],
-      },
-      {
-        // element: <ProtectedRoute />,
-
-        children: [
-          {
-            index: true,
-            element: <Page0 />,
-          },
-          {
-            path: ROUTES.SEND_PARCEL,
-            element: <SendParcel />,
-          },
-
-          {
-            path: ROUTES.PAGE5,
+            element: <AppLayout />,
             children: [
               {
-
-                path: ROUTES.SUCCESS,
-                element: <ProviderPage />,
-
                 index: true,
-                element: <Page0 />,
+                element: <LandingPage />,
               },
               {
-                path: ROUTES.PAGE1,
+                path: ROUTES.PARCELS,
+                children: [
+                  {
+                    index: true,
+                    element: <ParcelPage />,
+                  },
+                  {
+                    path: ROUTES.DETAILS,
+                    element: <ParcelDetails />,
+                  },
+                ],
+              },
+              {
+                path: ROUTES.RECIPIENT_FORM,
                 element: <RecipientForm />,
               },
               {
-                path: ROUTES.PAGE2,
+                path: ROUTES.PARCEL_FORM,
                 element: <ParcelForm />,
               },
               {
-                path: ROUTES.PAGE3,
-                element: <Page3 />,
+                path: ROUTES.TRACKING,
+                element: <Tracking />,
               },
               {
-                path: ROUTES.PAGE4,
-                element: <Page4 />,
+                path: ROUTES.TRACKINGSLUG,
+                element: <TrackingSlug />,
+              },
 
-              },
               {
-                path: ROUTES.ERROR,
-                element: <ErrorPage />,
+                path: ROUTES.PAGE5,
+                children: [
+                  {
+                    path: ROUTES.SUCCESS,
+                    element: <ProviderPage />,
+                  },
+                  {
+                    path: ROUTES.ERROR,
+                    element: <ErrorPage />,
+                  },
+                ],
               },
             ],
           },

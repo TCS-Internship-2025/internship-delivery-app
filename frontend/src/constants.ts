@@ -15,7 +15,8 @@ export const ROUTES = {
   LOGIN: 'login',
   REGISTER: 'register',
   APP: 'app',
-  SEND_PARCEL: 'send-parcel',
+  RECIPIENT_FORM: 'recipient-form',
+  PARCEL_FORM: 'parcel-form',
   PAGE5: 'page5',
   SUCCESS: 'success',
   ERROR: 'error',
@@ -31,7 +32,6 @@ export const PARCEL_STATUS = {
   DELIVERED: 'DELIVERED',
   STUCK: 'STUCK',
 };
-
 
 export const mapboxAccessToken: string = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string;
 
