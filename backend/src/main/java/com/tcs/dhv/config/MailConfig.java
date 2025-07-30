@@ -68,7 +68,7 @@ public class MailConfig {
     }
 
     @Bean
-    SimpleMailMessage templateShipmentMessage() throws MessagingException {
+    SimpleMailMessage templateShipmentMessage() {
         final var mail = new SimpleMailMessage();
         mail.setFrom(username);
         return mail;

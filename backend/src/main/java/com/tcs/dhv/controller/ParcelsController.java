@@ -1,7 +1,9 @@
 package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.ParcelDto;
+import com.tcs.dhv.service.EmailService;
 import com.tcs.dhv.service.ParcelService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +29,24 @@ import java.util.UUID;
 public class ParcelsController {
 
     private final ParcelService parcelService;
+    private final EmailService emailService;
+
+
 
     @PostMapping
     public ResponseEntity<ParcelDto> createParcel(
         @Valid @RequestBody final ParcelDto parcelDto,
         final Authentication authentication
-    ) {
+    ) throws MessagingException {
         log.info("Creating parcel request received from user: {}", authentication.getName());
 
         final var parcelResponse = parcelService.createParcel(parcelDto, authentication.getName());
 
         log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
+
+        emailService.sendShipmentCreationEmail(parcelResponse.recipient().email(), parcelResponse.trackingCode(), "www.google.com");
+
+        log.info("Parcel creation email sent to email: {}", parcelResponse.recipient().email());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(parcelResponse);
     }

@@ -7,6 +7,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ public class EmailService {
     @Value("${app.base-url}")
     private String appBaseUrl;
 
+
     public final void sendShipmentCreationEmail(
         final String email,
         final String trackingNumber,
@@ -57,9 +59,6 @@ public class EmailService {
         helper.setText(htmlContent, true);
 
         mailSender.send(message);
-
-
-
     }
 
     @Async

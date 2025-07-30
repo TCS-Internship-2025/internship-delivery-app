@@ -28,7 +28,6 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService authService;
-    //private final EmailVerificationService emailVerificationService;
     private final EmailService emailService;
 
     @Value("${email-verification.required}")
