@@ -1,5 +1,7 @@
 package com.tcs.dhv.domain.dto;
 
+import com.tcs.dhv.domain.entity.PredefinedLocation;
+
 import java.util.UUID;
 
 public record PickupPointDto(
@@ -9,4 +11,13 @@ public record PickupPointDto(
     Double longitude,
     AddressDto address
 ) {
+    public static PickupPointDto fromEntity(PredefinedLocation location) {
+        return new PickupPointDto(
+            location.getId(),
+            location.getName(),
+            location.getAddress().getLatitude(),
+            location.getAddress().getLongitude(),
+            AddressDto.fromEntity(location.getAddress())
+        );
+    }
 }

@@ -30,8 +30,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     public static final String[] PUBLIC_ENDPOINTS = {
-            "/api/auth/**",
-            "/api/tracking/**"
+        "/api/auth/**",
+        "/api/tracking/**",
+        "/api/locations/**",
     };
 
     @Value("${dhv.client-url}")
