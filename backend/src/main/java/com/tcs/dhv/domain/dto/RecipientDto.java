@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import com.tcs.dhv.domain.entity.Recipient;
 
 import java.time.LocalDate;
 
@@ -35,4 +36,31 @@ public record RecipientDto(
     @Valid
     AddressRequest address
 ) {
+    public static RecipientDto fromEntity(final Recipient recipient) {
+        return new RecipientDto(
+            recipient.getName(),
+            recipient.getEmail(),
+            recipient.getPhone(),
+            recipient.getBirthDate(),
+            AddressDto.fromEntity(recipient.getAddress())
+        );
+    }
+
+    public Recipient toEntity() {
+        return Recipient.builder()
+            .name(name)
+            .email(email)
+            .phone(phone)
+            .birthDate(birthDate)
+            .address(address.toEntity())
+            .build();
+    }
+
+    public void updateEntity(final Recipient recipient) {
+        if (name != null) recipient.setName(name);
+        if (email != null) recipient.setEmail(email);
+        if (phone != null) recipient.setPhone(phone);
+        if (birthDate != null) recipient.setBirthDate(birthDate);
+        if (address != null) address.updateEntity(recipient.getAddress());
+    }
 }

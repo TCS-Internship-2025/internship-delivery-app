@@ -1,11 +1,6 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.ApiErrorResponse;
-import com.tcs.dhv.domain.dto.ParcelRequest;
-import com.tcs.dhv.domain.dto.ParcelResponse;
-import com.tcs.dhv.domain.dto.ParcelUpdate;
-import com.tcs.dhv.domain.entity.User;
-
+import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.service.ParcelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,15 +56,15 @@ public class ParcelsController {
                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping
-    public ResponseEntity<ParcelResponse> createParcel(
-        @Valid @RequestBody final ParcelRequest parcelRequest,
-        @AuthenticationPrincipal final User currentUser
+    public ResponseEntity<ParcelDto> createParcel(
+        @Valid @RequestBody final ParcelDto parcelDto,
+        final Authentication authentication
     ) {
-        log.info("Creating parcel request received from user: {}", currentUser.getEmail());
+        log.info("Creating parcel request received from user: {}", authentication.getName());
 
-        final var parcelResponse = parcelService.createParcel(parcelRequest, currentUser);
+        final var parcelResponse = parcelService.createParcel(parcelDto, authentication.getName());
 
-        log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), currentUser.getEmail());
+        log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(parcelResponse);
     }
@@ -80,12 +75,12 @@ public class ParcelsController {
             content = @Content(schema = @Schema(implementation = ParcelResponse.class)))
     })
     @GetMapping
-    public ResponseEntity<List<ParcelResponse>> getUserParcels(@AuthenticationPrincipal final User currentUser) {
-        log.info("Retrieving parcels for user: {}", currentUser.getEmail());
+    public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
+        log.info("Retrieving parcels for user: {}", authentication.getName());
 
-        final var parcels = parcelService.getUserParcels(currentUser.getId());
+        final var parcels = parcelService.getUserParcels(authentication.getName());
 
-        log.info("Retrieved {} parcels for user: {}", parcels.size(), currentUser.getEmail());
+        log.info("Retrieved {} parcels for user: {}", parcels.size(), authentication.getName());
         return ResponseEntity.ok(parcels);
     }
 
@@ -97,13 +92,13 @@ public class ParcelsController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ParcelResponse> getParcel(
+    public ResponseEntity<ParcelDto> getParcel(
         @PathVariable final UUID id,
-        @AuthenticationPrincipal final User currentUser
+        final Authentication authentication
     ) {
-        log.info("Retrieving parcel with ID: {} for user: {}", id, currentUser.getEmail());
+        log.info("Retrieving parcel with ID: {} for user: {}", id, authentication.getName());
 
-        final var parcel = parcelService.getParcel(id, currentUser);
+        final var parcel = parcelService.getParcel(id, authentication.getName());
         return ResponseEntity.ok(parcel);
     }
 
@@ -117,14 +112,14 @@ public class ParcelsController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ParcelResponse> updateParcel(
+    public ResponseEntity<ParcelDto> updateParcel(
         @PathVariable final UUID id,
-        @Valid @RequestBody final ParcelUpdate parcelUpdate,
-        @AuthenticationPrincipal final User currentUser
+        @Valid @RequestBody final ParcelDto parcelUpdate,
+        final Authentication authentication
     ) {
-        log.info("Updating parcel with ID: {} for user: {}", id, currentUser.getEmail());
+        log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
 
-        final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, currentUser);
+        final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, authentication.getName());
         return ResponseEntity.ok(updatedParcel);
     }
 
@@ -140,11 +135,11 @@ public class ParcelsController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcel(
         @PathVariable final UUID id,
-        @AuthenticationPrincipal final User currentUser
+        final Authentication authentication
     ) {
-        log.info("Deleting parcel with ID: {} for user: {}", id, currentUser.getEmail());
+        log.info("Deleting parcel with ID: {} for user: {}", id, authentication.getName());
 
-        parcelService.deleteParcel(id, currentUser);
+        parcelService.deleteParcel(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 }

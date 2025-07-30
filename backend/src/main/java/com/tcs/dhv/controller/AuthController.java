@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.tcs.dhv.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,8 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService authService;
-    private final EmailVerificationService emailVerificationService;
+    //private final EmailVerificationService emailVerificationService;
+    private final EmailService emailService;
 
     @Value("${email-verification.required}")
     private boolean emailVerificationRequired;
@@ -90,7 +92,7 @@ public class AuthController {
         final var registeredUser = authService.registerUser(registerRequest);
 
         if (emailVerificationRequired) {
-            emailVerificationService.sendVerificationTokenByEmail(
+            emailService.sendVerificationTokenByEmail(
                 registeredUser.getId(),
                 registeredUser.getEmail()
             );
@@ -115,7 +117,7 @@ public class AuthController {
     @PostMapping("/email/resend-verification")
     public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) {
         log.info("Resend verification email requested for: {}", email);
-        emailVerificationService.resendVerificationTokenByEmail(email);
+        emailService.resendVerificationTokenByEmail(email);
 
         log.info("Verification email successfully sent to: {}", email);
         return ResponseEntity.noContent().build();
@@ -138,7 +140,7 @@ public class AuthController {
         @RequestParam("uid") final UUID userId,
         @RequestParam("t") final String token
     ) {
-        final var verifiedUser = emailVerificationService.verifyEmail(userId, token);
+        final var verifiedUser = emailService.verifyEmail(userId, token);
 
         log.info("User with email {} successfully verified", verifiedUser.getEmail());
         return ResponseEntity.ok(new RegisterResponse(
