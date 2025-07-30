@@ -11,8 +11,8 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TrackingMapper {
-    @Mapping(source = "trackingCode", target = "trackingCode")
-    @Mapping(source = "status", target = "currentStatus")
+    @Mapping(source = "parcel.trackingCode", target = "trackingCode")
+    @Mapping(source = "parcel.currentStatus", target = "currentStatus")
     @Mapping(source = "history", target = "timeline")
     TrackingResponse toResponse(Parcel parcel, List<ParcelStatusHistory> history);
 
