@@ -31,5 +31,7 @@ public class ApiKey {
     @Column(nullable = false)
     private Boolean active = true;
 
-   private LocalDateTime lastUsedAt;
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
+
 }
