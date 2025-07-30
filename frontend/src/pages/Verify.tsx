@@ -89,7 +89,7 @@ export const Verify = () => {
             Didn't receive an email? Check your spam folder or request a new verification link.
           </Typography>
 
-          <Button disabled={cooldown} variant="outlined" color="primary" onClick={handleSubmit} sx={{ mt: 3 }}>
+          <Button disabled={cooldown} variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 3 }}>
             Resend Email
           </Button>
           {cooldown && (
