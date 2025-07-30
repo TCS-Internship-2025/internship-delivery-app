@@ -9,6 +9,4 @@ import java.util.UUID;
 
 public interface ApiKeyRepository extends CrudRepository<ApiKey, Integer> {
     List<ApiKey> findAllByActiveTrue();
-
-    Optional<ApiKey> findById(UUID id);
 }

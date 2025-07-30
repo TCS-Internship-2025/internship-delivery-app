@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/testing")
+@RequestMapping("/api/tracking")
 @RequiredArgsConstructor
 public class TestController {
 

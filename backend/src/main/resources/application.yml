@@ -63,10 +63,8 @@ app:
   base-url: http://localhost:8080
 
 dhv:
-  client-url: http://localhost:3000
+  client-url: http://localhost:5173
 api:
   key:
     header:
-      name: API-KEY
-    secret: 6f8a1c7e4bbf2a019f7c4d9c97b3a6f344ce7301225c73b874ca9c7e6f3b9e5f
-
+      name: ${HEADER_NAME}
