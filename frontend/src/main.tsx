@@ -26,6 +26,7 @@ import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
 import { Login } from './pages/Login.tsx';
 import { ParcelDetails } from './pages/ParcelDetails.tsx';
+import { ProfileInfo } from './pages/ProfileInfo.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { ProviderPage } from './pages/Success.tsx';
@@ -90,6 +91,10 @@ const router = createBrowserRouter([
               {
                 path: ROUTES.TRACKINGSLUG,
                 element: <TrackingSlug />,
+              },
+              {
+                path: ROUTES.PROFILE,
+                element: <ProfileInfo />,
               },
 
               {

@@ -168,7 +168,7 @@ export const Navbar = () => {
               color="primary"
               sx={{ px: 1, borderRadius: 1 }}
               onClick={() => {
-                console.log('xd');
+                void navigate(ROUTES.PROFILE);
               }}
             >
               <PersonIcon />
