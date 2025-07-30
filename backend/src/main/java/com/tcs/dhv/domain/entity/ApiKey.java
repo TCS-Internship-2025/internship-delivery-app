@@ -6,13 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "api_keys")
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@Entity
+@Table(name = "api_keys")
 public class ApiKey {
 
     @Id
@@ -35,3 +35,5 @@ public class ApiKey {
     private LocalDateTime lastUpdated;
 
 }
+
+

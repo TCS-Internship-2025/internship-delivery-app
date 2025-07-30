@@ -56,7 +56,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             final HttpSecurity http,
             final CorsConfigurationSource corsConfigurationSource,
-            final ApiKeyFilter apiKeyFilter) throws Exception {
+            final ApiKeyFilter apiKeyFilter
+    ) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf
