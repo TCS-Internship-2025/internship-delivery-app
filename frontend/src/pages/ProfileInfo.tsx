@@ -51,9 +51,10 @@ export const ProfileInfo = () => {
   const name = 'Example Human';
   const email = 'example.human@example.com';
 
-  const getInitials = (fullName: string) => {
+  const getFirstThreeInitials = (fullName: string) => {
     return fullName
       .split(' ')
+      .slice(0, 3)
       .map((word) => word[0])
       .join('')
       .toUpperCase();
@@ -64,7 +65,9 @@ export const ProfileInfo = () => {
       <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
         <Grid container spacing={3} alignItems="center">
           <Grid>
-            <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: 28 }}>{getInitials(name)}</Avatar>
+            <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: 28 }}>
+              {getFirstThreeInitials(name)}
+            </Avatar>
           </Grid>
 
           <Grid>
