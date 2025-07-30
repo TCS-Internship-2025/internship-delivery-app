@@ -63,15 +63,17 @@ export const ProfileInfo = () => {
 
         <Divider sx={{ my: 3 }} />
 
-        <Stack direction={'row'} justifyContent={'space-between'}>
+        <Stack direction={'column'} spacing={2}>
           <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
-          <ProfileInfoButton>Edit Profile</ProfileInfoButton>
+          <ProfileInfoButton>Edit password</ProfileInfoButton>
+          <ProfileInfoButton>Edit address</ProfileInfoButton>
+          <ProfileInfoButton>Edit user info</ProfileInfoButton>
         </Stack>
       </Paper>
 
       <Box sx={{ mx: 'auto', mt: 4 }}>
         <Typography variant="h6" gutterBottom>
-          My last 2 parcels
+          My last 2 packages
         </Typography>
 
         {(() => {
