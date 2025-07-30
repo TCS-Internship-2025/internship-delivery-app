@@ -15,10 +15,7 @@ export const MainHeader = () => {
   const isSlug = location.pathname.includes('/tracking');
 
   const getPageInfo = () => {
-    if (location.pathname.includes(ROUTES.PAGE1)) return { title: 'Page1', progress: 25 };
-    if (location.pathname.includes(ROUTES.PAGE2)) return { title: 'Page2', progress: 50 };
-    if (location.pathname.includes(ROUTES.PAGE3)) return { title: 'Page3', progress: 75 };
-    if (location.pathname.includes(ROUTES.PAGE4)) return { title: 'Page4', progress: 95 };
+    if (location.pathname.includes(ROUTES.PARCEL_FORM)) return { title: 'Send Parcel', progress: 25 };
     if (location.pathname.includes(ROUTES.PARCELS)) return { title: 'My Parcels', progress: 100 };
     if (location.pathname.includes(`${ROUTES.PAGE5}/${ROUTES.SUCCESS}`))
       return { title: 'Something was successful', progress: 100 };
@@ -26,15 +23,13 @@ export const MainHeader = () => {
       return { title: 'Technical error', progress: 100 };
     return { title: 'Pending ...' };
   };
-
+  const pageInfo = getPageInfo();
   if (isHomePage) {
     return;
   }
   if (isSlug) {
     return;
   }
-
-  const pageInfo = getPageInfo();
 
   return (
     <Paper
@@ -51,7 +46,6 @@ export const MainHeader = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          p: 3,
           py: 2,
         }}
       >
