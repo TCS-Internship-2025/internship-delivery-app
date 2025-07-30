@@ -3,10 +3,12 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.ParcelRequest;
 import com.tcs.dhv.domain.dto.ParcelResponse;
 import com.tcs.dhv.domain.dto.ParcelUpdate;
+import com.tcs.dhv.domain.entity.ParcelStatusHistory;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.mapper.AddressMapper;
 import com.tcs.dhv.mapper.ParcelMapper;
 import com.tcs.dhv.repository.ParcelRepository;
+import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class ParcelService {
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
     private final AddressMapper addressMapper;
+    private final ParcelStatusHistoryRepository statusHistoryRepository;
 
     private final Random random = new Random();
 
@@ -77,11 +80,13 @@ public class ParcelService {
         log.info("Updating parcel with ID: {} for user: {}", id, sender.getEmail());
 
         final var parcel = parcelRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
         if (!parcel.getSender().getId().equals(sender.getId())) {
             throw new AccessDeniedException("Access denied");
         }
+
+        var oldStatus = parcel.getCurrentStatus();
 
         parcelMapper.updateEntity(parcel, parcelUpdate);
 
@@ -91,6 +96,17 @@ public class ParcelService {
         }
 
         final var updatedParcel = parcelRepository.save(parcel);
+
+        if (parcelUpdate.status() != null && parcelUpdate.status() != oldStatus) {
+            var history = ParcelStatusHistory.builder()
+                    .parcel(updatedParcel)
+                    .status(updatedParcel.getCurrentStatus())
+                    .description("Status updated to " + updatedParcel.getCurrentStatus())
+                    .timestamp(java.time.LocalDateTime.now())
+                    .build();
+            statusHistoryRepository.save(history);
+        }
+
         log.info("Parcel with ID: {} updated successfully", id);
         return parcelMapper.toResponse(updatedParcel);
     }

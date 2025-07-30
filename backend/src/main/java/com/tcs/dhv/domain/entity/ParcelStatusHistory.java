@@ -46,14 +46,12 @@ public class ParcelStatusHistory {
     private Parcel parcel;
 
     @NotNull
-    @Setter(AccessLevel.NONE)
     @Enumerated(EnumType.STRING)
     private ParcelStatus status;
 
     private String description;
 
     @NotNull
-    @Setter(AccessLevel.NONE)
     @CreationTimestamp
     private LocalDateTime timestamp;
 }

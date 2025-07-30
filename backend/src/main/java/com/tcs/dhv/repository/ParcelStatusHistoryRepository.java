@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ParcelStatusHistoryRepository extends JpaRepository<ParcelStatusHistory, UUID> {
-
     List<ParcelStatusHistory> findAllByParcelIdOrderByTimestampAsc(UUID parcelId);
 }
