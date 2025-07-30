@@ -1,6 +1,11 @@
 import { useCallback, useEffect, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
-import { parcelFormDefaultValues, ROUTES } from '@/constants';
+import {
+  DELIVERY_TYPE_NAME_CONVERTER,
+  PARCEL_FORM_DEFAULT_VALUES,
+  PAYMENT_TYPE_NAME_CONVERTER,
+  ROUTES,
+} from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useFormContext } from '@/contexts/FormContext';
@@ -32,7 +37,7 @@ export const ParcelForm = () => {
   const handleReset = useCallback(() => {
     const currentDeliveryType = getValues('deliveryType');
     reset({
-      ...parcelFormDefaultValues,
+      ...PARCEL_FORM_DEFAULT_VALUES,
       deliveryType: currentDeliveryType,
     });
   }, [getValues, reset]);
@@ -42,7 +47,20 @@ export const ParcelForm = () => {
   }, [handleReset, deliveryType]);
 
   const onSubmit = (data: ParcelFormSchema) => {
-    const submittedData = { ...formContext.getRecipientFormData(), ...data };
+    const { paymentType, deliveryType, ...addressData } = data;
+    const recipientFormData = formContext.getRecipientFormData();
+
+    const submittedData = {
+      recipient: {
+        ...recipientFormData,
+        address: {
+          ...addressData,
+        },
+      },
+      paymentType: PAYMENT_TYPE_NAME_CONVERTER[paymentType],
+      deliveryType: DELIVERY_TYPE_NAME_CONVERTER[deliveryType],
+    };
+
     console.log('Form submitted with data:', submittedData);
     mutate(submittedData);
     handleReset();

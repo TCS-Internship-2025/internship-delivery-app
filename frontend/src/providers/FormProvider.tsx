@@ -1,14 +1,14 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
-import { parcelFormDefaultValues, recipientFormDefaultValues } from '@/constants';
+import { PARCEL_FORM_DEFAULT_VALUES, RECIPIENT_FORM_DEFAULT_VALUES } from '@/constants';
 
 import { FormContext, type FormContextValue, type FormData } from '@/contexts/FormContext';
 
 import type { ParcelFormSchema, RecipientFormSchema } from '@/utils/parcelComposition';
 
 const defaultFormData: FormData = {
-  ...recipientFormDefaultValues,
+  ...RECIPIENT_FORM_DEFAULT_VALUES,
 
-  ...parcelFormDefaultValues,
+  ...PARCEL_FORM_DEFAULT_VALUES,
 };
 
 interface FormProviderProps {

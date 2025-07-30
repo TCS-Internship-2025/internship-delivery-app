@@ -25,7 +25,6 @@ export const recipientFormSchema = z.object({
 
 export const parcelFormSchema = z.object({
   // Section 2 fields
-  //addressName: z.string().min(1, 'Address Name is required'),
   line1: z.string().min(1, 'Address Line 1 is required'),
   line2: z.string().optional(),
   building: z.string().min(1, 'Building is required'),

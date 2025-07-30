@@ -40,16 +40,15 @@ export const FIELD_PLACEHOLDERS: Record<string, string> = {
   'Email address': 'email@example.com',
 };
 
-export const recipientFormDefaultValues: RecipientFormSchema = {
+export const RECIPIENT_FORM_DEFAULT_VALUES: RecipientFormSchema = {
   title: '',
   name: '',
-  mobilePhone: '',
-  emailAddress: '',
-  dateOfBirth: null,
+  phone: '',
+  email: '',
+  birthDate: null,
 };
 
-export const parcelFormDefaultValues: ParcelFormSchema = {
-  addressName: '',
+export const PARCEL_FORM_DEFAULT_VALUES: ParcelFormSchema = {
   line1: '',
   line2: '',
   apartment: '',
@@ -59,4 +58,14 @@ export const parcelFormDefaultValues: ParcelFormSchema = {
   building: '',
   paymentType: '',
   deliveryType: 'Home',
+};
+
+export const PAYMENT_TYPE_NAME_CONVERTER: Record<string, string> = {
+  [PaymentEnum.enum.Sender]: 'SENDER_PAYS',
+  [PaymentEnum.enum.Recipient]: 'RECIPIENT_PAYS',
+};
+
+export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
+  [DeliveryEnum.enum.Home]: 'HOME',
+  [DeliveryEnum.enum['Pickup Point']]: 'PICKUP_POINT',
 };
