@@ -12,6 +12,23 @@ export const Verify = () => {
   const [countdown, setCountdown] = useState(30);
 
   useEffect(() => {
+    // Check localStorage for existing cooldown on mount
+    const cooldownExpiryTime = localStorage.getItem('cooldownExpiryTime');
+    if (cooldownExpiryTime) {
+      const expiryTime = parseInt(cooldownExpiryTime, 10);
+      const currentTime = Date.now();
+
+      if (expiryTime > currentTime) {
+        const remainingSeconds = Math.ceil((expiryTime - currentTime) / 1000);
+        setCooldown(true);
+        setCountdown(remainingSeconds);
+      } else {
+        localStorage.removeItem('cooldownExpiryTime');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     let timer: NodeJS.Timeout;
 
     if (cooldown && countdown > 0) {
@@ -21,6 +38,7 @@ export const Verify = () => {
     } else if (countdown === 0) {
       setCooldown(false);
       setCountdown(30);
+      localStorage.removeItem('cooldownExpiryTime');
     }
 
     return () => {
@@ -34,6 +52,9 @@ export const Verify = () => {
     and managing the cooldown state to prevent spamming. */
     setCooldown(true);
     setCountdown(30);
+
+    const expiryTime = Date.now() + 30 * 1000;
+    localStorage.setItem('cooldownExpiryTime', expiryTime.toString());
   };
 
   return (
