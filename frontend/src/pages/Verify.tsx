@@ -83,7 +83,7 @@ export const Verify = () => {
             Verify Your Email
           </Typography>
           <Typography variant="body1" align="center" color="text.primary" sx={{ mt: 1 }}>
-            Please check your email for a verification link.
+            We have sent you an email. Please check your email for a verification link.
           </Typography>
           <Typography variant="body2" align="center" sx={{ mt: 3 }}>
             Didn't receive an email? Check your spam folder or request a new verification link.
