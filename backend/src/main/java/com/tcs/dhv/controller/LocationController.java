@@ -22,7 +22,7 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<LocationResponse>> getLocations(
         @Valid @RequestParam final DeliveryType deliveryType
     ) {
