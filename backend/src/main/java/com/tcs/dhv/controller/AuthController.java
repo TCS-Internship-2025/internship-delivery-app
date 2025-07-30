@@ -6,15 +6,13 @@ import com.tcs.dhv.domain.dto.LoginRequest;
 import com.tcs.dhv.domain.dto.RegisterRequest;
 import com.tcs.dhv.domain.dto.RegisterResponse;
 import com.tcs.dhv.service.AuthService;
-import com.tcs.dhv.service.EmailVerificationService;
-
+import com.tcs.dhv.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import com.tcs.dhv.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -166,7 +164,7 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthResponse> refreshToken(@RequestParam final UUID refreshToken) {
         log.info("Refresh token request: {}", refreshToken);
-        final AuthResponse authResponse = authService.refreshToken(refreshToken);
+        final var authResponse = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(authResponse);
     }
 

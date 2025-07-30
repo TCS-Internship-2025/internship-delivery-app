@@ -34,7 +34,7 @@ public record RecipientDto(
 
     @Schema(description = "Recipient's delivery address")
     @Valid
-    AddressRequest address
+    AddressDto address
 ) {
     public static RecipientDto fromEntity(final Recipient recipient) {
         return new RecipientDto(

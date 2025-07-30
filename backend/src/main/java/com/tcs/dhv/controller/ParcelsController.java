@@ -1,9 +1,11 @@
 package com.tcs.dhv.controller;
 
+import com.tcs.dhv.domain.dto.ApiErrorResponse;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.service.ParcelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -46,10 +48,47 @@ public class ParcelsController {
 
     private final ParcelService parcelService;
 
-    @Operation(summary = "Create parcel", description = "Create a new parcel")
+    @Operation(summary = "Create parcel", description = "Create a new parcel",
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Parcel creation request",
+        required = true,
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ParcelDto.class),
+            examples = {
+                @ExampleObject(
+                    name = "Sample Parcel Request",
+                    summary = "Example request body for creating a parcel",
+                    value = """
+                        {
+                          "recipient": {
+                            "name": "Ferenc Kiss",
+                            "email": "ferenckiss19823010@gmail.com",
+                            "phone": "+36309876543",
+                            "birthDate": "2000-12-12",
+                            "address": {
+                              "line1": "Kossuth street 12",
+                              "line2": "2. floor",
+                              "building": "3A",
+                              "apartment": "12",
+                              "city": "Budapest",
+                              "postalCode": "1117",
+                              "country": "Hungary",
+                              "latitude": 47.15,
+                              "longitude": 18.746
+                            }
+                          },
+                          "deliveryType": "PICKUP_POINT",
+                          "paymentType": "SENDER_PAYS"
+                        }
+                    """
+                )
+            }
+        )
+    )
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Parcel created successfully",
-                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelResponse.class))),
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data",
                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
             @ApiResponse(responseCode = "422", description = "Validation failed",
@@ -72,7 +111,7 @@ public class ParcelsController {
     @Operation(summary = "Get user's every parcels", description = "Get all of the parcels of the user")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Parcels retrieved successfully",
-            content = @Content(schema = @Schema(implementation = ParcelResponse.class)))
+            content = @Content(schema = @Schema(implementation = ParcelDto.class)))
     })
     @GetMapping
     public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
@@ -87,7 +126,7 @@ public class ParcelsController {
     @Operation(summary = "Get 1 parcel", description = "Get a specific parcel by parcel's id")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Parcel retrieved successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelResponse.class))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class))),
         @ApiResponse(responseCode = "404", description = "Parcel not found",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
@@ -102,10 +141,44 @@ public class ParcelsController {
         return ResponseEntity.ok(parcel);
     }
 
-    @Operation(summary = "Update parcel", description = "Update a parcel by id")
+    @Operation(summary = "Update parcel", description = "Update a parcel by id",requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Parcel creation request",
+        required = true,
+        content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ParcelDto.class),
+            examples = {
+                @ExampleObject(
+                    name = "Sample Parcel Request",
+                    summary = "Example request body for creating a parcel",
+                    value = """
+                        {
+                            "deliveryType": "PICKUP_POINT",
+                            "recipient": {
+                                "name": "Ferenc Kiss",
+                                "email": "ferenckiss19823010@gmail.com",
+                                "phone": "+36309876543",
+                                "birthDate": "2000-12-12",
+                                "address": {
+                                    "line1": "Kossuth street 132",
+                                    "line2": "2. floor",
+                                    "building": "3A",
+                                    "apartment": "12",
+                                    "city": "Budapest",
+                                    "postalCode": "1117",
+                                    "country": "Hungary",
+                                    "latitude": 47.15,
+                                    "longitude": 18.746
+                                }
+                            }
+                        }
+                    """
+                )
+            }
+        )
+    ))
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Parcel updated successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelResponse.class))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class))),
         @ApiResponse(responseCode = "404", description = "Parcel not found",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
         @ApiResponse(responseCode = "422", description = "Validation failed",

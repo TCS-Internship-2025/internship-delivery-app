@@ -19,6 +19,15 @@ import java.util.List;
     bearerFormat = "JWT",
     description = """
         # JWT Bearer token authentication.
+        
+        **How to get a token:**
+        1. Register using POST /api/auth/register
+        2. Verify email using the link sent to your email
+        3. Login using POST /api/auth/login
+        4. Copy the 'accessToken' from the response
+        5. Enter it here as: Bearer <your-access-token>
+        
+        **Token format:** Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         """
 )
 @OpenAPIDefinition(
@@ -35,6 +44,13 @@ import java.util.List;
             ## Parcel Endpoints
             
             These endpoints require JWT token authorization to view.
+            
+            ### **How to get a token:**
+                1. Register using POST /api/auth/register
+                2. Verify email using the link sent to your email
+                3. Login using POST /api/auth/login
+                4. Copy the 'accessToken' from the response
+                5. Enter it here as: Bearer <your-access-token>
             """
     ),
     security = @SecurityRequirement(name = "bearerAuth")
