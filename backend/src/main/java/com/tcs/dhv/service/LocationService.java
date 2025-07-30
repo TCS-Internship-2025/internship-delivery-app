@@ -1,6 +1,6 @@
 package com.tcs.dhv.service;
 
-import com.tcs.dhv.domain.dto.LocationResponse;
+import com.tcs.dhv.domain.dto.LocationDto;
 import com.tcs.dhv.domain.enums.DeliveryType;
 import com.tcs.dhv.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +16,11 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
-    public List<LocationResponse> getLocationsByDeliveryType(DeliveryType deliveryType) {
+    public List<LocationDto> getLocationsByDeliveryType(DeliveryType deliveryType) {
         log.info("Fetching locations by delivery type {}", deliveryType);
         return locationRepository.findByDeliveryType(deliveryType)
             .stream()
-            .map(LocationResponse::fromEntity)
+            .map(LocationDto::fromEntity)
             .toList();
     }
 }

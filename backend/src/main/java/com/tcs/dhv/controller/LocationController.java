@@ -1,6 +1,6 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.LocationResponse;
+import com.tcs.dhv.domain.dto.LocationDto;
 import com.tcs.dhv.domain.enums.DeliveryType;
 import com.tcs.dhv.service.LocationService;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class LocationController {
     private final LocationService locationService;
 
     @GetMapping
-    public ResponseEntity<List<LocationResponse>> getLocations(
+    public ResponseEntity<List<LocationDto>> getLocations(
         @Valid @RequestParam final DeliveryType deliveryType
     ) {
         log.info("Received request for locations by delivery type {} :",  deliveryType);

@@ -5,7 +5,7 @@ import com.tcs.dhv.domain.enums.DeliveryType;
 
 import java.util.UUID;
 
-public record LocationResponse(
+public record LocationDto(
     UUID id,
     String name,
     Double latitude,
@@ -13,8 +13,8 @@ public record LocationResponse(
     DeliveryType deliveryType,
     AddressDto address
 ) {
-    public static LocationResponse fromEntity(PredefinedLocation location) {
-        return new LocationResponse(
+    public static LocationDto fromEntity(PredefinedLocation location) {
+        return new LocationDto(
             location.getId(),
             location.getName(),
             location.getAddress().getLatitude(),
