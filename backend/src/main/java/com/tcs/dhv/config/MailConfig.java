@@ -1,12 +1,18 @@
 package com.tcs.dhv.config;
 
-import com.tcs.dhv.util.EmailConstants;
+
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import static com.tcs.dhv.util.EmailConstants.EMAIL_PROTOCOL;
 import static com.tcs.dhv.util.EmailConstants.MAIL_AUTH;
@@ -45,12 +51,28 @@ public class MailConfig {
     }
 
     @Bean
-    SimpleMailMessage templateShipmentMessage() {
+    public TemplateEngine emailTemplateEngine(){
+        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.addTemplateResolver(htmlTemplateResolver());
+        return templateEngine;
+    }
+
+    private ITemplateResolver htmlTemplateResolver() {
+        final ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
+        resolver.setPrefix("templates/");
+        resolver.setSuffix(".html");
+        resolver.setTemplateMode(TemplateMode.HTML);
+        resolver.setCharacterEncoding("UTF-8");
+        resolver.setCacheable(false);
+        return resolver;
+    }
+
+    @Bean
+    SimpleMailMessage templateShipmentMessage() throws MessagingException {
         final var mail = new SimpleMailMessage();
         mail.setFrom(username);
-        mail.setSubject(EmailConstants.MAIL_SUBJECT);
-        mail.setText("Your package %s is on the way\n Click the following link to see its status: %s");
-
         return mail;
     }
+
+
 }
