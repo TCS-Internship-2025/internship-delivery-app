@@ -34,15 +34,14 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
     return {
       title: formData.title,
       name: formData.name,
-      dateOfBirth: formData.dateOfBirth,
-      mobilePhone: formData.mobilePhone,
-      emailAddress: formData.emailAddress,
+      birthDate: formData.birthDate,
+      phone: formData.phone,
+      email: formData.email,
     };
   }, [formData]);
 
   const getParcelFormData = useCallback((): ParcelFormSchema => {
     return {
-      addressName: formData.addressName,
       line1: formData.line1,
       line2: formData.line2,
       building: formData.building,
