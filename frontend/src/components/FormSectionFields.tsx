@@ -1,4 +1,5 @@
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form';
+import { FIELD_PLACEHOLDERS } from '@/constants';
 import type { ZodEnum } from 'zod';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -45,6 +46,8 @@ export interface FieldConfig<T extends FieldValues = FieldValues> {
   max?: number;
   rowGroup?: string;
   maxRows?: number;
+  minDate?: Date;
+  maxDate?: Date;
 }
 
 interface FormFieldProps<T extends FieldValues = FieldValues> {
@@ -64,6 +67,8 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
             <DatePicker
               value={fieldProps.value as Date | null}
               onChange={(date) => fieldProps.onChange(date)}
+              minDate={field.minDate}
+              maxDate={field.maxDate}
               slotProps={{
                 textField: {
                   variant: 'outlined',
@@ -72,6 +77,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
                   required: field.required,
                   disabled: field.disabled,
                   error: !!error,
+                  helperText: error?.message,
                 },
               }}
             />
@@ -90,6 +96,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
                 disabled={field.disabled}
                 error={!!error}
                 sx={field.sx}
+                helperText={error?.message}
               />
             );
           }
@@ -104,6 +111,7 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
               select
               error={!!error}
               sx={field.sx}
+              helperText={error?.message}
             >
               {field.options.options.map((option) => (
                 <MenuItem key={option} value={option}>
@@ -250,7 +258,6 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
         }
 
         default:
-          console.log('Error', error);
           return (
             <TextField
               {...fieldProps}
@@ -259,9 +266,10 @@ const FormField = <T extends FieldValues = FieldValues>({ field, control }: Form
               label={field.label}
               required={field.required}
               disabled={field.disabled}
+              placeholder={FIELD_PLACEHOLDERS[field.label] || ''}
               error={!!error}
               sx={field.sx}
-              helperText={field.label === 'Email address' || field.label === 'Mobile phone' ? error?.message : null}
+              helperText={error?.message}
             />
           );
       }
