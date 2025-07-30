@@ -1,9 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { useLoginMutation } from '@/apis/authApi';
+import { login } from '@/apis/authApi';
 
 import { loginSchema } from '@/utils/authZodSchemas';
 
@@ -11,8 +12,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
-
-  const loginMutation = useLoginMutation();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -23,20 +22,20 @@ export const useLoginForm = () => {
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
-    try {
-      await loginMutation.mutateAsync(data);
+  const { mutate: submitLogin, isPending } = useMutation({
+    mutationFn: login,
+    onSuccess: () => {
       void navigate('/');
-    } catch {
-      // Error is now handled by TanStack Query
-    }
+    },
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    submitLogin(data);
   };
 
   return {
     form,
     onSubmit,
-    isLoading: loginMutation.isPending,
-    error: loginMutation.error,
-    isError: loginMutation.isError,
+    isLoading: isPending,
   };
 };

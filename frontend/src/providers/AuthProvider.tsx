@@ -1,55 +1,63 @@
-import React, { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { queryClient } from '@/queryClient';
-import { type AuthContextType, type User } from '@/types/auth';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { User } from '@/types/auth';
+import { useQuery } from '@tanstack/react-query';
 
 import { AuthContext } from '@/contexts/AuthContext';
 
-import { authService } from '@/services/authService';
+import * as authApi from '@/apis/authApi';
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  const { data: authData, isLoading } = useQuery({
+    queryKey: ['auth', 'stored'],
+    queryFn: authApi.getStoredAuthData,
+    staleTime: Infinity,
+    retry: false,
+  });
 
   useEffect(() => {
-    const authData = authService.loadAuthData();
     if (authData) {
-      setUser(authData.user);
       setToken(authData.token);
-      authService.setAuthToken(authData.token);
+      setRefreshToken(authData.refreshToken);
+      setUser(authData.user);
     } else {
-      logout();
+      setToken(null);
+      setRefreshToken(null);
+      setUser(null);
     }
-  }, []);
+  }, [authData]);
 
-  const setAuthData = (token: string, user: User) => {
-    setUser(user);
-    setToken(token);
-    authService.saveAuthData(token, user);
-    authService.setAuthToken(token);
-  };
-
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    authService.clearAuthToken();
-    authService.clearAuthData();
-    queryClient.clear();
-  };
-
-  const contextValue: AuthContextType = useMemo(
+  const contextValue = useMemo(
     () => ({
       user,
       token,
-      logout,
-      isAuthenticated: !!token && !!user,
-      setAuthData,
+      refreshToken,
+      isAuthenticated: Boolean(user && token),
+      isLoading,
+      setAuthData: (t: string, rt: string, u: User) => {
+        setToken(t);
+        setRefreshToken(rt);
+        setUser(u);
+        authApi.saveAuthData(t, rt, u);
+      },
+      logout: async () => {
+        try {
+          await authApi.logout();
+        } catch (error) {
+          console.warn('Logout API call failed:', error);
+        } finally {
+          setToken(null);
+          setRefreshToken(null);
+          setUser(null);
+          authApi.clearAuthData();
+        }
+      },
     }),
-    [user, token]
+    [token, refreshToken, user, isLoading]
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
-};
+}

@@ -1,40 +1,28 @@
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { registrationSchema, type RegistrationFormData } from '../utils/authZodSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 
-import { useRegisterMutation } from '@/apis/authApi';
+import { register } from '@/apis/authApi';
 
-export const useRegisterForm = () => {
-  const navigate = useNavigate();
+import { registrationSchema, type RegistrationFormData } from '@/utils/authZodSchemas';
 
-  const registerMutation = useRegisterMutation();
-
+export function useRegisterForm() {
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     mode: 'onChange',
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
   });
 
-  const onSubmit = async (data: RegistrationFormData) => {
-    try {
-      await registerMutation.mutateAsync(data);
-      void navigate('/');
-    } catch {
-      // Error is now handled by TanStack Query
-    }
+  const { mutate: submitRegister, isPending } = useMutation({
+    mutationFn: register,
+  });
+
+  const onSubmit = (data: RegistrationFormData) => {
+    submitRegister(data);
   };
 
   return {
     form,
     onSubmit,
-    isLoading: registerMutation.isPending,
-    error: registerMutation.error,
-    isError: registerMutation.isError,
+    isLoading: isPending,
   };
-};
+}
