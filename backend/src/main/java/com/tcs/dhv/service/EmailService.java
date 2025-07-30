@@ -37,7 +37,7 @@ public class EmailService {
     private String appBaseUrl;
 
 
-    public final void sendShipmentCreationEmail(
+    public void sendShipmentCreationEmail(
         final String email,
         final String trackingNumber,
         final String link
