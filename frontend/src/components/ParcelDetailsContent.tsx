@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
+import { deliveryConverter, paymentConverter } from '@/utils/parcelTypeConverter';
+
 const formatDate = (date: string | Date | undefined): string => {
   if (!date) return 'Not specified';
 
@@ -56,8 +58,8 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }
       <Box display={{ xs: 'block', md: 'flex' }}>
         <Box width={{ xs: '100%', md: '50%' }}>
           <DataDisplay label="Tracking code">{parcelData?.trackingCode ?? 'Unknown'}</DataDisplay>
-          <DataDisplay label="Delivery type">{parcelData?.deliveryType ?? 'Not specified'}</DataDisplay>
-          <DataDisplay label="Payment type">{parcelData?.paymentType ?? 'Not specified'}</DataDisplay>
+          <DataDisplay label="Delivery type">{deliveryConverter(parcelData?.deliveryType)}</DataDisplay>
+          <DataDisplay label="Payment type">{paymentConverter(parcelData?.paymentType)}</DataDisplay>
         </Box>
         <Box width={{ xs: '100%', md: '50%' }}>
           <DataDisplay label="Created at">{formatDate(parcelData?.createdAt)}</DataDisplay>

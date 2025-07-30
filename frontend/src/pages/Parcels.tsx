@@ -1,37 +1,40 @@
-import { useGetAllParcels } from '@/apis/parcelGet';
+// import { useGetAllParcels } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
+// import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
+
+// import Typography from '@mui/material/Typography';
 
 import { ParcelGrid } from '@/components/ParcelGrid';
 
-export const ParcelPage = () => {
-  const { data, status } = useGetAllParcels();
+import { sampleData } from '@/utils/parcel_sample_data';
 
-  if (status === 'pending') {
-    return (
-      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (status === 'error') {
-    return (
-      <Box
-        display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        height={'100%'}
-        flexDirection={'column'}
-        mt={10}
-      >
-        <Typography variant="h4">Something went wrong.</Typography>
-        <Typography variant="subtitle1">Please try again later!</Typography>
-      </Box>
-    );
-  }
+export const ParcelPage = () => {
+  // const { data, status } = useGetAllParcels();
+
+  // if (status === 'pending') {
+  //   return (
+  //     <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
+  //       <CircularProgress />
+  //     </Box>
+  //   );
+  // }
+  // if (status === 'error') {
+  //   return (
+  //     <Box
+  //       display={'flex'}
+  //       justifyContent={'center'}
+  //       alignItems={'center'}
+  //       height={'100%'}
+  //       flexDirection={'column'}
+  //       mt={10}
+  //     >
+  //       <Typography variant="h4">Something went wrong.</Typography>
+  //       <Typography variant="subtitle1">Please try again later!</Typography>
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -43,7 +46,7 @@ export const ParcelPage = () => {
             flexDirection: 'column',
           }}
         >
-          <ParcelGrid parcels={data} />
+          <ParcelGrid parcels={sampleData} />
         </Container>
       </Box>
     </Box>
