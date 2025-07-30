@@ -3,15 +3,35 @@ import z from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
 
+const addressSchema = z.object({
+  line1: z.string(),
+  line2: z.string(),
+  building: z.string(),
+  apartment: z.string(),
+  city: z.string(),
+  postalCode: z.string(),
+  country: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+});
+
+export const recipientSchema = z.object({
+  name: z.string(),
+  email: z.email(),
+  phone: z.string(),
+  birthDate: z.string(),
+  address: addressSchema,
+});
+
 export const parcelSchema = z.object({
   id: z.string(),
-  sender: z.string(),
-  recipient: z.string(),
-  delivery: z.string(),
-  tracking: z.string(),
-  status: z.string(),
-  created: z.date(),
-  updated: z.date(),
+  trackingCode: z.string(),
+  recipient: recipientSchema,
+  currentStatus: z.string(),
+  deliveryType: z.string(),
+  paymentType: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const parcelListSchema = z.array(parcelSchema);
