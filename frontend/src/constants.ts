@@ -15,17 +15,15 @@ export const ROUTES = {
   LOGIN: 'login',
   REGISTER: 'register',
   APP: 'app',
-  PAGE1: 'page1',
-  PAGE2: 'page2',
-  PAGE3: 'page3',
-  PAGE4: 'page4',
+  RECIPIENT_FORM: 'recipient-form',
+  PARCEL_FORM: 'parcel-form',
   PAGE5: 'page5',
   SUCCESS: 'success',
   ERROR: 'error',
   TRACKINGSLUG: 'tracking/:slug',
   TRACKING: 'tracking',
   PARCELS: 'my-parcels',
-  DETAILS: 'details',
+  DETAILS: 'details/:parcelId',
 };
 
 export const PARCEL_STATUS = {
@@ -34,7 +32,6 @@ export const PARCEL_STATUS = {
   DELIVERED: 'DELIVERED',
   STUCK: 'STUCK',
 };
-
 
 export const mapboxAccessToken: string = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string;
 

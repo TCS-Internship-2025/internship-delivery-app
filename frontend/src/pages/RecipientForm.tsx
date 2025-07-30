@@ -29,7 +29,7 @@ export const RecipientForm = () => {
   const onSubmit = (data: RecipientFormSchema) => {
     formContext.updateFormData({ ...data });
 
-    void navigate(`/${ROUTES.PAGE2}`);
+    void navigate(`/${ROUTES.PARCEL_FORM}`);
   };
 
   const handleFormSubmit = (event: FormEvent) => {
