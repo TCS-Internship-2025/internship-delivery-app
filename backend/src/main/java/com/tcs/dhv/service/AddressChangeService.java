@@ -31,6 +31,7 @@ public class AddressChangeService {
     private final AddressRepository addressRepository;
     private final UserService userService;
     private final ParcelService parcelService;
+    private final EmailService emailService;
 
     @Transactional
     public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final String userEmail) {
@@ -49,6 +50,15 @@ public class AddressChangeService {
         parcelRepository.save(parcel);
 
         // TODO: Add to status history
+
+        emailService.sendAddressChangeNotification(
+            parcel.getRecipient().getEmail(),
+            parcel.getRecipient().getName(),
+            parcel.getTrackingCode(),
+            oldAddress,
+            savedAddress,
+            requestDto.requestReason()
+        );
 
         log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
     }
