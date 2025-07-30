@@ -41,6 +41,10 @@ const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; o
   );
 };
 
+const Body2Typography = ({ children }: { children: React.ReactNode }) => {
+  return <Typography variant="body2">{children}</Typography>;
+};
+
 export const ProfileInfo = () => {
   const navigate = useNavigate();
 
@@ -88,11 +92,11 @@ export const ProfileInfo = () => {
               <Typography variant="subtitle1" fontWeight={600}>
                 Tracking: {parcel.tracking}
               </Typography>
-              <Typography variant="body2">
+              <Body2Typography>
                 From: {parcel.sender} &nbsp;&nbsp; To: {parcel.recipient}
-              </Typography>
-              <Typography variant="body2">Delivery: {parcel.delivery}</Typography>
-              <Typography variant="body2">Status: {parcel.status}</Typography>
+              </Body2Typography>
+              <Body2Typography>Delivery: {parcel.delivery}</Body2Typography>
+              <Body2Typography>Status: {parcel.status}</Body2Typography>
               <Typography variant="caption" color="text.secondary">
                 Updated: {parcel.updated.toLocaleDateString()}
               </Typography>
