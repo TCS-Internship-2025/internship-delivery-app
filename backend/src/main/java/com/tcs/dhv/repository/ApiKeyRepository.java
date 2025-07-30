@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ApiKeyRepository extends CrudRepository<ApiKey, Integer> {
+public interface ApiKeyRepository extends CrudRepository<ApiKey, UUID> {
     List<ApiKey> findAllByActiveTrue();
 }
