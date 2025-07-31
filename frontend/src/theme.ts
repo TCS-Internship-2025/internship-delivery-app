@@ -104,8 +104,8 @@ export const themes = {
                   paddingTop: 0,
                   paddingY: 1.5,
                   '&.Mui-selected': {
-                    backgroundColor: (theme) => theme.palette.primary.light,
-                    color: (theme) => theme.palette.primary.main,
+                    backgroundColor: primaryColor,
+                    color: white,
                   },
                 },
               },
@@ -113,6 +113,7 @@ export const themes = {
           },
         },
       },
+
       MuiTextField: {
         styleOverrides: {
           root: {
@@ -210,7 +211,7 @@ export const themes = {
           MenuProps: {
             PaperProps: {
               sx: {
-                mt: 0.5,
+                mt: 1,
                 borderRadius: 2,
                 boxShadow: (theme) => theme.shadows[5],
                 '& .MuiList-root': {
@@ -220,8 +221,8 @@ export const themes = {
                   paddingTop: 0,
                   paddingY: 1.5,
                   '&.Mui-selected': {
-                    backgroundColor: (theme) => theme.palette.primary.light,
-                    color: (theme) => theme.palette.primary.main,
+                    backgroundColor: primaryColor,
+                    color: white,
                   },
                 },
               },
