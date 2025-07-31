@@ -45,10 +45,16 @@ public class AuthService {
         );
 
         final var email = authentication.getName();
-        final var token = jwtService.generateToken(loginRequest.email());
 
         final var user = userRepository.findByEmail(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email"));
+
+        final var token = jwtService.generateToken(
+            user.getEmail(),
+            user.getId(),
+            user.getName(),
+            user.getIsVerified()
+        );
 
         final var refreshToken = new RefreshToken();
         refreshToken.setUser(user);
@@ -81,8 +87,15 @@ public class AuthService {
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "Invalid or expired refresh token"));
+        final var user = refreshTokenEntity.getUser();
 
-        final var newToken = jwtService.generateToken(refreshTokenEntity.getUser().getEmail());
+        final var newToken = jwtService.generateToken(
+            user.getEmail(),
+            user.getId(),
+            user.getName(),
+            user.getIsVerified()
+        );
+
         return new AuthResponse(newToken, refreshTokenEntity.getId());
     }
 
