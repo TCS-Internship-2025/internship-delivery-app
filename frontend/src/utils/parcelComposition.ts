@@ -27,8 +27,8 @@ export const parcelFormSchema = z.object({
   // Section 2 fields
   line1: z.string().min(1, 'Address Line 1 is required'),
   line2: z.string().optional(),
-  building: z.string().min(1, 'Building is required'),
-  apartment: z.string().min(1, 'Apartment is required'),
+  building: z.string().optional(),
+  apartment: z.string().optional(),
   city: z.string().min(1, 'City is required'),
   postalCode: z.string().min(1, 'ZIP/POSTAL Code is required'),
   country: z.string().min(1, 'Country is required'),
@@ -53,15 +53,15 @@ export const recipientFields: FieldConfig<RecipientFormSchema>[][] = [
 
 export const parcelFields: FieldConfig<ParcelFormSchema>[][] = [
   [
-    { name: 'building', label: 'Building', required: true },
-    { name: 'postalCode', label: 'ZIP/Postal Code', required: true },
+    { name: 'country', label: 'Country', required: true },
     { name: 'line1', label: 'Address Line 1', required: true },
     { name: 'line2', label: 'Address Line 2' },
+    { name: 'building', label: 'Building' },
   ],
   [
-    { name: 'country', label: 'Country', required: true },
-    { name: 'apartment', label: 'Apartment', required: true },
+    { name: 'postalCode', label: 'ZIP/Postal Code', required: true },
     { name: 'city', label: 'City', required: true },
+    { name: 'apartment', label: 'Apartment' },
   ],
 ];
 
