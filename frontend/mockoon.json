@@ -338,11 +338,42 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "api/parcels/:parcelId",
+      "endpoint": "api/parcels/:id",
       "responses": [
         {
           "uuid": "4f484785-4810-45f7-8e06-5e25f12a4407",
-          "body": "[\n  {\n    \"id\": \"{{faker 'string.uuid'}}\",\n    \"trackingCode\": \"HU{{faker 'number.int' min=1000000000 max=9999999999}}HL\",\n    \"recipient\": {\n      \"name\": \"{{faker 'person.fullName'}}\",\n      \"email\": \"{{faker 'internet.email'}}\",\n      \"phone\": \"+36{{faker 'number.int' min=200000000 max=709999999}}\",\n      \"birthDate\": \"{{faker 'date.birthdate' min=1960 max=2005 mode='year'}}-{{faker 'number.int' min=1 max=12}}-{{faker 'number.int' min=1 max=28}}\",\n      \"address\": {\n        \"line1\": \"{{faker 'location.street'}}\",\n        \"line2\": \"{{faker 'number.int' min=1 max=5}}. emelet\",\n        \"building\": \"{{faker 'string.alpha' count=1 casing='upper'}} épület\",\n        \"apartment\": \"{{faker 'number.int' min=1 max=30}}\",\n        \"city\": \"{{faker 'location.city'}}\",\n        \"postalCode\": \"{{faker 'location.zipCode'}}\",\n        \"country\": \"Hungary\",\n        \"latitude\": {{faker 'location.latitude'}},\n        \"longitude\": {{faker 'location.longitude'}}\n      }\n    },\n    \"currentStatus\": \"{{faker 'helpers.arrayElement' (array 'CREATED' 'PICKED_UP' 'IN_TRANSIT' 'OUT_FOR_DELIVERY' 'DELIVERED' 'CANCELLED' 'DELIVERY_ATTEMPTED' 'RETURNED_TO_SENDER')}}\",\n    \"deliveryType\": \"{{faker 'helpers.arrayElement' (array 'HOME' 'PICKUP_POINT' 'PARCEL_BOX')}}\",\n    \"paymentType\": \"{{faker 'helpers.arrayElement' (array 'SENDER_PAYS' 'RECIPIENT_PAYS')}}\",\n    \"createdAt\": \"{{faker 'date.recent' 7}}\",\n    \"updatedAt\": \"{{faker 'date.recent' 2}}\"\n  }{{#unless @last}},{{/unless}}\n]",
+          "body": "{\n  \"id\": \"{{urlParam 'id'}}\",\n  \"trackingCode\": \"HU{{faker 'number.int' min=1000000000 max=9999999999}}HL\",\n  \"recipient\": {\n    \"name\": \"{{faker 'person.fullName'}}\",\n    \"email\": \"{{faker 'internet.email'}}\",\n    \"phone\": \"+36{{faker 'number.int' min=200000000 max=709999999}}\",\n    \"birthDate\": \"{{faker 'date.birthdate' min=1960 max=2005 mode='year'}}-{{faker 'number.int' min=1 max=12}}-{{faker 'number.int' min=1 max=28}}\",\n    \"address\": {\n      \"line1\": \"{{faker 'location.street'}}\",\n      \"line2\": \"{{faker 'number.int' min=1 max=5}}. emelet\",\n      \"building\": \"{{faker 'string.alpha' count=1 casing='upper'}} épület\",\n      \"apartment\": \"{{faker 'number.int' min=1 max=30}}\",\n      \"city\": \"{{faker 'location.city'}}\",\n      \"postalCode\": \"{{faker 'location.zipCode'}}\",\n      \"country\": \"Hungary\",\n      \"latitude\": {{faker 'location.latitude'}},\n      \"longitude\": {{faker 'location.longitude'}}\n    }\n  },\n  \"currentStatus\": \"{{faker 'helpers.arrayElement' (array 'CREATED' 'PICKED_UP' 'IN_TRANSIT' 'OUT_FOR_DELIVERY' 'DELIVERED' 'CANCELLED' 'DELIVERY_ATTEMPTED' 'RETURNED_TO_SENDER')}}\",\n  \"deliveryType\": \"{{faker 'helpers.arrayElement' (array 'HOME' 'PICKUP_POINT' 'PARCEL_BOX')}}\",\n  \"paymentType\": \"{{faker 'helpers.arrayElement' (array 'SENDER_PAYS' 'RECIPIENT_PAYS')}}\",\n  \"createdAt\": \"{{faker 'date.recent' 7}}\",\n  \"updatedAt\": \"{{faker 'date.recent' 2}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "e7212458-9655-4e0e-8119-4d795d5a9b86",
+      "type": "http",
+      "documentation": "",
+      "method": "delete",
+      "endpoint": "api/parcels/:id",
+      "responses": [
+        {
+          "uuid": "1767f21f-11a9-48ad-a400-6352678b2187",
+          "body": "{\n  \"id\": \"{{urlParam 'id'}}\",\n  \"trackingCode\": \"HU{{faker 'number.int' min=1000000000 max=9999999999}}HL\",\n  \"recipient\": {\n    \"name\": \"{{faker 'person.fullName'}}\",\n    \"email\": \"{{faker 'internet.email'}}\",\n    \"phone\": \"+36{{faker 'number.int' min=200000000 max=709999999}}\",\n    \"birthDate\": \"{{faker 'date.birthdate' min=1960 max=2005 mode='year'}}-{{faker 'number.int' min=1 max=12}}-{{faker 'number.int' min=1 max=28}}\",\n    \"address\": {\n      \"line1\": \"{{faker 'location.street'}}\",\n      \"line2\": \"{{faker 'number.int' min=1 max=5}}. emelet\",\n      \"building\": \"{{faker 'string.alpha' count=1 casing='upper'}} épület\",\n      \"apartment\": \"{{faker 'number.int' min=1 max=30}}\",\n      \"city\": \"{{faker 'location.city'}}\",\n      \"postalCode\": \"{{faker 'location.zipCode'}}\",\n      \"country\": \"Hungary\",\n      \"latitude\": {{faker 'location.latitude'}},\n      \"longitude\": {{faker 'location.longitude'}}\n    }\n  },\n  \"currentStatus\": \"{{faker 'helpers.arrayElement' (array 'CREATED' 'PICKED_UP' 'IN_TRANSIT' 'OUT_FOR_DELIVERY' 'DELIVERED' 'CANCELLED' 'DELIVERY_ATTEMPTED' 'RETURNED_TO_SENDER')}}\",\n  \"deliveryType\": \"{{faker 'helpers.arrayElement' (array 'HOME' 'PICKUP_POINT' 'PARCEL_BOX')}}\",\n  \"paymentType\": \"{{faker 'helpers.arrayElement' (array 'SENDER_PAYS' 'RECIPIENT_PAYS')}}\",\n  \"createdAt\": \"{{faker 'date.recent' 7}}\",\n  \"updatedAt\": \"{{faker 'date.recent' 2}}\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
@@ -401,6 +432,10 @@
     {
       "type": "route",
       "uuid": "310e861d-514a-43cc-aaf9-dabb6c2a1b56"
+    },
+    {
+      "type": "route",
+      "uuid": "e7212458-9655-4e0e-8119-4d795d5a9b86"
     }
   ],
   "proxyMode": false,

@@ -7,14 +7,10 @@ import Typography from '@mui/material/Typography';
 
 import { ParcelGrid } from '@/components/ParcelGrid';
 
-// import { sampleData } from '@/utils/parcel_sample_data';
-
 export const ParcelPage = () => {
-  const { data, status, isPending } = useGetAllParcels();
+  const { data, status } = useGetAllParcels();
 
-  console.log(status);
-
-  if (isPending) {
+  if (status === 'pending') {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
         <CircularProgress />
@@ -39,11 +35,6 @@ export const ParcelPage = () => {
 
   return (
     <>
-      {/* {isPending && (
-        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
-          <CircularProgress />
-        </Box>
-      )} */}
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
           <Container

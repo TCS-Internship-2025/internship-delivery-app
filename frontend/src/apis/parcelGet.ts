@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import z from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
@@ -66,10 +66,13 @@ export async function deleteParcelData(parcelId: string | undefined): Promise<Pa
   return await httpService.delete(`/api/parcels/${parcelId}`, parcelSchema);
 }
 
-export function useDeleteParcelById(id: string | undefined) {
-  return useQuery<ParcelData>({
-    queryKey: ['parcels', id],
-    queryFn: () => deleteParcelData(id),
-    enabled: !!id,
+export function useDeleteParcelById() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (parcelId: string) => deleteParcelData(parcelId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['parcels'] });
+    },
   });
 }

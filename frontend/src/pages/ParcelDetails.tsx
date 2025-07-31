@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useGetParcelById } from '@/apis/parcelGet';
+import { useDeleteParcelById, useGetParcelById } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -10,36 +10,10 @@ import Typography from '@mui/material/Typography';
 
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
 
-// const DUMMY_PARCEL = {
-//   id: 'cc09a4ad-d7ba-422b-88ed-122b160cc265',
-//   trackingCode: 'HU5901999790HL',
-//   recipient: {
-//     name: 'János Kovács',
-//     email: 'janos.kovacs@example.com',
-//     phone: '+36301234567',
-//     birthDate: '1985-03-15',
-//     address: {
-//       line1: 'Deák Ferenc tér',
-//       line2: '1. emelet',
-//       building: 'A épület',
-//       apartment: '12',
-//       city: 'Budapest',
-//       postalCode: '1034',
-//       country: 'Hungary',
-//       latitude: 47.5316,
-//       longitude: 19.0579,
-//     },
-//   },
-//   currentStatus: 'CREATED',
-//   deliveryType: 'HOME',
-//   paymentType: 'SENDER_PAYS',
-//   createdAt: '2025-07-29T17:36:38.278011',
-//   updatedAt: '2025-07-29T17:48:22.69395',
-// };
-
 export const ParcelDetails = () => {
-  const { id } = useParams();
-  const { data, status } = useGetParcelById(id);
+  const { parcelId } = useParams();
+  const { data, status } = useGetParcelById(parcelId);
+  const deleteParcelMutation = useDeleteParcelById();
   const navigate = useNavigate();
 
   if (status === 'pending') {
@@ -70,8 +44,17 @@ export const ParcelDetails = () => {
   }
 
   function handleDelete() {
-    // TODO: delete request
-    console.log('deleted');
+    if (!parcelId) return;
+
+    deleteParcelMutation.mutate(parcelId, {
+      onSuccess: () => {
+        console.log('Parcel deleted successfully');
+        void navigate('..');
+      },
+      onError: (error) => {
+        console.error('Failed to delete parcel:', error);
+      },
+    });
   }
 
   return (
