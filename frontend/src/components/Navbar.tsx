@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen.ts';
@@ -7,6 +7,7 @@ import { useTheme } from '@/providers/ThemeProvider.tsx';
 
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import HomeIcon from '@mui/icons-material/Home';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -26,15 +27,14 @@ import { NavItem } from './NavItem.tsx';
 export const Navbar = () => {
   const isAuthenticated = true; // Force it for testing
   const navigate = useNavigate();
-  const location = useLocation();
   const { mode, toggleTheme } = useTheme();
   const [open, setOpen] = useState<boolean>(false);
   const isSmallScreen = useSmallScreen();
 
-  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []); //add route's here whenever adding a new element to navbar for example will need to add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation(4)}
+  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
+  //add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
 
-  const currentIndex = routes.indexOf(location.pathname);
-  const activeTab = currentIndex !== -1 ? currentIndex : 0;
+  const [currentIndex, setCurrentIndex] = useState<number>();
 
   const handleDrawerClick = () => {
     setOpen(!open);
@@ -42,6 +42,7 @@ export const Navbar = () => {
 
   const handleNavigation = (index: number) => {
     setOpen(false);
+    setCurrentIndex(index);
     void navigate(routes[index]);
   };
 
@@ -86,7 +87,7 @@ export const Navbar = () => {
               <NavItem
                 icon={<TrackChangesIcon />}
                 label="Tracking"
-                isActive={activeTab === 1}
+                isActive={currentIndex === 1}
                 onClick={() => handleNavigation(1)}
               />
               {isAuthenticated && (
@@ -94,13 +95,13 @@ export const Navbar = () => {
                   <NavItem
                     icon={<LocalShippingIcon />}
                     label="Send Parcel"
-                    isActive={activeTab === 2}
+                    isActive={currentIndex === 2}
                     onClick={() => handleNavigation(2)}
                   />
                   <NavItem
                     icon={<LocalShippingIcon />}
                     label="My Parcels"
-                    isActive={activeTab === 3}
+                    isActive={currentIndex === 3}
                     onClick={() => handleNavigation(3)}
                   />
                 </>
@@ -115,11 +116,17 @@ export const Navbar = () => {
           }}
           open={open}
         >
-          <Box display={'flex'} flexDirection={'column'}>
+          <Box display={'flex'} flexDirection={'column'} py={2}>
+            <NavItem
+              icon={<HomeIcon />}
+              label="Home"
+              isActive={currentIndex === 0}
+              onClick={() => handleNavigation(0)}
+            />
             <NavItem
               icon={<TrackChangesIcon />}
               label="Tracking"
-              isActive={activeTab === 0}
+              isActive={currentIndex === 1}
               onClick={() => handleNavigation(1)}
             />
             {isAuthenticated && (
@@ -127,13 +134,13 @@ export const Navbar = () => {
                 <NavItem
                   icon={<LocalShippingIcon />}
                   label="Send Parcel"
-                  isActive={activeTab === 1}
+                  isActive={currentIndex === 2}
                   onClick={() => handleNavigation(2)}
                 />
                 <NavItem
                   icon={<LocalShippingIcon />}
                   label="My Parcels"
-                  isActive={activeTab === 2}
+                  isActive={currentIndex === 3}
                   onClick={() => handleNavigation(3)}
                 />
               </>
