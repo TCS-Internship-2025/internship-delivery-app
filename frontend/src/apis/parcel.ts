@@ -1,5 +1,4 @@
-import { queryClient } from '@/queryClient';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod/v4';
 
 import { useFormContext } from '@/contexts/FormContext';
@@ -34,6 +33,8 @@ const createParcel = (data: FullFormSchema) => {
 
 export const useCreateParcel = () => {
   const formContext = useFormContext();
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: createParcel,
     onSuccess: async () => {

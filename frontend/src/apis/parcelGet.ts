@@ -40,7 +40,7 @@ export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 
 export async function fetchAllParcelData(): Promise<ParcelListData> {
-  return httpService.get('/parcels', parcelListSchema);
+  return httpService.get('/api/parcels', parcelListSchema);
 }
 
 export function useGetAllParcels() {
