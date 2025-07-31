@@ -6,6 +6,7 @@ import com.tcs.dhv.domain.dto.RegisterRequest;
 import com.tcs.dhv.domain.dto.RegisterResponse;
 import com.tcs.dhv.service.AuthService;
 import com.tcs.dhv.service.EmailService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> registerUser(
         @Valid @RequestBody final RegisterRequest registerRequest
-    ) {
+    ) throws MessagingException {
         log.info("Register request for email: {}", registerRequest.email());
         final var registeredUser = authService.registerUser(registerRequest);
 
@@ -67,7 +68,7 @@ public class AuthController {
     }
 
     @PostMapping("/email/resend-verification")
-    public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) {
+    public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) throws MessagingException {
         log.info("Resend verification email requested for: {}", email);
         emailService.resendVerificationTokenByEmail(email);
 
