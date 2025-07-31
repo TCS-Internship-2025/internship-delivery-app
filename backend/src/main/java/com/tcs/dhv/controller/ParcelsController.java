@@ -90,7 +90,7 @@ public class ParcelsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/address-change")
+    @PutMapping("/{id}/address")
     public ResponseEntity<Void> changeAddress(
         @PathVariable final UUID id,
         @Valid @RequestBody final AddressChangeDto requestDto,

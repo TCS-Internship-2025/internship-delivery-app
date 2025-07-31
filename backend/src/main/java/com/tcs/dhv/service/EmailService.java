@@ -194,9 +194,7 @@ public class EmailService {
                 newAddress.getCity(),
                 newAddress.getCountry(),
                 newAddress.getPostalCode(),
-                requestReason != null && !requestReason.trim().isEmpty()
-                    ? "Reason: " + requestReason
-                    : ""
+                requestReason != null && !requestReason.trim().isEmpty() ? "Reason: " + requestReason : ""
             );
 
         final var message = template;
