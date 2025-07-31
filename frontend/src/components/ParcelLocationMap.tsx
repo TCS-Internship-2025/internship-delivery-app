@@ -33,7 +33,11 @@ export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) 
   const theme = useTheme();
 
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
-  const { data: pickupPoints, isLoading: isPickupPointsLoading, isError } = useGetAllPickupPoints();
+  const {
+    data: pickupPoints,
+    isLoading: isPickupPointsLoading,
+    isError,
+  } = useGetAllPickupPoints({ deliveryType: 'PICKUP_POINT' });
   if (isPickupPointsLoading) {
     return <CircularProgress />;
   } else if (isError) {

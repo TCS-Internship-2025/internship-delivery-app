@@ -3,6 +3,11 @@ import { z } from 'zod';
 
 import { httpService } from '@/services/httpService';
 
+type DeliveryType = 'PICKUP_POINT' | 'PARCEL_BOX';
+
+interface PickupPointSearchParams {
+  deliveryType?: DeliveryType;
+}
 export const addressSchema = z.object({
   line1: z.string(),
   line2: z.string(),
@@ -23,16 +28,27 @@ export const pickupPointSchema = z.object({
   address: addressSchema,
 });
 
+export const parcelPoint = z.object({
+  id: z.string(),
+  name: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  deliveryType: z.literal('PARCEL_BOX'),
+  address: addressSchema,
+});
+
 const pickupPointListSchema = z.array(pickupPointSchema);
 
 export type PickupPoint = z.infer<typeof pickupPointSchema>;
 export type PickupPointList = z.infer<typeof pickupPointListSchema>;
 
-export async function fetchAllPickupPoints(): Promise<PickupPointList> {
+export async function fetchPickupPoints(searchParams: PickupPointSearchParams = {}): Promise<PickupPointList> {
   //Get token when its ready until get from postman
   const token = '';
 
-  return await httpService.request('/api/locations?deliveryType=PICKUP_POINT', pickupPointListSchema, {
+  const query = new URLSearchParams(searchParams as Record<string, string>).toString();
+
+  return await httpService.request(`/api/locations?${query}`, pickupPointListSchema, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -40,9 +56,9 @@ export async function fetchAllPickupPoints(): Promise<PickupPointList> {
   });
 }
 
-export function useGetAllPickupPoints() {
+export function useGetAllPickupPoints(searchParams: PickupPointSearchParams = {}) {
   return useQuery<PickupPointList>({
-    queryKey: ['pickupPoints'],
-    queryFn: fetchAllPickupPoints,
+    queryKey: ['pickupPoints', searchParams],
+    queryFn: () => fetchPickupPoints(searchParams),
   });
 }
