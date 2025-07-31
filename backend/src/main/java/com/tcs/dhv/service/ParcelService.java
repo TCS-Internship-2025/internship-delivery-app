@@ -86,7 +86,7 @@ public class ParcelService {
             throw new AccessDeniedException("Access denied");
         }
 
-        var oldStatus = parcel.getCurrentStatus();
+        final var oldStatus = parcel.getCurrentStatus();
 
         parcelMapper.updateEntity(parcel, parcelUpdate);
 
@@ -98,7 +98,7 @@ public class ParcelService {
         final var updatedParcel = parcelRepository.save(parcel);
 
         if (parcelUpdate.status() != null && parcelUpdate.status() != oldStatus) {
-            var history = ParcelStatusHistory.builder()
+            final var history = ParcelStatusHistory.builder()
                     .parcel(updatedParcel)
                     .status(updatedParcel.getCurrentStatus())
                     .description("Status updated to " + updatedParcel.getCurrentStatus())

@@ -7,30 +7,20 @@ import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.service.ParcelStatusHistoryService;
 import com.tcs.dhv.service.TrackingService;
 import com.tcs.dhv.validation.TrackingCodeValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/api/tracking")
+@RequiredArgsConstructor
 @RestController
 public class TrackingController {
     private final TrackingService trackingService;
     private final TrackingCodeValidator trackingCodeValidator;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final ParcelRepository parcelRepository;
-
-    public TrackingController(
-            TrackingService trackingService,
-            TrackingCodeValidator trackingCodeValidator,
-            ParcelStatusHistoryService parcelStatusHistoryService,
-            ParcelRepository parcelRepository
-    ) {
-        this.trackingService = trackingService;
-        this.trackingCodeValidator = trackingCodeValidator;
-        this.parcelStatusHistoryService = parcelStatusHistoryService;
-        this.parcelRepository = parcelRepository;
-    }
 
     @GetMapping("/{trackingCode}")
     public ResponseEntity<TrackingResponse> trackParcel(@PathVariable String trackingCode) {
@@ -40,8 +30,8 @@ public class TrackingController {
                     Optional.empty(),
                     List.of()));
         }
-        TrackingRequest request = new TrackingRequest(trackingCode);
-        TrackingResponse response = trackingService.getTrackingDetails(request);
+        final TrackingRequest request = new TrackingRequest(trackingCode);
+        final TrackingResponse response = trackingService.getTrackingDetails(request);
         if (response == null) {
             return ResponseEntity.notFound().build();
         }
@@ -53,11 +43,11 @@ public class TrackingController {
         if (!trackingCodeValidator.isValid(trackingCode, null)) {
             return ResponseEntity.badRequest().build();
         }
-        var parcelOpt = parcelRepository.findByTrackingCode(trackingCode);
+        final var parcelOpt = parcelRepository.findByTrackingCode(trackingCode);
         if (parcelOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        var timeline = parcelStatusHistoryService.getParcelTimeline(parcelOpt.get().getId());
+        final var timeline = parcelStatusHistoryService.getParcelTimeline(parcelOpt.get().getId());
         return ResponseEntity.ok(timeline);
     }
 }

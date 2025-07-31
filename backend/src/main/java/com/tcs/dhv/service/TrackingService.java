@@ -28,11 +28,11 @@ public class TrackingService {
     public TrackingResponse getTrackingDetails(TrackingRequest trackingRequest) {
         log.info("Getting tracking data of parcel with tracking code : {}", trackingRequest.trackingCode());
 
-        Parcel parcel = parcelRepository.findByTrackingCode(trackingRequest.trackingCode())
+        final Parcel parcel = parcelRepository.findByTrackingCode(trackingRequest.trackingCode())
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingRequest.trackingCode()));
 
-        List<ParcelStatusHistory> statusHistory = parcelStatusHistoryRepository.findAllByParcelIdOrderByTimestampAsc(parcel.getId());
-        Optional<LocalDateTime> estDeliveryDate = calculateEstimatedDevilryTime(parcel);
+        final List<ParcelStatusHistory> statusHistory = parcelStatusHistoryRepository.findAllByParcelIdOrderByTimestampAsc(parcel.getId());
+        final Optional<LocalDateTime> estDeliveryDate = calculateEstimatedDevilryTime(parcel);
 
         return trackingMapper.toResponse(parcel, statusHistory)
                 .toBuilder().estimatedDelivery(estDeliveryDate)

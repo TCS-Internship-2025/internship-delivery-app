@@ -45,7 +45,6 @@ public class ParcelStatusHistory {
     @JoinColumn(name = "parcel_id")
     private Parcel parcel;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private ParcelStatus status;
 
