@@ -23,6 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(authData.token);
       setRefreshToken(authData.refreshToken);
       setUser(authData.user);
+      console.log('AuthData', authData);
     } else {
       setToken(null);
       setRefreshToken(null);

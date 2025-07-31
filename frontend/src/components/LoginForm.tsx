@@ -19,20 +19,26 @@ interface LoginFormProps {
 export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const { form, onSubmit, isLoading } = useLoginForm();
-  const { control, handleSubmit } = form;
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = form;
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    void handleSubmit(onSubmit)(e);
-  };
-
   return (
     <>
-      <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 2 }}>
+      <Box
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSubmit(onSubmit)(e);
+        }}
+        sx={{ mt: 2 }}
+      >
         <Controller
           name="email"
           control={control}
@@ -91,7 +97,7 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
           fullWidth
           variant="contained"
           size="large"
-          disabled={isLoading}
+          disabled={!isValid || isLoading}
           sx={{
             mt: 2,
             mb: 2,

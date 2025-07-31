@@ -1,12 +1,17 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { enqueueSnackbar } from 'notistack';
 
 import { register } from '@/apis/authApi';
 
 import { registrationSchema, type RegistrationFormData } from '@/utils/authZodSchemas';
 
-export function useRegisterForm() {
+interface UseRegisterFormProps {
+  onSuccess?: () => void;
+}
+
+export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     mode: 'onChange',
@@ -14,6 +19,17 @@ export function useRegisterForm() {
 
   const { mutate: submitRegister, isPending } = useMutation({
     mutationFn: register,
+    onSuccess: (data) => {
+      enqueueSnackbar(
+        `Account created successfully! ${data.emailVerificationRequired ? 'Please check your email for verification.' : 'You can now login.'}`,
+        { variant: 'success' }
+      );
+      form.reset();
+      onSuccess?.();
+    },
+    onError: (error) => {
+      console.error('Registration failed:', error);
+    },
   });
 
   const onSubmit = (data: RegistrationFormData) => {

@@ -22,8 +22,8 @@ function notifyError(error: unknown): void {
 }
 class HttpService {
   public baseUrl: string;
-
-  constructor(baseUrl = import.meta.env.VITE_API_BASE_URL ?? '') {
+  //TODO: hardcoded for testing
+  constructor(baseUrl = 'http://localhost:8080/api') {
     this.baseUrl = baseUrl;
   }
 

@@ -106,18 +106,26 @@ export async function register(credentials: RegisterRequest): Promise<RegisterRe
 }
 
 export async function logout(): Promise<void> {
+  const authData = getStoredAuthData();
   try {
-    await httpService.post('/auth/logout', z.object({}));
+    if (authData?.refreshToken) {
+      await httpService.post(`/auth/logout?refreshToken=${authData.refreshToken}`, z.object({}));
+    }
   } catch (err) {
     console.warn('Logout failed:', err);
   } finally {
     clearAuthData();
   }
 }
-
 export async function refreshToken(): Promise<RefreshTokenResponse> {
-  const response = await httpService.post('/auth/refresh', refreshTokenResponseSchema);
-
+  const authData = getStoredAuthData();
+  if (!authData?.refreshToken) {
+    throw new Error('No refresh token available');
+  }
+  const response = await httpService.post(
+    `/auth/refresh-token?refreshToken=${authData.refreshToken}`,
+    refreshTokenResponseSchema
+  );
   const currentData = queryClient.getQueryData<{ token: string; refreshToken: string; user: User }>(['auth', 'stored']);
 
   if (currentData?.user) {
