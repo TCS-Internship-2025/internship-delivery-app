@@ -22,8 +22,9 @@ export interface LoginResponse {
 }
 
 export interface RegisterResponse {
-  token: string;
-  refreshToken: string;
+  name: string;
+  email: string;
+  emailVerificationRequired: boolean;
 }
 
 export interface RefreshTokenResponse {

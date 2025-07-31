@@ -7,6 +7,7 @@ import type {
   RegisterResponse,
   User,
 } from '@/types/auth';
+import { jwtDecode } from 'jwt-decode';
 import { z } from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
@@ -20,20 +21,19 @@ const AUTH_USER_KEY = 'authUser';
 export const userSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   emailVerificationRequired: z.boolean(),
 });
 
 export const loginResponseSchema = z.object({
   token: z.string(),
   refreshToken: z.string(),
-  user: userSchema,
 });
 
 export const registerResponseSchema = z.object({
-  token: z.string(),
-  refreshToken: z.string(),
-  // No user returned from register (if so, we leave it out)
+  name: z.string(),
+  email: z.email(),
+  emailVerificationRequired: z.boolean(),
 });
 
 export const refreshTokenResponseSchema = z.object({
@@ -72,7 +72,21 @@ export function getStoredAuthData(): { token: string; refreshToken: string; user
 
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   const response = await httpService.post('/auth/login', loginResponseSchema, credentials);
-  const user = await httpService.get('/auth/me', userSchema);
+
+  // Decode token to extract user data
+  const decodedToken = jwtDecode<{
+    sub: string;
+    name: string;
+    email: string;
+    emailVerified: boolean;
+  }>(response.token);
+
+  const user: User = {
+    id: decodedToken.sub,
+    name: decodedToken.name,
+    email: decodedToken.email,
+    emailVerificationRequired: !decodedToken.emailVerified,
+  };
 
   saveAuthData(response.token, response.refreshToken, user);
 
@@ -87,13 +101,6 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
 
 export async function register(credentials: RegisterRequest): Promise<RegisterResponse> {
   const response = await httpService.post('/auth/register', registerResponseSchema, credentials);
-
-  // No user is returned here, so don't call `saveAuthData`
-  queryClient.setQueryData(['auth', 'stored'], {
-    token: response.token,
-    refreshToken: response.refreshToken,
-    user: null,
-  });
 
   return response;
 }
@@ -112,6 +119,10 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
   const response = await httpService.post('/auth/refresh', refreshTokenResponseSchema);
 
   const currentData = queryClient.getQueryData<{ token: string; refreshToken: string; user: User }>(['auth', 'stored']);
+
+  if (currentData?.user) {
+    saveAuthData(response.token, response.refreshToken, currentData.user);
+  }
 
   queryClient.setQueryData(['auth', 'stored'], {
     token: response.token,
