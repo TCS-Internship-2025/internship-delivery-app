@@ -1,10 +1,17 @@
-package com.tcs.dhv.config;
+package com.tcs.dhv.config.openapi;
 
+import com.tcs.dhv.domain.dto.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +63,32 @@ import java.util.List;
     security = @SecurityRequirement(name = "bearerAuth")
 )
 public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+            .components(new Components()
+                .addResponses("BadRequest", new ApiResponse()
+                    .description("Invalid input data")
+                    .content(new Content()
+                        .addMediaType("application/json",
+                            new MediaType().schema(new Schema<ApiErrorResponse>()
+                                .$ref("#/components/schemas/ApiErrorResponse")))))
+                .addResponses("ValidationError", new ApiResponse()
+                    .description("Validation failed")
+                    .content(new Content()
+                        .addMediaType("application/json",
+                            new MediaType().schema(new Schema<ApiErrorResponse>()
+                                .$ref("#/components/schemas/ApiErrorResponse")))))
+                .addResponses("InternalServerError", new ApiResponse()
+                    .description("Internal server error")
+                    .content(new Content()
+                        .addMediaType("application/json",
+                            new MediaType().schema(new Schema<ApiErrorResponse>()
+                                .$ref("#/components/schemas/ApiErrorResponse")))))
+            );
+    }
+
     @Bean
     public OpenApiCustomizer operationOrderCustomizer(){
         return openApi ->{

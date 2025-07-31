@@ -5,7 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Address request")
 public record AddressDto(
-    @Schema(description = "Primary address line", example = "Kossuth street 12")
+    @Schema(description = "Primary address line", example = "Kossuth street 12",
+        requiredMode = Schema.RequiredMode.REQUIRED)
     String line1,
 
     @Schema(description = "Secondary address line", example = "2. floor")
@@ -17,13 +18,16 @@ public record AddressDto(
     @Schema(description = "Apartment number/characters", example = "12")
     String apartment,
 
-    @Schema(description ="City", example = "Budapest")
+    @Schema(description ="City", example = "Budapest",
+        requiredMode = Schema.RequiredMode.REQUIRED)
     String city,
 
-    @Schema(description = "Postal Code", example = "1117")
+    @Schema(description = "Postal Code", example = "1117",
+        requiredMode = Schema.RequiredMode.REQUIRED)
     String postalCode,
 
-    @Schema(description = "Country", example = "Hungary")
+    @Schema(description = "Country", example = "Hungary",
+        requiredMode = Schema.RequiredMode.REQUIRED)
     String country,
 
     @Schema(description = "Latitude of the location, between 47.0 and 48.0", example = "47.15")

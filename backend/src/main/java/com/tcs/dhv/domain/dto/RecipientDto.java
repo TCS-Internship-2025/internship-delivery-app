@@ -1,5 +1,6 @@
 package com.tcs.dhv.domain.dto;
 
+import com.tcs.dhv.config.openapi.SchemaConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -13,12 +14,15 @@ import java.time.LocalDate;
 
 @Schema(description = "Recipient information for parcel delivery")
 public record RecipientDto(
-    @Schema(description = "Recipient's full name", example = "Ferenc Kiss")
+    @Schema(description = SchemaConstants.NAME_DESC, example = SchemaConstants.NAME_EX,
+        requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Recipient's name is required")
     @Size(min = 1, max = 100, message = "Name must be 1-100 characters")
     String name,
 
-    @Schema(description = "Recipient's email", example = "ferenckiss19823010@gmail.com")
+
+    @Schema(description = SchemaConstants.EMAIL_DESC, example = SchemaConstants.EMAIL_EX,
+        requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Recipient's email address is required")
     @Email(message = "Invalid email format")
     @Size(max = 254, message = "Email cannot exceed 254 characters")

@@ -1,11 +1,13 @@
 package com.tcs.dhv.domain.dto;
 
+import com.tcs.dhv.config.openapi.SchemaConstants;
 import com.tcs.dhv.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 import java.util.UUID;
 
@@ -18,10 +20,12 @@ public class UserDto {
     @Schema(description = "User id", example = "550e8400-e29b-41d4-a716-446655440000")
     private UUID id;
 
-    @Schema(description = "User's full name", example = "Ferenc Kiss")
+    @Schema(description = SchemaConstants.NAME_DESC, example = SchemaConstants.NAME_EX,
+        requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @Schema(description = "User's email", example = "ferenckiss19823010@gmail.com")
+    @Schema(description = SchemaConstants.EMAIL_DESC, example = SchemaConstants.EMAIL_EX,
+        requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
     public static UserDto fromEntity(final User user) {

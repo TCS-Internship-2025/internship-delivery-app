@@ -1,6 +1,6 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.ApiErrorResponse;
+import com.tcs.dhv.config.openapi.ApiResponseAnnotations;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.service.ParcelService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,15 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Parcels", description = "Parcels controller operations")
-
-@ApiResponses({
-    @ApiResponse(responseCode = "401", description = "Authentication required",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-    @ApiResponse(responseCode = "403", description = "Access forbidden",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-    @ApiResponse(responseCode = "500", description = "Internal server error",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
-})
+@ApiResponseAnnotations.SecureEndpointResponse
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/parcels")
@@ -86,14 +77,9 @@ public class ParcelsController {
         )
     )
     )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Parcel created successfully",
-                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data",
-                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "422", description = "Validation failed",
-                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
+    @ApiResponse(responseCode = "201", description = "Parcel created successfully",
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class)))
+    @ApiResponseAnnotations.ValidationApiResponse
     @PostMapping
     public ResponseEntity<ParcelDto> createParcel(
         @Valid @RequestBody final ParcelDto parcelDto,
@@ -109,10 +95,7 @@ public class ParcelsController {
     }
 
     @Operation(summary = "Get user's every parcels", description = "Get all of the parcels of the user")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Parcels retrieved successfully",
-            content = @Content(schema = @Schema(implementation = ParcelDto.class)))
-    })
+    @ApiResponse(responseCode = "200", description = "Parcels retrieved successfully", content = @Content(schema = @Schema(implementation = ParcelDto.class)))
     @GetMapping
     public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
         log.info("Retrieving parcels for user: {}", authentication.getName());
@@ -124,12 +107,8 @@ public class ParcelsController {
     }
 
     @Operation(summary = "Get 1 parcel", description = "Get a specific parcel by parcel's id")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Parcel retrieved successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class))),
-        @ApiResponse(responseCode = "404", description = "Parcel not found",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
+    @ApiResponse(responseCode = "200", description = "Parcel retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class)))
+    @ApiResponseAnnotations.NotFoundApiResponse
     @GetMapping("/{id}")
     public ResponseEntity<ParcelDto> getParcel(
         @PathVariable final UUID id,
@@ -176,14 +155,9 @@ public class ParcelsController {
             }
         )
     ))
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Parcel updated successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class))),
-        @ApiResponse(responseCode = "404", description = "Parcel not found",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-        @ApiResponse(responseCode = "422", description = "Validation failed",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
+    @ApiResponse(responseCode = "200", description = "Parcel updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class)))
+    @ApiResponseAnnotations.NotFoundApiResponse
+    @ApiResponseAnnotations.ValidationApiResponse
     @PutMapping("/{id}")
     public ResponseEntity<ParcelDto> updateParcel(
         @PathVariable final UUID id,
@@ -197,14 +171,8 @@ public class ParcelsController {
     }
 
     @Operation(summary = "Delete parcel", description = "Delete a parcel by id")
-
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Parcel deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid parcel ID format",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-        @ApiResponse(responseCode = "404", description = "Parcel not found",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
-    })
+    @ApiResponse(responseCode = "204", description = "Parcel deleted successfully")
+    @ApiResponseAnnotations.NotFoundApiResponse
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcel(
         @PathVariable final UUID id,
