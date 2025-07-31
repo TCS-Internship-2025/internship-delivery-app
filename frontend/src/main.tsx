@@ -18,7 +18,10 @@ import { ToastProvider } from '@/providers/ToastProvider.tsx';
 import { ParcelForm } from '@/pages/ParcelForm.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
 import { RecipientForm } from '@/pages/RecipientForm.tsx';
+import { ProviderPage } from '@/pages/Success.tsx';
 import { Tracking } from '@/pages/Tracking.tsx';
+import { Verified } from '@/pages/Verified.tsx';
+import { Verify } from '@/pages/Verify.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
@@ -28,9 +31,6 @@ import { Login } from './pages/Login.tsx';
 import { ParcelDetails } from './pages/ParcelDetails.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
-import { ProviderPage } from './pages/Success.tsx';
-import { Verified } from './pages/Verified.tsx';
-import { Verify } from './pages/Verify.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
 import { queryClient } from './queryClient.ts';
 
