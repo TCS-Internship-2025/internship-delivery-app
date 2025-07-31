@@ -31,11 +31,7 @@ export const Navbar = () => {
   const [open, setOpen] = useState<boolean>(false);
   const isSmallScreen = useSmallScreen();
 
-  const handleLogoClick = () => {
-    void navigate('/');
-  };
-
-  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
+  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []); //add route's here whenever adding a new element to navbar for example will need to add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation(4)}
 
   const currentIndex = routes.indexOf(location.pathname);
   const activeTab = currentIndex !== -1 ? currentIndex : 0;
@@ -66,7 +62,11 @@ export const Navbar = () => {
       {!isSmallScreen ? (
         <>
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '15%' }}>
-            <ButtonBase onClick={handleLogoClick}>
+            <ButtonBase
+              onClick={() => {
+                handleNavigation(0);
+              }}
+            >
               <img
                 src="/logo.jpg"
                 style={{
@@ -77,9 +77,9 @@ export const Navbar = () => {
                 }}
                 alt="Logo"
               />
+              <Divider variant="middle" sx={{ my: 0.1 }} />
+              <Typography>SwiftParcel</Typography>
             </ButtonBase>
-            <Divider variant="middle" sx={{ my: 0.1 }} />
-            <Typography>SwiftParcel</Typography>
           </Box>
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Box display={'flex'} flexDirection={'row'}>
@@ -120,7 +120,7 @@ export const Navbar = () => {
               icon={<TrackChangesIcon />}
               label="Tracking"
               isActive={activeTab === 0}
-              onClick={() => handleNavigation(0)}
+              onClick={() => handleNavigation(1)}
             />
             {isAuthenticated && (
               <>
@@ -128,13 +128,13 @@ export const Navbar = () => {
                   icon={<LocalShippingIcon />}
                   label="Send Parcel"
                   isActive={activeTab === 1}
-                  onClick={() => handleNavigation(1)}
+                  onClick={() => handleNavigation(2)}
                 />
                 <NavItem
                   icon={<LocalShippingIcon />}
                   label="My Parcels"
                   isActive={activeTab === 2}
-                  onClick={() => handleNavigation(2)}
+                  onClick={() => handleNavigation(3)}
                 />
               </>
             )}
