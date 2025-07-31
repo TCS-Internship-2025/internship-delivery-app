@@ -4,6 +4,7 @@ import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.service.EmailService;
 import com.tcs.dhv.service.ParcelService;
+import com.tcs.dhv.util.EmailConstants;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class ParcelsController {
 
         log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
 
-        emailService.sendShipmentCreationEmail(parcelResponse.recipient().email(), parcelResponse.trackingCode(), "www.google.com");
+        emailService.sendShipmentCreationEmail(parcelResponse.recipient().email(), parcelResponse.trackingCode(), EmailConstants.TRACKING_PAGE_URL + parcelResponse.trackingCode());
 
         log.info("Parcel creation email sent to email: {}", parcelResponse.recipient().email());
 
@@ -84,7 +85,7 @@ public class ParcelsController {
         final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, authentication.getName());
 
         if(updatedParcel.currentStatus().equals(ParcelStatus.DELIVERED.toString())){
-            emailService.sendDeliveryCompleteEmail(updatedParcel.recipient().email(), updatedParcel.trackingCode(), "www.google.com");
+            emailService.sendDeliveryCompleteEmail(updatedParcel.recipient().email(), updatedParcel.trackingCode(), EmailConstants.TRACKING_PAGE_URL + updatedParcel.trackingCode());
             log.info("Delivery completion email sent to email: {}", updatedParcel.recipient().email());
         }
         return ResponseEntity.ok(updatedParcel);

@@ -17,4 +17,5 @@ public class EmailConstants {
     public static final String EMAIL_SENDER = "noreply@dhv.com";
     public static final String ENCODING = "UTF-8";
     public static final String DELIVERY_COMPLETE_SUBJECT = "Delivery is complete";
+    public static final String TRACKING_PAGE_URL = "http://localhost:5173/tracking/";
 }
