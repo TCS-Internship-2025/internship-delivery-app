@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -48,24 +47,12 @@ public class Parcel {
     private User sender;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "recipient_id", nullable = false)
-    private Recipient recipient;
-
-    @NotNull
     private String trackingCode;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private DeliveryType deliveryType;
-
-    @NotNull
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @NotNull
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "recipient_id", nullable = false)
+    private Recipient recipient;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -74,8 +61,15 @@ public class Parcel {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    private DeliveryType deliveryType;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
-    @Version // for optimistic locking if implemented
-    private Long version;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

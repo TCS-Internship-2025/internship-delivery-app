@@ -1,19 +1,21 @@
 package com.tcs.dhv.exception;
 
 import com.tcs.dhv.domain.dto.ApiErrorResponse;
+
 import jakarta.validation.ConstraintViolationException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.util.List;
+
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,6 +62,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(err);
     }
 
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
         final var errorList = ex.getConstraintViolations()
@@ -80,4 +83,48 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(err);
     }
 
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        log.error("Data integrity violation", ex);
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.CONFLICT.value())
+            .message("Data integrity violation: " + ex.getMostSpecificCause().getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.error("Entity not found", ex);
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.NOT_FOUND.value())
+            .message(ex.getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(final InternalAuthenticationServiceException ex) {
+        log.error("Internal authentication service error", ex);
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .message(ex.getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalStateException(final IllegalStateException ex) {
+        log.error("Illegal state error", ex);
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .message(ex.getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+    }
 }
