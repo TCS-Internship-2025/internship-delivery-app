@@ -5,13 +5,14 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState } from 'react';
 import { mapboxAccessToken } from '@/constants';
 
-import { useTheme } from '@/providers/ThemeProvider.tsx';
+import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
 
 import { useGetAllPickupPoints, type PickupPoint } from '@/apis/pickupPoints';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useTheme } from '@mui/material/styles';
 
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 
@@ -27,7 +28,9 @@ interface ParcelLocationMapProps {
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
 export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) => {
-  const { mapboxStyle } = useTheme();
+  const { mapboxStyle } = useMuiTheme();
+  const theme = useTheme();
+
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const { data: pickupPoints, isLoading: isPickupPointsLoading, isError } = useGetAllPickupPoints();
   if (isPickupPointsLoading) {
@@ -61,8 +64,15 @@ export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) 
                 }}
               >
                 <LocationPinIcon
-                  color={selectedMarker?.id === point.id ? 'error' : 'primary'}
-                  sx={{ fontSize: 42, cursor: 'pointer' }}
+                  color="inherit"
+                  sx={{
+                    fontSize: 42,
+                    cursor: 'pointer',
+                    color:
+                      selectedMarker?.id === point.id
+                        ? theme.palette.primary.markerSelected
+                        : theme.palette.primary.marker,
+                  }}
                 />
               </Marker>
             ))}
