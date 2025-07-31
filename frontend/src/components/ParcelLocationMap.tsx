@@ -10,6 +10,7 @@ import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
 import { useGetAllPickupPoints, type PickupPoint } from '@/apis/pickupPoints';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
@@ -36,7 +37,15 @@ export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) 
   if (isPickupPointsLoading) {
     return <CircularProgress />;
   } else if (isError) {
-    return <p>Error oh no</p>;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+        <Box maxWidth={400} textAlign="center">
+          <Alert severity="error" variant="filled">
+            Failed to load pickup points. Please check your connection or try again later.
+          </Alert>
+        </Box>
+      </Box>
+    );
   } else if (pickupPoints) {
     console.log(pickupPoints);
     return (
