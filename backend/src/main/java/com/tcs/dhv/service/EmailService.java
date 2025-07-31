@@ -60,6 +60,27 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    public void sendDeliveryCompleteEmail(
+            String email,
+            String id,
+            String link
+    ) throws MessagingException {
+        final Context context = new Context();
+        context.setVariable("trackingCode", id);
+        context.setVariable("trackingUrl", link);
+
+        final MimeMessage message = mailSender.createMimeMessage();
+        final MimeMessageHelper helper = new MimeMessageHelper(message, true, EmailConstants.ENCODING);
+        helper.setSubject(EmailConstants.DELIVERY_COMPLETE_SUBJECT);
+        helper.setFrom(EmailConstants.EMAIL_SENDER);
+        helper.setTo(email);
+
+        final String htmlContent = this.templateEngine.process("DeliveryCompletionEmail.html",context);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(message);
+    }
+
     @Async
     public void sendVerificationTokenByEmail(
         final UUID userId,
@@ -84,26 +105,6 @@ public class EmailService {
         helper.setText(htmlContent, true);
         mailSender.send(message);
 
-//        final var emailText = """
-//            Hello,
-//
-//            Please verify your email by clicking the link below:
-//            %s
-//
-//            This link will expire in 15 minutes.
-//
-//            If you did not request this, please ignore this email.
-//
-//            Regards,
-//            DHV Team
-//            """.formatted(emailVerificationUrl);
-//
-//        final var message = template;
-//        message.setTo(email);
-//        message.setSubject("Email Verification Token");
-//        message.setText(emailText);
-//
-//        mailSender.send(message);
         log.info("Verification email sent to {}", email);
     }
 

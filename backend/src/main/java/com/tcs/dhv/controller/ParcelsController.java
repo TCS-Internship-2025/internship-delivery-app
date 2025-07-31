@@ -1,6 +1,7 @@
 package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.ParcelDto;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.service.EmailService;
 import com.tcs.dhv.service.ParcelService;
 import jakarta.mail.MessagingException;
@@ -77,10 +78,15 @@ public class ParcelsController {
         @PathVariable final UUID id,
         @Valid @RequestBody final ParcelDto parcelUpdate,
         final Authentication authentication
-    ) {
+    ) throws MessagingException {
         log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
 
         final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, authentication.getName());
+
+        if(updatedParcel.currentStatus().equals(ParcelStatus.DELIVERED.toString())){
+            emailService.sendDeliveryCompleteEmail(updatedParcel.recipient().email(), updatedParcel.trackingCode(), "www.google.com");
+            log.info("Delivery completion email sent to email: {}", updatedParcel.recipient().email());
+        }
         return ResponseEntity.ok(updatedParcel);
     }
 
