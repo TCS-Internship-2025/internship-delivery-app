@@ -40,15 +40,13 @@ export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 
 export async function fetchAllParcelData(): Promise<ParcelListData> {
-  return await httpService.get('/api/parcels', parcelListSchema);
+  return httpService.get('/parcels', parcelListSchema);
 }
 
 export function useGetAllParcels() {
   return useQuery<ParcelListData>({
     queryKey: ['parcels'],
     queryFn: () => fetchAllParcelData(),
-    enabled: true,
-    staleTime: 0,
   });
 }
 

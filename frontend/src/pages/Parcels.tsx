@@ -1,42 +1,41 @@
 import { useGetAllParcels } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
-// import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-
-// import Typography from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
 
 import { ParcelGrid } from '@/components/ParcelGrid';
 
 // import { sampleData } from '@/utils/parcel_sample_data';
 
 export const ParcelPage = () => {
-  const { data, status } = useGetAllParcels();
+  const { data, status, isPending } = useGetAllParcels();
 
   console.log(status);
 
-  // if (isPending) {
-  //   return (
-  //     <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
-  //       <CircularProgress />
-  //     </Box>
-  //   );
-  // }
-  // if (status === 'error') {
-  //   return (
-  //     <Box
-  //       display={'flex'}
-  //       justifyContent={'center'}
-  //       alignItems={'center'}
-  //       height={'100%'}
-  //       flexDirection={'column'}
-  //       mt={10}
-  //     >
-  //       <Typography variant="h4">Something went wrong.</Typography>
-  //       <Typography variant="subtitle1">Please try again later!</Typography>
-  //     </Box>
-  //   );
-  // }
+  if (isPending) {
+    return (
+      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (status === 'error') {
+    return (
+      <Box
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'center'}
+        height={'100%'}
+        flexDirection={'column'}
+        mt={10}
+      >
+        <Typography variant="h4">Something went wrong.</Typography>
+        <Typography variant="subtitle1">Please try again later!</Typography>
+      </Box>
+    );
+  }
 
   return (
     <>
