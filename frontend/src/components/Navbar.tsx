@@ -25,7 +25,8 @@ import DrawerComponent from './DrawerComponent.tsx';
 import { NavItem } from './NavItem.tsx';
 
 export const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
+  console.info('User from navbar', user);
   const navigate = useNavigate();
   const location = useLocation();
   const { mode, toggleTheme } = useTheme();
@@ -177,12 +178,37 @@ export const Navbar = () => {
                 console.log('xd');
               }}
             >
-              <PersonIcon />
-              {!isSmallScreen && (
-                <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                  Profile
-                </Typography>
-              )}
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <PersonIcon />
+                {!isSmallScreen ? (
+                  <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
+                    {user?.name}
+                  </Typography>
+                ) : (
+                  user?.name && (
+                    <Typography
+                      variant="caption"
+                      fontWeight={600}
+                      sx={{
+                        ml: 0.5,
+                        fontSize: '0.8rem',
+                        color: 'text.secondary',
+                        backgroundColor: 'background.paper',
+                        borderRadius: '50%',
+                        width: 16,
+                        height: 16,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                      }}
+                    >
+                      {user.name.charAt(0).toUpperCase()}
+                    </Typography>
+                  )
+                )}
+              </Box>
             </IconButton>
           </Tooltip>
         )}

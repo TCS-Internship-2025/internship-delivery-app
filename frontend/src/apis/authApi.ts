@@ -71,7 +71,6 @@ export function getStoredAuthData(): { token: string; refreshToken: string; user
 
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   const response = await httpService.post('/auth/login', loginResponseSchema, credentials);
-  // Don't save or update anything here - let the hook handle it
   return response;
 }
 
