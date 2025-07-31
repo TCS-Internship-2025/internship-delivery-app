@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
 @RequestMapping("/api/tracking")
+@RestController
 public class TrackingController {
     private final TrackingService trackingService;
     private final TrackingCodeValidator trackingCodeValidator;
