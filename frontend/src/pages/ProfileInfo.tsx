@@ -27,7 +27,7 @@ const Body2Typography = ({ children }: { children: React.ReactNode }) => {
 
 export const ProfileInfo = () => {
   const navigate = useNavigate();
-  const { data: parcels, isLoading, isError } = useGetAllParcels();
+  const { data: parcels, isPending, isError } = useGetAllParcels();
 
   const name = 'Example Human';
   const email = 'example.human@example.com';
@@ -77,7 +77,7 @@ export const ProfileInfo = () => {
         </Typography>
 
         {(() => {
-          if (isLoading) {
+          if (isPending) {
             return (
               <Box display="flex" justifyContent="center" alignItems="center" height={100}>
                 <CircularProgress />
@@ -94,7 +94,7 @@ export const ProfileInfo = () => {
                   <Typography variant="subtitle1" fontWeight={600}>
                     Tracking: {parcel.trackingCode}
                   </Typography>
-                  <Body2Typography>From: Unknown &nbsp;&nbsp; To: {parcel.recipient.name}</Body2Typography>
+                  <Body2Typography>To: {parcel.recipient.name}</Body2Typography>
                   <Body2Typography>Delivery: {parcel.deliveryType}</Body2Typography>
                   <Body2Typography>Status: {parcel.currentStatus}</Body2Typography>
                   <Typography variant="caption" color="text.secondary">
