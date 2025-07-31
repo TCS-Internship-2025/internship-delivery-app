@@ -1,16 +1,15 @@
 package com.tcs.dhv.domain.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import lombok.Builder;
 
-@Builder(toBuilder = true)
+@Builder
 public record TrackingResponse(
         String trackingCode,
-        String currentStatus,
-        Optional<LocalDateTime> estimatedDelivery,
-        List<TrackingStatus> timeline
+        ParcelStatus currentStatus,
+        Optional<LocalDateTime> estimatedDelivery
 ) {
 }

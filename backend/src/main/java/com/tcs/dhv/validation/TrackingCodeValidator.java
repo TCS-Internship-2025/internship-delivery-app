@@ -3,17 +3,16 @@ package com.tcs.dhv.validation;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class TrackingCodeValidator implements ConstraintValidator<TrackingCode, String> {
 
     private final String TRACKING_CODE_REGEX = "^HU\\d{10}[A-Z]{2}$";
     private final ParcelRepository parcelRepository;
 
-    public TrackingCodeValidator(ParcelRepository parcelRepository) {
-        this.parcelRepository = parcelRepository;
-    }
 
     @Override
     public void initialize(TrackingCode constraintAnnotation) {

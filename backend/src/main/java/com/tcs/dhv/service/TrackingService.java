@@ -1,45 +1,54 @@
 package com.tcs.dhv.service;
 
-import com.tcs.dhv.domain.dto.TrackingRequest;
 import com.tcs.dhv.domain.dto.TrackingResponse;
 import com.tcs.dhv.domain.entity.Parcel;
-import com.tcs.dhv.domain.entity.ParcelStatusHistory;
-import com.tcs.dhv.mapper.TrackingMapper;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
+import com.tcs.dhv.validation.TrackingCode;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Validated
 public class TrackingService {
 
     private final ParcelRepository parcelRepository;
     private final ParcelStatusHistoryRepository parcelStatusHistoryRepository;
-    private final TrackingMapper trackingMapper;
 
-    public TrackingResponse getTrackingDetails(TrackingRequest trackingRequest) {
-        log.info("Getting tracking data of parcel with tracking code : {}", trackingRequest.trackingCode());
+    public TrackingResponse getTrackingDetails(
+            @Valid
+            @NotNull
+            @TrackingCode
+            String trackingCode
+    ){
+         Parcel parcel = parcelRepository.findByTrackingCode(trackingCode)
+                .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
-        Parcel parcel = parcelRepository.findByTrackingCode(trackingRequest.trackingCode())
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingRequest.trackingCode()));
+        log.info("Getting tracking data of parcel with tracking code : {}", trackingCode);
 
-        List<ParcelStatusHistory> statusHistory = parcelStatusHistoryRepository.findAllByParcelIdOrderByTimestampAsc(parcel.getId());
-        Optional<LocalDateTime> estDeliveryDate = calculateEstimatedDevilryTime(parcel);
+        final var estimatedDevilryTime = calculateEstimatedDevilryTime(parcel);
 
-        return trackingMapper.toResponse(parcel, statusHistory)
-                .toBuilder().estimatedDelivery(estDeliveryDate)
+        return TrackingResponse.builder()
+                .trackingCode(parcel.getTrackingCode())
+                .currentStatus(parcel.getCurrentStatus())
+                .estimatedDelivery(estimatedDevilryTime)
                 .build();
     }
 
-    private Optional<LocalDateTime> calculateEstimatedDevilryTime(Parcel parcel) {
+    private Optional<LocalDateTime> calculateEstimatedDevilryTime(
+            Parcel parcel
+    ){
         return switch(parcel.getCurrentStatus()){
             case CREATED -> Optional.of(parcel.getCreatedAt().plusDays(7));
             case PICKED_UP -> Optional.of(parcel.getUpdatedAt().plusDays(5)); // the carier has it

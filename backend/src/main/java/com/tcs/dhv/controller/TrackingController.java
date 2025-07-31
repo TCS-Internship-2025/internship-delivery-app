@@ -1,35 +1,24 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.TrackingRequest;
+
 import com.tcs.dhv.domain.dto.TrackingResponse;
 import com.tcs.dhv.service.TrackingService;
-import com.tcs.dhv.validation.TrackingCodeValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/tracking")
 public class TrackingController {
-    private final TrackingService trackingService;
-    private final TrackingCodeValidator trackingCodeValidator;
 
-    public TrackingController(TrackingService trackingService, TrackingCodeValidator trackingCodeValidator) {
-        this.trackingService = trackingService;
-        this.trackingCodeValidator = trackingCodeValidator;
-    }
+    private final TrackingService trackingService;
 
     @GetMapping("/{trackingCode}")
-    public ResponseEntity<TrackingResponse> trackParcel(@PathVariable String trackingCode) {
-        if (!trackingCodeValidator.isValid(trackingCode, null)) {
-            return ResponseEntity.badRequest().body(new TrackingResponse(null,
-                    "Invalid tracking code format",
-                    Optional.empty(),
-                    List.of()));
-        }
-        TrackingRequest request = new TrackingRequest(trackingCode);
-        TrackingResponse response = trackingService.getTrackingDetails(request);
+    public ResponseEntity<TrackingResponse> trackParcel(
+            @PathVariable String trackingCode
+    ) {
+        final var response = trackingService.getTrackingDetails(trackingCode);
         if (response == null) {
             return ResponseEntity.notFound().build();
         }
