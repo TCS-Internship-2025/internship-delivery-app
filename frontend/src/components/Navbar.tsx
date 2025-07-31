@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen.ts';
+import { useAuth } from '@/contexts/AuthContext.tsx';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
@@ -24,7 +25,7 @@ import DrawerComponent from './DrawerComponent.tsx';
 import { NavItem } from './NavItem.tsx';
 
 export const Navbar = () => {
-  const isAuthenticated = true; // Force it for testing
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { mode, toggleTheme } = useTheme();
@@ -33,6 +34,11 @@ export const Navbar = () => {
 
   const handleLogoClick = () => {
     void navigate('/');
+  };
+  const handleLogout = () => {
+    void logout().then(() => {
+      void navigate('/login');
+    });
   };
 
   const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
@@ -181,23 +187,11 @@ export const Navbar = () => {
           </Tooltip>
         )}
         <Tooltip title={isAuthenticated ? 'Logout' : 'Login'} arrow>
-          <IconButton
-            size="small"
-            color={isAuthenticated ? 'error' : 'primary'}
-            sx={{ px: 1, borderRadius: 1 }}
-            onClick={() => {
-              if (isAuthenticated) {
-                //duplicated for testing until having the logout API
-                void navigate('/login');
-              } else {
-                void navigate('/login');
-              }
-            }}
-          >
+          <IconButton size="small" color="error" sx={{ px: 1, borderRadius: 1 }} onClick={handleLogout}>
             {isAuthenticated ? <LogoutIcon fontSize="small" /> : <ExitToAppIcon fontSize="small" />}
             {!isSmallScreen && (
               <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                {isAuthenticated ? 'Logout' : 'Login'}
+                Logout
               </Typography>
             )}
           </IconButton>

@@ -1,9 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import type { User } from '@/types/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+import { jwtDecode } from 'jwt-decode';
 import { enqueueSnackbar } from 'notistack';
 import { z } from 'zod';
+
+import { useAuth } from '@/contexts/AuthContext';
 
 import { login } from '@/apis/authApi';
 
@@ -13,7 +17,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { setAuthData } = useAuth();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -33,13 +37,26 @@ export const useLoginForm = () => {
     onSuccess: (data) => {
       console.log('Login successful:', data);
 
-      void queryClient.invalidateQueries({ queryKey: ['auth', 'stored'] });
+      // Decode the token to extract user data
+      const decodedToken = jwtDecode<{
+        sub: string;
+        name: string;
+        email: string;
+        emailVerified: boolean;
+      }>(data.token);
+
+      const user: User = {
+        id: decodedToken.sub,
+        name: decodedToken.name,
+        email: decodedToken.email,
+        emailVerificationRequired: !decodedToken.emailVerified,
+      };
+
+      setAuthData(data.token, data.refreshToken, user);
 
       enqueueSnackbar('Login successful!', { variant: 'success' });
 
-      setTimeout(() => {
-        void navigate('/');
-      }, 100);
+      void navigate('/');
     },
     onError: (error) => {
       console.error('Login failed:', error);

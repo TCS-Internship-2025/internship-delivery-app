@@ -1,4 +1,5 @@
 import { Controller } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 import { useRegisterForm } from '@/hooks/useRegisterForm';
 
@@ -17,7 +18,15 @@ interface RegistrationFormProps {
 }
 
 export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
-  const { form, onSubmit, isLoading } = useRegisterForm();
+  const navigate = useNavigate();
+
+  const { form, onSubmit, isLoading } = useRegisterForm({
+    onSuccess: (data) => {
+      if (!data.emailVerificationRequired) {
+        void navigate('/login');
+      }
+    },
+  });
   const {
     control,
     handleSubmit,

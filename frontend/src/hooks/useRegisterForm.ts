@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import type { RegisterResponse } from '@/types/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { enqueueSnackbar } from 'notistack';
@@ -8,7 +9,7 @@ import { register } from '@/apis/authApi';
 import { registrationSchema, type RegistrationFormData } from '@/utils/authZodSchemas';
 
 interface UseRegisterFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (data: RegisterResponse) => void;
 }
 
 export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
@@ -25,7 +26,7 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
         { variant: 'success' }
       );
       form.reset();
-      onSuccess?.();
+      onSuccess?.(data); // ✅ Pass the data to the callback
     },
     onError: (error) => {
       console.error('Registration failed:', error);

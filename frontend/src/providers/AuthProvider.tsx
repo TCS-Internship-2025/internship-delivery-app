@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { queryClient } from '@/queryClient';
 import type { User } from '@/types/auth';
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,9 +12,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
+  // Better query function that initializes from storage
   const { data: authData, isLoading } = useQuery({
-    queryKey: ['auth', 'stored'],
-    queryFn: authApi.getStoredAuthData,
+    queryKey: ['auth'],
+    queryFn: () => {
+      const storedData = authApi.getStoredAuthData();
+      return storedData ?? null;
+    },
     staleTime: Infinity,
     retry: false,
   });
@@ -43,6 +48,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRefreshToken(rt);
         setUser(u);
         authApi.saveAuthData(t, rt, u);
+
+        // Update query cache and invalidate to trigger re-fetch
+        queryClient.setQueryData(['auth'], {
+          token: t,
+          refreshToken: rt,
+          user: u,
+        });
+
+        // Force a refetch to ensure state is synchronized
+        void queryClient.invalidateQueries({ queryKey: ['auth'] });
       },
       logout: async () => {
         try {
@@ -53,7 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setToken(null);
           setRefreshToken(null);
           setUser(null);
-          authApi.clearAuthData();
         }
       },
     }),

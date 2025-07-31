@@ -7,7 +7,6 @@ import type {
   RegisterResponse,
   User,
 } from '@/types/auth';
-import { jwtDecode } from 'jwt-decode';
 import { z } from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
@@ -72,30 +71,7 @@ export function getStoredAuthData(): { token: string; refreshToken: string; user
 
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   const response = await httpService.post('/auth/login', loginResponseSchema, credentials);
-
-  // Decode token to extract user data
-  const decodedToken = jwtDecode<{
-    sub: string;
-    name: string;
-    email: string;
-    emailVerified: boolean;
-  }>(response.token);
-
-  const user: User = {
-    id: decodedToken.sub,
-    name: decodedToken.name,
-    email: decodedToken.email,
-    emailVerificationRequired: !decodedToken.emailVerified,
-  };
-
-  saveAuthData(response.token, response.refreshToken, user);
-
-  queryClient.setQueryData(['auth', 'stored'], {
-    token: response.token,
-    refreshToken: response.refreshToken,
-    user,
-  });
-
+  // Don't save or update anything here - let the hook handle it
   return response;
 }
 
@@ -104,17 +80,29 @@ export async function register(credentials: RegisterRequest): Promise<RegisterRe
 
   return response;
 }
-
 export async function logout(): Promise<void> {
   const authData = getStoredAuthData();
-  try {
-    if (authData?.refreshToken) {
-      await httpService.post(`/auth/logout?refreshToken=${authData.refreshToken}`, z.object({}));
+
+  clearAuthData();
+
+  if (authData?.refreshToken) {
+    try {
+      // Use direct fetch for logout since we know it returns empty response
+      const response = await fetch(`http://localhost:8080/api/auth/logout?refreshToken=${authData.refreshToken}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        console.log('Logout API call successful');
+      } else {
+        console.warn(`Logout API returned status: ${response.status}`);
+      }
+    } catch (error) {
+      console.warn('Logout API call failed, but local logout completed:', error);
     }
-  } catch (err) {
-    console.warn('Logout failed:', err);
-  } finally {
-    clearAuthData();
   }
 }
 export async function refreshToken(): Promise<RefreshTokenResponse> {
@@ -126,13 +114,14 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
     `/auth/refresh-token?refreshToken=${authData.refreshToken}`,
     refreshTokenResponseSchema
   );
-  const currentData = queryClient.getQueryData<{ token: string; refreshToken: string; user: User }>(['auth', 'stored']);
+
+  const currentData = queryClient.getQueryData<{ token: string; refreshToken: string; user: User }>(['auth']);
 
   if (currentData?.user) {
     saveAuthData(response.token, response.refreshToken, currentData.user);
   }
 
-  queryClient.setQueryData(['auth', 'stored'], {
+  queryClient.setQueryData(['auth'], {
     token: response.token,
     refreshToken: response.refreshToken,
     user: currentData?.user ?? null,
