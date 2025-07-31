@@ -49,7 +49,7 @@ export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) 
   } else if (pickupPoints) {
     console.log(pickupPoints);
     return (
-      <Box display="flex" justifyContent="center" width="90%" mt={2} height="70vh">
+      <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
         <Box width="80%" flexGrow={1}>
           <Map
             mapboxAccessToken={mapboxAccessToken}
