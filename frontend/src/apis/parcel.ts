@@ -71,7 +71,7 @@ export const useCreateParcel = () => {
     mutationFn: createParcel,
     onSuccess: async (data) => {
       console.log('Parcel created successfully:', data);
-      await queryClient.invalidateQueries({ queryKey: ['Parcels'] });
+      await queryClient.invalidateQueries({ queryKey: ['parcels'] });
       formContext.resetForm();
     },
   });

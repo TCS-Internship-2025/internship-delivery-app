@@ -1,9 +1,12 @@
-import { useCallback, useEffect, type FormEvent } from 'react';
+import { useCallback, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import {
   DELIVERY_TYPE_NAME_CONVERTER,
+  DeliveryEnum,
   PARCEL_FORM_DEFAULT_VALUES,
   PAYMENT_TYPE_NAME_CONVERTER,
+  PaymentEnum,
   ROUTES,
 } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,30 +28,43 @@ import { parcelFields, parcelFormSchema, shippingOptionsField, type ParcelFormSc
 
 export const ParcelForm = () => {
   const { mutate, isPending } = useCreateParcel();
-  const formContext = useFormContext();
+  const { updateFormData, getParcelFormData, getRecipientFormData, resetParcelForm } = useFormContext();
+  const navigate = useNavigate();
 
   const { control, handleSubmit, watch, reset, getValues } = useForm<ParcelFormSchema>({
     resolver: zodResolver(parcelFormSchema),
     mode: 'onChange',
-    defaultValues: formContext.getParcelFormData(),
+    defaultValues: getParcelFormData(),
   });
   const deliveryType = watch('deliveryType');
 
-  const handleReset = useCallback(() => {
-    const currentDeliveryType = getValues('deliveryType');
-    reset({
-      ...PARCEL_FORM_DEFAULT_VALUES,
-      deliveryType: currentDeliveryType,
-    });
-  }, [getValues, reset]);
+  const handleReset = useCallback(
+    (deliveryType: DeliveryEnum, paymentType: PaymentEnum | '') => {
+      console.log('resetting');
 
-  useEffect(() => {
-    handleReset();
-  }, [handleReset, deliveryType]);
+      resetParcelForm({
+        deliveryType,
+        paymentType,
+      });
+
+      reset({
+        ...PARCEL_FORM_DEFAULT_VALUES,
+        deliveryType,
+        paymentType,
+      });
+    },
+    [reset, resetParcelForm]
+  );
+
+  watch((data, { name }) => {
+    if (name === 'deliveryType') {
+      handleReset(data.deliveryType as DeliveryEnum, data.paymentType as PaymentEnum | '');
+    }
+  });
 
   const onSubmit = (data: ParcelFormSchema) => {
     const { paymentType, deliveryType, ...addressData } = data;
-    const recipientFormData = formContext.getRecipientFormData();
+    const recipientFormData = getRecipientFormData();
 
     const submittedData = {
       recipient: {
@@ -62,13 +78,22 @@ export const ParcelForm = () => {
     };
 
     console.log('Form submitted with data:', submittedData);
-    mutate(submittedData);
-    handleReset();
+    mutate(submittedData, {
+      onSuccess: () => {
+        reset({ ...PARCEL_FORM_DEFAULT_VALUES });
+        void navigate(`/${ROUTES.RECIPIENT_FORM}`);
+      },
+    });
   };
 
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     void handleSubmit(onSubmit)(event);
+  };
+
+  const handlePrevious = () => {
+    updateFormData({ ...getValues() });
+    void navigate(`/${ROUTES.RECIPIENT_FORM}`);
   };
 
   return (
@@ -96,7 +121,7 @@ export const ParcelForm = () => {
             </form>
           </PageContainer>
           <NavigationButtons
-            previousPath={`/${ROUTES.RECIPIENT_FORM}`}
+            onPrevious={handlePrevious}
             onNext={() => {
               void handleSubmit(onSubmit)();
             }}

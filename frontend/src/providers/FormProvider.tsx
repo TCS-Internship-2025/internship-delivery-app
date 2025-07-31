@@ -30,6 +30,19 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
     setFormData(defaultFormData);
   }, []);
 
+  const resetParcelForm = useCallback(
+    (persistedData: Partial<ParcelFormSchema>) => {
+      const updatedParcelForm: ParcelFormSchema = {
+        ...PARCEL_FORM_DEFAULT_VALUES,
+        ...persistedData,
+      };
+
+      console.log('formProvider: ', updatedParcelForm);
+      updateFormData(updatedParcelForm);
+    },
+    [updateFormData]
+  );
+
   const getRecipientFormData = useCallback((): RecipientFormSchema => {
     return {
       title: formData.title,
@@ -59,10 +72,11 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
       formData,
       updateFormData,
       resetForm,
+      resetParcelForm,
       getRecipientFormData,
       getParcelFormData,
     }),
-    [formData, updateFormData, resetForm, getRecipientFormData, getParcelFormData]
+    [formData, updateFormData, resetForm, getRecipientFormData, getParcelFormData, resetParcelForm]
   );
 
   return <FormContext.Provider value={contextValue}>{children}</FormContext.Provider>;
