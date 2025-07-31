@@ -1,4 +1,4 @@
-// import { useGetAllParcels } from '@/apis/parcelGet';
+import { useGetAllParcels } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
 // import CircularProgress from '@mui/material/CircularProgress';
@@ -8,12 +8,14 @@ import Container from '@mui/material/Container';
 
 import { ParcelGrid } from '@/components/ParcelGrid';
 
-import { sampleData } from '@/utils/parcel_sample_data';
+// import { sampleData } from '@/utils/parcel_sample_data';
 
 export const ParcelPage = () => {
-  // const { data, status } = useGetAllParcels();
+  const { data, status } = useGetAllParcels();
 
-  // if (status === 'pending') {
+  console.log(status);
+
+  // if (isPending) {
   //   return (
   //     <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
   //       <CircularProgress />
@@ -37,18 +39,25 @@ export const ParcelPage = () => {
   // }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
-        <Container
-          maxWidth={false}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <ParcelGrid parcels={sampleData} />
-        </Container>
+    <>
+      {/* {isPending && (
+        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
+          <CircularProgress />
+        </Box>
+      )} */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          <Container
+            maxWidth={false}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <ParcelGrid parcels={data} />
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };

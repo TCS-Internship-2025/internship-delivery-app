@@ -40,18 +40,20 @@ export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 
 export async function fetchAllParcelData(): Promise<ParcelListData> {
-  return await httpService.get('api/parcels', parcelListSchema);
+  return await httpService.get('/api/parcels', parcelListSchema);
 }
 
 export function useGetAllParcels() {
   return useQuery<ParcelListData>({
     queryKey: ['parcels'],
     queryFn: () => fetchAllParcelData(),
+    enabled: true,
+    staleTime: 0,
   });
 }
 
 export async function fetchParcelData(parcelId: string | undefined): Promise<ParcelData> {
-  return await httpService.get(`api/parcels/${parcelId}`, parcelSchema);
+  return await httpService.get(`/api/parcels/${parcelId}`, parcelSchema);
 }
 
 export function useGetParcelById(id: string | undefined) {
@@ -63,7 +65,7 @@ export function useGetParcelById(id: string | undefined) {
 }
 
 export async function deleteParcelData(parcelId: string | undefined): Promise<ParcelData> {
-  return await httpService.delete(`api/parcels/${parcelId}`, parcelSchema);
+  return await httpService.delete(`/api/parcels/${parcelId}`, parcelSchema);
 }
 
 export function useDeleteParcelById(id: string | undefined) {
