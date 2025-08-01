@@ -101,4 +101,15 @@ public class GlobalExceptionHandler {
             .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
     }
+
+    @ExceptionHandler(MailMessagingException.class)
+    public ResponseEntity<ApiErrorResponse> handleMailMessagingException(final MailMessagingException exception){
+        log.error("Mail messaging error", exception);
+        final var err = ApiErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(exception.getMessage())
+                .timestamp(Instant.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+    }
 }

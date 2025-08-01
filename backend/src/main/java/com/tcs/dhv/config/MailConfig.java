@@ -1,7 +1,6 @@
 package com.tcs.dhv.config;
 
 
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,7 @@ import static com.tcs.dhv.util.EmailConstants.MAIL_AUTH;
 import static com.tcs.dhv.util.EmailConstants.MAIL_DEBUG;
 import static com.tcs.dhv.util.EmailConstants.MAIL_PROTOCOL;
 import static com.tcs.dhv.util.EmailConstants.MAIL_STARTTLS_ENABLE;
-import static com.tcs.dhv.util.EmailConstants.TRUE;
+import static com.tcs.dhv.util.EmailConstants.MAIL_PROPERTY_ENABLED;
 
 @Configuration
 public class MailConfig {
@@ -43,9 +42,9 @@ public class MailConfig {
 
         final var props = mailSender.getJavaMailProperties();
         props.put(MAIL_PROTOCOL, EMAIL_PROTOCOL);
-        props.put(MAIL_AUTH, TRUE);
-        props.put(MAIL_STARTTLS_ENABLE, TRUE);
-        props.put(MAIL_DEBUG, TRUE);
+        props.put(MAIL_AUTH, MAIL_PROPERTY_ENABLED);
+        props.put(MAIL_STARTTLS_ENABLE, MAIL_PROPERTY_ENABLED);
+        props.put(MAIL_DEBUG, MAIL_PROPERTY_ENABLED);
 
         return mailSender;
     }

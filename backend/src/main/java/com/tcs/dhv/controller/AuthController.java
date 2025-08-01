@@ -46,7 +46,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> registerUser(
         @Valid @RequestBody final RegisterRequest registerRequest
-    ) throws MessagingException {
+    ) {
         log.info("Register request for email: {}", registerRequest.email());
         final var registeredUser = authService.registerUser(registerRequest);
 
