@@ -11,12 +11,13 @@ import {
 } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useFormContext } from '@/contexts/FormContext';
 
 import { useCreateParcel } from '@/apis/parcel';
 import type { PickupPoint } from '@/apis/pickupPoints';
 
-import QuestionMark from '@mui/icons-material/QuestionMark';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -32,6 +33,7 @@ export const ParcelForm = () => {
   const [selectedParcel, setSelectedParcel] = useState<PickupPoint | null>();
   const { mutate, isPending } = useCreateParcel();
   const { updateFormData, getParcelFormData, getRecipientFormData, resetParcelForm } = useFormContext();
+  const isSmallScreen = useSmallScreen();
   const navigate = useNavigate();
 
   const { control, handleSubmit, watch, reset, getValues } = useForm<ParcelFormSchema>({
@@ -100,14 +102,14 @@ export const ParcelForm = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {isPending ? (
         <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
           <CircularProgress />
         </Box>
       ) : (
         <>
-          <PageContainer icon={<QuestionMark />} title="Parcel Data">
+          <PageContainer icon={<LocationOnIcon />} title="Parcel Data">
             <form onSubmit={handleFormSubmit}>
               <SectionContainer title="Preferences">
                 <SectionFields fields={shippingOptionsField} control={control} />
