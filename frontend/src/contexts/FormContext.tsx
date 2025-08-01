@@ -10,6 +10,7 @@ export interface FormContextValue {
   formData: FormData;
   updateFormData: (data: Partial<FormData>) => void;
   resetForm: () => void;
+  resetParcelForm: (persistedData: Partial<ParcelFormSchema>) => void;
   getRecipientFormData: () => RecipientFormSchema;
   getParcelFormData: () => ParcelFormSchema;
 }
