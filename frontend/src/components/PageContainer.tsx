@@ -1,3 +1,6 @@
+import { useSmallScreen } from '@/hooks/useSmallScreen';
+import { useTheme } from '@/providers/ThemeProvider';
+
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -11,8 +14,12 @@ interface PageContainerProps {
 }
 
 export const PageContainer = ({ children, icon, title }: PageContainerProps) => {
+  const isSmallScreen = useSmallScreen();
+  const { mode } = useTheme();
+  const bgColor = mode === 'light' ? '#1018280D' : '#2A2F2A';
+
   return (
-    <>
+    <Box paddingY={isSmallScreen ? 2 : 10} paddingX={5} borderRadius={3} sx={{ height: '100%', bgcolor: bgColor }}>
       <Box
         sx={{
           display: 'flex',
@@ -32,12 +39,11 @@ export const PageContainer = ({ children, icon, title }: PageContainerProps) => 
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            border: '2px dashed grey',
           }}
         >
           {children}
         </Container>
       </Box>
-    </>
+    </Box>
   );
 };
