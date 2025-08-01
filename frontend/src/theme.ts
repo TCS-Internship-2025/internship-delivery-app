@@ -6,6 +6,15 @@ declare module '@mui/material/styles' {
     default: string;
     paper: string;
   }
+  interface PaletteColor {
+    marker?: string;
+    markerSelected?: string;
+  }
+
+  interface SimplePaletteColorOptions {
+    marker?: string;
+    markerSelected?: string;
+  }
 }
 
 const white = '#FFFFFF';
@@ -36,6 +45,8 @@ export const themes = {
         main: primaryColor,
         light: '#74c69d',
         dark: '#2d6a4f',
+        marker: '#1b4332',
+        markerSelected: '#ff0000',
         contrastText: white,
       },
       secondary: {
@@ -152,6 +163,8 @@ export const themes = {
       primary: {
         main: '#52b788',
         light: '#74c69d',
+        marker: '#b6e2ca',
+        markerSelected: '#ff0000',
         dark: primaryColorDark,
         contrastText: white,
       },

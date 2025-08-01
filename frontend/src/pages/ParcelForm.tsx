@@ -1,4 +1,4 @@
-import { useCallback, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormContext } from '@/contexts/FormContext';
 
 import { useCreateParcel } from '@/apis/parcel';
+import type { PickupPoint } from '@/apis/pickupPoints';
 
 import QuestionMark from '@mui/icons-material/QuestionMark';
 import Box from '@mui/material/Box';
@@ -22,11 +23,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { SectionFields } from '@/components/FormSectionFields';
 import { NavigationButtons } from '@/components/NavigationButtons.tsx';
 import { PageContainer } from '@/components/PageContainer';
+import { ParcelLocationMap } from '@/components/ParcelLocationMap';
 import { SectionContainer } from '@/components/SectionContainer';
 
 import { parcelFields, parcelFormSchema, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
 
 export const ParcelForm = () => {
+  const [selectedParcel, setSelectedParcel] = useState<PickupPoint | null>();
   const { mutate, isPending } = useCreateParcel();
   const { updateFormData, getParcelFormData, getRecipientFormData, resetParcelForm } = useFormContext();
   const navigate = useNavigate();
@@ -115,8 +118,11 @@ export const ParcelForm = () => {
                 </SectionContainer>
               )}
               {deliveryType === 'Pickup Point' && (
-                // Map generation will Happen here
-                <p> Map here </p>
+                <Box display="flex" justifyContent="center">
+                  <p>{selectedParcel?.name}</p>
+                  {/* Testing*/}
+                  <ParcelLocationMap setSelectedPoint={setSelectedParcel} />
+                </Box>
               )}
             </form>
           </PageContainer>
