@@ -1,5 +1,8 @@
+import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import SendIcon from '@mui/icons-material/Send';
 import Box from '@mui/material/Box';
@@ -8,20 +11,34 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-interface FormValues {
-  trackNumber: string;
-}
+const TrackingFormSchema = z.object({
+  trackNumber: z.string().regex(/^HU\d{10}[A-Z]{2}$/, {
+    message: "Tracking number starts with 'HU', followed by 10 digits and 2 uppercase letters",
+  }),
+});
+
+type FormValues = z.infer<typeof TrackingFormSchema>;
 
 export const Tracking = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<FormValues>();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(TrackingFormSchema),
+  });
+  const handleFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    void handleSubmit(onSubmit)(event);
+  };
   const onSubmit = async (data: FormValues) => {
     await navigate(`/tracking/${data.trackNumber}`);
   };
 
   return (
-    <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+    <form onSubmit={handleFormSubmit}>
       <Box
         sx={{
           display: 'flex',
@@ -33,9 +50,11 @@ export const Tracking = () => {
         }}
       >
         <TextField
-          sx={{ width: '66%', marginBottom: 3 }}
-          placeholder="SWIFT1875037"
-          {...register('trackNumber', { required: true })}
+          sx={{ width: '70%', marginBottom: 3 }}
+          placeholder="HU1234567890AA"
+          {...register('trackNumber')}
+          error={!!errors.trackNumber}
+          helperText={errors.trackNumber?.message}
           slotProps={{
             input: {
               endAdornment: (
