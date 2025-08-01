@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState } from 'react';
 import { mapboxAccessToken } from '@/constants';
 
+import { useAuth } from '@/contexts/AuthContext.tsx';
 import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
 
 import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/apis/pickupPoints';
@@ -32,13 +33,14 @@ interface ParcelLocationMapProps {
 export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
+  const { token } = useAuth();
 
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const {
     data: pickupPoints,
     isLoading: isPickupPointsLoading,
     isError,
-  } = useGetAllPickupPoints({ deliveryType: deliveryType });
+  } = useGetAllPickupPoints(token, { deliveryType: deliveryType });
   if (isPickupPointsLoading) {
     return <CircularProgress />;
   } else if (isError) {
