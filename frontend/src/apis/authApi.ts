@@ -1,4 +1,3 @@
-import { queryClient } from '@/queryClient';
 import type {
   LoginRequest,
   LoginResponse,
@@ -7,6 +6,7 @@ import type {
   RegisterResponse,
   User,
 } from '@/types/auth';
+import { QueryClient } from '@tanstack/react-query';
 import { z } from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
@@ -16,7 +16,7 @@ import { parseFromStorage } from '@/utils/storageParser';
 const AUTH_TOKEN_KEY = 'authToken';
 const AUTH_REFRESH_TOKEN_KEY = 'authRefreshToken';
 const AUTH_USER_KEY = 'authUser';
-
+const queryClient = new QueryClient();
 export const userSchema = z.object({
   id: z.string(),
   name: z.string(),

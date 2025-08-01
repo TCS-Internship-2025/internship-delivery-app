@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
+import { CoordinatesMap } from './CoordinatesMap.tsx';
+
 import { deliveryConverter, paymentConverter } from '@/utils/parcelTypeConverter';
 
 const formatDate = (date: string | Date | undefined): string => {
@@ -99,7 +101,12 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }
           </DataDisplay>
         </Box>
       </Box>
-      {/* TODO: Map (coordinates: parcelData?.recipient.address.latitude, parcelData?.recipient.address.longitude) */}
+      <Box display={'flex'} justifyContent={'center'}>
+        <CoordinatesMap
+          longitude={parcelData?.recipient.address.longitude ?? 0}
+          latitude={parcelData?.recipient.address.latitude ?? 0}
+        />
+      </Box>
     </>
   );
 };
