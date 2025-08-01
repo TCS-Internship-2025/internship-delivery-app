@@ -2,12 +2,14 @@ package com.tcs.dhv.domain.dto;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import lombok.Builder;
 
 @Builder
 public record TrackingResponse(
+        UUID parcelId,
         String trackingCode,
         String senderName,
         String recipientName,

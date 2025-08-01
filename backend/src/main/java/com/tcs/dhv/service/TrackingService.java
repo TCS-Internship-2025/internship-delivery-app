@@ -40,6 +40,7 @@ public class TrackingService {
         final var estimatedDevilryTime = calculateEstimatedDevilryTime(parcel);
 
         return TrackingResponse.builder()
+                .parcelId(parcel.getId())
                 .trackingCode(parcel.getTrackingCode())
                 .senderName(parcel.getSender().getName())
                 .recipientName(parcel.getRecipient().getName())
