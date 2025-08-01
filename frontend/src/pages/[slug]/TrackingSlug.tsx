@@ -37,6 +37,7 @@ function TrackingSlug() {
         sx={{
           display: 'flex',
           height: '100%',
+          width: '100%',
           flexDirection: isSmallScreen ? 'column' : 'row',
           justifyContent: 'center',
           alignItems: isSmallScreen ? 'start' : 'center',
@@ -44,6 +45,7 @@ function TrackingSlug() {
       >
         <Box
           sx={{
+            width: '33%',
             ...(isSmallScreen && { paddingLeft: 2 }),
             '& > :not(:last-child)': {
               marginBottom: (theme) => theme.spacing(0.5),
@@ -53,22 +55,22 @@ function TrackingSlug() {
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             PARCEL NUMBER
           </Typography>
-          <Typography>{data.id}</Typography>
+          <Typography>{data.trackingCode}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
-            SENDER
+            SEND DATE
           </Typography>
-          <Typography>{data.sender}</Typography>
+          <Typography>{new Date(data.parcel.createdAt).toLocaleDateString()}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             DELIVERY METHOD
           </Typography>
-          <Typography>{data.method}</Typography>
+          <Typography>{data.parcel.deliveryType}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
-            DELIVERY ADDRESS
+            PAYMENT TYPE
           </Typography>
-          <Typography>{data.address}</Typography>
+          <Typography>{data.parcel.paymentType}</Typography>
         </Box>
-        <Box marginLeft={0}>
-          <TimelineComponent status={data.status} />
+        <Box sx={{ width: '33%' }}>
+          <TimelineComponent timeline={data.timeline} />
         </Box>
       </Container>
     </Box>
