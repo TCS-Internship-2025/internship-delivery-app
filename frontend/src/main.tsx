@@ -63,18 +63,26 @@ const router = createBrowserRouter([
         element: <Verified />,
       },
       {
+        path: ROUTES.TRACKING,
+        element: <Tracking />,
+      },
+      {
+        path: ROUTES.TRACKINGSLUG,
+        element: <TrackingSlug />,
+      },
+
+      // App layout shared for public + protected pages
+      {
+        element: <AppLayout />,
         children: [
           {
-            element: <AppLayout />,
+            index: true,
+            element: <LandingPage />,
+          },
+
+          {
+            element: <ProtectedRoute />,
             children: [
-              {
-                index: true,
-                element: (
-                  <ProtectedRoute>
-                    <LandingPage />
-                  </ProtectedRoute>
-                ),
-              },
               {
                 path: ROUTES.PARCELS,
                 children: [
@@ -96,15 +104,6 @@ const router = createBrowserRouter([
                 path: ROUTES.PARCEL_FORM,
                 element: <ParcelForm />,
               },
-              {
-                path: ROUTES.TRACKING,
-                element: <Tracking />,
-              },
-              {
-                path: ROUTES.TRACKINGSLUG,
-                element: <TrackingSlug />,
-              },
-
               {
                 path: ROUTES.PAGE5,
                 children: [
