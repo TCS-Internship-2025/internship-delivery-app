@@ -7,7 +7,7 @@ import { mapboxAccessToken } from '@/constants';
 
 import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
 
-import { useGetAllPickupPoints, type PickupPoint } from '@/apis/pickupPoints';
+import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/apis/pickupPoints';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import Alert from '@mui/material/Alert';
@@ -19,16 +19,17 @@ import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
+  deliveryType: DeliveryType;
 }
 /**
  * Interactive map component displaying pickup points across Budapest.
  * Features clickable markers that show detailed popups and allows users to select pickup locations.
  * @param setSelectedPoint - Callback function triggered when a user selects a pickup point from the popup.
- *                          Receives the selected PickupPoint object or null when deselected.
- *                          Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
+ * @param deliveryType - the type of delivery selected.
+ * Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
-export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) => {
+export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
 
@@ -37,7 +38,7 @@ export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) 
     data: pickupPoints,
     isLoading: isPickupPointsLoading,
     isError,
-  } = useGetAllPickupPoints({ deliveryType: 'PICKUP_POINT' });
+  } = useGetAllPickupPoints({ deliveryType: deliveryType });
   if (isPickupPointsLoading) {
     return <CircularProgress />;
   } else if (isError) {

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { httpService } from '@/services/httpService';
 
-type DeliveryType = 'PICKUP_POINT' | 'PARCEL_BOX';
+export type DeliveryType = 'PICKUP_POINT' | 'PARCEL_BOX';
 
 interface PickupPointSearchParams {
   deliveryType?: DeliveryType;
@@ -24,24 +24,13 @@ export const pickupPointSchema = z.object({
   name: z.string(),
   latitude: z.number(),
   longitude: z.number(),
-  deliveryType: z.literal('PICKUP_POINT'),
-  address: addressSchema,
-});
-
-export const parcelPoint = z.object({
-  id: z.string(),
-  name: z.string(),
-  latitude: z.number(),
-  longitude: z.number(),
-  deliveryType: z.literal('PARCEL_BOX'),
+  deliveryType: z.literal('PICKUP_POINT').or(z.literal('PARCEL_BOX')),
   address: addressSchema,
 });
 
 const pickupPointListSchema = z.array(pickupPointSchema);
-
 export type PickupPoint = z.infer<typeof pickupPointSchema>;
 export type PickupPointList = z.infer<typeof pickupPointListSchema>;
-
 export async function fetchPickupPoints(searchParams: PickupPointSearchParams = {}): Promise<PickupPointList> {
   //Get token when its ready until get from postman
   const token = '';
