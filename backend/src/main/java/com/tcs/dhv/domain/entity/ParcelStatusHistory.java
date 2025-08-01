@@ -45,14 +45,12 @@ public class ParcelStatusHistory {
     @JoinColumn(name = "parcel_id")
     private Parcel parcel;
 
-    @NotNull
-    @Setter(AccessLevel.NONE)
     @Enumerated(EnumType.STRING)
     private ParcelStatus status;
 
     private String description;
 
-    @Setter(AccessLevel.NONE)
+    @NotNull
     @CreationTimestamp
     private LocalDateTime timestamp;
 }

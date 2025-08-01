@@ -1,6 +1,8 @@
 package com.tcs.dhv.exception;
 
 import com.tcs.dhv.domain.dto.ApiErrorResponse;
+
+import jakarta.validation.ConstraintViolationException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -57,6 +61,28 @@ public class GlobalExceptionHandler {
             .build();
         return ResponseEntity.badRequest().body(err);
     }
+
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        final var errorList = ex.getConstraintViolations()
+                .stream()
+                .map(violation -> new ApiErrorResponse.FieldError(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage()
+                ))
+                .collect(Collectors.toList());
+
+        final var err = ApiErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .timestamp(Instant.now())
+                .errors(errorList)
+                .build();
+
+        return ResponseEntity.badRequest().body(err);
+    }
+
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
