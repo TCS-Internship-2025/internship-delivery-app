@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -31,7 +30,6 @@ public class EmailService {
     private final OtpService otpService;
     private final UserRepository userRepository;
     private final TemplateEngine templateEngine;
-    private final SimpleMailMessage template;
 
     @Value("${app.base-url}")
     private String appBaseUrl;
@@ -44,25 +42,14 @@ public class EmailService {
         final String email,
         final String trackingNumber
     ) {
-        //Prepare the evaluation context
-        final Context context = new Context();
+        final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
-        //Prepare the message using Spring helper
-        final MimeMessage message = mailSender.createMimeMessage();
-        final MimeMessageHelper helper;
-        final String htmlContent = this.templateEngine.process("ShipmentCreationEmail.html", context);
-        try {
-            helper = new MimeMessageHelper(message, true, EmailConstants.ENCODING);
-            helper.setSubject(EmailConstants.SHIPMENT_MAIL_SUBJECT);
-            helper.setFrom(EmailConstants.EMAIL_SENDER);
-            helper.setTo(email);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            throw new MailMessagingException(e.getMessage());
-        }
+        final var htmlContent = this.templateEngine.process("ShipmentCreationEmail.html", context);
+        final var message = CreateMessage(
+                EmailConstants.SHIPMENT_MAIL_SUBJECT, EmailConstants.EMAIL_SENDER, email, htmlContent);
+        mailSender.send(message);
 
     }
 
@@ -70,24 +57,14 @@ public class EmailService {
             String email,
             String trackingNumber
     ) {
-        final Context context = new Context();
+        final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
-        final MimeMessage message = mailSender.createMimeMessage();
-
-        final MimeMessageHelper helper;
-        final String htmlContent = this.templateEngine.process("DeliveryCompletionEmail.html",context);
-        try {
-            helper = new MimeMessageHelper(message, true, EmailConstants.ENCODING);
-            helper.setSubject(EmailConstants.DELIVERY_COMPLETE_SUBJECT);
-            helper.setFrom(EmailConstants.EMAIL_SENDER);
-            helper.setTo(email);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            throw new MailMessagingException(e.getMessage());
-        }
+        final var htmlContent = this.templateEngine.process("DeliveryCompletionEmail.html",context);
+        final var message = CreateMessage(
+                EmailConstants.DELIVERY_COMPLETE_SUBJECT, EmailConstants.EMAIL_SENDER, email, htmlContent);
+        mailSender.send(message);
     }
 
     @Async
@@ -100,28 +77,36 @@ public class EmailService {
         final var emailVerificationUrl = "%s/api/auth/email/verify?uid=%s&t=%s"
             .formatted(appBaseUrl, userId, token);
 
-        final Context context = new Context();
+        final var context = new Context();
         context.setVariable("verifyLink", emailVerificationUrl);
 
-        final MimeMessage message = mailSender.createMimeMessage();
+        final var htmlContent = this.templateEngine.process("VerificationTokenEmail.html", context);
+        final var message = CreateMessage(
+                EmailConstants.VERIFICATION_MAIL_SUBJECT, EmailConstants.EMAIL_SENDER, email, htmlContent);
+        mailSender.send(message);
+    }
+
+    private MimeMessage CreateMessage(
+            String subject,
+            String from,
+            String to,
+            String text
+    ){
+        final var message = mailSender.createMimeMessage();
         final MimeMessageHelper helper;
-        final String htmlContent = this.templateEngine.process("VerificationTokenEmail.html", context);
         try {
             helper = new MimeMessageHelper(message, true, EmailConstants.ENCODING);
-            helper.setSubject(EmailConstants.VERIFICATION_MAIL_SUBJECT);
-            helper.setFrom(EmailConstants.EMAIL_SENDER);
-            helper.setFrom(EmailConstants.EMAIL_SENDER);
-            helper.setTo(email);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-            log.info("Verification email sent to {}", email);
+            helper.setSubject(subject);
+            helper.setFrom(from);
+            helper.setTo(to);
+            helper.setText(text, true);
+            return message;
         } catch (MessagingException e) {
             throw new MailMessagingException(e.getMessage());
         }
-
     }
 
-    public void resendVerificationTokenByEmail(String email) throws MessagingException {
+    public void resendVerificationTokenByEmail(String email) {
         final var user = userRepository.findByEmail(email)
             .filter(usr -> !usr.getIsVerified())
             .orElseThrow(() -> new ResponseStatusException(

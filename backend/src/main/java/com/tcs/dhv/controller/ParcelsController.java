@@ -37,7 +37,7 @@ public class ParcelsController {
     public ResponseEntity<ParcelDto> createParcel(
         @Valid @RequestBody final ParcelDto parcelDto,
         final Authentication authentication
-    )  {
+    ) {
         log.info("Creating parcel request received from user: {}", authentication.getName());
 
         final var parcelResponse = parcelService.createParcel(parcelDto, authentication.getName());

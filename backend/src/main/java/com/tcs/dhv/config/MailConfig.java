@@ -51,13 +51,13 @@ public class MailConfig {
 
     @Bean
     public TemplateEngine emailTemplateEngine(){
-        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        final var templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(htmlTemplateResolver());
         return templateEngine;
     }
 
     private ITemplateResolver htmlTemplateResolver() {
-        final ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
+        final var resolver = new ClassLoaderTemplateResolver();
         resolver.setPrefix("templates/");
         resolver.setSuffix(".html");
         resolver.setTemplateMode(TemplateMode.HTML);

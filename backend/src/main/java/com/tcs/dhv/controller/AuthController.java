@@ -68,7 +68,7 @@ public class AuthController {
     }
 
     @PostMapping("/email/resend-verification")
-    public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) throws MessagingException {
+    public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) {
         log.info("Resend verification email requested for: {}", email);
         emailService.resendVerificationTokenByEmail(email);
 
