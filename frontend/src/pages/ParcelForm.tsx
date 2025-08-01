@@ -102,7 +102,7 @@ export const ParcelForm = () => {
   };
 
   return (
-    <Box paddingX={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {isPending ? (
         <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
           <CircularProgress />

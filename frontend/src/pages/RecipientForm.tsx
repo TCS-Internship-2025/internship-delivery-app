@@ -40,7 +40,7 @@ export const RecipientForm = () => {
   };
 
   return (
-    <Box paddingX={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <PageContainer icon={<BadgeIcon />} title="Recipient Details">
         <form onSubmit={handleFormSubmit}>
           <SectionContainer title="Information">

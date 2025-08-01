@@ -19,7 +19,7 @@ export const PageContainer = ({ children, icon, title }: PageContainerProps) => 
   const bgColor = mode === 'light' ? '#1018280D' : '#2A2F2A';
 
   return (
-    <Box paddingY={isSmallScreen ? 2 : 10} paddingX={5} borderRadius={3} sx={{ height: '100%', bgcolor: bgColor }}>
+    <Box py={isSmallScreen ? 2 : 10} px={5} borderRadius={3} sx={{ height: '100%', bgcolor: bgColor }}>
       <Box
         sx={{
           display: 'flex',
