@@ -22,7 +22,7 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
     mutationFn: register,
     onSuccess: (data) => {
       enqueueSnackbar(
-        `Account created successfully! ${data.emailVerificationRequired ? 'Please check your email for verification.' : 'You can now login.'}`,
+        `Account created successfully! ${data.emailVerified ? 'Please check your email for verification.' : 'You can now login.'}`,
         { variant: 'success' }
       );
       form.reset();

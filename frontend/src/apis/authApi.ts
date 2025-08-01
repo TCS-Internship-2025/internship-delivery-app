@@ -21,7 +21,7 @@ export const userSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.email(),
-  emailVerificationRequired: z.boolean(),
+  emailVerified: z.boolean(),
 });
 
 export const loginResponseSchema = z.object({
@@ -32,7 +32,7 @@ export const loginResponseSchema = z.object({
 export const registerResponseSchema = z.object({
   name: z.string(),
   email: z.email(),
-  emailVerificationRequired: z.boolean(),
+  emailVerified: z.boolean().default(false),
 });
 
 export const refreshTokenResponseSchema = z.object({
@@ -114,16 +114,13 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
     refreshTokenResponseSchema
   );
 
-  const currentData = queryClient.getQueryData<{ token: string; refreshToken: string; user: User }>(['auth']);
-
-  if (currentData?.user) {
-    saveAuthData(response.token, response.refreshToken, currentData.user);
-  }
+  // Use authData.user instead of currentData?.user
+  saveAuthData(response.token, response.refreshToken, authData.user);
 
   queryClient.setQueryData(['auth'], {
     token: response.token,
     refreshToken: response.refreshToken,
-    user: currentData?.user ?? null,
+    user: authData.user,
   });
 
   return response;

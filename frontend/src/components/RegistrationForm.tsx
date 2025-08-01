@@ -22,7 +22,8 @@ export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
 
   const { form, onSubmit, isLoading } = useRegisterForm({
     onSuccess: (data) => {
-      if (!data.emailVerificationRequired) {
+      if (!data.emailVerified) {
+        // TODO: to be changed to route to the verification page
         void navigate('/login');
       }
     },

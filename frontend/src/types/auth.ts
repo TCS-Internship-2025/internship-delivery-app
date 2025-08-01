@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  emailVerificationRequired: boolean;
+  emailVerified: boolean;
 }
 
 export interface RegisterRequest {
@@ -24,7 +24,7 @@ export interface LoginResponse {
 export interface RegisterResponse {
   name: string;
   email: string;
-  emailVerificationRequired: boolean;
+  emailVerified: boolean;
 }
 
 export interface RefreshTokenResponse {

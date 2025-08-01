@@ -1,78 +1,175 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { queryClient } from '@/queryClient';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { User } from '@/types/auth';
-import { useQuery } from '@tanstack/react-query';
 
 import { AuthContext } from '@/contexts/AuthContext';
 
-import * as authApi from '@/apis/authApi';
+import { logout as apiLogout, refreshToken as apiRefreshToken, getStoredAuthData, saveAuthData } from '@/apis/authApi';
+
+interface JWTPayload {
+  iss: string;
+  name: string;
+  sub: string;
+  emailVerified: boolean;
+  exp: number;
+  email: string;
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-
-  // Better query function that initializes from storage
-  const { data: authData, isLoading } = useQuery({
-    queryKey: ['auth'],
-    queryFn: () => {
-      const storedData = authApi.getStoredAuthData();
-      return storedData ?? null;
-    },
-    staleTime: Infinity,
-    retry: false,
+  const [token, setToken] = useState<string | null>(() => {
+    const storedData = getStoredAuthData();
+    const initialToken = storedData?.token ?? null;
+    return initialToken;
   });
 
-  useEffect(() => {
-    if (authData) {
-      setToken(authData.token);
-      setRefreshToken(authData.refreshToken);
-      setUser(authData.user);
-      console.log('AuthData', authData);
-    } else {
+  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
+    const storedData = getStoredAuthData();
+    const initialRefreshToken = storedData?.refreshToken ?? null;
+    return initialRefreshToken;
+  });
+
+  const [user, setUser] = useState<User | null>(() => {
+    const storedData = getStoredAuthData();
+    const initialUser = storedData?.user ?? null;
+
+    return initialUser;
+  });
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Logout handler - clears all auth state
+  const handleLogout = useCallback(async () => {
+    try {
+      await apiLogout();
+    } catch (error) {
+      console.warn('⚠️ AuthProvider: API logout failed:', error);
+    } finally {
       setToken(null);
       setRefreshToken(null);
       setUser(null);
     }
-  }, [authData]);
+  }, []);
 
-  const contextValue = useMemo(
-    () => ({
+  // Token refresh handler
+  const handleTokenRefresh = useCallback(async (): Promise<boolean> => {
+    if (isRefreshing) {
+      console.log('⏳ AuthProvider: Token refresh already in progress, skipping');
+      return false;
+    }
+
+    console.log('🔄 AuthProvider: Starting token refresh...');
+    setIsRefreshing(true);
+
+    try {
+      const response = await apiRefreshToken();
+
+      setToken(response.token);
+      setRefreshToken(response.refreshToken);
+      console.log('✅ AuthProvider: Token refresh successful - local state updated');
+
+      return true;
+    } catch (error) {
+      console.error('AuthProvider: Token refresh failed:', error);
+      await handleLogout();
+      return false;
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [isRefreshing, handleLogout]);
+
+  // Safe JWT token parsing
+  const parseTokenExpiry = useCallback((tokenString: string): number | null => {
+    try {
+      const parts = tokenString.split('.');
+      if (parts.length !== 3) {
+        return null;
+      }
+
+      const payload = JSON.parse(atob(parts[1])) as JWTPayload;
+      if (typeof payload.exp !== 'number') {
+        return null;
+      }
+
+      const expiryMs = payload.exp * 1000;
+      console.log(`🕐 AuthProvider: Token expires at ${new Date(expiryMs).toLocaleString()}`);
+      return expiryMs;
+    } catch (error) {
+      console.error('❌ AuthProvider: Error parsing JWT:', error);
+      return null;
+    }
+  }, []);
+
+  // Check if token needs refresh (5 minutes before expiry)
+  const checkTokenExpiry = useCallback(
+    (tokenString: string): boolean => {
+      const exp = parseTokenExpiry(tokenString);
+      if (!exp) {
+        return true;
+      }
+
+      const now = Date.now();
+      const timeUntilExpiry = exp - now;
+      const fiveMinutesMs = 5 * 60 * 1000;
+      const needsRefresh = timeUntilExpiry < fiveMinutesMs;
+
+      return needsRefresh;
+    },
+    [parseTokenExpiry]
+  );
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    if (checkTokenExpiry(token)) {
+      void handleTokenRefresh();
+      return;
+    }
+
+    // Set up periodic token expiry checks (every 10 minutes)
+    console.log('⏰ AuthProvider: Setting up 10-minute token check interval');
+    const interval = setInterval(
+      () => {
+        if (token && checkTokenExpiry(token)) {
+          void handleTokenRefresh();
+        }
+      },
+      10 * 60 * 1000
+    );
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [token, checkTokenExpiry, handleTokenRefresh]);
+
+  const contextValue = useMemo(() => {
+    const isAuthenticated = Boolean(user && token);
+    const isLoading = isRefreshing;
+
+    return {
       user,
       token,
       refreshToken,
-      isAuthenticated: Boolean(user && token),
+      isAuthenticated,
       isLoading,
+
       setAuthData: (t: string, rt: string, u: User) => {
+        console.log('💾 AuthProvider: Setting new auth data', {
+          userEmail: u.email,
+          userId: u.id,
+        });
+
         setToken(t);
         setRefreshToken(rt);
         setUser(u);
-        authApi.saveAuthData(t, rt, u);
 
-        // Update query cache and invalidate to trigger re-fetch
-        queryClient.setQueryData(['auth'], {
-          token: t,
-          refreshToken: rt,
-          user: u,
-        });
+        saveAuthData(t, rt, u);
+      },
 
-        // Force a refetch to ensure state is synchronized
-        void queryClient.invalidateQueries({ queryKey: ['auth'] });
-      },
-      logout: async () => {
-        try {
-          await authApi.logout();
-        } catch (error) {
-          console.warn('Logout API call failed:', error);
-        } finally {
-          setToken(null);
-          setRefreshToken(null);
-          setUser(null);
-        }
-      },
-    }),
-    [token, refreshToken, user, isLoading]
-  );
+      logout: handleLogout,
+      refreshAuthToken: handleTokenRefresh,
+    };
+  }, [token, refreshToken, user, isRefreshing, handleLogout, handleTokenRefresh]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }

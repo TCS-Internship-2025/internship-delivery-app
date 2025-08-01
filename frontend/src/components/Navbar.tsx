@@ -26,7 +26,7 @@ import { NavItem } from './NavItem.tsx';
 
 export const Navbar = () => {
   const { isAuthenticated, logout, user } = useAuth();
-  console.info('User from navbar', user);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { mode, toggleTheme } = useTheme();
