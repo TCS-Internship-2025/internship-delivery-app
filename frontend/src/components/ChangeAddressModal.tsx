@@ -1,21 +1,20 @@
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import type { FormEvent } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { useEditAddress } from '@/apis/editProfile';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
 
-import { PasswordField } from './PasswordField';
+import { SectionFields } from './FormSectionFields';
 
-interface ChangePasswordFormData {
-  password: string;
-  confirmPassword: string;
-}
-
-interface ChangePasswordModalProps {
-  open: boolean;
-  handleClose: () => void;
-}
+import {
+  changeAddressFields,
+  changeAddressFormSchema,
+  type ChangeAddressFormSchema,
+} from '@/utils/changeDataComposition';
 
 const style = {
   position: 'absolute',
@@ -29,79 +28,43 @@ const style = {
   p: 4,
 };
 
+interface ChangePasswordModalProps {
+  open: boolean;
+  handleClose: () => void;
+}
 export default function ChangeAddressModal({ open, handleClose }: ChangePasswordModalProps) {
   const {
     control,
     handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<ChangePasswordFormData>({
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
-    },
+    formState: { isSubmitting },
+  } = useForm<ChangeAddressFormSchema>({
+    resolver: zodResolver(changeAddressFormSchema),
+    mode: 'onChange',
   });
+  const { mutate } = useEditAddress();
 
-  const passwordValue = watch('password');
+  const onSubmit = (data: ChangeAddressFormSchema) => {
+    mutate(data);
+  };
 
-  const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
-    try {
-      console.log('Password change submitted:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      handleClose();
-    } catch (err) {
-      console.error('Failed to change password:', err);
-    }
+  const handleFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    void handleSubmit(onSubmit)(event);
   };
 
   return (
     <Modal open={open} onClose={handleClose}>
-      <Box
-        component="form"
-        onSubmit={(e) => {
-          void handleSubmit(onSubmit)(e);
-        }}
-        sx={style}
-      >
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Change Password
-        </Typography>
+      <Box sx={style}>
+        <form onSubmit={handleFormSubmit}>
+          <SectionFields fields={changeAddressFields} control={control} />
 
-        <PasswordField
-          name="password"
-          label="New Password"
-          control={control}
-          error={errors.password}
-          value={passwordValue}
-          showStrengthIndicator
-        />
-
-        <Controller
-          name="confirmPassword"
-          control={control}
-          rules={{
-            required: 'Confirm password is required',
-            validate: (value) => value === passwordValue || 'Passwords do not match',
-          }}
-          render={({ field }) => (
-            <PasswordField
-              {...field}
-              name="confirmPassword"
-              label="Confirm Password"
-              control={control}
-              error={errors.confirmPassword}
-              value={field.value}
-              autoComplete="new-password"
-            />
-          )}
-        />
-
-        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2 }}>
-          {isSubmitting ? 'Updating...' : 'Change Password'}
-        </Button>
-        <Button variant="outlined" fullWidth onClick={handleClose} sx={{ mt: 1 }}>
-          Cancel
-        </Button>
+          <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2 }}>
+            {isSubmitting ? 'Updating...' : 'Change Password'}
+          </Button>
+          <Button variant="outlined" fullWidth onClick={handleClose} sx={{ mt: 1 }}>
+            Cancel
+          </Button>
+        </form>
       </Box>
     </Modal>
   );
