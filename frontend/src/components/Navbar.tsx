@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen.ts';
+import { useAuth } from '@/contexts/AuthContext.tsx';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
@@ -25,16 +26,29 @@ import { Navigation } from './Navigation.tsx';
 import { NavItem } from './NavItem.tsx';
 
 export const Navbar = () => {
-  const isAuthenticated = false; // Force it for testing
+
+  const { isAuthenticated, logout, user } = useAuth();
+
+
   const navigate = useNavigate();
   const { mode, toggleTheme } = useTheme();
   const [open, setOpen] = useState<boolean>(false);
   const isSmallScreen = useSmallScreen();
   const location = useLocation();
 
-  const routes = useMemo(() => ['', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
-  //add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
-  const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
+const handleLogoClick = () => {
+  void navigate('/');
+};
+
+const handleLogout = () => {
+  void logout().then(() => {
+    void navigate('/login');
+  });
+};
+
+const routes = useMemo(() => ['', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
+//add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
+const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
 
   const handleDrawerClick = () => {
     setOpen(!open);
@@ -149,33 +163,46 @@ export const Navbar = () => {
                 console.log('xd');
               }}
             >
-              <PersonIcon />
-              {!isSmallScreen && (
-                <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                  Profile
-                </Typography>
-              )}
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <PersonIcon />
+                {!isSmallScreen ? (
+                  <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
+                    {user?.name}
+                  </Typography>
+                ) : (
+                  user?.name && (
+                    <Typography
+                      variant="caption"
+                      fontWeight={600}
+                      sx={{
+                        ml: 0.5,
+                        fontSize: '0.8rem',
+                        color: 'text.secondary',
+                        backgroundColor: 'background.paper',
+                        borderRadius: '50%',
+                        width: 16,
+                        height: 16,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                      }}
+                    >
+                      {user.name.charAt(0).toUpperCase()}
+                    </Typography>
+                  )
+                )}
+              </Box>
             </IconButton>
           </Tooltip>
         )}
         <Tooltip title={isAuthenticated ? 'Logout' : 'Login'} arrow>
-          <IconButton
-            size="small"
-            color={isAuthenticated ? 'error' : 'primary'}
-            sx={{ px: 1, borderRadius: 1 }}
-            onClick={() => {
-              if (isAuthenticated) {
-                //duplicated for testing until having the logout API
-                void navigate('/login');
-              } else {
-                void navigate('/login');
-              }
-            }}
-          >
+          <IconButton size="small" color="error" sx={{ px: 1, borderRadius: 1 }} onClick={handleLogout}>
             {isAuthenticated ? <LogoutIcon fontSize="small" /> : <ExitToAppIcon fontSize="small" />}
             {!isSmallScreen && (
               <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                {isAuthenticated ? 'Logout' : 'Login'}
+                Logout
               </Typography>
             )}
           </IconButton>
