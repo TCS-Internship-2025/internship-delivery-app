@@ -1,54 +1,53 @@
-import { ParcelList } from '../components/ParcelList';
-import { PARCEL_STATUS } from '@/constants.ts';
+import { useGetAllParcels } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 
-const DUMMY_DATA = [
-  {
-    parcelId: 14,
-    address: 'Budapest',
-    delivery: 'Home',
-    payment: 'sender',
-    status: PARCEL_STATUS.SCHEDULED,
-  },
-  {
-    parcelId: 21,
-    address: 'Budapest',
-    delivery: 'Pickup point',
-    payment: 'sender',
-    status: PARCEL_STATUS.SHIPPING,
-  },
-  {
-    parcelId: 25,
-    address: 'Szentendre',
-    delivery: 'Home',
-    payment: 'receiver',
-    status: PARCEL_STATUS.DELIVERED,
-  },
-  {
-    parcelId: 31,
-    address: 'Budakeszi',
-    delivery: 'Pickup point',
-    payment: 'sender',
-    status: PARCEL_STATUS.STUCK,
-  },
-];
+import { ParcelGrid } from '@/components/ParcelGrid';
 
 export const ParcelPage = () => {
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
-        <Container
-          maxWidth={false}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <ParcelList parcelList={DUMMY_DATA} />
-        </Container>
+  const { data, status } = useGetAllParcels();
+
+  if (status === 'pending') {
+    return (
+      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
+        <CircularProgress />
       </Box>
-    </Box>
+    );
+  }
+  if (status === 'error') {
+    return (
+      <Box
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'center'}
+        height={'100%'}
+        flexDirection={'column'}
+        mt={10}
+      >
+        <Typography variant="h4">Something went wrong.</Typography>
+        <Typography variant="subtitle1">Please try again later!</Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          <Container
+            maxWidth={false}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <ParcelGrid parcels={data} />
+          </Container>
+        </Box>
+      </Box>
+    </>
   );
 };

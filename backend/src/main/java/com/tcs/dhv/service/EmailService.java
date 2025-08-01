@@ -11,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
@@ -18,20 +19,34 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class EmailVerificationService {
+public class EmailService {
 
+    private final JavaMailSender mailSender;
+    private final SimpleMailMessage template;
     private final OtpService otpService;
     private final UserRepository userRepository;
-    private final JavaMailSender mailSender;
-
-    @Value("${spring.mail.username}")
-    private String fromAddress;
 
     @Value("${app.base-url}")
     private String appBaseUrl;
 
+    public final void sendStatusByEmail(
+        final String email,
+        final String trackingNumber,
+        final String link
+    ) {
+        final var message = template;
+        Assert.notNull(message.getText(), "Message must not be null;");
+        message.setText(String.format(template.getText(), trackingNumber, link));
+        message.setTo(email);
+
+        mailSender.send(message);
+    }
+
     @Async
-    public void sendVerificationTokenByEmail(UUID userId, String email) {
+    public void sendVerificationTokenByEmail(
+        final UUID userId,
+        final String email
+    ) {
         final var token = otpService.generateAndStoreOtp(userId);
 
         final var emailVerificationUrl = "%s/api/auth/email/verify?uid=%s&t=%s"
@@ -51,10 +66,9 @@ public class EmailVerificationService {
             DHV Team
             """.formatted(emailVerificationUrl);
 
-        final var message = new SimpleMailMessage();
+        final var message = template;
         message.setTo(email);
         message.setSubject("Email Verification Token");
-        message.setFrom(fromAddress);
         message.setText(emailText);
 
         mailSender.send(message);
@@ -73,7 +87,10 @@ public class EmailVerificationService {
     }
 
     @Transactional
-    public User verifyEmail(UUID userId, String token) {
+    public User verifyEmail(
+        final UUID userId,
+        final String token
+    ) {
         if (!otpService.isOtpValid(userId, token)) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
@@ -101,5 +118,7 @@ public class EmailVerificationService {
 
         return user;
     }
+
+
 
 }

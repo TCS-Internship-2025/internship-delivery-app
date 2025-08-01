@@ -8,6 +8,7 @@ import { useTheme } from '@/providers/ThemeProvider.tsx';
 
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import HomeIcon from '@mui/icons-material/Home';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -21,31 +22,33 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import DrawerComponent from './DrawerComponent.tsx';
+import { Navigation } from './Navigation.tsx';
 import { NavItem } from './NavItem.tsx';
 
 export const Navbar = () => {
+
   const { isAuthenticated, logout, user } = useAuth();
 
+
   const navigate = useNavigate();
-  const location = useLocation();
   const { mode, toggleTheme } = useTheme();
   const [open, setOpen] = useState<boolean>(false);
   const isSmallScreen = useSmallScreen();
+  const location = useLocation();
 
-  const handleLogoClick = () => {
-    void navigate('/');
-  };
-  const handleLogout = () => {
-    void logout().then(() => {
-      void navigate('/login');
-    });
-  };
+const handleLogoClick = () => {
+  void navigate('/');
+};
 
-  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
+const handleLogout = () => {
+  void logout().then(() => {
+    void navigate('/login');
+  });
+};
 
-  const currentIndex = routes.indexOf(location.pathname);
-  const activeTab = currentIndex !== -1 ? currentIndex : 0;
+const routes = useMemo(() => ['', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
+//add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
+const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
 
   const handleDrawerClick = () => {
     setOpen(!open);
@@ -53,6 +56,7 @@ export const Navbar = () => {
 
   const handleNavigation = (index: number) => {
     setOpen(false);
+    setCurrentIndex(index);
     void navigate(routes[index]);
   };
 
@@ -62,7 +66,6 @@ export const Navbar = () => {
       sx={{
         width: '100%',
         position: 'fixed',
-        overflow: 'hidden',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -70,10 +73,14 @@ export const Navbar = () => {
         height: 64,
       }}
     >
-      {!isSmallScreen ? (
-        <>
-          <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '15%' }}>
-            <ButtonBase onClick={handleLogoClick}>
+      <Navigation open={open} isSmallScreen={isSmallScreen} handleDrawerClick={handleDrawerClick}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: isSmallScreen ? '100%' : '15%' }}>
+          {!isSmallScreen && (
+            <ButtonBase
+              onClick={() => {
+                handleNavigation(0);
+              }}
+            >
               <img
                 src="/logo.jpg"
                 style={{
@@ -84,70 +91,48 @@ export const Navbar = () => {
                 }}
                 alt="Logo"
               />
+              <Divider variant="middle" sx={{ my: 0.1 }} />
+              <Typography>SwiftParcel</Typography>
             </ButtonBase>
-            <Divider variant="middle" sx={{ my: 0.1 }} />
-            <Typography>SwiftParcel</Typography>
-          </Box>
-          <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Box display={'flex'} flexDirection={'row'}>
-              <NavItem
-                icon={<TrackChangesIcon />}
-                label="Tracking"
-                isActive={activeTab === 1}
-                onClick={() => handleNavigation(1)}
-              />
-              {isAuthenticated && (
-                <>
-                  <NavItem
-                    icon={<LocalShippingIcon />}
-                    label="Send Parcel"
-                    isActive={activeTab === 2}
-                    onClick={() => handleNavigation(2)}
-                  />
-                  <NavItem
-                    icon={<LocalShippingIcon />}
-                    label="My Parcels"
-                    isActive={activeTab === 3}
-                    onClick={() => handleNavigation(3)}
-                  />
-                </>
-              )}
-            </Box>
-          </Box>
-        </>
-      ) : (
-        <DrawerComponent
-          handleDrawerClick={() => {
-            handleDrawerClick();
-          }}
-          open={open}
+          )}
+        </Box>
+        <Box
+          sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: isSmallScreen ? 'flex-start' : 'center' }}
         >
-          <Box display={'flex'} flexDirection={'column'}>
+          <Box display={'flex'} flexDirection={isSmallScreen ? 'column' : 'row'} width={'100%'}>
+            {isSmallScreen && (
+              <NavItem
+                icon={<HomeIcon />}
+                label="Home"
+                isActive={currentIndex === 0}
+                onClick={() => handleNavigation(0)}
+              />
+            )}
             <NavItem
               icon={<TrackChangesIcon />}
               label="Tracking"
-              isActive={activeTab === 0}
-              onClick={() => handleNavigation(0)}
+              isActive={currentIndex === 1}
+              onClick={() => handleNavigation(1)}
             />
-            {isAuthenticated && (
-              <>
-                <NavItem
-                  icon={<LocalShippingIcon />}
-                  label="Send Parcel"
-                  isActive={activeTab === 1}
-                  onClick={() => handleNavigation(1)}
-                />
-                <NavItem
-                  icon={<LocalShippingIcon />}
-                  label="My Parcels"
-                  isActive={activeTab === 2}
-                  onClick={() => handleNavigation(2)}
-                />
-              </>
-            )}
+            <>
+              <NavItem
+                icon={<LocalShippingIcon />}
+                label="Send Parcel"
+                isActive={currentIndex === 2}
+                onClick={() => handleNavigation(2)}
+                disabled={isAuthenticated ? false : true}
+              />
+              <NavItem
+                icon={<LocalShippingIcon />}
+                label="My Parcels"
+                isActive={currentIndex === 3}
+                onClick={() => handleNavigation(3)}
+                disabled={isAuthenticated ? false : true}
+              />
+            </>
           </Box>
-        </DrawerComponent>
-      )}
+        </Box>
+      </Navigation>
       <Box
         sx={{
           display: 'flex',
