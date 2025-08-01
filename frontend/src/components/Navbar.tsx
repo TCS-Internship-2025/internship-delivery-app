@@ -75,7 +75,7 @@ export const Navbar = () => {
           {!isSmallScreen && (
             <ButtonBase onClick={handleLogoClick}>
               <img
-                src="/logo.jpg"
+                src="/image.png"
                 style={{
                   height: 50,
                   width: 'auto',

@@ -36,17 +36,16 @@ export const LandingPage = () => {
     >
       <Box
         sx={{
-          mb: 8,
           maxWidth: 400,
           width: '100%',
         }}
       >
         <img
-          src="/logo2.png"
+          src="/image.png"
           alt="Logo"
           style={{
             width: '100%',
-            height: 'auto',
+            height: '80%',
             display: 'block',
             margin: '0 auto',
             objectFit: 'contain',
@@ -54,7 +53,10 @@ export const LandingPage = () => {
           }}
         />
       </Box>
-      <Typography variant="h5" color="text.secondary" sx={{ mb: 3 }}>
+      <Typography variant="h1" color="text.primary" sx={{ mb: 4 }}>
+        SwiftParcel
+      </Typography>
+      <Typography variant="h5" color="text.secondary" sx={{ mb: 2 }}>
         Welcome to the best parcel service provider!
       </Typography>
       <Box display="flex" justifyContent="space-between" gap={2}>
