@@ -1,15 +1,16 @@
 package com.tcs.dhv.controller;
 
-
 import com.tcs.dhv.domain.dto.ParcelStatusHistoryDto;
 import com.tcs.dhv.domain.dto.TrackingResponse;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.service.ParcelStatusHistoryService;
 import com.tcs.dhv.service.TrackingService;
-
-import com.tcs.dhv.validation.TrackingCodeValidator;
+import com.tcs.dhv.validation.TrackingCode;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,17 +18,21 @@ import java.util.List;
 @RequestMapping("/api/tracking")
 @RequiredArgsConstructor
 @RestController
+@Validated
 public class TrackingController {
 
 
     private final TrackingService trackingService;
-    private final TrackingCodeValidator  trackingCodeValidator;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final ParcelRepository parcelRepository;
 
     @GetMapping("/{trackingCode}")
     public ResponseEntity<TrackingResponse> trackParcel(
-            @PathVariable String trackingCode
+            @Valid
+            @NotNull
+            @TrackingCode
+            @PathVariable
+            String trackingCode
     ) {
         final var response = trackingService.getTrackingDetails(trackingCode);
 
@@ -39,11 +44,12 @@ public class TrackingController {
 
     @GetMapping("/{trackingCode}/timeline")
     public ResponseEntity<List<ParcelStatusHistoryDto>> getParcelTimeline(
-            @PathVariable String trackingCode
+            @Valid
+            @NotNull
+            @TrackingCode
+            @PathVariable
+            String trackingCode
     ) {
-        if (!trackingCodeValidator.isValid(trackingCode, null)) {
-            return ResponseEntity.badRequest().build();
-        }
         final var parcelOpt = parcelRepository.findByTrackingCode(trackingCode);
         if (parcelOpt.isEmpty()) {
             return ResponseEntity.notFound().build();

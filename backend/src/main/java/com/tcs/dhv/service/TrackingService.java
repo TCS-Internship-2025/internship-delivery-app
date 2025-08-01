@@ -4,10 +4,7 @@ import com.tcs.dhv.domain.dto.TrackingResponse;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
-import com.tcs.dhv.validation.TrackingCode;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,16 +17,12 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Validated
 public class TrackingService {
 
     private final ParcelRepository parcelRepository;
     private final ParcelStatusHistoryRepository parcelStatusHistoryRepository;
 
     public TrackingResponse getTrackingDetails(
-            @Valid
-            @NotNull
-            @TrackingCode
             String trackingCode
     ){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
