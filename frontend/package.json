@@ -27,6 +27,7 @@
     "ag-grid-community": "^34.0.2",
     "ag-grid-react": "^34.0.2",
     "date-fns": "^4.1.0",
+    "jwt-decode": "^4.0.0",
     "mapbox-gl": "^3.13.0",
     "notistack": "^3.0.2",
     "react": "^19.1.1",

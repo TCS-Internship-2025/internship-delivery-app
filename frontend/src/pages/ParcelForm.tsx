@@ -123,7 +123,7 @@ export const ParcelForm = () => {
                 <Box display="flex" justifyContent="center">
                   <p>{selectedParcel?.name}</p>
                   {/* Testing*/}
-                  <ParcelLocationMap setSelectedPoint={setSelectedParcel} />
+                  <ParcelLocationMap setSelectedPoint={setSelectedParcel} deliveryType="PICKUP_POINT" />
                 </Box>
               )}
             </form>

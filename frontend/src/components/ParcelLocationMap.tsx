@@ -5,9 +5,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState } from 'react';
 import { mapboxAccessToken } from '@/constants';
 
+import { useAuth } from '@/contexts/AuthContext.tsx';
 import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
 
-import { useGetAllPickupPoints, type PickupPoint } from '@/apis/pickupPoints';
+import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/apis/pickupPoints';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import Alert from '@mui/material/Alert';
@@ -19,25 +20,27 @@ import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
+  deliveryType: DeliveryType;
 }
 /**
  * Interactive map component displaying pickup points across Budapest.
  * Features clickable markers that show detailed popups and allows users to select pickup locations.
  * @param setSelectedPoint - Callback function triggered when a user selects a pickup point from the popup.
- *                          Receives the selected PickupPoint object or null when deselected.
- *                          Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
+ * @param deliveryType - the type of delivery selected.
+ * Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
-export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) => {
+export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
+  const { token } = useAuth();
 
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const {
     data: pickupPoints,
     isLoading: isPickupPointsLoading,
     isError,
-  } = useGetAllPickupPoints({ deliveryType: 'PICKUP_POINT' });
+  } = useGetAllPickupPoints(token, { deliveryType: deliveryType });
   if (isPickupPointsLoading) {
     return <CircularProgress />;
   } else if (isError) {

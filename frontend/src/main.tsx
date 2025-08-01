@@ -24,6 +24,7 @@ import { Verified } from '@/pages/Verified.tsx';
 import { Verify } from '@/pages/Verify.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
@@ -62,14 +63,26 @@ const router = createBrowserRouter([
         element: <Verified />,
       },
       {
+        path: ROUTES.TRACKING,
+        element: <Tracking />,
+      },
+      {
+        path: ROUTES.TRACKINGSLUG,
+        element: <TrackingSlug />,
+      },
+
+      // App layout shared for public + protected pages
+      {
+        element: <AppLayout />,
         children: [
           {
-            element: <AppLayout />,
+            index: true,
+            element: <LandingPage />,
+          },
+
+          {
+            element: <ProtectedRoute />,
             children: [
-              {
-                index: true,
-                element: <LandingPage />,
-              },
               {
                 path: ROUTES.PARCELS,
                 children: [
@@ -91,15 +104,6 @@ const router = createBrowserRouter([
                 path: ROUTES.PARCEL_FORM,
                 element: <ParcelForm />,
               },
-              {
-                path: ROUTES.TRACKING,
-                element: <Tracking />,
-              },
-              {
-                path: ROUTES.TRACKINGSLUG,
-                element: <TrackingSlug />,
-              },
-
               {
                 path: ROUTES.PAGE5,
                 children: [
