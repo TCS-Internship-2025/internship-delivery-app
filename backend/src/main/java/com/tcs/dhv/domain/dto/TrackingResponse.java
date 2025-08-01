@@ -9,6 +9,8 @@ import lombok.Builder;
 @Builder
 public record TrackingResponse(
         String trackingCode,
+        String senderName,
+        String recipientName,
         ParcelStatus currentStatus,
         Optional<LocalDateTime> estimatedDelivery
 ) {

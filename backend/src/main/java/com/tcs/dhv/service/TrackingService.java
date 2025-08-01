@@ -32,15 +32,17 @@ public class TrackingService {
             @TrackingCode
             String trackingCode
     ){
-         Parcel parcel = parcelRepository.findByTrackingCode(trackingCode)
+         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
-        log.info("Getting tracking data of parcel with tracking code : {}", trackingCode);
+        log.info("Getting tracking data of parcel with id : {}", parcel.getId());
 
         final var estimatedDevilryTime = calculateEstimatedDevilryTime(parcel);
 
         return TrackingResponse.builder()
                 .trackingCode(parcel.getTrackingCode())
+                .senderName(parcel.getSender().getName())
+                .recipientName(parcel.getRecipient().getName())
                 .currentStatus(parcel.getCurrentStatus())
                 .estimatedDelivery(estimatedDevilryTime)
                 .build();
