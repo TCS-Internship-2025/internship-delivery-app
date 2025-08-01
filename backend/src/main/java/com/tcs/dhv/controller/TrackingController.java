@@ -9,16 +9,20 @@ import com.tcs.dhv.validation.TrackingCode;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/tracking")
+
+
+@Slf4j
+@Validated
 @RequiredArgsConstructor
 @RestController
-@Validated
+@RequestMapping("/api/tracking")
 public class TrackingController {
 
 
@@ -39,6 +43,8 @@ public class TrackingController {
         if (response == null) {
             return ResponseEntity.notFound().build();
         }
+        log.info("Received tracking request for parcel with id {}", response.parcelId());
+
         return ResponseEntity.ok(response);
     }
 
@@ -55,6 +61,9 @@ public class TrackingController {
             return ResponseEntity.notFound().build();
         }
         final var timeline = parcelStatusHistoryService.getParcelTimeline(parcelOpt.get().getId());
+
+        log.info("Received timeline tracking request for parcel with id {}", parcelOpt.get().getId());
+        
         return ResponseEntity.ok(timeline);
     }
 }

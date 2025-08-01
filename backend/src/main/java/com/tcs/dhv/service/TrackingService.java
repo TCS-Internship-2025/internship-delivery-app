@@ -3,12 +3,10 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.TrackingResponse;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.repository.ParcelRepository;
-import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +18,6 @@ import java.util.Optional;
 public class TrackingService {
 
     private final ParcelRepository parcelRepository;
-    private final ParcelStatusHistoryRepository parcelStatusHistoryRepository;
 
     public TrackingResponse getTrackingDetails(
             String trackingCode
