@@ -35,7 +35,7 @@ public class ParcelsController {
     ) {
         log.info("Creating parcel request received from user: {}", authentication.getName());
 
-        final var parcelResponse = parcelService.createParcel(parcelDto, authentication.getName());
+        final var parcelResponse = parcelService.createParcel(parcelDto, authentication.getName()); //this is returning the id
 
         log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
 

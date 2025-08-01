@@ -56,14 +56,15 @@ public class TrackingController {
             @PathVariable
             String trackingCode
     ) {
-        final var parcelOpt = parcelRepository.findByTrackingCode(trackingCode);
-        if (parcelOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        final var timeline = parcelStatusHistoryService.getParcelTimeline(parcelOpt.get().getId());
+//        final var parcelOpt = parcelRepository.findByTrackingCode(trackingCode);
+//        if (parcelOpt.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
 
-        log.info("Received timeline tracking request for parcel with id {}", parcelOpt.get().getId());
-        
+        final var trackingResponse = trackingService.getTrackingDetails(trackingCode);
+        final var timeline = parcelStatusHistoryService.getParcelTimeline(trackingResponse.parcelId());
+
+        log.info("Received tracking request for parcel with id {}", trackingResponse.parcelId());
         return ResponseEntity.ok(timeline);
     }
 }
