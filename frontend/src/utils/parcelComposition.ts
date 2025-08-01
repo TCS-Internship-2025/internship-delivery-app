@@ -25,17 +25,36 @@ export const recipientFormSchema = z.object({
 
 export const parcelFormSchema = z.object({
   // Section 2 fields
-  line1: z.string().min(1, 'Address Line 1 is required'),
-  line2: z.string().optional(),
-  building: z.string().optional(),
-  apartment: z.string().optional(),
-  city: z.string().min(1, 'City is required'),
-  postalCode: z.string().min(1, 'ZIP/POSTAL Code is required'),
-  country: z.string().min(1, 'Country is required'),
+  building: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]+$/, 'Invalid building name'),
+  country: z
+    .string()
+    .trim()
+    .regex(/^hungary$/i, 'We only deliver in Hungary'),
+  postalCode: z.string().regex(/^\d{4}$/, 'Invalid zip code'),
+  apartment: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]+$/, 'Invalid apartment name'),
+  line1: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]+$/, 'Invalid address line 1'),
+  city: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű]+$/, 'Invalid city name'),
+  line2: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/, 'Invalid address line 2')
+    .optional(),
 
   // Section 3 fields
   paymentType: z.string().min(1, 'Payment Type is required'),
-  deliveryType: z.string().min(1, 'Payment Type is required'),
+  deliveryType: z.string().min(1, 'Delivery Type is required'),
 });
 
 export type RecipientFormSchema = z.infer<typeof recipientFormSchema>;
