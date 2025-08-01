@@ -3,17 +3,26 @@ import z from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
 
-//probably wont be the response the backend sends
 export const trackSchema = z.object({
-  id: z.string(),
-  sender: z.string(),
-  method: z.string(),
-  address: z.string(),
-  status: z.array(
+  trackingCode: z.string(),
+  status: z.string(),
+  parcel: z.object({
+    id: z.string(),
+    senderId: z.string(),
+    recipientId: z.string(),
+    deliveryType: z.string(),
+    paymentType: z.string(),
+    currentStatus: z.string(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  }),
+  timeline: z.array(
     z.object({
-      changeDate: z.string(),
-      changeMessage: z.string(),
-      changeLocation: z.string(),
+      id: z.string(),
+      parcelId: z.string(),
+      status: z.string(),
+      description: z.string(),
+      timestamp: z.string(),
     })
   ),
 });
