@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { queryClient } from '@/queryClient';
 import { type AuthContextType, type User } from '@/types/auth';
 
 import { AuthContext } from '@/contexts/AuthContext';
@@ -37,7 +36,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(null);
     authService.clearAuthToken();
     authService.clearAuthData();
-    queryClient.clear();
   };
 
   const contextValue: AuthContextType = useMemo(

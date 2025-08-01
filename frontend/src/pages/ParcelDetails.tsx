@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useGetParcelById } from '@/apis/parcelGet';
+import { useDeleteParcelById, useGetParcelById } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -11,8 +11,9 @@ import Typography from '@mui/material/Typography';
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
 
 export const ParcelDetails = () => {
-  const { id } = useParams();
-  const { data, status } = useGetParcelById(id);
+  const { parcelId } = useParams();
+  const { data, status } = useGetParcelById(parcelId);
+  const deleteParcelMutation = useDeleteParcelById();
   const navigate = useNavigate();
 
   if (status === 'pending') {
@@ -43,8 +44,17 @@ export const ParcelDetails = () => {
   }
 
   function handleDelete() {
-    // TODO: delete request
-    console.log('deleted');
+    if (!parcelId) return;
+
+    deleteParcelMutation.mutate(parcelId, {
+      onSuccess: () => {
+        console.log('Parcel deleted successfully');
+        void navigate('..');
+      },
+      onError: (error) => {
+        console.error('Failed to delete parcel:', error);
+      },
+    });
   }
 
   return (
@@ -60,7 +70,7 @@ export const ParcelDetails = () => {
           }}
         >
           <ParcelDetailsContent parcelData={data} />
-          <Box alignSelf="center" mt={{ xs: 8, md: 15 }}>
+          <Box alignSelf="center" mt={{ xs: 5, md: 10 }}>
             <Button
               variant="outlined"
               color="primary"
