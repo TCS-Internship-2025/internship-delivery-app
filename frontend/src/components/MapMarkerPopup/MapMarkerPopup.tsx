@@ -1,5 +1,6 @@
 import { Popup } from 'react-map-gl/mapbox';
-import type { PickupPoint } from '@/types/PickupPoint';
+
+import type { PickupPoint } from '@/apis/pickupPoints';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -37,8 +38,13 @@ export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedP
           gap: 1.5,
         }}
       >
-        <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
+        <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 'bold' }} alignSelf={'center'}>
           {selectedMarker.name}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.primary' }}>
+          {selectedMarker.address.line1}
+          <br />
+          {selectedMarker.address.line2}
         </Typography>
         <Button
           onClick={() => {

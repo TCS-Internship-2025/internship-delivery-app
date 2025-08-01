@@ -29,10 +29,14 @@ export const ROUTES = {
 };
 
 export const PARCEL_STATUS = {
-  SCHEDULED: 'SCHEDULED',
-  SHIPPING: 'SHIPPING',
+  CREATED: 'CREATED',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
   DELIVERED: 'DELIVERED',
-  STUCK: 'STUCK',
+  CANCELLED: 'CANCELLED',
+  DELIVERY_ATTEMPTED: 'DELIVERY_ATTEMPTED',
+  RETURNED_TO_SENDER: 'RETURNED_TO_SENDER',
 };
 
 export const mapboxAccessToken: string = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string;
@@ -42,16 +46,15 @@ export const FIELD_PLACEHOLDERS: Record<string, string> = {
   'Email address': 'email@example.com',
 };
 
-export const recipientFormDefaultValues: RecipientFormSchema = {
+export const RECIPIENT_FORM_DEFAULT_VALUES: RecipientFormSchema = {
   title: '',
   name: '',
-  mobilePhone: '',
-  emailAddress: '',
-  dateOfBirth: null,
+  phone: '',
+  email: '',
+  birthDate: null,
 };
 
-export const parcelFormDefaultValues: ParcelFormSchema = {
-  addressName: '',
+export const PARCEL_FORM_DEFAULT_VALUES: ParcelFormSchema = {
   line1: '',
   line2: '',
   apartment: '',
@@ -61,4 +64,14 @@ export const parcelFormDefaultValues: ParcelFormSchema = {
   building: '',
   paymentType: '',
   deliveryType: 'Home',
+};
+
+export const PAYMENT_TYPE_NAME_CONVERTER: Record<string, string> = {
+  [PaymentEnum.enum.Sender]: 'SENDER_PAYS',
+  [PaymentEnum.enum.Recipient]: 'RECIPIENT_PAYS',
+};
+
+export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
+  [DeliveryEnum.enum.Home]: 'HOME',
+  [DeliveryEnum.enum['Pickup Point']]: 'PICKUP_POINT',
 };
