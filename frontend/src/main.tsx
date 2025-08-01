@@ -7,7 +7,7 @@ import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ROUTES } from '@/constants';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -32,7 +32,6 @@ import { ParcelDetails } from './pages/ParcelDetails.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
-import { queryClient } from './queryClient.ts';
 
 console.log('Commit SHA:', import.meta.env.VITE_COMMIT_HASH);
 
@@ -128,11 +127,12 @@ if (typeof window !== 'undefined') {
 }
 
 export function setupApp() {
+  const queryClient = new QueryClient();
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <ThemeProvider>
-        <LocalizationProvider>
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <LocalizationProvider>
             {import.meta.env.DEV && (
               <Suspense fallback={null}>
                 <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
@@ -145,9 +145,9 @@ export function setupApp() {
                 </FormProvider>
               </AuthProvider>
             </ToastProvider>
-          </QueryClientProvider>
-        </LocalizationProvider>
-      </ThemeProvider>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </StrictMode>
   );
 }
