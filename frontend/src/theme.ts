@@ -6,6 +6,15 @@ declare module '@mui/material/styles' {
     default: string;
     paper: string;
   }
+  interface PaletteColor {
+    marker?: string;
+    markerSelected?: string;
+  }
+
+  interface SimplePaletteColorOptions {
+    marker?: string;
+    markerSelected?: string;
+  }
 }
 
 const white = '#FFFFFF';
@@ -36,6 +45,8 @@ export const themes = {
         main: primaryColor,
         light: '#74c69d',
         dark: '#2d6a4f',
+        marker: '#1b4332',
+        markerSelected: '#ff0000',
         contrastText: white,
       },
       secondary: {
@@ -104,8 +115,8 @@ export const themes = {
                   paddingTop: 0,
                   paddingY: 1.5,
                   '&.Mui-selected': {
-                    backgroundColor: (theme) => theme.palette.primary.light,
-                    color: (theme) => theme.palette.primary.main,
+                    backgroundColor: primaryColor,
+                    color: white,
                   },
                 },
               },
@@ -113,6 +124,7 @@ export const themes = {
           },
         },
       },
+
       MuiTextField: {
         styleOverrides: {
           root: {
@@ -151,6 +163,8 @@ export const themes = {
       primary: {
         main: '#52b788',
         light: '#74c69d',
+        marker: '#b6e2ca',
+        markerSelected: '#ff0000',
         dark: primaryColorDark,
         contrastText: white,
       },
@@ -210,7 +224,7 @@ export const themes = {
           MenuProps: {
             PaperProps: {
               sx: {
-                mt: 0.5,
+                mt: 1,
                 borderRadius: 2,
                 boxShadow: (theme) => theme.shadows[5],
                 '& .MuiList-root': {
@@ -220,8 +234,8 @@ export const themes = {
                   paddingTop: 0,
                   paddingY: 1.5,
                   '&.Mui-selected': {
-                    backgroundColor: (theme) => theme.palette.primary.light,
-                    color: (theme) => theme.palette.primary.main,
+                    backgroundColor: primaryColor,
+                    color: white,
                   },
                 },
               },

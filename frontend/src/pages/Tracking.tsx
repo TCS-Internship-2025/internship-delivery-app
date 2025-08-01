@@ -29,7 +29,7 @@ export const Tracking = () => {
           alignItems: 'center',
           justifyContent: 'center',
           width: '100%',
-          height: '100vh',
+          height: '90vh',
         }}
       >
         <TextField

@@ -18,7 +18,6 @@ export const PageContainer = ({ children, icon, title }: PageContainerProps) => 
           display: 'flex',
           alignItems: 'center',
           mb: 2,
-          flexShrink: 0,
         }}
       >
         <BoxIcon icon={icon} />
@@ -34,7 +33,6 @@ export const PageContainer = ({ children, icon, title }: PageContainerProps) => 
             display: 'flex',
             flexDirection: 'column',
             border: '2px dashed grey',
-            height: 1200, // This simulates large content
           }}
         >
           {children}

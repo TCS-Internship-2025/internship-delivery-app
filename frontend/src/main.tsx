@@ -7,23 +7,24 @@ import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ROUTES } from '@/constants';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 import { AuthProvider } from '@/providers/AuthProvider';
+import { FormProvider } from '@/providers/FormProvider.tsx';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
-import { Page0 } from '@/pages/Page0.tsx';
-import { Page1 } from '@/pages/Page1.tsx';
-import { Page2 } from '@/pages/Page2.tsx';
-import { Page3 } from '@/pages/Page3.tsx';
-import { Page4 } from '@/pages/Page4.tsx';
+import { ParcelForm } from '@/pages/ParcelForm.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
+import { RecipientForm } from '@/pages/RecipientForm.tsx';
+import { ProviderPage } from '@/pages/Success.tsx';
 import { Tracking } from '@/pages/Tracking.tsx';
+import { Verified } from '@/pages/Verified.tsx';
+import { Verify } from '@/pages/Verify.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
-import { ProtectedRoute } from '@/components/ProtectedRoute.tsx';
+import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
@@ -31,9 +32,7 @@ import { Login } from './pages/Login.tsx';
 import { ParcelDetails } from './pages/ParcelDetails.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
-import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
-import { queryClient } from './queryClient.ts';
 
 console.log('Commit SHA:', import.meta.env.VITE_COMMIT_HASH);
 
@@ -48,10 +47,6 @@ const router = createBrowserRouter([
     errorElement: <SiteNotFound />,
     children: [
       {
-        index: true,
-        element: <LandingPage />,
-      },
-      {
         path: ROUTES.LOGIN,
         element: <Login />,
       },
@@ -60,52 +55,56 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        path: ROUTES.TRACKING,
-        element: <Tracking />,
+        path: ROUTES.VERIFY,
+        element: <Verify />,
       },
       {
-        path: ROUTES.TRACKINGSLUG,
-        element: <TrackingSlug />,
+        path: ROUTES.VERIFIED,
+        element: <Verified />,
       },
       {
-        path: ROUTES.PARCELS,
-        children: [
-          {
-            index: true,
-            element: <ParcelPage />,
-          },
-          {
-            path: ROUTES.DETAILS,
-            element: <ParcelDetails />,
-          },
-        ],
-      },
-      {
-        element: <ProtectedRoute />,
         children: [
           {
             element: <AppLayout />,
             children: [
               {
                 index: true,
-                element: <Page0 />,
+                element: (
+                  <ProtectedRoute>
+                    <LandingPage />
+                  </ProtectedRoute>
+                ),
               },
               {
-                path: ROUTES.PAGE1,
-                element: <Page1 />,
+                path: ROUTES.PARCELS,
+                children: [
+                  {
+                    index: true,
+                    element: <ParcelPage />,
+                  },
+                  {
+                    path: ROUTES.DETAILS,
+                    element: <ParcelDetails />,
+                  },
+                ],
               },
               {
-                path: ROUTES.PAGE2,
-                element: <Page2 />,
+                path: ROUTES.RECIPIENT_FORM,
+                element: <RecipientForm />,
               },
               {
-                path: ROUTES.PAGE3,
-                element: <Page3 />,
+                path: ROUTES.PARCEL_FORM,
+                element: <ParcelForm />,
               },
               {
-                path: ROUTES.PAGE4,
-                element: <Page4 />,
+                path: ROUTES.TRACKING,
+                element: <Tracking />,
               },
+              {
+                path: ROUTES.TRACKINGSLUG,
+                element: <TrackingSlug />,
+              },
+
               {
                 path: ROUTES.PAGE5,
                 children: [
@@ -133,11 +132,12 @@ if (typeof window !== 'undefined') {
 }
 
 export function setupApp() {
+  const queryClient = new QueryClient();
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <ThemeProvider>
-        <LocalizationProvider>
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <LocalizationProvider>
             {import.meta.env.DEV && (
               <Suspense fallback={null}>
                 <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
@@ -145,12 +145,14 @@ export function setupApp() {
             )}
             <ToastProvider>
               <AuthProvider>
-                <RouterProvider router={router} />
+                <FormProvider>
+                  <RouterProvider router={router} />
+                </FormProvider>
               </AuthProvider>
             </ToastProvider>
-          </QueryClientProvider>
-        </LocalizationProvider>
-      </ThemeProvider>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </StrictMode>
   );
 }
