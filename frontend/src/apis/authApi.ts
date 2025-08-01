@@ -114,7 +114,6 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
     refreshTokenResponseSchema
   );
 
-  // Use authData.user instead of currentData?.user
   saveAuthData(response.token, response.refreshToken, authData.user);
 
   queryClient.setQueryData(['auth'], {

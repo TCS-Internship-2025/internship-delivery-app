@@ -26,7 +26,7 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
         { variant: 'success' }
       );
       form.reset();
-      onSuccess?.(data); // ✅ Pass the data to the callback
+      onSuccess?.(data);
     },
     onError: (error) => {
       console.error('Registration failed:', error);
