@@ -3,20 +3,28 @@ import z from 'zod';
 
 import type { FieldConfig } from '@/components/FormSectionFields.tsx';
 
+const REGEX_PATTERNS = {
+  TITLE: /^(Mr|Mrs|Ms|Dr|Prof)\.?$/i,
+  HUNGARIAN_NAME: /^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű\s'-]+$/,
+  HUNGARIAN_PHONE: /^(?:(\+36|06)\s?)?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/,
+  HUNGARY_ONLY: /^hungary$/i,
+  POSTAL_CODE: /^\d{4}$/,
+  HUNGARIAN_TEXT_WITH_SYMBOLS: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/,
+  HUNGARIAN_TEXT_REQUIRED: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]+$/,
+  HUNGARIAN_CITY: /^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű]+$/,
+} as const;
+
 export const MIN_BIRTH_DATE = new Date('1900-01-01');
 export const MAX_BIRTH_DATE = new Date();
 MAX_BIRTH_DATE.setFullYear(MAX_BIRTH_DATE.getFullYear() - 18);
 
 export const recipientFormSchema = z.object({
   // Section 1 fields
-  title: z
-    .string()
-    .regex(/^(Mr|Mrs|Ms|Dr|Prof)\.?$/i, 'Please select a valid title')
-    .optional(),
+  title: z.string().regex(REGEX_PATTERNS.TITLE, 'Please select a valid title').optional(),
   name: z
     .string()
     .min(1, 'Full name is required')
-    .regex(/^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű\s'-]+$/, 'Name can only contain letters, spaces, and apostrophes')
+    .regex(REGEX_PATTERNS.HUNGARIAN_NAME, 'Name can only contain letters, spaces, and apostrophes')
     .min(2, 'Name must be at least 2 characters long')
     .max(100, 'Name cannot exceed 100 characters'),
   birthDate: z
@@ -27,7 +35,7 @@ export const recipientFormSchema = z.object({
   phone: z
     .string()
     .min(1, 'Mobile phone is required')
-    .regex(/^(?:(\+36|06)\s?)?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/, 'Please enter a valid Hungarian phone number'),
+    .regex(REGEX_PATTERNS.HUNGARIAN_PHONE, 'Please enter a valid Hungarian phone number'),
   email: z
     .string()
     .min(1, 'Email is required')
@@ -37,34 +45,13 @@ export const recipientFormSchema = z.object({
 
 export const parcelFormSchema = z.object({
   // Section 2 fields
-  building: z
-    .string()
-    .trim()
-    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/, 'Invalid building name')
-    .optional(),
-  country: z
-    .string()
-    .trim()
-    .regex(/^hungary$/i, 'We only deliver in Hungary'),
-  postalCode: z.string().regex(/^\d{4}$/, 'Invalid zip code'),
-  apartment: z
-    .string()
-    .trim()
-    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/, 'Invalid apartment name')
-    .optional(),
-  line1: z
-    .string()
-    .trim()
-    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]+$/, 'Invalid address line 1'),
-  city: z
-    .string()
-    .trim()
-    .regex(/^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű]+$/, 'Invalid city name'),
-  line2: z
-    .string()
-    .trim()
-    .regex(/^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/, 'Invalid address line 2')
-    .optional(),
+  building: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid building name').optional(),
+  country: z.string().trim().regex(REGEX_PATTERNS.HUNGARY_ONLY, 'We only deliver in Hungary'),
+  postalCode: z.string().regex(REGEX_PATTERNS.POSTAL_CODE, 'Invalid zip code'),
+  apartment: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid apartment name').optional(),
+  line1: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_REQUIRED, 'Invalid address line 1'),
+  city: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_CITY, 'Invalid city name'),
+  line2: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid address line 2').optional(),
 
   // Section 3 fields
   paymentType: z.string().min(1, 'Payment Type is required'),
