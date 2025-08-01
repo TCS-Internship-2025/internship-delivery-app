@@ -103,7 +103,7 @@ public class ParcelService {
 
         final var parcel = getParcelEntity(id, sender);
 
-        parcelUpdate.updateEntity(parcel);
+        // parcelUpdate.updateEntity(parcel); will be fixed in another branch
         parcel.setUpdatedAt(LocalDateTime.now());
 
         final var updatedParcel = parcelRepository.saveAndFlush(parcel);
