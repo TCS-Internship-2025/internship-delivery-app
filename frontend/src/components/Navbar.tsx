@@ -26,9 +26,7 @@ import { Navigation } from './Navigation.tsx';
 import { NavItem } from './NavItem.tsx';
 
 export const Navbar = () => {
-
   const { isAuthenticated, logout, user } = useAuth();
-
 
   const navigate = useNavigate();
   const { mode, toggleTheme } = useTheme();
@@ -36,19 +34,18 @@ export const Navbar = () => {
   const isSmallScreen = useSmallScreen();
   const location = useLocation();
 
-const handleLogoClick = () => {
-  void navigate('/');
-};
+  const handleLogoClick = () => {
+    void navigate('/');
+  };
 
-const handleLogout = () => {
-  void logout().then(() => {
-    void navigate('/login');
-  });
-};
+  const handleLogout = () => {
+    void logout().then(() => {
+      void navigate('/login');
+    });
+  };
 
-const routes = useMemo(() => ['', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []);
-//add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
-const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
+  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []); //add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
+  const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
 
   const handleDrawerClick = () => {
     setOpen(!open);
@@ -76,13 +73,9 @@ const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location
       <Navigation open={open} isSmallScreen={isSmallScreen} handleDrawerClick={handleDrawerClick}>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: isSmallScreen ? '100%' : '15%' }}>
           {!isSmallScreen && (
-            <ButtonBase
-              onClick={() => {
-                handleNavigation(0);
-              }}
-            >
+            <ButtonBase onClick={handleLogoClick}>
               <img
-                src="/logo.jpg"
+                src="/image.png"
                 style={{
                   height: 50,
                   width: 'auto',
@@ -198,11 +191,22 @@ const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location
           </Tooltip>
         )}
         <Tooltip title={isAuthenticated ? 'Logout' : 'Login'} arrow>
-          <IconButton size="small" color="error" sx={{ px: 1, borderRadius: 1 }} onClick={handleLogout}>
+          <IconButton
+            size="small"
+            color={isAuthenticated ? 'error' : 'primary'}
+            sx={{ px: 1, borderRadius: 1 }}
+            onClick={() => {
+              if (isAuthenticated) {
+                handleLogout();
+              } else {
+                void navigate(ROUTES.LOGIN);
+              }
+            }}
+          >
             {isAuthenticated ? <LogoutIcon fontSize="small" /> : <ExitToAppIcon fontSize="small" />}
             {!isSmallScreen && (
               <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                Logout
+                {isAuthenticated ? 'Logout' : 'Login'}
               </Typography>
             )}
           </IconButton>

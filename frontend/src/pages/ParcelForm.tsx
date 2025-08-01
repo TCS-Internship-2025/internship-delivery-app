@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useState, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -121,7 +121,7 @@ export const ParcelForm = () => {
                 <Box display="flex" justifyContent="center">
                   <p>{selectedParcel?.name}</p>
                   {/* Testing*/}
-                  <ParcelLocationMap setSelectedPoint={setSelectedParcel} />
+                  <ParcelLocationMap setSelectedPoint={setSelectedParcel} deliveryType="PICKUP_POINT" />
                 </Box>
               )}
             </form>
