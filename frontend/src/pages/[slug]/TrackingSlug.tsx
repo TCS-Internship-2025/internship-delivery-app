@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
-import { useTracking } from '@/apis/tracking';
+import { useTimeline, useTracking } from '@/apis/tracking';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -13,17 +13,17 @@ import TimelineComponent from '@/components/Timeline';
 
 function TrackingSlug() {
   const { slug } = useParams();
-  const { data, status } = useTracking(slug);
+  const { data: trackingData, status: trackingStatus } = useTracking(slug);
+  const { data: timelineData, status: timelineStatus } = useTimeline(slug);
   const isSmallScreen = useSmallScreen();
-
-  if (status === 'pending') {
+  if (trackingStatus === 'pending' || timelineStatus === 'pending') {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <CircularProgress />
       </Box>
     );
   }
-  if (status === 'error') {
+  if (trackingStatus === 'error' || timelineStatus === 'error') {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
         <Typography variant="h4">Something went wrong.</Typography>
@@ -55,22 +55,26 @@ function TrackingSlug() {
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             PARCEL NUMBER
           </Typography>
-          <Typography>{data.trackingCode}</Typography>
+          <Typography>{trackingData.trackingCode}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
-            SEND DATE
+            ESTIMATED TIME OF ARRIVAL
           </Typography>
-          <Typography>{new Date(data.parcel.createdAt).toLocaleDateString()}</Typography>
+          <Typography>{new Date(trackingData.estimatedDelivery).toLocaleDateString()}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
-            DELIVERY METHOD
+            RECIPIENT
           </Typography>
-          <Typography>{data.parcel.deliveryType}</Typography>
+          <Typography>{trackingData.recipientName}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
-            PAYMENT TYPE
+            SENDER
           </Typography>
-          <Typography>{data.parcel.paymentType}</Typography>
+          <Typography>{trackingData.senderName}</Typography>
+          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
+            CURRENT STATUS
+          </Typography>
+          <Typography>{trackingData.currentStatus}</Typography>
         </Box>
         <Box sx={{ width: '33%' }}>
-          <TimelineComponent timeline={data.timeline} />
+          <TimelineComponent timeline={timelineData} />
         </Box>
       </Container>
     </Box>

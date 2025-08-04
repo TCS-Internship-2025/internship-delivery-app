@@ -8,19 +8,15 @@ import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import Typography from '@mui/material/Typography';
 
-interface TimelineEvent {
+const notSmallScreenStyle = { top: '50%', left: '50%', transform: 'translate(50%, 0)' };
+interface TimelineEntry {
   id: string;
   parcelId: string;
   status: string;
   description: string;
   timestamp: string;
 }
-
-interface TimelineProps {
-  timeline: TimelineEvent[];
-}
-const notSmallScreenStyle = { top: '50%', left: '50%', transform: 'translate(50%, 0)' };
-export default function TimelineComponent({ timeline }: TimelineProps) {
+export default function TimelineComponent({ timeline }: { timeline: TimelineEntry[] }) {
   const isSmallScreen = useSmallScreen();
 
   return (
@@ -41,7 +37,7 @@ export default function TimelineComponent({ timeline }: TimelineProps) {
             {event.status !== 'DELIVERED' && <TimelineConnector />}
           </TimelineSeparator>
           <TimelineContent variant="subtitle2" fontSize={12}>
-            {event.description.toUpperCase()}
+            {event.description}
             <br />
             <Typography variant="caption" noWrap>
               {event.status.replace('_', ' ')}
