@@ -2,6 +2,7 @@ package com.tcs.dhv.domain.entity;
 
 import com.tcs.dhv.domain.enums.DeliveryType;
 import com.tcs.dhv.domain.enums.LocationStatus;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -40,9 +41,9 @@ public class PredefinedLocation {
     @NotNull
     private String name;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
-    private DeliveryType type;
+    @Column(name = "type", nullable = false)
+    private DeliveryType deliveryType;
 
     @NotNull
     @Enumerated(EnumType.STRING)

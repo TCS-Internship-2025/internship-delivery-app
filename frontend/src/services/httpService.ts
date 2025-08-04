@@ -22,11 +22,9 @@ function notifyError(error: unknown): void {
 }
 class HttpService {
   public baseUrl: string;
-
-  constructor(baseUrl = import.meta.env.VITE_API_BASE_URL ?? '') {
+  constructor(baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api') {
     this.baseUrl = baseUrl;
   }
-
   private createRequestConfig(options: RequestInit = {}): RequestInit {
     const headers: Record<string, string> = {
       ...(options.headers as Record<string, string>),

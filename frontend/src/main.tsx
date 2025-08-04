@@ -7,7 +7,7 @@ import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ROUTES } from '@/constants';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -18,9 +18,13 @@ import { ToastProvider } from '@/providers/ToastProvider.tsx';
 import { ParcelForm } from '@/pages/ParcelForm.tsx';
 import { ParcelPage } from '@/pages/Parcels.tsx';
 import { RecipientForm } from '@/pages/RecipientForm.tsx';
+import { ProviderPage } from '@/pages/Success.tsx';
 import { Tracking } from '@/pages/Tracking.tsx';
+import { Verified } from '@/pages/Verified.tsx';
+import { Verify } from '@/pages/Verify.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
@@ -29,9 +33,7 @@ import { ParcelDetails } from './pages/ParcelDetails.tsx';
 import { ProfileInfo } from './pages/ProfileInfo.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
-import { ProviderPage } from './pages/Success.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
-import { queryClient } from './queryClient.ts';
 
 console.log('Commit SHA:', import.meta.env.VITE_COMMIT_HASH);
 
@@ -53,16 +55,35 @@ const router = createBrowserRouter([
         path: ROUTES.REGISTER,
         element: <Register />,
       },
-
       {
+        path: ROUTES.VERIFY,
+        element: <Verify />,
+      },
+      {
+        path: ROUTES.VERIFIED,
+        element: <Verified />,
+      },
+      {
+        path: ROUTES.TRACKING,
+        element: <Tracking />,
+      },
+      {
+        path: ROUTES.TRACKINGSLUG,
+        element: <TrackingSlug />,
+      },
+
+      // App layout shared for public + protected pages
+      {
+        element: <AppLayout />,
         children: [
           {
-            element: <AppLayout />,
+            index: true,
+            element: <LandingPage />,
+          },
+
+          {
+            element: <ProtectedRoute />,
             children: [
-              {
-                index: true,
-                element: <LandingPage />,
-              },
               {
                 path: ROUTES.PARCELS,
                 children: [
@@ -124,11 +145,12 @@ if (typeof window !== 'undefined') {
 }
 
 export function setupApp() {
+  const queryClient = new QueryClient();
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <ThemeProvider>
-        <LocalizationProvider>
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <LocalizationProvider>
             {import.meta.env.DEV && (
               <Suspense fallback={null}>
                 <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
@@ -141,9 +163,9 @@ export function setupApp() {
                 </FormProvider>
               </AuthProvider>
             </ToastProvider>
-          </QueryClientProvider>
-        </LocalizationProvider>
-      </ThemeProvider>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </StrictMode>
   );
 }
