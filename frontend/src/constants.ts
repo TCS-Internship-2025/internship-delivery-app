@@ -76,3 +76,13 @@ export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
   [DeliveryEnum.enum.Home]: 'HOME',
   [DeliveryEnum.enum['Pickup Point']]: 'PICKUP_POINT',
 };
+
+export const QUERY_STATUS = {
+  PENDING: 'pending',
+  ERROR: 'error',
+};
+
+export const PARCEL_DELIVERY_STATUSES = {
+  DELIVERED: 'DELIVERED',
+  //add more if necessary
+};
