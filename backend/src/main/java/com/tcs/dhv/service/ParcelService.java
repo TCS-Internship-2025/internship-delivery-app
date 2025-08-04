@@ -47,7 +47,7 @@ public class ParcelService {
     public ParcelDto createParcel(final ParcelDto parcelDto, final String userEmail) {
         log.info("Creating parcel for user: {}", userEmail);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = getUserById(userEmail);
 
         final var existingRecipient = recipientRepository.findByEmail(parcelDto.recipient().email());
 
@@ -79,7 +79,7 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final String userEmail) {
         log.info("Retrieving parcels for user: {}", userEmail);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = getUserById(userEmail);
 
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
 
@@ -91,7 +91,7 @@ public class ParcelService {
     public ParcelDto getParcel(final UUID id, final String userEmail) {
         log.info("Retrieving parcel with ID: {}", id);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = getUserById(userEmail);
 
         final var parcel = getParcelEntity(id, sender);
 
@@ -103,7 +103,7 @@ public class ParcelService {
     public ParcelDto updateParcel(final UUID id, final ParcelDto parcelUpdate, final String userEmail) {
         log.info("Updating parcel with ID: {} for user: {}", id, userEmail);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = getUserById(userEmail);
 
         final var parcel = getParcelEntity(id, sender);
 
@@ -120,7 +120,7 @@ public class ParcelService {
     public void deleteParcel(final UUID id, final String userEmail) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userEmail);
 
-        final var sender = getUserByEmail(userEmail);
+        final var sender = getUserById(userEmail);
 
         final var parcel = getParcelEntity(id, sender);
 
@@ -152,8 +152,8 @@ public class ParcelService {
         return parcel;
     }
 
-    private User getUserByEmail(final String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+    private User getUserById(final String id) {
+        return userRepository.findById(UUID.fromString(id))
+            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + id));
     }
 }

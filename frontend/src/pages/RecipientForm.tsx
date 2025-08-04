@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useFormContext } from '@/contexts/FormContext';
 
-import QuestionMark from '@mui/icons-material/QuestionMark';
+import BadgeIcon from '@mui/icons-material/Badge';
 import Box from '@mui/material/Box';
 
 import { SectionFields } from '@/components/FormSectionFields.tsx';
@@ -19,6 +20,7 @@ import { recipientFields, recipientFormSchema, type RecipientFormSchema } from '
 export const RecipientForm = () => {
   const navigate = useNavigate();
   const formContext = useFormContext();
+  const isSmallScreen = useSmallScreen();
 
   const { control, handleSubmit } = useForm<RecipientFormSchema>({
     resolver: zodResolver(recipientFormSchema),
@@ -38,8 +40,8 @@ export const RecipientForm = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <PageContainer icon={<QuestionMark />} title="Recipient Details">
+    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <PageContainer icon={<BadgeIcon />} title="Recipient Details">
         <form onSubmit={handleFormSubmit}>
           <SectionContainer title="Information">
             <SectionFields fields={recipientFields} control={control} />

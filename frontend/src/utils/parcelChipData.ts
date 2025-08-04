@@ -8,9 +8,9 @@ interface ChipData {
 export const getParcelChipData = (status?: string): ChipData => {
   switch (status) {
     case PARCEL_STATUS.CREATED:
-      return { color: 'secondary', label: 'Created' };
+      return { color: 'default', label: 'Created' };
     case PARCEL_STATUS.PICKED_UP:
-      return { color: 'secondary', label: 'Picked up' };
+      return { color: 'info', label: 'Picked up' };
     case PARCEL_STATUS.IN_TRANSIT:
       return { color: 'info', label: 'In transit' };
     case PARCEL_STATUS.OUT_FOR_DELIVERY:
@@ -24,6 +24,6 @@ export const getParcelChipData = (status?: string): ChipData => {
     case PARCEL_STATUS.RETURNED_TO_SENDER:
       return { color: 'warning', label: 'Returned to sender' };
     default:
-      return { color: 'default', label: 'Unknown' };
+      return { color: 'secondary', label: 'Unknown' };
   }
 };
