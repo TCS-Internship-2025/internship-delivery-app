@@ -1,3 +1,5 @@
+import { useAuth } from '@/contexts/AuthContext';
+
 import { useGetAllParcels } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
@@ -8,7 +10,8 @@ import Typography from '@mui/material/Typography';
 import { ParcelGrid } from '@/components/ParcelGrid';
 
 export const ParcelPage = () => {
-  const { data, status } = useGetAllParcels();
+  const { token } = useAuth();
+  const { data, status } = useGetAllParcels(token);
 
   if (status === 'pending') {
     return (

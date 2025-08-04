@@ -39,25 +39,35 @@ export const parcelListSchema = z.array(parcelSchema);
 export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 
-export async function fetchAllParcelData(): Promise<ParcelListData> {
-  return httpService.get('/api/parcels', parcelListSchema);
-}
-
-export function useGetAllParcels() {
-  return useQuery<ParcelListData>({
-    queryKey: ['parcels'],
-    queryFn: () => fetchAllParcelData(),
+export async function fetchAllParcelData(JWTtoken: string | null): Promise<ParcelListData> {
+  return await httpService.request(`/parcels`, parcelListSchema, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${JWTtoken}`,
+    },
   });
 }
 
-export async function fetchParcelData(parcelId: string | undefined): Promise<ParcelData> {
-  return await httpService.get(`/api/parcels/${parcelId}`, parcelSchema);
+export function useGetAllParcels(JWTtoken: string | null) {
+  return useQuery<ParcelListData>({
+    queryKey: ['parcels'],
+    queryFn: () => fetchAllParcelData(JWTtoken),
+  });
 }
 
-export function useGetParcelById(id: string | undefined) {
+export async function fetchParcelData(parcelId: string | undefined, JWTtoken: string | null): Promise<ParcelData> {
+  return await httpService.request(`/parcels/${parcelId}`, parcelSchema, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${JWTtoken}`,
+    },
+  });
+}
+
+export function useGetParcelById(id: string | undefined, JWTtoken: string | null) {
   return useQuery<ParcelData>({
     queryKey: ['parcels', id],
-    queryFn: () => fetchParcelData(id),
+    queryFn: () => fetchParcelData(id, JWTtoken),
     enabled: !!id,
   });
 }
