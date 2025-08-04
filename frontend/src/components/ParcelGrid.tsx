@@ -5,6 +5,7 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
+import { ROUTES } from '@/constants';
 import type { ColDef, ICellRendererParams, RowSelectionOptions } from 'ag-grid-community';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
@@ -121,7 +122,7 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
     const selected = gridRef.current?.api.getSelectedRows();
     if (selected?.length) {
       console.log('Selected row:', selected[0]);
-      void navigate(`details/${selected[0].parcelId}`);
+      void navigate(`${ROUTES.DETAILS}?parcelId=${selected[0].parcelId}`);
     }
   };
 

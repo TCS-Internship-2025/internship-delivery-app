@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useDeleteParcelById, useGetParcelById } from '@/apis/parcelGet';
 
@@ -11,7 +11,8 @@ import Typography from '@mui/material/Typography';
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
 
 export const ParcelDetails = () => {
-  const { parcelId } = useParams();
+  const [searchParams] = useSearchParams();
+  const parcelId = searchParams.get('parcelId') ?? undefined;
   const { data, status } = useGetParcelById(parcelId);
   const deleteParcelMutation = useDeleteParcelById();
   const navigate = useNavigate();

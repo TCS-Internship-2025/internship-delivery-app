@@ -25,7 +25,7 @@ export const ROUTES = {
   TRACKINGSLUG: 'tracking/:slug',
   TRACKING: 'tracking',
   PARCELS: 'my-parcels',
-  DETAILS: 'details/:parcelId',
+  DETAILS: 'details',
 };
 
 export const PARCEL_STATUS = {
