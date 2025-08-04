@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useRegisterForm } from '@/hooks/useRegisterForm';
 
+import { resendVerificationEmail } from '@/apis/authApi';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -23,7 +25,19 @@ export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
   const { form, onSubmit, isLoading } = useRegisterForm({
     onSuccess: (data) => {
       if (!data.emailVerified) {
-        // TODO: to be changed to route to the verification page
+        resendVerificationEmail(data.email)
+          .catch((error) => {
+            console.error('Failed to send verification email:', error);
+          })
+          .finally(() => {
+            void navigate('/verify', {
+              state: {
+                email: data.email,
+                name: data.name,
+              },
+            });
+          });
+      } else {
         void navigate('/login');
       }
     },
