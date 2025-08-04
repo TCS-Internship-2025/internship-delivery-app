@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
@@ -46,10 +46,14 @@ export const Navbar = () => {
 
   const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []); //add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
   const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
-
   const handleDrawerClick = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    const index = routes.indexOf(location.pathname.replace('/', ''));
+    setCurrentIndex(index !== -1 ? index : -1);
+  }, [location.pathname, routes]);
 
   const handleNavigation = (index: number) => {
     setOpen(false);
