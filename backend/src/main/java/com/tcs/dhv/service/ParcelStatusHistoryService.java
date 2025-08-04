@@ -1,16 +1,13 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.ParcelStatusHistoryDto;
-import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.ParcelStatusHistory;
-import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +36,7 @@ public class ParcelStatusHistoryService {
 
     @Transactional
     public ParcelStatusHistoryDto addStatusHistory(ParcelStatusHistory entity) {
-        final ParcelStatusHistory saved = statusHistoryRepository.save(entity);
+        final var saved = statusHistoryRepository.save(entity);
         return toDto(saved);
     }
     @Transactional
@@ -59,12 +56,12 @@ public class ParcelStatusHistoryService {
     }
     @Transactional
     public ParcelStatusHistoryDto updateStatusHistory(UUID id, ParcelStatusHistory updatedEntity) {
-        final ParcelStatusHistory existing = statusHistoryRepository.findById(id)
+        final var existing = statusHistoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Status history not found for ID: " + id));
         existing.setStatus(updatedEntity.getStatus());
         existing.setDescription(updatedEntity.getDescription());
         existing.setTimestamp(updatedEntity.getTimestamp());
-        final ParcelStatusHistory saved = statusHistoryRepository.save(existing);
+        final var saved = statusHistoryRepository.save(existing);
         return toDto(saved);
     }
 
