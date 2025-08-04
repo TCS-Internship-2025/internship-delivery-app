@@ -1,17 +1,37 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import z from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
 
+const addressSchema = z.object({
+  line1: z.string(),
+  line2: z.string(),
+  building: z.string(),
+  apartment: z.string(),
+  city: z.string(),
+  postalCode: z.string(),
+  country: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+});
+
+export const recipientSchema = z.object({
+  name: z.string(),
+  email: z.email(),
+  phone: z.string(),
+  birthDate: z.string(),
+  address: addressSchema,
+});
+
 export const parcelSchema = z.object({
   id: z.string(),
-  sender: z.string(),
-  recipient: z.string(),
-  delivery: z.string(),
-  tracking: z.string(),
-  status: z.string(),
-  created: z.date(),
-  updated: z.date(),
+  trackingCode: z.string(),
+  recipient: recipientSchema,
+  currentStatus: z.string(),
+  deliveryType: z.string(),
+  paymentType: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const parcelListSchema = z.array(parcelSchema);
@@ -19,19 +39,25 @@ export const parcelListSchema = z.array(parcelSchema);
 export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 
-export async function fetchAllParcelData(): Promise<ParcelListData> {
-  return await httpService.get('api/parcels', parcelListSchema);
+export async function fetchAllParcelData(JWTtoken: string | null): Promise<ParcelListData> {
+  const token = JWTtoken;
+  return await httpService.request(`/parcels`, parcelListSchema, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
 
-export function useGetAllParcels() {
+export function useGetAllParcels(JWTtoken: string | null) {
   return useQuery<ParcelListData>({
     queryKey: ['parcels'],
-    queryFn: () => fetchAllParcelData(),
+    queryFn: () => fetchAllParcelData(JWTtoken),
   });
 }
 
 export async function fetchParcelData(parcelId: string | undefined): Promise<ParcelData> {
-  return await httpService.get(`api/parcels/${parcelId}`, parcelSchema);
+  return await httpService.get(`/api/parcels/${parcelId}`, parcelSchema);
 }
 
 export function useGetParcelById(id: string | undefined) {
@@ -43,13 +69,16 @@ export function useGetParcelById(id: string | undefined) {
 }
 
 export async function deleteParcelData(parcelId: string | undefined): Promise<ParcelData> {
-  return await httpService.delete(`api/parcels/${parcelId}`, parcelSchema);
+  return await httpService.delete(`/api/parcels/${parcelId}`, parcelSchema);
 }
 
-export function useDeleteParcelById(id: string | undefined) {
-  return useQuery<ParcelData>({
-    queryKey: ['parcels', id],
-    queryFn: () => deleteParcelData(id),
-    enabled: !!id,
+export function useDeleteParcelById() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (parcelId: string) => deleteParcelData(parcelId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['parcels'] });
+    },
   });
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
 import Box from '@mui/material/Box';
@@ -14,6 +15,8 @@ interface SectionContainerProps {
 
 export const SectionContainer = ({ title, subtitle, disableBorder = false, children }: SectionContainerProps) => {
   const { mode } = useTheme();
+  const isSmallScreen = useSmallScreen();
+
   const borderColor = mode === 'light' ? '#1018280D' : '#e5e7eb0D';
 
   return (
@@ -21,6 +24,7 @@ export const SectionContainer = ({ title, subtitle, disableBorder = false, child
       <Box
         sx={{
           display: 'flex',
+          flexDirection: isSmallScreen ? 'column' : 'row',
           py: 3,
           gap: 2,
           borderRadius: 2,
