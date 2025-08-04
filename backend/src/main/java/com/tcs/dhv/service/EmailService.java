@@ -197,10 +197,12 @@ public class EmailService {
                 requestReason != null && !requestReason.trim().isEmpty() ? "Reason: " + requestReason : ""
             );
 
-        final var message = template;
-        message.setTo(recipientEmail);
-        message.setSubject("Delivery Address Changed - " + trackingCode);
-        message.setText(emailText);
+        final var message = CreateMessage(
+            "Delivery Address Changed - " + trackingCode,
+            EmailConstants.EMAIL_SENDER,
+            recipientEmail,
+            emailText
+        );
 
         mailSender.send(message);
         log.info("Address change notification email sent to {} for parcel {}", recipientEmail, trackingCode);

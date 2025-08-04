@@ -33,6 +33,7 @@ public class AddressChangeService {
     private final AddressRepository addressRepository;
     private final UserService userService;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
+    private final EmailService emailService;
 
     @Transactional
     public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
@@ -46,6 +47,18 @@ public class AddressChangeService {
         final var oldAddress = parcel.getRecipient().getAddress();
         final var newAddress = requestDto.newAddress().toEntity();
         final var savedAddress = addressRepository.save(newAddress);
+
+        // Status change emails should probably be sent in ParcelStatusHistoryService
+        emailService.sendAddressChangeNotification(
+            parcel.getRecipient().getEmail(),
+            parcel.getRecipient().getName(),
+            parcel.getTrackingCode(),
+            oldAddress,
+            newAddress,
+            requestDto.requestReason()
+        );
+
+        log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
 
         parcel.getRecipient().setAddress(savedAddress);
         parcelRepository.save(parcel);

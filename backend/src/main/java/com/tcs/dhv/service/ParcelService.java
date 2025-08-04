@@ -34,6 +34,8 @@ public class ParcelService {
     private final AddressRepository addressRepository;
     private final RecipientRepository recipientRepository;
     private final UserService userService;
+    private final EmailService emailService;
+    private final ParcelStatusHistoryService parcelStatusHistoryService;
 
     private final Random random = new Random();
 
@@ -66,6 +68,12 @@ public class ParcelService {
 
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
+
+        emailService.sendShipmentCreationEmail(parcelDto.recipient().email(), parcelDto.trackingCode());
+        log.info("Parcel creation email sent to email: {}", parcelDto.recipient().email());
+
+        parcelStatusHistoryService.addStatusHistory(parcelDto.id(), userId);
+        log.info("Parcel status entry created: {}", parcelDto.id());
 
         return ParcelDto.fromEntity(savedParcel);
     }
