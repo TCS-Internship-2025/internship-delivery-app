@@ -5,8 +5,10 @@ import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +22,7 @@ import java.util.UUID;
 @Service
 public class AddressChangeService {
 
-    private static final int TIME_LIMIT_HOURS = 2;
+    private static final int TIME_LIMIT_HOURS = 24;
     private static final List<ParcelStatus> UPDATABLE_STATUSES = List.of(
         ParcelStatus.CREATED,
         ParcelStatus.PICKED_UP,
@@ -30,15 +32,14 @@ public class AddressChangeService {
     private final ParcelRepository parcelRepository;
     private final AddressRepository addressRepository;
     private final UserService userService;
-    private final ParcelService parcelService;
-    private final EmailService emailService;
+    private final ParcelStatusHistoryService parcelStatusHistoryService;
 
     @Transactional
-    public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final String userEmail) {
-        log.info("Address change for parcel {} by user {}", parcelId, userEmail);
+    public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+        log.info("Address change for parcel {} by user {}", parcelId, userId);
 
-        final var sender = userService.getUserByEmail(userEmail);
-        final var parcel = parcelService.getParcelByIdAndUser(parcelId, sender);
+        final var sender = userService.getUserById(userId);
+        final var parcel = getParcelByIdAndUser(parcelId, sender);
 
         validateAddressChangeRequest(parcel);
 
@@ -49,18 +50,20 @@ public class AddressChangeService {
         parcel.getRecipient().setAddress(savedAddress);
         parcelRepository.save(parcel);
 
-        // TODO: Add to status history
-
-        emailService.sendAddressChangeNotification(
-            parcel.getRecipient().getEmail(),
-            parcel.getRecipient().getName(),
-            parcel.getTrackingCode(),
-            oldAddress,
-            savedAddress,
-            requestDto.requestReason()
-        );
+        parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
 
         log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+    }
+
+    private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
+        final var parcel = parcelRepository.findById(parcelId)
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
+
+        if (!parcel.getSender().getId().equals(sender.getId())) {
+            throw new AccessDeniedException("Access denied");
+        }
+
+        return parcel;
     }
 
     private void validateAddressChangeRequest(final Parcel parcel) {

@@ -1,7 +1,5 @@
 package com.tcs.dhv.service;
 
-import com.tcs.dhv.domain.entity.ParcelStatusHistory;
-
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.Recipient;
@@ -43,7 +41,7 @@ public class ParcelService {
     public ParcelDto createParcel(final ParcelDto parcelDto, final UUID userId) {
         log.info("Creating parcel for user: {}", userId);
 
-        final var sender = userService.getUserByEmail(userEmail);
+        final var sender = userService.getUserById(userId);
 
         final var existingRecipient = recipientRepository.findByEmail(parcelDto.recipient().email());
 
@@ -75,7 +73,7 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user: {}", userId);
 
-        final var sender = userService.getUserByEmail(userEmail);
+        final var sender = userService.getUserById(userId);
 
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
 
@@ -87,7 +85,7 @@ public class ParcelService {
     public ParcelDto getParcel(final UUID id, final UUID userId) {
         log.info("Retrieving parcel with ID: {}", id);
 
-        final var sender = userService.getUserByEmail(userEmail);
+        final var sender = userService.getUserById(userId);
 
         final var parcel = getParcelByIdAndUser(id, sender);
 
@@ -100,7 +98,7 @@ public class ParcelService {
     public void deleteParcel(final UUID id, final UUID userId) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userId);
 
-        final var sender = userService.getUserByEmail(userEmail);
+        final var sender = userService.getUserById(userId);
 
         final var parcel = getParcelByIdAndUser(id, sender);
 
