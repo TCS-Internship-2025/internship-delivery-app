@@ -1,5 +1,6 @@
 package com.tcs.dhv.service;
 
+import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.exception.MailMessagingException;
 import com.tcs.dhv.repository.UserRepository;
@@ -150,6 +151,61 @@ public class EmailService {
         return user;
     }
 
+    @Async
+    public void sendAddressChangeNotification(
+        final String recipientEmail,
+        final String recipientName,
+        final String trackingCode,
+        final Address oldAddress,
+        final Address newAddress,
+        final String requestReason
+    ) {
+        final var emailText = """
+            Hello %s,
+            
+            Your parcel delivery address has been changed for tracking number: %s
+            
+            Previous Address:
+            %s
+            %s
+            %s, %s %s
+            
+            New Address:
+            %s
+            %s
+            %s, %s %s
+            
+            %s
+            
+            If you did not request this change, please contact our support team immediately.
+            
+            Regards,
+            DHV Team
+            """.formatted(
+                recipientName,
+                trackingCode,
+                oldAddress.getLine1(),
+                oldAddress.getLine2() != null ? oldAddress.getLine2() : "",
+                oldAddress.getCity(),
+                oldAddress.getCountry(),
+                oldAddress.getPostalCode(),
+                newAddress.getLine1(),
+                newAddress.getLine2() != null ? newAddress.getLine2() : "",
+                newAddress.getCity(),
+                newAddress.getCountry(),
+                newAddress.getPostalCode(),
+                requestReason != null && !requestReason.trim().isEmpty() ? "Reason: " + requestReason : ""
+            );
 
+        final var message = CreateMessage(
+            "Delivery Address Changed - " + trackingCode,
+            EmailConstants.EMAIL_SENDER,
+            recipientEmail,
+            emailText
+        );
+
+        mailSender.send(message);
+        log.info("Address change notification email sent to {} for parcel {}", recipientEmail, trackingCode);
+    }
 
 }

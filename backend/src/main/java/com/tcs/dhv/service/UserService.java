@@ -72,7 +72,7 @@ public class UserService {
         return UserProfileDto.fromEntity(savedUser);
     }
 
-    private User getUserById(final UUID userId) {
+    public User getUserById(final UUID userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }
