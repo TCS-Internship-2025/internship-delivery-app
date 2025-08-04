@@ -40,11 +40,10 @@ export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 
 export async function fetchAllParcelData(JWTtoken: string | null): Promise<ParcelListData> {
-  const token = JWTtoken;
   return await httpService.request(`/parcels`, parcelListSchema, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${JWTtoken}`,
     },
   });
 }
@@ -56,14 +55,19 @@ export function useGetAllParcels(JWTtoken: string | null) {
   });
 }
 
-export async function fetchParcelData(parcelId: string | undefined): Promise<ParcelData> {
-  return await httpService.get(`/api/parcels/${parcelId}`, parcelSchema);
+export async function fetchParcelData(parcelId: string | undefined, JWTtoken: string | null): Promise<ParcelData> {
+  return await httpService.request(`/parcels/${parcelId}`, parcelSchema, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${JWTtoken}`,
+    },
+  });
 }
 
-export function useGetParcelById(id: string | undefined) {
+export function useGetParcelById(id: string | undefined, JWTtoken: string | null) {
   return useQuery<ParcelData>({
     queryKey: ['parcels', id],
-    queryFn: () => fetchParcelData(id),
+    queryFn: () => fetchParcelData(id, JWTtoken),
     enabled: !!id,
   });
 }
