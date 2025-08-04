@@ -56,8 +56,8 @@ export const ParcelDetails = () => {
             flexDirection: 'column',
           }}
         >
-          <ParcelDetailsContent parcelData={data} />
-          <Box alignSelf="center" mt={{ xs: 5, md: 10 }}>
+          {/* TODO: sticky, responsive back arrow button */}
+          <Box alignSelf="flex-end" mt={{ xs: 0, md: 1 }}>
             <Button
               variant="outlined"
               color="primary"
@@ -67,6 +67,7 @@ export const ParcelDetails = () => {
               Back
             </Button>
           </Box>
+          <ParcelDetailsContent parcelData={data} />
         </Container>
       </Box>
     </Box>
