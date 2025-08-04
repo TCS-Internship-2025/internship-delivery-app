@@ -65,4 +65,16 @@ public record AddressDto(
             .longitude(longitude)
             .build();
     }
+
+    public void updateEntity(final Address address) {
+        if (line1 != null && !line1.isBlank()) address.setLine1(line1);
+        if (line2 != null && !line2.isBlank()) address.setLine2(line2);
+        if (building != null && !building.isBlank()) address.setBuilding(building);
+        if (apartment != null && !apartment.isBlank()) address.setApartment(apartment);
+        if (city != null && !city.isBlank()) address.setCity(city);
+        if (postalCode != null && !postalCode.isBlank()) address.setPostalCode(postalCode);
+        if (country != null && !country.isBlank()) address.setCountry(country);
+        if (latitude != null) address.setLatitude(latitude);
+        if (longitude != null) address.setLongitude(longitude);
+    }
 }
