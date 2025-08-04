@@ -2,11 +2,8 @@ package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.entity.Parcel;
-import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.domain.entity.User;
-import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
-import com.tcs.dhv.repository.RecipientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +28,7 @@ public class ParcelService {
     private static final long TRACKING_NUMBER_MAX = 10_000_000_000L;
 
     private final ParcelRepository parcelRepository;
-    private final AddressRepository addressRepository;
-    private final RecipientRepository recipientRepository;
+    private final RecipientService recipientService;
     private final UserService userService;
     private final EmailService emailService;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
@@ -45,21 +41,8 @@ public class ParcelService {
 
         final var sender = userService.getUserById(userId);
 
-        final var existingRecipient = recipientRepository.findByEmail(parcelDto.recipient().email());
-
-        final Recipient recipient;
-        if (existingRecipient.isPresent()) {
-            log.info("Using existing recipient for email: {}", parcelDto.recipient().email());
-            recipient = existingRecipient.get();
-        } else {
-            log.info("Creating new recipient for email: {}", parcelDto.recipient().email());
-            final var address = parcelDto.recipient().address().toEntity();
-            final var savedAddress = addressRepository.save(address);
-
-            recipient = parcelDto.recipient().toEntity();
-            recipient.setAddress(savedAddress);
-            recipientRepository.save(recipient);
-        }
+        final var recipientDto = recipientService.findOrCreateRecipient(parcelDto.recipient());
+        final var recipient = recipientDto.toEntity();
 
         final var trackingCode = generateTrackingCode();
 
