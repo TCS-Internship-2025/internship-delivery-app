@@ -1,5 +1,6 @@
 package com.tcs.dhv.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tcs.dhv.domain.entity.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -29,8 +30,10 @@ public record UserProfileDto(
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
 
+    @JsonIgnore
     String currentPassword,
 
+    @JsonIgnore
     @Size(min = 8, max = 128,
         message = "New password must be between 8 and 128 characters")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!?.,;:~`<>{}\\[\\]()_-]).{8,128}$",
