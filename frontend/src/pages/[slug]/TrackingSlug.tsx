@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom';
+import { error, pending } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
-import { useTimeline, useTracking } from '@/apis/tracking';
+import { useTracking } from '@/apis/tracking';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -14,16 +15,16 @@ import TimelineComponent from '@/components/Timeline';
 function TrackingSlug() {
   const { slug } = useParams();
   const { data: trackingData, status: trackingStatus } = useTracking(slug);
-  const { data: timelineData, status: timelineStatus } = useTimeline(slug);
+
   const isSmallScreen = useSmallScreen();
-  if (trackingStatus === 'pending' || timelineStatus === 'pending') {
+  if (trackingStatus === pending) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <CircularProgress />
       </Box>
     );
   }
-  if (trackingStatus === 'error' || timelineStatus === 'error') {
+  if (trackingStatus === error) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
         <Typography variant="h4">Something went wrong.</Typography>
@@ -74,7 +75,7 @@ function TrackingSlug() {
           <Typography>{trackingData.currentStatus}</Typography>
         </Box>
         <Box sx={{ width: '33%' }}>
-          <TimelineComponent timeline={timelineData} />
+          <TimelineComponent trackingNumber={slug ?? ''} />
         </Box>
       </Container>
     </Box>
