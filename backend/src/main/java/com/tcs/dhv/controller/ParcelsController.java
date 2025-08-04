@@ -91,7 +91,7 @@ public class ParcelsController {
     ) {
         log.info("Creating parcel request received from user: {}", authentication.getName());
 
-        final var parcelResponse = parcelService.createParcel(parcelDto, authentication.getName());
+        final var parcelResponse = parcelService.createParcel(parcelDto, UUID.fromString(authentication.getName()));
 
         log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
 
@@ -108,7 +108,7 @@ public class ParcelsController {
     public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
         log.info("Retrieving parcels for user: {}", authentication.getName());
 
-        final var parcels = parcelService.getUserParcels(authentication.getName());
+        final var parcels = parcelService.getUserParcels(UUID.fromString(authentication.getName()));
 
         log.info("Retrieved {} parcels for user: {}", parcels.size(), authentication.getName());
         return ResponseEntity.ok(parcels);
@@ -124,7 +124,7 @@ public class ParcelsController {
     ) {
         log.info("Retrieving parcel with ID: {} for user: {}", id, authentication.getName());
 
-        final var parcel = parcelService.getParcel(id, authentication.getName());
+        final var parcel = parcelService.getParcel(id, UUID.fromString(authentication.getName()));
         return ResponseEntity.ok(parcel);
     }
 
@@ -174,7 +174,7 @@ public class ParcelsController {
     ) {
         log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
 
-        final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, authentication.getName());
+        final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, UUID.fromString(authentication.getName()));
 
         if(updatedParcel.currentStatus().equals(ParcelStatus.DELIVERED.toString())){
             emailService.sendDeliveryCompleteEmail(updatedParcel.recipient().email(), updatedParcel.trackingCode());
@@ -193,7 +193,7 @@ public class ParcelsController {
     ) {
         log.info("Deleting parcel with ID: {} for user: {}", id, authentication.getName());
 
-        parcelService.deleteParcel(id, authentication.getName());
+        parcelService.deleteParcel(id, UUID.fromString(authentication.getName()));
         return ResponseEntity.noContent().build();
     }
 }

@@ -79,4 +79,4 @@ dhv:
 api:
   key:
     header:
-      name: ${HEADER_NAME}
+      name: X-API-Key
