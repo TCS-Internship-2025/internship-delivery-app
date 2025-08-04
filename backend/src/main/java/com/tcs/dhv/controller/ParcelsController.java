@@ -43,8 +43,7 @@ public class ParcelsController {
     requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
         description = "Parcel creation request",
         required = true,
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ParcelDto.class),
+        content = @Content(schema = @Schema(implementation = ParcelDto.class),
             examples = {
                 @ExampleObject(
                     name = "Sample Parcel Request",
@@ -78,7 +77,7 @@ public class ParcelsController {
     )
     )
     @ApiResponse(responseCode = "201", description = "Parcel created successfully",
-                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class)))
+                content = @Content(schema = @Schema(implementation = ParcelDto.class)))
     @ApiResponseAnnotations.ValidationApiResponse
     @PostMapping
     public ResponseEntity<ParcelDto> createParcel(
@@ -107,7 +106,7 @@ public class ParcelsController {
     }
 
     @Operation(summary = "Get 1 parcel", description = "Get a specific parcel by parcel's id")
-    @ApiResponse(responseCode = "200", description = "Parcel retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class)))
+    @ApiResponse(responseCode = "200", description = "Parcel retrieved successfully", content = @Content(schema = @Schema(implementation = ParcelDto.class)))
     @ApiResponseAnnotations.NotFoundApiResponse
     @GetMapping("/{id}")
     public ResponseEntity<ParcelDto> getParcel(
@@ -123,8 +122,7 @@ public class ParcelsController {
     @Operation(summary = "Update parcel", description = "Update a parcel by id",requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
         description = "Parcel creation request",
         required = true,
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ParcelDto.class),
+        content = @Content(schema = @Schema(implementation = ParcelDto.class),
             examples = {
                 @ExampleObject(
                     name = "Sample Parcel Request",
@@ -155,9 +153,10 @@ public class ParcelsController {
             }
         )
     ))
-    @ApiResponse(responseCode = "200", description = "Parcel updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParcelDto.class)))
-    @ApiResponseAnnotations.NotFoundApiResponse
-    @ApiResponseAnnotations.ValidationApiResponse
+    @ApiResponse(responseCode = "200", description = "Parcel updated successfully",
+        content = @Content(schema = @Schema(implementation = ParcelDto.class)))
+    //@ApiResponseAnnotations.NotFoundApiResponse
+    //@ApiResponseAnnotations.ValidationApiResponse
     @PutMapping("/{id}")
     public ResponseEntity<ParcelDto> updateParcel(
         @PathVariable final UUID id,

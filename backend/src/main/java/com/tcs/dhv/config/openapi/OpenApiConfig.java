@@ -65,31 +65,6 @@ import java.util.List;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-            .components(new Components()
-                .addResponses("BadRequest", new ApiResponse()
-                    .description("Invalid input data")
-                    .content(new Content()
-                        .addMediaType("application/json",
-                            new MediaType().schema(new Schema<ApiErrorResponse>()
-                                .$ref("#/components/schemas/ApiErrorResponse")))))
-                .addResponses("ValidationError", new ApiResponse()
-                    .description("Validation failed")
-                    .content(new Content()
-                        .addMediaType("application/json",
-                            new MediaType().schema(new Schema<ApiErrorResponse>()
-                                .$ref("#/components/schemas/ApiErrorResponse")))))
-                .addResponses("InternalServerError", new ApiResponse()
-                    .description("Internal server error")
-                    .content(new Content()
-                        .addMediaType("application/json",
-                            new MediaType().schema(new Schema<ApiErrorResponse>()
-                                .$ref("#/components/schemas/ApiErrorResponse")))))
-            );
-    }
-
-    @Bean
     public OpenApiCustomizer operationOrderCustomizer(){
         return openApi ->{
             final var authOperationOrder = List.of(

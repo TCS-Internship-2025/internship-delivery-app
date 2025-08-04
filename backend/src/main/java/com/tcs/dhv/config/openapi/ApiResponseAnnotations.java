@@ -16,29 +16,24 @@ public class ApiResponseAnnotations {
     @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @ApiResponse(responseCode = "400", description = "Bad Request",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ApiErrorResponse.class)))
+        content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @ApiResponse(responseCode = "500", description = "Internal server error",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ApiErrorResponse.class)))
+        content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     public @interface CommonErrorResponse {}
 
     @Target({ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @ApiResponse(responseCode = "404", description = "Resource not found",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ApiErrorResponse.class)))
+        content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     public @interface NotFoundApiResponse {}
 
     @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @CommonErrorResponse // 400, 500
     @ApiResponse(responseCode = "401", description = "Authentication required",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ApiErrorResponse.class)))
+        content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @ApiResponse(responseCode = "403", description = "Access forbidden",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ApiErrorResponse.class)))
+        content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @SecurityRequirement(name = "bearerAuth")
     public @interface SecureEndpointResponse {}
 
@@ -46,7 +41,6 @@ public class ApiResponseAnnotations {
     @Retention(RetentionPolicy.RUNTIME)
     @CommonErrorResponse //400, 500
     @ApiResponse(responseCode = "422", description = "Validation failed",
-        content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ApiErrorResponse.class)))
+        content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     public @interface ValidationApiResponse {}
 }

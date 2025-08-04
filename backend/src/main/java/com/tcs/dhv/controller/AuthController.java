@@ -48,9 +48,9 @@ public class AuthController {
     @Operation(summary = "Login user", description = "Authenticate user with email and password")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "User logged in successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
         @ApiResponse(responseCode = "401", description = "Invalid credentials",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
+            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @ApiResponseAnnotations.ValidationApiResponse
     @PostMapping("/login")
@@ -64,7 +64,7 @@ public class AuthController {
 
     @Operation(summary = "Register user", description = "Register user")
     @ApiResponse(responseCode = "201", description = "User registered successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterResponse.class)))
+        content = @Content(schema = @Schema(implementation = RegisterResponse.class)))
     @ApiResponseAnnotations.ValidationApiResponse
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> registerUser(
@@ -104,9 +104,9 @@ public class AuthController {
 
     @Operation(summary = "Email verification", description = "Verify user by the email")
     @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User verified"),
         @ApiResponse(responseCode = "410", description = "Verification token expired",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-        @ApiResponse(responseCode = "200", description = "User verified")
+            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @ApiResponseAnnotations.NotFoundApiResponse
     @GetMapping("/email/verify")
@@ -128,9 +128,9 @@ public class AuthController {
     @Operation(summary = "Refresh token", description = "Refresh token")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Token refreshed successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponse.class))),
+            content = @Content(schema = @Schema(implementation = AuthResponse.class))),
         @ApiResponse(responseCode = "401", description = "Refresh token expired or invalid",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
+            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @ApiResponseAnnotations.NotFoundApiResponse
     @PostMapping("/refresh-token")
