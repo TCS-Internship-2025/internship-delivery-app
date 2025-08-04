@@ -6,8 +6,9 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
+
 @AllArgsConstructor
+@Component
 public class TrackingCodeValidator implements ConstraintValidator<TrackingCode, String> {
 
     private final String TRACKING_CODE_REGEX = "^HU\\d{10}[A-Z]{2}$";

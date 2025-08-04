@@ -8,7 +8,7 @@ import com.tcs.dhv.domain.enums.ParcelStatus;
 import lombok.Builder;
 
 @Builder
-public record TrackingResponse(
+public record TrackingDto(
         UUID parcelId,
         String trackingCode,
         String senderName,

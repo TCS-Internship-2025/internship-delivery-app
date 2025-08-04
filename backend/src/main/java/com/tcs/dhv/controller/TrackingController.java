@@ -1,12 +1,10 @@
 package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.ParcelStatusHistoryDto;
-import com.tcs.dhv.domain.dto.TrackingResponse;
-import com.tcs.dhv.repository.ParcelRepository;
+import com.tcs.dhv.domain.dto.TrackingDto;
 import com.tcs.dhv.service.ParcelStatusHistoryService;
 import com.tcs.dhv.service.TrackingService;
 import com.tcs.dhv.validation.TrackingCode;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +26,9 @@ public class TrackingController {
 
     private final TrackingService trackingService;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
-    private final ParcelRepository parcelRepository;
 
     @GetMapping("/{trackingCode}")
-    public ResponseEntity<TrackingResponse> trackParcel(
-            @Valid
+    public ResponseEntity<TrackingDto> trackParcel(
             @NotNull
             @TrackingCode
             @PathVariable
@@ -50,21 +46,16 @@ public class TrackingController {
 
     @GetMapping("/{trackingCode}/timeline")
     public ResponseEntity<List<ParcelStatusHistoryDto>> getParcelTimeline(
-            @Valid
             @NotNull
             @TrackingCode
             @PathVariable
             String trackingCode
     ) {
-//        final var parcelOpt = parcelRepository.findByTrackingCode(trackingCode);
-//        if (parcelOpt.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        }
 
         final var trackingResponse = trackingService.getTrackingDetails(trackingCode);
         final var timeline = parcelStatusHistoryService.getParcelTimeline(trackingResponse.parcelId());
 
-        log.info("Received tracking request for parcel with id {}", trackingResponse.parcelId());
+        log.info("Received tracking with timeline request for parcel with id {}", trackingResponse.parcelId());
         return ResponseEntity.ok(timeline);
     }
 }

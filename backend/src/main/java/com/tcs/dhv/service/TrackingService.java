@@ -1,6 +1,6 @@
 package com.tcs.dhv.service;
 
-import com.tcs.dhv.domain.dto.TrackingResponse;
+import com.tcs.dhv.domain.dto.TrackingDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,7 +19,7 @@ public class TrackingService {
 
     private final ParcelRepository parcelRepository;
 
-    public TrackingResponse getTrackingDetails(
+    public TrackingDto getTrackingDetails(
             String trackingCode
     ){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
@@ -29,7 +29,7 @@ public class TrackingService {
 
         final var estimatedDevilryTime = calculateEstimatedDevilryTime(parcel);
 
-        return TrackingResponse.builder()
+        return TrackingDto.builder()
                 .parcelId(parcel.getId())
                 .trackingCode(parcel.getTrackingCode())
                 .senderName(parcel.getSender().getName())

@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
+
 @RequiredArgsConstructor
+@Service
 public class ParcelStatusHistoryService {
 
     private final ParcelStatusHistoryRepository statusHistoryRepository;
@@ -57,7 +58,7 @@ public class ParcelStatusHistoryService {
         return new ParcelStatusHistoryDto(
                 entity.getId(),
                 entity.getParcel().getId(),
-                entity.getStatus().name(),
+                entity.getStatus(),
                 entity.getDescription(),
                 entity.getTimestamp()
         );
