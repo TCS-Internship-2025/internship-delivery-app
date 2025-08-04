@@ -13,6 +13,7 @@ export interface FormContextValue {
   resetParcelForm: (persistedData: Partial<ParcelFormSchema>) => void;
   getRecipientFormData: () => RecipientFormSchema;
   getParcelFormData: () => ParcelFormSchema;
+  getPointId: () => string | null | undefined;
 }
 
 export const FormContext = createContext<FormContextValue | undefined>(undefined);
