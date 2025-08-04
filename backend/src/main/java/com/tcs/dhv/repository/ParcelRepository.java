@@ -10,14 +10,10 @@ import java.util.UUID;
 
 public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
 
-    @EntityGraph(attributePaths = {
-            "sender",
-            "sender.address",
-            "recipient",
-            "recipient.address"
-    })
+    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
     List<Parcel> findAllBySenderId(UUID userId);
 
+    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
     boolean existsByTrackingCode(String trackingCode);
 
     // For public tracking
