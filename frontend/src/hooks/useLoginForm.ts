@@ -47,7 +47,7 @@ export const useLoginForm = () => {
         id: decodedToken.sub,
         name: decodedToken.name,
         email: decodedToken.email,
-        emailVerified: !decodedToken.emailVerified,
+        emailVerified: decodedToken.emailVerified,
       };
 
       setAuthData(data.token, data.refreshToken, user);

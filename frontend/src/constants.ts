@@ -15,7 +15,7 @@ export const ROUTES = {
   LOGIN: 'login',
   REGISTER: 'register',
   VERIFY: 'verify',
-  VERIFIED: 'verified',
+  VERIFIED: 'verified/:uid/:token',
   APP: 'app',
   RECIPIENT_FORM: 'recipient-form',
   PARCEL_FORM: 'parcel-form',
