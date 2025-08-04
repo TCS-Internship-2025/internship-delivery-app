@@ -64,7 +64,13 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
       country: formData.country,
       paymentType: formData.paymentType,
       deliveryType: formData.deliveryType,
+      longitude: formData.longitude,
+      latitude: formData.latitude,
     };
+  }, [formData]);
+
+  const getPointId = useCallback((): string | null | undefined => {
+    return formData.pointId;
   }, [formData]);
 
   const contextValue: FormContextValue = useMemo(
@@ -75,8 +81,9 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
       resetParcelForm,
       getRecipientFormData,
       getParcelFormData,
+      getPointId,
     }),
-    [formData, updateFormData, resetForm, getRecipientFormData, getParcelFormData, resetParcelForm]
+    [formData, updateFormData, resetForm, getRecipientFormData, getParcelFormData, resetParcelForm, getPointId]
   );
 
   return <FormContext.Provider value={contextValue}>{children}</FormContext.Provider>;

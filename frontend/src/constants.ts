@@ -4,7 +4,7 @@ import type { ParcelFormSchema, RecipientFormSchema } from './utils/parcelCompos
 
 // Zod enums
 export const TitleEnum = z.enum(['Mr', 'Mrs', 'Ms', 'Dr', 'Prof']);
-export const DeliveryEnum = z.enum(['Home', 'Pickup Point']);
+export const DeliveryEnum = z.enum(['Home', 'Pickup Point', 'Parcel Box']);
 export const PaymentEnum = z.enum(['Sender', 'Recipient']);
 export type TitleEnum = z.infer<typeof TitleEnum>;
 export type DeliveryEnum = z.infer<typeof DeliveryEnum>;
@@ -64,6 +64,9 @@ export const PARCEL_FORM_DEFAULT_VALUES: ParcelFormSchema = {
   building: '',
   paymentType: '',
   deliveryType: 'Home',
+  longitude: null,
+  latitude: null,
+  pointId: null,
 };
 
 export const PAYMENT_TYPE_NAME_CONVERTER: Record<string, string> = {
@@ -74,4 +77,5 @@ export const PAYMENT_TYPE_NAME_CONVERTER: Record<string, string> = {
 export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
   [DeliveryEnum.enum.Home]: 'HOME',
   [DeliveryEnum.enum['Pickup Point']]: 'PICKUP_POINT',
+  [DeliveryEnum.enum['Parcel Box']]: 'PARCEL_BOX',
 };
