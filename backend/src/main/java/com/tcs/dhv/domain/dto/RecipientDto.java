@@ -1,14 +1,29 @@
 package com.tcs.dhv.domain.dto;
 
 import com.tcs.dhv.domain.entity.Recipient;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
 public record RecipientDto(
+    @Size(min = 1, max = 100, message = "Name must be between {min} and {max} characters")
     String name,
+
+    @Email(message = "Invalid email format")
+    @Size(max = 254, message = "Email cannot exceed {max} characters")
     String email,
+
+    @Pattern(regexp = "^\\+36[1-9][0-9]{7,8}$", message = "Invalid Hungarian phone number format (+36XXXXXXXXX)")
     String phone,
+
+    @Past(message = "Date of birth must be in the past")
     LocalDate birthDate,
+
+    @Valid
     AddressDto address
 ) {
     public static RecipientDto fromEntity(final Recipient recipient) {
@@ -29,13 +44,5 @@ public record RecipientDto(
             .birthDate(birthDate)
             .address(address.toEntity())
             .build();
-    }
-
-    public void updateEntity(final Recipient recipient) {
-        if (name != null) recipient.setName(name);
-        if (email != null) recipient.setEmail(email);
-        if (phone != null) recipient.setPhone(phone);
-        if (birthDate != null) recipient.setBirthDate(birthDate);
-        if (address != null) address.updateEntity(recipient.getAddress());
     }
 }
