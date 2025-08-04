@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ROUTES } from '@/constants';
 
-import { useDeleteParcelById, useGetParcelById } from '@/apis/parcelGet';
+import { useGetParcelById } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,7 +15,6 @@ export const ParcelDetails = () => {
   const [searchParams] = useSearchParams();
   const parcelId = searchParams.get('parcelId') ?? undefined;
   const { data, status } = useGetParcelById(parcelId);
-  const deleteParcelMutation = useDeleteParcelById();
   const navigate = useNavigate();
 
   if (status === 'pending') {
@@ -41,21 +41,7 @@ export const ParcelDetails = () => {
   }
 
   function handleBack() {
-    void navigate('..');
-  }
-
-  function handleDelete() {
-    if (!parcelId) return;
-
-    deleteParcelMutation.mutate(parcelId, {
-      onSuccess: () => {
-        console.log('Parcel deleted successfully');
-        void navigate('..');
-      },
-      onError: (error) => {
-        console.error('Failed to delete parcel:', error);
-      },
-    });
+    void navigate(`/${ROUTES.PARCELS}`);
   }
 
   return (
@@ -79,14 +65,6 @@ export const ParcelDetails = () => {
               sx={{ py: 2, px: 4, mr: 2, fontSize: 20, borderRadius: 3 }}
             >
               Back
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDelete}
-              sx={{ py: 2, px: 4, ml: 2, fontSize: 20, borderRadius: 3 }}
-            >
-              Delete
             </Button>
           </Box>
         </Container>
