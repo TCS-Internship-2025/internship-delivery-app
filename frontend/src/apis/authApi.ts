@@ -81,14 +81,7 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
 }
 
 export async function register(credentials: RegisterRequest): Promise<RegisterResponse> {
-  console.log('Registration request:', {
-    name: credentials.name,
-    email: credentials.email,
-    passwordLength: credentials.password.length,
-  }); // Log request data (without password)
-
   const response = await httpService.post('/auth/register', registerResponseSchema, credentials);
-  console.log('Registration response:', response); // Log successful response
 
   return response;
 }
@@ -100,7 +93,7 @@ export async function logout(): Promise<void> {
   if (authData?.refreshToken) {
     try {
       // Use direct fetch for logout since we know it returns empty response
-      const response = await fetch(`http://localhost:8080/api/auth/logout?refreshToken=${authData.refreshToken}`, {
+      const response = await fetch(`/logout?refreshToken=${authData.refreshToken}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,38 +131,21 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
   return response;
 }
 export async function resendVerificationEmail(email: string): Promise<void> {
-  const response = await fetch(`http://localhost:8080/api/auth/email/resend-verification?email=${email}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to resend verification email');
-  }
+  await httpService.post(`/auth/email/resend-verification?email=${email}`, z.void());
 }
 
 export async function verifyEmail(
   userId: string,
   token: string
 ): Promise<{ name: string; email: string; emailVerified: boolean }> {
-  const response = await fetch(`http://localhost:8080/api/auth/email/verify?userId=${userId}&token=${token}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const response = await httpService.get(
+    `/auth/email/verify?userId=${userId}&token=${token}`,
+    verifyEmailResponseSchema
+  );
 
-  if (!response.ok) {
-    throw new Error('Email verification failed');
-  }
-
-  const data: unknown = await response.json();
-  const validatedData = verifyEmailResponseSchema.parse(data);
   return {
-    name: validatedData.name,
-    email: validatedData.email,
-    emailVerified: validatedData.emailVerified,
+    name: response.name,
+    email: response.email,
+    emailVerified: response.emailVerified,
   };
 }
