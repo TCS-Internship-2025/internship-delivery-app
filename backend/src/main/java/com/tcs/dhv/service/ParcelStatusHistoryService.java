@@ -35,25 +35,12 @@ public class ParcelStatusHistoryService {
     }
 
     @Transactional
-    public ParcelStatusHistoryDto addStatusHistory(ParcelStatusHistory entity) {
+    public ParcelStatusHistoryDto addStatusHistory(UUID parcelId, UUID userId) {
+        final var entity = createStatusHistoryEntry(parcelId, userId);
         final var saved = statusHistoryRepository.save(entity);
         return toDto(saved);
     }
-    @Transactional
-    public ParcelStatusHistory createStatusHistoryEntry(UUID parcelId, UUID userId) {
-        final var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
-        final var parcel = parcelRepository.findById(parcelId)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
-
-        return ParcelStatusHistory.builder()
-            .parcel(parcel)
-            .status(ParcelStatus.CREATED)
-            .description("Parcel created by user: " + user.getEmail())
-            .timestamp(LocalDateTime.now())
-            .build();
-    }
     @Transactional
     public ParcelStatusHistoryDto updateStatusHistory(UUID id, ParcelStatusHistory updatedEntity) {
         final var existing = statusHistoryRepository.findById(id)
@@ -73,6 +60,20 @@ public class ParcelStatusHistoryService {
         statusHistoryRepository.deleteById(id);
     }
 
+    private ParcelStatusHistory createStatusHistoryEntry(UUID parcelId, UUID userId) {
+        final var user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+
+        final var parcel = parcelRepository.findById(parcelId)
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
+
+        return ParcelStatusHistory.builder()
+            .parcel(parcel)
+            .status(ParcelStatus.CREATED)
+            .description("Parcel created by user: " + user.getEmail())
+            .timestamp(LocalDateTime.now())
+            .build();
+    }
     private ParcelStatusHistoryDto toDto(ParcelStatusHistory entity) {
         return new ParcelStatusHistoryDto(
                 entity.getId(),

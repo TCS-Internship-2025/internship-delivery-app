@@ -27,7 +27,7 @@ public class TrackingService {
 
         log.info("Getting tracking data of parcel with id : {}", parcel.getId());
 
-        final var estimatedDevilryTime = calculateEstimatedDevilryTime(parcel);
+        final var estimatedDevilryTime = calculateEstimatedDeliveryTime(parcel);
 
         return TrackingDto.builder()
                 .parcelId(parcel.getId())
@@ -39,7 +39,7 @@ public class TrackingService {
                 .build();
     }
 
-    private Optional<LocalDateTime> calculateEstimatedDevilryTime(
+    private Optional<LocalDateTime> calculateEstimatedDeliveryTime(
             Parcel parcel
     ){
         return switch(parcel.getCurrentStatus()){
