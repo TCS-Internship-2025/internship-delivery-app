@@ -90,6 +90,19 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
             '*::-webkit-scrollbar-track': {
               backgroundColor: 'transparent',
             },
+            // override autofill styles
+            'input:-webkit-autofill': {
+              WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset !important`,
+              WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+            },
+            'input:-webkit-autofill:hover': {
+              WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset !important`,
+              WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+            },
+            'input:-webkit-autofill:focus': {
+              WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset !important`,
+              WebkitTextFillColor: `${theme.palette.text.primary} !important`,
+            },
           })}
         />
         {children}

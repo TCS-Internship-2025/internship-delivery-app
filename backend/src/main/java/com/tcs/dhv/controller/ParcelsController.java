@@ -52,10 +52,9 @@ public class ParcelsController {
 
         log.info("Parcel creation email sent to email: {}", parcelResponse.recipient().email());
 
-        final var parcelHistoryEntity = parcelStatusHistoryService.createStatusHistoryEntry(parcelResponse.id(), UUID.fromString(authentication.getName()));
-        parcelStatusHistoryService.addStatusHistory(parcelHistoryEntity);
+        parcelStatusHistoryService.addStatusHistory(parcelResponse.id(), UUID.fromString(authentication.getName()));
 
-        log.info("Parcel status entry created: {}", parcelHistoryEntity.getId());
+        log.info("Parcel status entry created: {}", parcelResponse.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(parcelResponse);
     }
 

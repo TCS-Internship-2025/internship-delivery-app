@@ -1,16 +1,13 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.ParcelStatusHistoryDto;
-import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.ParcelStatusHistory;
-import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,17 +30,37 @@ public class ParcelStatusHistoryService {
             throw new RuntimeException("No status history found for parcel ID: " + parcelId);
         }
         return historyList.stream()
-                .map(this::toDto)
+                .map(ParcelStatusHistoryDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public ParcelStatusHistoryDto addStatusHistory(ParcelStatusHistory entity) {
-        final ParcelStatusHistory saved = statusHistoryRepository.save(entity);
-        return toDto(saved);
+    public ParcelStatusHistoryDto addStatusHistory(UUID parcelId, UUID userId) {
+        final var entity = createStatusHistoryEntry(parcelId, userId);
+        final var saved = statusHistoryRepository.save(entity);
+        return ParcelStatusHistoryDto.fromEntity(saved);
     }
+
     @Transactional
-    public ParcelStatusHistory createStatusHistoryEntry(UUID parcelId, UUID userId) {
+    public ParcelStatusHistoryDto updateStatusHistory(UUID id, ParcelStatusHistory updatedEntity) {
+        final var existing = statusHistoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Status history not found for ID: " + id));
+        existing.setStatus(updatedEntity.getStatus());
+        existing.setDescription(updatedEntity.getDescription());
+        existing.setTimestamp(updatedEntity.getTimestamp());
+        final var saved = statusHistoryRepository.save(existing);
+        return ParcelStatusHistoryDto.fromEntity(saved);
+    }
+
+    @Transactional
+    public void deleteStatusHistory(UUID id) {
+        if (!statusHistoryRepository.existsById(id)) {
+            throw new EntityNotFoundException("Status history not found for ID: " + id);
+        }
+        statusHistoryRepository.deleteById(id);
+    }
+
+    private ParcelStatusHistory createStatusHistoryEntry(UUID parcelId, UUID userId) {
         final var user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
@@ -57,32 +74,5 @@ public class ParcelStatusHistoryService {
             .timestamp(LocalDateTime.now())
             .build();
     }
-    @Transactional
-    public ParcelStatusHistoryDto updateStatusHistory(UUID id, ParcelStatusHistory updatedEntity) {
-        final ParcelStatusHistory existing = statusHistoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Status history not found for ID: " + id));
-        existing.setStatus(updatedEntity.getStatus());
-        existing.setDescription(updatedEntity.getDescription());
-        existing.setTimestamp(updatedEntity.getTimestamp());
-        final ParcelStatusHistory saved = statusHistoryRepository.save(existing);
-        return toDto(saved);
-    }
 
-    @Transactional
-    public void deleteStatusHistory(UUID id) {
-        if (!statusHistoryRepository.existsById(id)) {
-            throw new RuntimeException("Status history not found for ID: " + id);
-        }
-        statusHistoryRepository.deleteById(id);
-    }
-
-    private ParcelStatusHistoryDto toDto(ParcelStatusHistory entity) {
-        return new ParcelStatusHistoryDto(
-                entity.getId(),
-                entity.getParcel().getId(),
-                entity.getStatus(),
-                entity.getDescription(),
-                entity.getTimestamp()
-        );
-    }
 }
