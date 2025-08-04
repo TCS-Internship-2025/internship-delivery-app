@@ -31,6 +31,7 @@ import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
 import { Login } from './pages/Login.tsx';
 import { ParcelDetails } from './pages/ParcelDetails.tsx';
+import { ProfileInfo } from './pages/ProfileInfo.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
 import { LocalizationProvider } from './providers/LocalizationProvider.tsx';
@@ -63,14 +64,6 @@ const router = createBrowserRouter([
         path: ROUTES.VERIFIED,
         element: <Verified />,
       },
-      {
-        path: ROUTES.TRACKING,
-        element: <Tracking />,
-      },
-      {
-        path: ROUTES.TRACKINGSLUG,
-        element: <TrackingSlug />,
-      },
 
       // App layout shared for public + protected pages
       {
@@ -79,6 +72,14 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <LandingPage />,
+          },
+          {
+            path: ROUTES.TRACKING,
+            element: <Tracking />,
+          },
+          {
+            path: ROUTES.TRACKINGSLUG,
+            element: <TrackingSlug />,
           },
 
           {
@@ -110,6 +111,12 @@ const router = createBrowserRouter([
                   },
                 ],
               },
+
+              {
+                path: ROUTES.PROFILE,
+                element: <ProfileInfo />,
+              },
+
               {
                 path: ROUTES.PAGE5,
                 children: [

@@ -15,7 +15,7 @@ export const ROUTES = {
   LOGIN: 'login',
   REGISTER: 'register',
   VERIFY: 'verify',
-  VERIFIED: 'verified',
+  VERIFIED: 'verified/:uid/:token',
   APP: 'app',
   RECIPIENT_FORM: 'recipient-form',
   PARCEL_FORM: 'parcel-form',
@@ -26,6 +26,7 @@ export const ROUTES = {
   TRACKING: 'tracking',
   PARCELS: 'my-parcels',
   DETAILS: 'details/:parcelId',
+  PROFILE: 'profile',
 };
 
 export const PARCEL_STATUS = {
@@ -78,4 +79,14 @@ export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
   [DeliveryEnum.enum.Home]: 'HOME',
   [DeliveryEnum.enum['Pickup Point']]: 'PICKUP_POINT',
   [DeliveryEnum.enum['Parcel Box']]: 'PARCEL_BOX',
+};
+
+export const QUERY_STATUS = {
+  PENDING: 'pending',
+  ERROR: 'error',
+};
+
+export const PARCEL_DELIVERY_STATUSES = {
+  DELIVERED: 'DELIVERED',
+  //add more if necessary
 };
