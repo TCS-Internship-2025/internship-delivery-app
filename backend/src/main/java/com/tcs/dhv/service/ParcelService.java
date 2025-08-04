@@ -75,9 +75,9 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user: {}", userId);
 
-        final var sender = getUserById(userId);
+        //final var sender = getUserById(userId);
 
-        final var parcels = parcelRepository.findAllBySenderId(sender.getId());
+        final var parcels = parcelRepository.findAllBySenderId(userId);
 
         return parcels.stream()
             .map(ParcelDto::fromEntity)
