@@ -75,7 +75,6 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user: {}", userId);
 
-        //final var sender = getUserById(userId);
 
         final var parcels = parcelRepository.findAllBySenderId(userId);
 
@@ -87,9 +86,8 @@ public class ParcelService {
     public ParcelDto getParcel(final UUID id, final UUID userId) {
         log.info("Retrieving parcel with ID: {}", id);
 
-        final var sender = getUserById(userId);
 
-        final var parcel = getParcelEntity(id, sender);
+        final var parcel = getParcelEntity(id, userId);
 
         log.info("Parcel with ID: {} retrieved successfully for user: {}", id, userId);
         return ParcelDto.fromEntity(parcel);
@@ -99,9 +97,8 @@ public class ParcelService {
     public ParcelDto updateParcel(final UUID id, final ParcelDto parcelUpdate, final UUID userId) {
         log.info("Updating parcel with ID: {} for user: {}", id, userId);
 
-        final var sender = getUserById(userId);
 
-        final var parcel = getParcelEntity(id, sender);
+        final var parcel = getParcelEntity(id, userId);
 
         parcelUpdate.updateEntity(parcel);
         parcel.setUpdatedAt(LocalDateTime.now());
@@ -115,9 +112,8 @@ public class ParcelService {
     public void deleteParcel(final UUID id, final UUID userId) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userId);
 
-        final var sender = getUserById(userId);
 
-        final var parcel = getParcelEntity(id, sender);
+        final var parcel = getParcelEntity(id, userId);
 
         parcelRepository.delete(parcel);
         log.info("Parcel with ID: {} deleted successfully", id);
@@ -136,11 +132,11 @@ public class ParcelService {
         return code;
     }
 
-    private Parcel getParcelEntity(final UUID id, final User sender) {
+    private Parcel getParcelEntity(final UUID id, final UUID senderId) {
         final var parcel = parcelRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
-        if (!parcel.getSender().getId().equals(sender.getId())) {
+        if (!parcel.getSender().getId().equals(senderId)) {
             throw new AccessDeniedException("Access denied");
         }
 
