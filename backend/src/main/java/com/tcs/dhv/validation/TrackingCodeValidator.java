@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
-@AllArgsConstructor
 @Component
+@AllArgsConstructor
 public class TrackingCodeValidator implements ConstraintValidator<TrackingCode, String> {
 
     private final String TRACKING_CODE_REGEX = "^HU\\d{10}[A-Z]{2}$";

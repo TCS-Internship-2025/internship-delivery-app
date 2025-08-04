@@ -3,6 +3,7 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.ParcelStatusHistoryDto;
 import com.tcs.dhv.domain.entity.ParcelStatusHistory;
 import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class ParcelStatusHistoryService {
 
     private final ParcelStatusHistoryRepository statusHistoryRepository;
@@ -22,45 +22,35 @@ public class ParcelStatusHistoryService {
     public List<ParcelStatusHistoryDto> getParcelTimeline(UUID parcelId) {
         final List<ParcelStatusHistory> historyList = statusHistoryRepository.findAllByParcelIdOrderByTimestampAsc(parcelId);
         if (historyList.isEmpty()) {
-            throw new RuntimeException("No status history found for parcel ID: " + parcelId);
+            throw new EntityNotFoundException("No status history found for parcel ID: " + parcelId);
         }
         return historyList.stream()
-                .map(this::toDto)
+                .map(ParcelStatusHistoryDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public ParcelStatusHistoryDto addStatusHistory(ParcelStatusHistory entity) {
         final ParcelStatusHistory saved = statusHistoryRepository.save(entity);
-        return toDto(saved);
+        return ParcelStatusHistoryDto.fromEntity(saved);
     }
 
     @Transactional
     public ParcelStatusHistoryDto updateStatusHistory(UUID id, ParcelStatusHistory updatedEntity) {
         final ParcelStatusHistory existing = statusHistoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Status history not found for ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Status history not found for ID: " + id));
         existing.setStatus(updatedEntity.getStatus());
         existing.setDescription(updatedEntity.getDescription());
         existing.setTimestamp(updatedEntity.getTimestamp());
         final ParcelStatusHistory saved = statusHistoryRepository.save(existing);
-        return toDto(saved);
+        return ParcelStatusHistoryDto.fromEntity(saved);
     }
 
     @Transactional
     public void deleteStatusHistory(UUID id) {
         if (!statusHistoryRepository.existsById(id)) {
-            throw new RuntimeException("Status history not found for ID: " + id);
+            throw new EntityNotFoundException("Status history not found for ID: " + id);
         }
         statusHistoryRepository.deleteById(id);
-    }
-
-    private ParcelStatusHistoryDto toDto(ParcelStatusHistory entity) {
-        return new ParcelStatusHistoryDto(
-                entity.getId(),
-                entity.getParcel().getId(),
-                entity.getStatus(),
-                entity.getDescription(),
-                entity.getTimestamp()
-        );
     }
 }
