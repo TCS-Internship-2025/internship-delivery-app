@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
-@RequestMapping("/api/tracking")
-@RestController
 @Slf4j
 @Validated
 @RequiredArgsConstructor
+@RequestMapping("/api/tracking")
+@RestController
 public class TrackingController {
     private final TrackingService trackingService;
     private final ParcelStatusHistoryService parcelStatusHistoryService;

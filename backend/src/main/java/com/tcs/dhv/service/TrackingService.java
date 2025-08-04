@@ -19,9 +19,7 @@ public class TrackingService {
 
     private final ParcelRepository parcelRepository;
 
-    public TrackingDto getTrackingDetails(
-            String trackingCode
-    ){
+    public TrackingDto getTrackingDetails(String trackingCode){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
@@ -39,9 +37,7 @@ public class TrackingService {
                 .build();
     }
 
-    private Optional<LocalDateTime> calculateEstimatedDevilryTime(
-            Parcel parcel
-    ){
+    private Optional<LocalDateTime> calculateEstimatedDevilryTime(Parcel parcel){
         return switch(parcel.getCurrentStatus()){
             case CREATED -> Optional.of(parcel.getCreatedAt().plusDays(7));
             case PICKED_UP -> Optional.of(parcel.getUpdatedAt().plusDays(5)); // the carier has it

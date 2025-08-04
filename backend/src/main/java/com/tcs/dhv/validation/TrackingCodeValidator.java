@@ -24,8 +24,7 @@ public class TrackingCodeValidator implements ConstraintValidator<TrackingCode, 
     public boolean isValid(String trackingCode, ConstraintValidatorContext constraintValidatorContext) {
 
         if(trackingCode == null || trackingCode.isBlank()){
-            //to be handled by @NotNull or @NotBlank
-            return true;
+            return false;
         }
 
         //check pattern
