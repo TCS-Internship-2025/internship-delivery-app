@@ -1,4 +1,4 @@
-import { error, pending } from '@/constants';
+import { PARCEL_DELIVERY_STATUSES, QUERY_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
@@ -15,19 +15,17 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
 const notSmallScreenStyle = { top: '50%', left: '50%', transform: 'translate(50%, 0)' };
-
-const delivered = 'DELIVERED';
 export default function TimelineComponent({ trackingNumber }: { trackingNumber: string }) {
   const isSmallScreen = useSmallScreen();
   const { data: timelineData, status: timelineStatus } = useTimeline(trackingNumber);
-  if (timelineStatus === pending) {
+  if (timelineStatus === QUERY_STATUS.PENDING) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <CircularProgress />
       </Box>
     );
   }
-  if (timelineStatus === error) {
+  if (timelineStatus === QUERY_STATUS.ERROR) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
         <Typography variant="h4">Something went wrong.</Typography>
@@ -50,7 +48,7 @@ export default function TimelineComponent({ trackingNumber }: { trackingNumber: 
         <TimelineItem key={event.id}>
           <TimelineSeparator>
             <TimelineDot />
-            {event.status !== delivered && <TimelineConnector />}
+            {event.status !== PARCEL_DELIVERY_STATUSES.DELIVERED && <TimelineConnector />}
           </TimelineSeparator>
           <TimelineContent variant="subtitle2" fontSize={12}>
             {event.description}

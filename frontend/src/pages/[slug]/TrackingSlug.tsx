@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { error, pending } from '@/constants';
+import { QUERY_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
@@ -17,14 +17,14 @@ function TrackingSlug() {
   const { data: trackingData, status: trackingStatus } = useTracking(slug);
 
   const isSmallScreen = useSmallScreen();
-  if (trackingStatus === pending) {
+  if (trackingStatus === QUERY_STATUS.PENDING) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <CircularProgress />
       </Box>
     );
   }
-  if (trackingStatus === error) {
+  if (trackingStatus === QUERY_STATUS.ERROR) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
         <Typography variant="h4">Something went wrong.</Typography>
@@ -56,23 +56,23 @@ function TrackingSlug() {
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             PARCEL NUMBER
           </Typography>
-          <Typography>{trackingData.trackingCode}</Typography>
+          <Typography>{trackingData?.trackingCode}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             ESTIMATED TIME OF ARRIVAL
           </Typography>
-          <Typography>{new Date(trackingData.estimatedDelivery).toLocaleDateString()}</Typography>
+          <Typography>{trackingData && new Date(trackingData.estimatedDelivery).toLocaleDateString()}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             RECIPIENT
           </Typography>
-          <Typography>{trackingData.recipientName}</Typography>
+          <Typography>{trackingData?.recipientName}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             SENDER
           </Typography>
-          <Typography>{trackingData.senderName}</Typography>
+          <Typography>{trackingData?.senderName}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             CURRENT STATUS
           </Typography>
-          <Typography>{trackingData.currentStatus}</Typography>
+          <Typography>{trackingData?.currentStatus}</Typography>
         </Box>
         <Box sx={{ width: '33%' }}>
           <TimelineComponent trackingNumber={slug ?? ''} />
