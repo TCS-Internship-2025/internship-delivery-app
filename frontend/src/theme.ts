@@ -1,10 +1,19 @@
-import { blue, green, red, yellow } from '@mui/material/colors';
+import { red } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
   interface TypeBackground {
     default: string;
     paper: string;
+  }
+  interface PaletteColor {
+    marker?: string;
+    markerSelected?: string;
+  }
+
+  interface SimplePaletteColorOptions {
+    marker?: string;
+    markerSelected?: string;
   }
 }
 
@@ -36,6 +45,8 @@ export const themes = {
         main: primaryColor,
         light: '#74c69d',
         dark: '#2d6a4f',
+        marker: '#1b4332',
+        markerSelected: '#ff0000',
         contrastText: white,
       },
       secondary: {
@@ -43,12 +54,10 @@ export const themes = {
         light: '#74c69d',
         dark: '#40916c',
       },
-      success: {
-        main: green[600],
-      },
-      error: { main: red[600] },
-      warning: { main: yellow[700] },
-      info: { main: blue[500] },
+      success: { main: '#0ed82f' },
+      error: { main: '#fd6f68' },
+      warning: { main: '#e3d802' },
+      info: { main: '#0ed8d8' },
       background: {
         default: '#F8FBF8',
         paper: white,
@@ -152,6 +161,8 @@ export const themes = {
       primary: {
         main: '#52b788',
         light: '#74c69d',
+        marker: '#b6e2ca',
+        markerSelected: '#ff0000',
         dark: primaryColorDark,
         contrastText: white,
       },
@@ -160,12 +171,10 @@ export const themes = {
         light: '#95d5b2',
         dark: '#52b788',
       },
-      success: {
-        main: green[400],
-      },
-      error: { main: red[300] },
-      warning: { main: yellow[700] },
-      info: { main: blue[200] },
+      success: { main: '#18812a' },
+      error: { main: '#ab2821' },
+      warning: { main: '#888211' },
+      info: { main: '#188181' },
       background: {
         default: '#1A1F1A',
         paper: '#1A1F1A',

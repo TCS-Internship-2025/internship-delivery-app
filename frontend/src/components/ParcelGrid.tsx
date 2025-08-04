@@ -7,19 +7,35 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import type { ColDef, ICellRendererParams, RowSelectionOptions } from 'ag-grid-community';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
+import { useTheme } from '@/providers/ThemeProvider';
+
+import type { ParcelListData } from '@/apis/parcelGet';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 
 import { getParcelChipData } from '@/utils/parcelChipData';
+import { deliveryConverter, paymentConverter } from '@/utils/parcelTypeConverter';
 
-const StatusChipRenderer = (params: ICellRendererParams<ParcelData, string>) => {
+const StatusChipRenderer = (params: ICellRendererParams<ParcelShortData, string>) => {
+  const isSmallScreen = useSmallScreen();
   const chipData = getParcelChipData(params.value ?? '');
 
-  return <Chip {...chipData} sx={{ alignSelf: 'center', py: 2.5, px: 1, fontSize: 20 }} />;
+  return (
+    <Chip
+      {...chipData}
+      sx={
+        isSmallScreen
+          ? { alignSelf: 'center', py: 1, px: 0.5, fontSize: 12 }
+          : { alignSelf: 'center', py: 2.5, px: 1, fontSize: 20 }
+      }
+    />
+  );
 };
 
-const colDefs: ColDef<ParcelData>[] = [
+const colDefs: ColDef<ParcelShortData>[] = [
   {
     field: 'parcelId',
     headerName: 'Parcel ID',
@@ -58,24 +74,35 @@ const colDefs: ColDef<ParcelData>[] = [
   },
 ];
 
-interface ParcelData {
-  parcelId?: number;
+interface ParcelShortData {
+  parcelId?: string;
+  code?: string;
+  recipient?: string;
   address?: string;
   delivery?: string;
   payment?: string;
   status: string;
 }
 
-interface ParcelGridProps {
-  parcels?: ParcelData[];
-}
-
-export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
+export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
   // TODO: Error handling
 
-  const [rowData] = useState(parcels ?? undefined);
+  const shortParcels: ParcelShortData[] =
+    parcels?.map((parcel) => ({
+      parcelId: parcel.id,
+      address: parcel.recipient.address.line1,
+      code: parcel.trackingCode,
+      recipient: parcel.recipient.name,
+      delivery: deliveryConverter(parcel.deliveryType),
+      payment: paymentConverter(parcel.paymentType),
+      status: parcel.currentStatus,
+    })) ?? [];
+
+  const [rowData] = useState(shortParcels ?? undefined);
   const [isRowSelected, setIsRowSelected] = useState(false);
-  const gridRef = useRef<AgGridReact<ParcelData>>(null);
+  const gridRef = useRef<AgGridReact<ParcelShortData>>(null);
+  const isSmallScreen = useSmallScreen();
+  const { mode } = useTheme();
   const navigate = useNavigate();
 
   const rowSelection: RowSelectionOptions = useMemo(() => {
@@ -101,18 +128,43 @@ export const ParcelGrid = ({ parcels }: ParcelGridProps = {}) => {
 
   return (
     <Box
-      className="ag-theme-quartz"
+      className={`ag-theme-quartz${mode === 'dark' ? '-dark' : ''}`}
       width={{ xs: '100%', md: '75%' }}
-      height={{ xs: 500, md: 850 }}
+      height={{ xs: 360, md: 692 }}
       ml="auto"
       mr="auto"
-      sx={{
-        '--ag-row-height': '56px',
-        '--ag-font-size': '22px',
-        '--ag-grid-size': '10px',
-      }}
+      sx={
+        isSmallScreen
+          ? {
+              '--ag-row-height': '40px',
+              '--ag-font-size': '16px',
+              '--ag-grid-size': '8px',
+              ...(mode === 'dark' && {
+                '--ag-background-color': '#353b39',
+                '--ag-header-background-color': '#2e3331',
+                '--ag-row-hover-color': '#38423f',
+                '--ag-selected-row-background-color': '#43514c',
+              }),
+            }
+          : {
+              '--ag-row-height': '56px',
+              '--ag-font-size': '22px',
+              '--ag-grid-size': '10px',
+              ...(mode === 'dark' && {
+                '--ag-background-color': '#353b39',
+                '--ag-header-background-color': '#2e3331',
+                '--ag-row-hover-color': '#38423f',
+                '--ag-selected-row-background-color': '#43514c',
+              }),
+            }
+      }
     >
-      <Button onClick={handleDetails} disabled={!isRowSelected} variant="contained" sx={{ fontSize: 16, my: 3 }}>
+      <Button
+        onClick={handleDetails}
+        disabled={!isRowSelected}
+        variant="contained"
+        sx={isSmallScreen ? { fontSize: 14, my: 1 } : { fontSize: 16, my: 3 }}
+      >
         See details
       </Button>
       <AgGridReact

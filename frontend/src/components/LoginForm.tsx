@@ -4,7 +4,6 @@ import { useLoginForm } from '../hooks/useLoginForm';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -19,27 +18,27 @@ interface LoginFormProps {
 
 export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { form, onSubmit, isLoading, error } = useLoginForm();
-  const { control, handleSubmit } = form;
+  const { form, onSubmit, isLoading } = useLoginForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = form;
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    void handleSubmit(onSubmit)(e);
-  };
-
   return (
     <>
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error.message}
-        </Alert>
-      )}
-
-      <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 2 }}>
+      <Box
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSubmit(onSubmit)(e);
+        }}
+        sx={{ mt: 2 }}
+      >
         <Controller
           name="email"
           control={control}
@@ -55,6 +54,11 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
               autoComplete="email"
               autoFocus
               disabled={isLoading}
+              slotProps={{
+                input: {
+                  style: { WebkitBoxShadow: 'none !important' },
+                },
+              }}
             />
           )}
         />
@@ -98,7 +102,7 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
           fullWidth
           variant="contained"
           size="large"
-          disabled={isLoading}
+          disabled={!isValid || isLoading}
           sx={{
             mt: 2,
             mb: 2,

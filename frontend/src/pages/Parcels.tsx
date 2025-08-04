@@ -1,3 +1,5 @@
+import { useAuth } from '@/contexts/AuthContext';
+
 import { useGetAllParcels } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
@@ -8,7 +10,8 @@ import Typography from '@mui/material/Typography';
 import { ParcelGrid } from '@/components/ParcelGrid';
 
 export const ParcelPage = () => {
-  const { data, status } = useGetAllParcels();
+  const { token } = useAuth();
+  const { data, status } = useGetAllParcels(token);
 
   if (status === 'pending') {
     return (
@@ -34,18 +37,20 @@ export const ParcelPage = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
-        <Container
-          maxWidth={false}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <ParcelGrid parcels={data} />
-        </Container>
+    <>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          <Container
+            maxWidth={false}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <ParcelGrid parcels={data} />
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };

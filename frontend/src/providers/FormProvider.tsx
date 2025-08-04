@@ -1,14 +1,14 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
-import { parcelFormDefaultValues, recipientFormDefaultValues } from '@/constants';
+import { PARCEL_FORM_DEFAULT_VALUES, RECIPIENT_FORM_DEFAULT_VALUES } from '@/constants';
 
 import { FormContext, type FormContextValue, type FormData } from '@/contexts/FormContext';
 
 import type { ParcelFormSchema, RecipientFormSchema } from '@/utils/parcelComposition';
 
 const defaultFormData: FormData = {
-  ...recipientFormDefaultValues,
+  ...RECIPIENT_FORM_DEFAULT_VALUES,
 
-  ...parcelFormDefaultValues,
+  ...PARCEL_FORM_DEFAULT_VALUES,
 };
 
 interface FormProviderProps {
@@ -30,19 +30,31 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
     setFormData(defaultFormData);
   }, []);
 
+  const resetParcelForm = useCallback(
+    (persistedData: Partial<ParcelFormSchema>) => {
+      const updatedParcelForm: ParcelFormSchema = {
+        ...PARCEL_FORM_DEFAULT_VALUES,
+        ...persistedData,
+      };
+
+      console.log('formProvider: ', updatedParcelForm);
+      updateFormData(updatedParcelForm);
+    },
+    [updateFormData]
+  );
+
   const getRecipientFormData = useCallback((): RecipientFormSchema => {
     return {
       title: formData.title,
       name: formData.name,
-      dateOfBirth: formData.dateOfBirth,
-      mobilePhone: formData.mobilePhone,
-      emailAddress: formData.emailAddress,
+      birthDate: formData.birthDate,
+      phone: formData.phone,
+      email: formData.email,
     };
   }, [formData]);
 
   const getParcelFormData = useCallback((): ParcelFormSchema => {
     return {
-      addressName: formData.addressName,
       line1: formData.line1,
       line2: formData.line2,
       building: formData.building,
@@ -60,10 +72,11 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
       formData,
       updateFormData,
       resetForm,
+      resetParcelForm,
       getRecipientFormData,
       getParcelFormData,
     }),
-    [formData, updateFormData, resetForm, getRecipientFormData, getParcelFormData]
+    [formData, updateFormData, resetForm, getRecipientFormData, getParcelFormData, resetParcelForm]
   );
 
   return <FormContext.Provider value={contextValue}>{children}</FormContext.Provider>;
