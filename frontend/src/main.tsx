@@ -24,6 +24,7 @@ import { Verified } from '@/pages/Verified.tsx';
 import { Verify } from '@/pages/Verify.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import { FormProgressBar } from './components/FormProgressBar.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
@@ -97,12 +98,17 @@ const router = createBrowserRouter([
                 ],
               },
               {
-                path: ROUTES.RECIPIENT_FORM,
-                element: <RecipientForm />,
-              },
-              {
-                path: ROUTES.PARCEL_FORM,
-                element: <ParcelForm />,
+                element: <FormProgressBar />,
+                children: [
+                  {
+                    path: ROUTES.RECIPIENT_FORM,
+                    element: <RecipientForm />,
+                  },
+                  {
+                    path: ROUTES.PARCEL_FORM,
+                    element: <ParcelForm />,
+                  },
+                ],
               },
               {
                 path: ROUTES.PAGE5,
