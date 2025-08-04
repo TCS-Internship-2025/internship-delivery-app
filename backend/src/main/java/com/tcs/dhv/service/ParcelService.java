@@ -75,7 +75,6 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user: {}", userId);
 
-
         final var parcels = parcelRepository.findAllBySenderId(userId);
 
         return parcels.stream()
@@ -86,7 +85,6 @@ public class ParcelService {
     public ParcelDto getParcel(final UUID id, final UUID userId) {
         log.info("Retrieving parcel with ID: {}", id);
 
-
         final var parcel = getParcelEntity(id, userId);
 
         log.info("Parcel with ID: {} retrieved successfully for user: {}", id, userId);
@@ -96,7 +94,6 @@ public class ParcelService {
     @Transactional
     public ParcelDto updateParcel(final UUID id, final ParcelDto parcelUpdate, final UUID userId) {
         log.info("Updating parcel with ID: {} for user: {}", id, userId);
-
 
         final var parcel = getParcelEntity(id, userId);
 
@@ -111,7 +108,6 @@ public class ParcelService {
     @Transactional
     public void deleteParcel(final UUID id, final UUID userId) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userId);
-
 
         final var parcel = getParcelEntity(id, userId);
 
@@ -145,6 +141,6 @@ public class ParcelService {
 
     private User getUserById(final UUID id) {
         return userRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
     }
 }
