@@ -24,7 +24,7 @@ export type TrackingData = z.infer<typeof trackSchema>;
 export type TimelineData = z.infer<typeof timelineSchema>;
 
 export async function fetchTimelineData(trackingNumber: string | undefined): Promise<TimelineData> {
-  return await httpService.request(`tracking/${trackingNumber}/timeline`, timelineSchema, {
+  return await httpService.request(`/tracking/${trackingNumber}/timeline`, timelineSchema, {
     method: 'GET',
     headers: {
       'X-API-KEY': 'my-secret-api-key-1234',
@@ -32,7 +32,7 @@ export async function fetchTimelineData(trackingNumber: string | undefined): Pro
   });
 }
 export async function fetchTrackingData(trackingNumber: string | undefined): Promise<TrackingData> {
-  return await httpService.request(`tracking/${trackingNumber}`, trackSchema, {
+  return await httpService.request(`/tracking/${trackingNumber}`, trackSchema, {
     method: 'GET',
     headers: {
       'X-API-KEY': 'my-secret-api-key-1234',
