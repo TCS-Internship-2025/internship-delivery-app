@@ -1,11 +1,14 @@
 package com.tcs.dhv.service;
 
+import com.tcs.dhv.domain.entity.ParcelStatusHistory;
+
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
+import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
 import com.tcs.dhv.repository.RecipientRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,6 +39,7 @@ public class ParcelService {
     private final AddressRepository addressRepository;
     private final RecipientRepository recipientRepository;
     private final UserRepository userRepository;
+
 
     private final Random random = new Random();
 
@@ -108,6 +112,7 @@ public class ParcelService {
 
         final var updatedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel with ID: {} updated successfully", id);
+
         return ParcelDto.fromEntity(updatedParcel);
     }
 
