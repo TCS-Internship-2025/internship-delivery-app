@@ -61,7 +61,7 @@ export type CreateParcelRequestSchema = z.infer<typeof createParcelRequestSchema
 export type CreateParcelResponseSchema = z.infer<typeof createParcelResponseSchema>;
 
 const createParcel = (data: CreateParcelRequestSchema) => {
-  return httpService.post('/api/parcels', createParcelResponseSchema, data);
+  return httpService.post('/parcels', createParcelResponseSchema, data);
 };
 
 export const useCreateParcel = () => {
