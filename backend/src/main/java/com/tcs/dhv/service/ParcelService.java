@@ -41,8 +41,7 @@ public class ParcelService {
 
         final var sender = userService.getUserById(userId);
 
-        final var recipientDto = recipientService.findOrCreateRecipient(parcelDto.recipient());
-        final var recipient = recipientDto.toEntity();
+        final var recipient = recipientService.findOrCreateRecipient(parcelDto.recipient());
 
         final var trackingCode = generateTrackingCode();
 
@@ -52,11 +51,11 @@ public class ParcelService {
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
 
-        emailService.sendShipmentCreationEmail(parcelDto.recipient().email(), parcelDto.trackingCode());
-        log.info("Parcel creation email sent to email: {}", parcelDto.recipient().email());
+        emailService.sendShipmentCreationEmail(savedParcel.getRecipient().getEmail(), savedParcel.getTrackingCode());
+        log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
-        parcelStatusHistoryService.addStatusHistory(parcelDto.id(), userId);
-        log.info("Parcel status entry created: {}", parcelDto.id());
+        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), userId);
+        log.info("Parcel status entry created: {}", savedParcel.getId());
 
         return ParcelDto.fromEntity(savedParcel);
     }
