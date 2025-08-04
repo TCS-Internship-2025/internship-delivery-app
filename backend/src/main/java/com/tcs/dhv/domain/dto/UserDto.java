@@ -20,12 +20,10 @@ public class UserDto {
     @Schema(description = "User id", example = "550e8400-e29b-41d4-a716-446655440000")
     private UUID id;
 
-    @Schema(description = SchemaConstants.NAME_DESC, example = SchemaConstants.NAME_EX,
-        requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = SchemaConstants.NAME_DESC, example = SchemaConstants.NAME_EX)
     private String name;
 
-    @Schema(description = SchemaConstants.EMAIL_DESC, example = SchemaConstants.EMAIL_EX,
-        requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = SchemaConstants.EMAIL_DESC, example = SchemaConstants.EMAIL_EX)
     private String email;
 
     public static UserDto fromEntity(final User user) {
