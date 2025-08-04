@@ -45,3 +45,13 @@ export function useTimeline(slug: string | undefined) {
     enabled: !!slug,
   });
 }
+
+export const TrackingNumberRegex = /^HU\d{10}[A-Z]{2}$/;
+
+export const TrackingFormSchema = z.object({
+  trackNumber: z.string().regex(TrackingNumberRegex, {
+    message: "Tracking number starts with 'HU', followed by 10 digits and 2 uppercase letters",
+  }),
+});
+
+export type TrackingFormValues = z.infer<typeof TrackingFormSchema>;

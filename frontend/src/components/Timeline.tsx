@@ -16,6 +16,7 @@ interface TimelineEntry {
   description: string;
   timestamp: string;
 }
+const delivered = 'DELIVERED';
 export default function TimelineComponent({ timeline }: { timeline: TimelineEntry[] }) {
   const isSmallScreen = useSmallScreen();
 
@@ -34,7 +35,7 @@ export default function TimelineComponent({ timeline }: { timeline: TimelineEntr
         <TimelineItem key={event.id}>
           <TimelineSeparator>
             <TimelineDot />
-            {event.status !== 'DELIVERED' && <TimelineConnector />}
+            {event.status !== delivered && <TimelineConnector />}
           </TimelineSeparator>
           <TimelineContent variant="subtitle2" fontSize={12}>
             {event.description}

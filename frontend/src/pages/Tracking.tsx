@@ -2,7 +2,8 @@ import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+
+import { TrackingFormSchema, type TrackingFormValues } from '@/apis/tracking';
 
 import SendIcon from '@mui/icons-material/Send';
 import Box from '@mui/material/Box';
@@ -11,14 +12,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-const TrackingFormSchema = z.object({
-  trackNumber: z.string().regex(/^HU\d{10}[A-Z]{2}$/, {
-    message: "Tracking number starts with 'HU', followed by 10 digits and 2 uppercase letters",
-  }),
-});
-
-type FormValues = z.infer<typeof TrackingFormSchema>;
-
 export const Tracking = () => {
   const navigate = useNavigate();
 
@@ -26,14 +19,14 @@ export const Tracking = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<TrackingFormValues>({
     resolver: zodResolver(TrackingFormSchema),
   });
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
     void handleSubmit(onSubmit)(event);
   };
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: TrackingFormValues) => {
     await navigate(`/tracking/${data.trackNumber}`);
   };
 
