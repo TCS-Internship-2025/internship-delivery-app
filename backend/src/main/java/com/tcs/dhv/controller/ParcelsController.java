@@ -1,9 +1,11 @@
 package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.ParcelDto;
+import com.tcs.dhv.domain.entity.ParcelStatusHistory;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.service.EmailService;
 import com.tcs.dhv.service.ParcelService;
+import com.tcs.dhv.service.ParcelStatusHistoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +33,7 @@ public class ParcelsController {
 
     private final ParcelService parcelService;
     private final EmailService emailService;
+    private final ParcelStatusHistoryService  parcelStatusHistoryService;
 
 
 
@@ -48,6 +52,9 @@ public class ParcelsController {
 
         log.info("Parcel creation email sent to email: {}", parcelResponse.recipient().email());
 
+        parcelStatusHistoryService.addStatusHistory(parcelResponse.id(), UUID.fromString(authentication.getName()));
+
+        log.info("Parcel status entry created: {}", parcelResponse.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(parcelResponse);
     }
 
