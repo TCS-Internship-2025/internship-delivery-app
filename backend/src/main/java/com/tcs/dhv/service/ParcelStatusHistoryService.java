@@ -30,7 +30,7 @@ public class ParcelStatusHistoryService {
             throw new RuntimeException("No status history found for parcel ID: " + parcelId);
         }
         return historyList.stream()
-                .map(this::toDto)
+                .map(ParcelStatusHistoryDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -38,24 +38,24 @@ public class ParcelStatusHistoryService {
     public ParcelStatusHistoryDto addStatusHistory(UUID parcelId, UUID userId) {
         final var entity = createStatusHistoryEntry(parcelId, userId);
         final var saved = statusHistoryRepository.save(entity);
-        return toDto(saved);
+        return ParcelStatusHistoryDto.fromEntity(saved);
     }
 
     @Transactional
     public ParcelStatusHistoryDto updateStatusHistory(UUID id, ParcelStatusHistory updatedEntity) {
         final var existing = statusHistoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Status history not found for ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Status history not found for ID: " + id));
         existing.setStatus(updatedEntity.getStatus());
         existing.setDescription(updatedEntity.getDescription());
         existing.setTimestamp(updatedEntity.getTimestamp());
         final var saved = statusHistoryRepository.save(existing);
-        return toDto(saved);
+        return ParcelStatusHistoryDto.fromEntity(saved);
     }
 
     @Transactional
     public void deleteStatusHistory(UUID id) {
         if (!statusHistoryRepository.existsById(id)) {
-            throw new RuntimeException("Status history not found for ID: " + id);
+            throw new EntityNotFoundException("Status history not found for ID: " + id);
         }
         statusHistoryRepository.deleteById(id);
     }
@@ -74,13 +74,5 @@ public class ParcelStatusHistoryService {
             .timestamp(LocalDateTime.now())
             .build();
     }
-    private ParcelStatusHistoryDto toDto(ParcelStatusHistory entity) {
-        return new ParcelStatusHistoryDto(
-                entity.getId(),
-                entity.getParcel().getId(),
-                entity.getStatus(),
-                entity.getDescription(),
-                entity.getTimestamp()
-        );
-    }
+
 }
