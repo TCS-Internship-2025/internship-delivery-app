@@ -10,6 +10,6 @@ public record RegisterResponse(
 
     @Schema(description = SchemaConstants.EMAIL_DESC, example = SchemaConstants.EMAIL_EX)
     String email,
-    boolean emailVerificationRequired
+    boolean emailVerified
 ) {
 }

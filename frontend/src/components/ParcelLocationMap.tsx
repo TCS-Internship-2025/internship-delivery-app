@@ -5,12 +5,13 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState } from 'react';
 import { mapboxAccessToken } from '@/constants';
 
-import { useAuth } from '@/contexts/AuthContext.tsx';
+import { useFormContext } from '@/contexts/FormContext';
 import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
 
 import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/apis/pickupPoints';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -33,14 +34,15 @@ interface ParcelLocationMapProps {
 export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
-  const { token } = useAuth();
+
+  const { getPointId } = useFormContext();
 
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const {
     data: pickupPoints,
     isLoading: isPickupPointsLoading,
     isError,
-  } = useGetAllPickupPoints(token, { deliveryType: deliveryType });
+  } = useGetAllPickupPoints({ deliveryType: deliveryType });
   if (isPickupPointsLoading) {
     return <CircularProgress />;
   } else if (isError) {
@@ -78,17 +80,28 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
                   setSelectedMarker(point);
                 }}
               >
-                <LocationPinIcon
-                  color="inherit"
-                  sx={{
-                    fontSize: 42,
-                    cursor: 'pointer',
-                    color:
-                      selectedMarker?.id === point.id
-                        ? theme.palette.primary.markerSelected
-                        : theme.palette.primary.marker,
-                  }}
-                />
+                {getPointId() === point.id ? (
+                  <WhereToVoteIcon
+                    color="inherit"
+                    sx={{
+                      fontSize: 42,
+                      cursor: 'pointer',
+                      color: theme.palette.primary.markerSelected,
+                    }}
+                  />
+                ) : (
+                  <LocationPinIcon
+                    color="inherit"
+                    sx={{
+                      fontSize: 42,
+                      cursor: 'pointer',
+                      color:
+                        selectedMarker?.id === point.id
+                          ? theme.palette.primary.markerSelected
+                          : theme.palette.primary.marker,
+                    }}
+                  />
+                )}
               </Marker>
             ))}
             {selectedMarker && (
