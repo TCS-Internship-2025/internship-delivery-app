@@ -35,7 +35,7 @@ public class PasswordResetService {
     private static final Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
 
     private String generateSecureToken() {
-        byte[] randomBytes = new byte[32];
+        final var randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
         return encoder.encodeToString(randomBytes);
     }
