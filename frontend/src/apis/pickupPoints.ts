@@ -24,9 +24,7 @@ export type PickupPoint = z.infer<typeof pickupPointSchema>;
 export type PickupPointList = z.infer<typeof pickupPointListSchema>;
 export async function fetchPickupPoints(searchParams: PickupPointSearchParams = {}): Promise<PickupPointList> {
   const query = new URLSearchParams(searchParams as Record<string, string>).toString();
-  return await httpService.request(`/locations?${query}`, pickupPointListSchema, {
-    method: 'GET',
-  });
+  return await httpService.get(`/locations?${query}`, pickupPointListSchema);
 }
 
 export function useGetAllPickupPoints(searchParams: PickupPointSearchParams = {}) {
