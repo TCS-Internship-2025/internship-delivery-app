@@ -10,6 +10,7 @@ interface VerificationResult {
   name?: string;
 }
 
+const REDIRECT_TIME = 5000;
 export const useEmailVerification = () => {
   const navigate = useNavigate();
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
@@ -22,15 +23,14 @@ export const useEmailVerification = () => {
 
       setTimeout(() => {
         void navigate('/login', { replace: true });
-      }, 5000);
+      }, REDIRECT_TIME);
     },
-    onError: (error) => {
+    onError: () => {
       setVerificationResult({ success: false });
-      console.error('Email verification failed:', error);
-
+      enqueueSnackbar('Email verification failed. The link may be expired or invalid.', { variant: 'error' });
       setTimeout(() => {
         void navigate('/login', { replace: true });
-      }, 5000);
+      }, REDIRECT_TIME);
     },
   });
 
