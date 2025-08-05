@@ -16,6 +16,6 @@ public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
     @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
     boolean existsByTrackingCode(String trackingCode);
 
-    // For public tracking
+    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
     Optional<Parcel> findByTrackingCode(String trackingCode);
 }

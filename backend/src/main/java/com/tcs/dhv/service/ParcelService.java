@@ -63,7 +63,6 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user: {}", userId);
 
-
         final var sender = userService.getUserById(userId);
 
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
@@ -75,8 +74,6 @@ public class ParcelService {
 
     public ParcelDto getParcel(final UUID id, final UUID userId) {
         log.info("Retrieving parcel with ID: {}", id);
-
-        //final var parcel = getParcelByIdAndUserId(id, userId);
 
         final var sender = userService.getUserById(userId);
 
@@ -90,8 +87,6 @@ public class ParcelService {
     @Transactional
     public void deleteParcel(final UUID id, final UUID userId) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userId);
-
-        //final var parcel = getParcelByIdAndUserId(id, userId);
 
         final var sender = userService.getUserById(userId);
 
