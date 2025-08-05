@@ -28,6 +28,11 @@ export const changeAddressFormSchema = z.object({
   country: z.string().min(1, 'Country is required'),
 });
 
+export interface ChangePasswordFormData {
+  confirmPassword: string;
+  newPassword: string;
+  currentPassword: string;
+}
 export type ChangeProfileSchema = z.infer<typeof changeProfileSchema>;
 export type ChangeAddressFormSchema = z.infer<typeof changeAddressFormSchema>;
 
@@ -39,7 +44,6 @@ export const changeProfileFields: FieldConfig<ChangeProfileSchema>[][] = [
     { name: 'emailAddress', label: 'Email address', required: true },
   ],
 ];
-
 export const changeAddressFields: FieldConfig<ChangeAddressFormSchema>[][] = [
   [
     { name: 'addressName', label: 'Address Name', required: true },

@@ -2,7 +2,7 @@ import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useEditAddress } from '@/apis/editProfile';
+import { useEditAddress } from '@/apis/profile';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -59,7 +59,7 @@ export default function ChangeAddressModal({ open, handleClose }: ChangePassword
           <SectionFields fields={changeAddressFields} control={control} />
 
           <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2 }}>
-            {isSubmitting ? 'Updating...' : 'Change Password'}
+            {isSubmitting ? 'Updating...' : 'Change Address'}
           </Button>
           <Button variant="outlined" fullWidth onClick={handleClose} sx={{ mt: 1 }}>
             Cancel

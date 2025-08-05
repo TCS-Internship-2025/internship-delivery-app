@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 
 import ChangeAddressModal from '@/components/ChangeAddressModal';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
-import EditProfileModal from '@/components/EditProfileModal';
+import ChangeProfileModal from '@/components/ChangeProfileModal';
 
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
   return (
@@ -29,7 +29,7 @@ const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; o
 const Body2Typography = ({ children }: { children: React.ReactNode }) => {
   return <Typography variant="body2">{children}</Typography>;
 };
-type ModalType = 'editProfile' | 'changePassword' | 'changeAddress';
+type ModalType = 'changeProfile' | 'changePassword' | 'changeAddress';
 
 export const ProfileInfo = () => {
   const navigate = useNavigate();
@@ -94,14 +94,14 @@ export const ProfileInfo = () => {
           </ProfileInfoButton>
           <ProfileInfoButton
             onClick={() => {
-              handleOpen('editProfile');
+              handleOpen('changeProfile');
             }}
           >
             Edit user info
           </ProfileInfoButton>
         </Stack>
-        <EditProfileModal
-          open={openModal === 'editProfile'}
+        <ChangeProfileModal
+          open={openModal === 'changeProfile'}
           handleClose={handleClose}
           formData={{ name: name, email: email, phoneNumber: phoneNumber }}
         />

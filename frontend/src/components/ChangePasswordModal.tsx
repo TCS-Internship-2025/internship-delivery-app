@@ -7,10 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { PasswordField } from './PasswordField';
 
-interface ChangePasswordFormData {
-  password: string;
-  confirmPassword: string;
-}
+import type { ChangePasswordFormData } from '@/utils/changeDataComposition';
 
 interface ChangePasswordModalProps {
   open: boolean;
@@ -37,23 +34,25 @@ export default function ChangePasswordModal({ open, handleClose }: ChangePasswor
     formState: { errors, isSubmitting },
   } = useForm<ChangePasswordFormData>({
     defaultValues: {
-      password: '',
+      currentPassword: '',
+      newPassword: '',
       confirmPassword: '',
     },
   });
 
-  const passwordValue = watch('password');
-
+  const passwordValue = watch('newPassword');
   const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
     try {
-      console.log('Password change submitted:', data);
+      const { currentPassword, newPassword } = data;
+
+      console.log('Sending to API:', { currentPassword, newPassword });
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
       handleClose();
     } catch (err) {
       console.error('Failed to change password:', err);
     }
   };
-
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
@@ -66,13 +65,12 @@ export default function ChangePasswordModal({ open, handleClose }: ChangePasswor
         <Typography variant="h6" sx={{ mb: 2 }}>
           Change Password
         </Typography>
-
+        <PasswordField name="currentPassword" label="Old Password" control={control} error={errors.currentPassword} />
         <PasswordField
-          name="password"
+          name="newPassword"
           label="New Password"
           control={control}
-          error={errors.password}
-          value={passwordValue}
+          error={errors.newPassword}
           showStrengthIndicator
         />
 
@@ -90,7 +88,6 @@ export default function ChangePasswordModal({ open, handleClose }: ChangePasswor
               label="Confirm Password"
               control={control}
               error={errors.confirmPassword}
-              value={field.value}
               autoComplete="new-password"
             />
           )}

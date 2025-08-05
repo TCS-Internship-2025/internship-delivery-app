@@ -31,7 +31,7 @@ const style = {
   p: 4,
 };
 
-export default function EditProfileModal({ open, handleClose, formData }: EditProfileModalProps) {
+export default function ChangeProfileModal({ open, handleClose, formData }: EditProfileModalProps) {
   const {
     control,
     handleSubmit,
