@@ -7,7 +7,6 @@ import { useGetParcelById } from '@/apis/parcelGet';
 
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
