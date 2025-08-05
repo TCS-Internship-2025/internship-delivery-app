@@ -5,9 +5,12 @@ import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,40 +39,44 @@ public class UserService {
         final String userIdentifier,
         final UserProfileDto updateRequest
     ) {
-        log.info("UserIdentifier: {}", userIdentifier);
-        final var userId = UUID.fromString(userIdentifier);
-        log.info("Retrieving this user's profile by ID: {}", userId);
-        final var user = getUserById(userId);
-        //log.info("Retrieving user profile: {}", user);
+        try{
+            log.info("UserIdentifier: {}", userIdentifier);
+            final var userId = UUID.fromString(userIdentifier);
+            log.info("Retrieving this user's profile by ID: {}", userId);
+            final var user = getUserById(userId);
+
+            if(updateRequest.currentPassword() != null ||
+                updateRequest.newPassword() != null
+            ) {
+                handlePasswordUpdate(user, updateRequest);
+            }
 
 
-        if(updateRequest.currentPassword() != null ||
-        updateRequest.newPassword() != null
-        ) {
-            handlePasswordUpdate(user, updateRequest);
+            if(updateRequest.email() != null &&
+                !user.getEmail().equals(updateRequest.email()) &&
+                userRepository.existsByEmail(updateRequest.email())
+            ) {
+                throw new ValidationException("Email already exists");
+            }
+
+            if(updateRequest.address() !=null && user.getAddress() == null) {
+                final var newAddress = updateRequest.address().toEntity();
+                final var savedAddress = addressRepository.save(newAddress);
+                user.setAddress(savedAddress);
+                log.info("Created and saved new address: {}", savedAddress);
+            }
+
+            updateRequest.updateEntity(user);
+            user.setUpdatedAt(LocalDateTime.now());
+
+            final var savedUser = userRepository.saveAndFlush(user);
+            log.info("3.Profile updated for user ID: {}", savedUser.getId());
+            return UserProfileDto.fromEntity(savedUser);
         }
-
-
-        if(updateRequest.email() != null &&
-            !user.getEmail().equals(updateRequest.email()) &&
-            userRepository.existsByEmail(updateRequest.email())
-        ) {
-            throw new ValidationException("Email already exists");
+        catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+            log.warn("Optimistic lock occurred while trying to update user's profile: {}", userIdentifier);
+            throw new ConcurrencyFailureException("Profile was updated by another session");
         }
-
-        if(updateRequest.address() !=null && user.getAddress() == null) {
-            final var newAddress = updateRequest.address().toEntity();
-            final var savedAddress = addressRepository.save(newAddress);
-            user.setAddress(savedAddress);
-            log.info("Created and saved new address: {}", savedAddress);
-        }
-
-        updateRequest.updateEntity(user);
-        user.setUpdatedAt(LocalDateTime.now());
-
-        final var savedUser = userRepository.saveAndFlush(user);
-        log.info("3.Profile updated for user ID: {}", savedUser.getId());
-        return UserProfileDto.fromEntity(savedUser);
     }
 
     private User getUserById(final UUID userId) {

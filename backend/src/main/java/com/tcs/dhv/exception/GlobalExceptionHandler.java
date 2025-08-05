@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -138,4 +139,17 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
     }
+
+
+    @ExceptionHandler(ConcurrencyFailureException.class)
+    public ResponseEntity<ApiErrorResponse> handleConcurrencyFailureException(final ConcurrencyFailureException ex) {
+        log.error("Concurrency conflict: {}", ex.getMessage());
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.CONFLICT.value())
+            .message(ex.getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+    }
+
 }
