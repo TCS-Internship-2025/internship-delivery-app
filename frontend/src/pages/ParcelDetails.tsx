@@ -1,7 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useAuth } from '@/contexts/AuthContext';
-
 import { useDeleteParcelById, useGetParcelById } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
@@ -13,9 +11,8 @@ import Typography from '@mui/material/Typography';
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
 
 export const ParcelDetails = () => {
-  const { token } = useAuth();
   const { parcelId } = useParams();
-  const { data, status } = useGetParcelById(parcelId, token);
+  const { data, status } = useGetParcelById(parcelId);
   const deleteParcelMutation = useDeleteParcelById();
   const navigate = useNavigate();
 

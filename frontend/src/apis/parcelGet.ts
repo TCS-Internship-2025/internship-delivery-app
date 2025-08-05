@@ -6,8 +6,8 @@ import { httpService } from '@/services/httpService';
 const addressSchema = z.object({
   line1: z.string(),
   line2: z.string(),
-  building: z.string(),
-  apartment: z.string(),
+  building: z.string().nullable(),
+  apartment: z.string().nullable(),
   city: z.string(),
   postalCode: z.string(),
   country: z.string(),
@@ -19,7 +19,7 @@ export const recipientSchema = z.object({
   name: z.string(),
   email: z.email(),
   phone: z.string(),
-  birthDate: z.string(),
+  birthDate: z.string().nullable(),
   address: addressSchema,
 });
 
@@ -39,35 +39,25 @@ export const parcelListSchema = z.array(parcelSchema);
 export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 
-export async function fetchAllParcelData(JWTtoken: string | null): Promise<ParcelListData> {
-  return await httpService.request(`/parcels`, parcelListSchema, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${JWTtoken}`,
-    },
-  });
+export async function fetchAllParcelData(): Promise<ParcelListData> {
+  return await httpService.get('/parcels', parcelListSchema);
 }
 
-export function useGetAllParcels(JWTtoken: string | null) {
+export function useGetAllParcels() {
   return useQuery<ParcelListData>({
     queryKey: ['parcels'],
-    queryFn: () => fetchAllParcelData(JWTtoken),
+    queryFn: fetchAllParcelData,
   });
 }
 
-export async function fetchParcelData(parcelId: string | undefined, JWTtoken: string | null): Promise<ParcelData> {
-  return await httpService.request(`/parcels/${parcelId}`, parcelSchema, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${JWTtoken}`,
-    },
-  });
+export async function fetchParcelData(parcelId: string | undefined): Promise<ParcelData> {
+  return await httpService.get(`/parcels/${parcelId}`, parcelSchema);
 }
 
-export function useGetParcelById(id: string | undefined, JWTtoken: string | null) {
+export function useGetParcelById(id: string | undefined) {
   return useQuery<ParcelData>({
     queryKey: ['parcels', id],
-    queryFn: () => fetchParcelData(id, JWTtoken),
+    queryFn: () => fetchParcelData(id),
     enabled: !!id,
   });
 }
