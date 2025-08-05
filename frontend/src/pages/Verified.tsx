@@ -110,7 +110,7 @@ export const Verified = () => {
                 </Typography>
               )}
               <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                You will be redirected to the home page in a few seconds
+                You will be redirected to the login page in a few seconds
               </Typography>
             </>
           ) : (
