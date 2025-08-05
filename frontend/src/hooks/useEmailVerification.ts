@@ -10,36 +10,32 @@ interface VerificationResult {
   name?: string;
 }
 
+const REDIRECT_TIME = 3000;
 export const useEmailVerification = () => {
   const navigate = useNavigate();
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
 
-  const { mutate: verify, isPending } = useMutation({
+  const { mutate: verify } = useMutation({
     mutationFn: ({ userId, token }: { userId: string; token: string }) => verifyEmail(userId, token),
     onSuccess: (data) => {
       setVerificationResult({ success: true, name: data.name });
       enqueueSnackbar('Email verified successfully!', { variant: 'success' });
 
-      // Auto-redirect after 3 seconds
-      setTimeout(() => {
-        void navigate('/', { replace: true });
-      }, 3000);
-    },
-    onError: (error) => {
-      console.error('Verification failed:', error);
-      setVerificationResult({ success: false });
-      enqueueSnackbar('Email verification failed. The link may be expired or invalid.', { variant: 'error' });
-
-      // Redirect to login after 3 seconds on error
       setTimeout(() => {
         void navigate('/login', { replace: true });
-      }, 3000);
+      }, REDIRECT_TIME);
+    },
+    onError: () => {
+      setVerificationResult({ success: false });
+      enqueueSnackbar('Email verification failed. The link may be expired or invalid.', { variant: 'error' });
+      setTimeout(() => {
+        void navigate('/login', { replace: true });
+      }, REDIRECT_TIME);
     },
   });
 
   return {
     verify,
-    isPending,
     verificationResult,
   };
 };
