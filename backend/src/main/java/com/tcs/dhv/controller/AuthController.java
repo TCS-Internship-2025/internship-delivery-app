@@ -6,7 +6,6 @@ import com.tcs.dhv.domain.dto.RegisterRequest;
 import com.tcs.dhv.domain.dto.RegisterResponse;
 import com.tcs.dhv.service.AuthService;
 import com.tcs.dhv.service.EmailService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

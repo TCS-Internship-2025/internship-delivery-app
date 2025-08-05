@@ -27,19 +27,13 @@ export const profileSchema = z.object({
 
 export type Profile = z.infer<typeof profileSchema>;
 
-export async function fetchProfileInfo(JWTtoken: string | null): Promise<Profile> {
-  const token = JWTtoken;
-  return await httpService.request(`/users/me`, profileSchema, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export async function fetchProfileInfo(): Promise<Profile> {
+  return await httpService.get(`/users/me`, profileSchema);
 }
 
-export function useGetProfileInfo(JWTtoken: string | null) {
+export function useGetProfileInfo() {
   return useQuery<Profile>({
     queryKey: ['profileInfo'],
-    queryFn: () => fetchProfileInfo(JWTtoken),
+    queryFn: () => fetchProfileInfo(),
   });
 }

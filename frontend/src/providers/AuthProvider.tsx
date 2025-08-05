@@ -4,6 +4,7 @@ import type { User } from '@/types/auth';
 import { AuthContext } from '@/contexts/AuthContext';
 
 import { logout as apiLogout, refreshToken as apiRefreshToken, getStoredAuthData, saveAuthData } from '@/apis/authApi';
+import { httpService } from '@/services/httpService';
 
 interface JWTPayload {
   iss: string;
@@ -46,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(null);
       setRefreshToken(null);
       setUser(null);
+      httpService.removeGlobalHeader('Authorization');
     }
   }, []);
 
@@ -140,6 +142,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [token, checkTokenExpiry, handleTokenRefresh]);
 
+  useEffect(() => {
+    if (token) {
+      httpService.setGlobalHeader('Authorization', `Bearer ${token}`);
+    } else {
+      httpService.removeGlobalHeader('Authorization');
+    }
+  }, [token]);
+
   const contextValue = useMemo(() => {
     const isAuthenticated = Boolean(user && token);
     const isLoading = isRefreshing;
@@ -157,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(u);
 
         saveAuthData(t, rt, u);
+        httpService.setGlobalHeader('Authorization', `Bearer ${t}`);
       },
 
       logout: handleLogout,
