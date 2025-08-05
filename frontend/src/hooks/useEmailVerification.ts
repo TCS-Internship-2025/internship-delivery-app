@@ -10,7 +10,7 @@ interface VerificationResult {
   name?: string;
 }
 
-const REDIRECT_TIME = 5000;
+const REDIRECT_TIME = 3000;
 export const useEmailVerification = () => {
   const navigate = useNavigate();
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
