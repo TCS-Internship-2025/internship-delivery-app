@@ -34,4 +34,8 @@ public class PasswordResetToken {
 
     @Column(nullable = false)
     private Instant expiresAt;
+
+    public boolean isExpired() {
+        return expiresAt.isBefore(Instant.now());
+    }
 }
