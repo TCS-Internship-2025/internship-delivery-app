@@ -23,7 +23,7 @@
 </head>
 <body>
 <div class="container">
-    <h2>Dear User!</h2>
+    <h2 th:text="'Dear ' +  ${name}">Dear User!</h2>
     <p>Your parcel delivery address has been changed for tracking number: </p>
     <div class="code" th:text="${trackingCode}">DefaultCode</div>
     <h3>Previous Address:</h3>
