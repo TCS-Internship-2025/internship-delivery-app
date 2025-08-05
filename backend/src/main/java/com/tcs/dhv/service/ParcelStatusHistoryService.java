@@ -35,10 +35,13 @@ public class ParcelStatusHistoryService {
     }
 
     @Transactional
-    public ParcelStatusHistoryDto addStatusHistory(final UUID parcelId, final UUID userId) {
-        final var entity = createStatusHistoryEntry(parcelId, userId);
-        final var saved = statusHistoryRepository.save(entity);
-        return ParcelStatusHistoryDto.fromEntity(saved);
+    public void addStatusHistory(
+        final UUID parcelId,
+        final UUID userId,
+        final String reason
+    ) {
+        final var entity = createStatusHistoryEntry(parcelId, userId, reason);
+        statusHistoryRepository.save(entity);
     }
 
     @Transactional
@@ -60,42 +63,23 @@ public class ParcelStatusHistoryService {
         statusHistoryRepository.deleteById(id);
     }
 
-    @Transactional
-    public void addAddressChangeHistory(
-        final UUID parcelId,
-        final UUID userId,
-        final String reason
-    ) {
+    private ParcelStatusHistory createStatusHistoryEntry(final UUID parcelId, final UUID userId, final String reason) {
         final var user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
         final var parcel = parcelRepository.findById(parcelId)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
 
-        final var description = String.format("Address changed by %s%s",
-            user.getEmail(),
-            reason != null && !reason.trim().isEmpty() ? ". Reason: " + reason : "");
+        final var isAddressChanged = reason != null && !reason.trim().isEmpty();
 
-        final var historyEntry = ParcelStatusHistory.builder()
-            .parcel(parcel)
-            .status(parcel.getCurrentStatus())
-            .description(description)
-            .build();
-
-        statusHistoryRepository.save(historyEntry);
-    }
-
-    private ParcelStatusHistory createStatusHistoryEntry(final UUID parcelId, final UUID userId) {
-        final var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-
-        final var parcel = parcelRepository.findById(parcelId)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
+        final var description = isAddressChanged
+            ? String.format("Address changed by %s. Reason: %s", user.getEmail(), reason)
+            : String.format("Parcel created by %s", user.getEmail());
 
         return ParcelStatusHistory.builder()
             .parcel(parcel)
-            .status(ParcelStatus.CREATED)
-            .description("Parcel created by user: " + user.getEmail())
+            .status(parcel.getCurrentStatus())
+            .description(description)
             .build();
     }
 

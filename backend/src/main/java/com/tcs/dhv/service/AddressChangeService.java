@@ -63,7 +63,7 @@ public class AddressChangeService {
         parcel.getRecipient().setAddress(savedAddress);
         parcelRepository.save(parcel);
 
-        parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
+        parcelStatusHistoryService.addStatusHistory(parcelId, userId, requestDto.requestReason());
 
         log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
     }

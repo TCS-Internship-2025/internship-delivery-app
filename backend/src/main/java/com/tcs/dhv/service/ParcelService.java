@@ -54,7 +54,7 @@ public class ParcelService {
         emailService.sendShipmentCreationEmail(savedParcel.getRecipient().getEmail(), savedParcel.getTrackingCode());
         log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), userId);
+        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), userId, "");
         log.info("Parcel status entry created: {}", savedParcel.getId());
 
         return ParcelDto.fromEntity(savedParcel);
