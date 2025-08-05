@@ -1,17 +1,12 @@
-import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { useRegisterForm } from '@/hooks/useRegisterForm';
 
-import { resendVerificationEmail } from '@/apis/authApi';
-
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import LinearProgress from '@mui/material/LinearProgress';
-import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 
 import { PasswordField } from './PasswordField';
@@ -24,27 +19,16 @@ interface RegistrationFormProps {
 
 export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
   const navigate = useNavigate();
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
 
   const { form, onSubmit, isLoading } = useRegisterForm({
     onSuccess: (data) => {
       if (!data.emailVerified) {
-        resendVerificationEmail(data.email)
-          .catch(() => {
-            setAlertMessage('Failed to send verification email. Please try again.');
-            setAlertOpen(true);
-          })
-          .finally(() => {
-            void navigate('/verify', {
-              state: {
-                email: data.email,
-                name: data.name,
-              },
-            });
-          });
-      } else {
-        void navigate('/login');
+        void navigate('/verify', {
+          state: {
+            email: data.email,
+            name: data.name,
+          },
+        });
       }
     },
   });
@@ -166,17 +150,6 @@ export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
           </Button>
         </Box>
       </Box>
-
-      <Snackbar
-        open={alertOpen}
-        autoHideDuration={6000}
-        onClose={() => setAlertOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setAlertOpen(false)} severity="error" sx={{ width: '100%' }}>
-          {alertMessage}
-        </Alert>
-      </Snackbar>
     </>
   );
 };

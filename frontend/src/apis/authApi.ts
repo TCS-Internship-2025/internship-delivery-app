@@ -138,10 +138,7 @@ export async function verifyEmail(
   userId: string,
   token: string
 ): Promise<{ name: string; email: string; emailVerified: boolean }> {
-  const response = await httpService.get(
-    `/auth/email/verify?userId=${userId}&token=${token}`,
-    verifyEmailResponseSchema
-  );
+  const response = await httpService.get(`/auth/email/verify?uid=${userId}&t=${token}`, verifyEmailResponseSchema);
 
   return {
     name: response.name,

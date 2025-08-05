@@ -22,13 +22,12 @@ export const useEmailVerification = () => {
 
       // Auto-redirect after 3 seconds
       setTimeout(() => {
-        void navigate('/', { replace: true });
+        void navigate('/login', { replace: true });
       }, 3000);
     },
     onError: (error) => {
-      console.error('Verification failed:', error);
       setVerificationResult({ success: false });
-      enqueueSnackbar('Email verification failed. The link may be expired or invalid.', { variant: 'error' });
+      console.error('Email verification failed:', error);
 
       // Redirect to login after 3 seconds on error
       setTimeout(() => {
