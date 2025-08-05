@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod/v4';
 
-import { useAuth } from '@/contexts/AuthContext';
 import { useFormContext } from '@/contexts/FormContext';
 
 import { httpService } from '@/services/httpService';
@@ -57,13 +56,12 @@ export type CreateParcelRequestSchema = z.infer<typeof createParcelRequestSchema
 export type CreateParcelResponseSchema = z.infer<typeof createParcelResponseSchema>;
 export type AddressOnlySchema = z.infer<typeof addressOnlySchema>;
 
-const createParcel = (data: CreateParcelRequestSchema, JWTtoken: string | null) => {
+const createParcel = (data: CreateParcelRequestSchema) => {
   return httpService.request('/parcels', createParcelResponseSchema, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${JWTtoken}`,
     },
   });
 };
@@ -71,10 +69,9 @@ const createParcel = (data: CreateParcelRequestSchema, JWTtoken: string | null) 
 export const useCreateParcel = () => {
   const formContext = useFormContext();
   const queryClient = useQueryClient();
-  const { token } = useAuth();
 
   return useMutation({
-    mutationFn: (data: CreateParcelRequestSchema) => createParcel(data, token),
+    mutationFn: (data: CreateParcelRequestSchema) => createParcel(data),
     onSuccess: async (data) => {
       console.log('Parcel created successfully:', data);
       await queryClient.invalidateQueries({ queryKey: ['parcels'] });
