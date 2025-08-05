@@ -4,6 +4,7 @@ import type { User } from '@/types/auth';
 import { AuthContext } from '@/contexts/AuthContext';
 
 import { logout as apiLogout, refreshToken as apiRefreshToken, getStoredAuthData, saveAuthData } from '@/apis/authApi';
+import { httpService } from '@/services/httpService';
 
 interface JWTPayload {
   iss: string;
@@ -41,22 +42,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await apiLogout();
     } catch (error) {
-      console.warn('⚠️ AuthProvider: API logout failed:', error);
+      console.warn('AuthProvider: API logout failed:', error);
     } finally {
       setToken(null);
       setRefreshToken(null);
       setUser(null);
+      httpService.removeGlobalHeader('Authorization');
     }
   }, []);
 
   // Token refresh handler
   const handleTokenRefresh = useCallback(async (): Promise<boolean> => {
     if (isRefreshing) {
-      console.log('⏳ AuthProvider: Token refresh already in progress, skipping');
       return false;
     }
 
-    console.log('🔄 AuthProvider: Starting token refresh...');
+    console.log('AuthProvider: Starting token refresh...');
     setIsRefreshing(true);
 
     try {
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setToken(response.token);
       setRefreshToken(response.refreshToken);
-      console.log('✅ AuthProvider: Token refresh successful - local state updated');
+      console.log('AuthProvider: Token refresh successful - local state updated');
 
       return true;
     } catch (error) {
@@ -90,10 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const expiryMs = payload.exp * 1000;
-      console.log(`🕐 AuthProvider: Token expires at ${new Date(expiryMs).toLocaleString()}`);
+      console.log(`AuthProvider: Token expires at ${new Date(expiryMs).toLocaleString()}`);
       return expiryMs;
     } catch (error) {
-      console.error('❌ AuthProvider: Error parsing JWT:', error);
+      console.error('AuthProvider: Error parsing JWT:', error);
       return null;
     }
   }, []);
@@ -127,7 +128,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Set up periodic token expiry checks (every 10 minutes)
-    console.log('⏰ AuthProvider: Setting up 10-minute token check interval');
     const interval = setInterval(
       () => {
         if (token && checkTokenExpiry(token)) {
@@ -142,6 +142,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [token, checkTokenExpiry, handleTokenRefresh]);
 
+  useEffect(() => {
+    if (token) {
+      httpService.setGlobalHeader('Authorization', `Bearer ${token}`);
+    } else {
+      httpService.removeGlobalHeader('Authorization');
+    }
+  }, [token]);
+
   const contextValue = useMemo(() => {
     const isAuthenticated = Boolean(user && token);
     const isLoading = isRefreshing;
@@ -154,16 +162,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading,
 
       setAuthData: (t: string, rt: string, u: User) => {
-        console.log('💾 AuthProvider: Setting new auth data', {
-          userEmail: u.email,
-          userId: u.id,
-        });
-
         setToken(t);
         setRefreshToken(rt);
         setUser(u);
 
         saveAuthData(t, rt, u);
+        httpService.setGlobalHeader('Authorization', `Bearer ${t}`);
       },
 
       logout: handleLogout,

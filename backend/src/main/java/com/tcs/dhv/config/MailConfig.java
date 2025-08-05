@@ -16,9 +16,9 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import static com.tcs.dhv.util.EmailConstants.EMAIL_PROTOCOL;
 import static com.tcs.dhv.util.EmailConstants.MAIL_AUTH;
 import static com.tcs.dhv.util.EmailConstants.MAIL_DEBUG;
+import static com.tcs.dhv.util.EmailConstants.MAIL_PROPERTY_ENABLED;
 import static com.tcs.dhv.util.EmailConstants.MAIL_PROTOCOL;
 import static com.tcs.dhv.util.EmailConstants.MAIL_STARTTLS_ENABLE;
-import static com.tcs.dhv.util.EmailConstants.MAIL_PROPERTY_ENABLED;
 
 @Configuration
 public class MailConfig {

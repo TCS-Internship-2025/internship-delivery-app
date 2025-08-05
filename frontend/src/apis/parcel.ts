@@ -14,15 +14,10 @@ export const getParcelDataSchema = fullFormSchema.extend({
   id: z.number(),
 });
 
-export const addressOnlySchema = parcelFormSchema
-  .omit({
-    deliveryType: true,
-    paymentType: true,
-  })
-  .extend({
-    latitude: z.number().optional().nullable(),
-    longitude: z.number().optional().nullable(),
-  });
+export const addressOnlySchema = parcelFormSchema.omit({
+  deliveryType: true,
+  paymentType: true,
+});
 
 export const paymentDeliverySchema = parcelFormSchema.pick({
   deliveryType: true,
@@ -59,9 +54,16 @@ export type FullFormSchema = z.infer<typeof fullFormSchema>;
 export type GetParcelDataSchema = z.infer<typeof getParcelDataSchema>;
 export type CreateParcelRequestSchema = z.infer<typeof createParcelRequestSchema>;
 export type CreateParcelResponseSchema = z.infer<typeof createParcelResponseSchema>;
+export type AddressOnlySchema = z.infer<typeof addressOnlySchema>;
 
 const createParcel = (data: CreateParcelRequestSchema) => {
-  return httpService.post('/api/parcels', createParcelResponseSchema, data);
+  return httpService.request('/parcels', createParcelResponseSchema, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
 export const useCreateParcel = () => {
@@ -69,7 +71,7 @@ export const useCreateParcel = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createParcel,
+    mutationFn: (data: CreateParcelRequestSchema) => createParcel(data),
     onSuccess: async (data) => {
       console.log('Parcel created successfully:', data);
       await queryClient.invalidateQueries({ queryKey: ['parcels'] });

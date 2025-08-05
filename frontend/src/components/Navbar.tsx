@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
@@ -44,12 +44,22 @@ export const Navbar = () => {
     });
   };
 
-  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []); //add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
-  const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
+  const getRouteIndex = (path: string): number => {
+    const normalizedPath = path.replace('/', '');
+    if (normalizedPath === ROUTES.PARCEL_FORM) return routes.indexOf(ROUTES.RECIPIENT_FORM);
+    return routes.indexOf(normalizedPath);
+  };
 
+  const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []); //add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
+  const [currentIndex, setCurrentIndex] = useState<number>(getRouteIndex(location.pathname));
   const handleDrawerClick = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    const index = getRouteIndex(location.pathname);
+    setCurrentIndex(index !== -1 ? index : -1);
+  }, [location.pathname]);
 
   const handleNavigation = (index: number) => {
     setOpen(false);
@@ -153,7 +163,7 @@ export const Navbar = () => {
               color="primary"
               sx={{ px: 1, borderRadius: 1 }}
               onClick={() => {
-                console.log('xd');
+                void navigate(ROUTES.PROFILE);
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center' }}>

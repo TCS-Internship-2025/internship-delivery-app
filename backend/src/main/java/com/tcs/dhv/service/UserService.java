@@ -72,7 +72,14 @@ public class UserService {
         return UserProfileDto.fromEntity(savedUser);
     }
 
-    private User getUserById(final UUID userId) {
+    @Transactional
+    public void deleteUserProfile(final UUID userId) {
+        final var user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        userRepository.delete(user);
+    }
+
+    public User getUserById(final UUID userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }
