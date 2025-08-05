@@ -6,8 +6,11 @@ import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,35 +40,41 @@ public class AddressChangeService {
 
     @Transactional
     public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
-        log.info("Address change for parcel {} by user {}", parcelId, userId);
+        try{
+            log.info("Address change for parcel {} by user {}", parcelId, userId);
 
-        final var sender = userService.getUserById(userId);
-        final var parcel = getParcelByIdAndUser(parcelId, sender);
+            final var sender = userService.getUserById(userId);
+            final var parcel = getParcelByIdAndUser(parcelId, sender);
 
-        validateAddressChangeRequest(parcel);
+            validateAddressChangeRequest(parcel);
 
-        final var oldAddress = parcel.getRecipient().getAddress();
-        final var newAddress = requestDto.newAddress().toEntity();
-        final var savedAddress = addressRepository.save(newAddress);
+            final var oldAddress = parcel.getRecipient().getAddress();
+            final var newAddress = requestDto.newAddress().toEntity();
+            final var savedAddress = addressRepository.save(newAddress);
 
-        // Status change emails should probably be sent in ParcelStatusHistoryService
-        emailService.sendAddressChangeNotification(
-            parcel.getRecipient().getEmail(),
-            parcel.getRecipient().getName(),
-            parcel.getTrackingCode(),
-            oldAddress,
-            newAddress,
-            requestDto.requestReason()
-        );
+            // Status change emails should probably be sent in ParcelStatusHistoryService
+            emailService.sendAddressChangeNotification(
+                parcel.getRecipient().getEmail(),
+                parcel.getRecipient().getName(),
+                parcel.getTrackingCode(),
+                oldAddress,
+                newAddress,
+                requestDto.requestReason()
+            );
 
-        log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
+            log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
 
-        parcel.getRecipient().setAddress(savedAddress);
-        parcelRepository.save(parcel);
+            parcel.getRecipient().setAddress(savedAddress);
+            parcelRepository.save(parcel);
 
-        parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
+            parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
 
-        log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+            log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+
+        }catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+            log.warn("Optimistic lock conflict while changing address for parcel {} by user {}: {}",  parcelId, userId, e.getMessage());
+            throw new ConcurrencyFailureException("Address was modified by another session");
+        }
     }
 
     private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
