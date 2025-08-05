@@ -44,16 +44,22 @@ export const Navbar = () => {
     });
   };
 
+  const getRouteIndex = (path: string): number => {
+    const normalizedPath = path.replace('/', '');
+    if (normalizedPath === ROUTES.PARCEL_FORM) return routes.indexOf(ROUTES.RECIPIENT_FORM);
+    return routes.indexOf(normalizedPath);
+  };
+
   const routes = useMemo(() => ['/', ROUTES.TRACKING, ROUTES.RECIPIENT_FORM, ROUTES.PARCELS], []); //add route's here whenever adding a new element to navbar for example: add ROUTES.PROFILE and put line 171 onClick={() => handleNavigation([the index of ROUTES.PROFILE in the array])}
-  const [currentIndex, setCurrentIndex] = useState<number>(routes.indexOf(location.pathname.replace('/', '')));
+  const [currentIndex, setCurrentIndex] = useState<number>(getRouteIndex(location.pathname));
   const handleDrawerClick = () => {
     setOpen(!open);
   };
 
   useEffect(() => {
-    const index = routes.indexOf(location.pathname.replace('/', ''));
+    const index = getRouteIndex(location.pathname);
     setCurrentIndex(index !== -1 ? index : -1);
-  }, [location.pathname, routes]);
+  }, [location.pathname]);
 
   const handleNavigation = (index: number) => {
     setOpen(false);

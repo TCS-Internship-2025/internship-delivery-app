@@ -40,6 +40,12 @@ export const refreshTokenResponseSchema = z.object({
   refreshToken: z.string(),
 });
 
+export const verifyEmailResponseSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  emailVerified: z.boolean(),
+});
+
 export function saveAuthData(token: string, refreshToken: string, user: User) {
   sessionStorage.setItem(AUTH_TOKEN_KEY, token);
   sessionStorage.setItem(AUTH_REFRESH_TOKEN_KEY, refreshToken);
@@ -87,7 +93,7 @@ export async function logout(): Promise<void> {
   if (authData?.refreshToken) {
     try {
       // Use direct fetch for logout since we know it returns empty response
-      const response = await fetch(`http://localhost:8080/api/auth/logout?refreshToken=${authData.refreshToken}`, {
+      const response = await fetch(`/logout?refreshToken=${authData.refreshToken}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,4 +129,23 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
   });
 
   return response;
+}
+export async function resendVerificationEmail(email: string): Promise<void> {
+  await httpService.post(`/auth/email/resend-verification?email=${email}`, z.void());
+}
+
+export async function verifyEmail(
+  userId: string,
+  token: string
+): Promise<{ name: string; email: string; emailVerified: boolean }> {
+  const response = await httpService.get(
+    `/auth/email/verify?userId=${userId}&token=${token}`,
+    verifyEmailResponseSchema
+  );
+
+  return {
+    name: response.name,
+    email: response.email,
+    emailVerified: response.emailVerified,
+  };
 }

@@ -79,7 +79,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    private User getUserById(final UUID userId) {
+    public User getUserById(final UUID userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }

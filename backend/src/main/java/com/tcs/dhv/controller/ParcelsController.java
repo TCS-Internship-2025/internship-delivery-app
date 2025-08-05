@@ -1,8 +1,8 @@
 package com.tcs.dhv.controller;
 
+import com.tcs.dhv.domain.dto.AddressChangeDto;
 import com.tcs.dhv.domain.dto.ParcelDto;
-import com.tcs.dhv.domain.entity.ParcelStatusHistory;
-import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.service.AddressChangeService;
 import com.tcs.dhv.service.EmailService;
 import com.tcs.dhv.service.ParcelService;
 import com.tcs.dhv.service.ParcelStatusHistoryService;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,8 +33,7 @@ public class ParcelsController {
     private final ParcelService parcelService;
     private final EmailService emailService;
     private final ParcelStatusHistoryService  parcelStatusHistoryService;
-
-
+    private final AddressChangeService addressChangeService;
 
     @PostMapping
     public ResponseEntity<ParcelDto> createParcel(
@@ -44,18 +42,10 @@ public class ParcelsController {
     ) {
         log.info("Creating parcel request received from user: {}", authentication.getName());
 
-        final var parcelResponse = parcelService.createParcel(parcelDto, UUID.fromString(authentication.getName()));
+        final var parcel = parcelService.createParcel(parcelDto, UUID.fromString(authentication.getName()));
+        log.info("Parcel created successfully with ID: {} for user: {}", parcel.id(), authentication.getName());
 
-        log.info("Parcel created successfully with ID: {} for user: {}", parcelResponse.id(), authentication.getName());
-
-        emailService.sendShipmentCreationEmail(parcelResponse.recipient().email(), parcelResponse.trackingCode());
-
-        log.info("Parcel creation email sent to email: {}", parcelResponse.recipient().email());
-
-        parcelStatusHistoryService.addStatusHistory(parcelResponse.id(), UUID.fromString(authentication.getName()));
-
-        log.info("Parcel status entry created: {}", parcelResponse.id());
-        return ResponseEntity.status(HttpStatus.CREATED).body(parcelResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(parcel);
     }
 
     @GetMapping
@@ -63,8 +53,8 @@ public class ParcelsController {
         log.info("Retrieving parcels for user: {}", authentication.getName());
 
         final var parcels = parcelService.getUserParcels(UUID.fromString(authentication.getName()));
-
         log.info("Retrieved {} parcels for user: {}", parcels.size(), authentication.getName());
+
         return ResponseEntity.ok(parcels);
     }
 
@@ -76,24 +66,8 @@ public class ParcelsController {
         log.info("Retrieving parcel with ID: {} for user: {}", id, authentication.getName());
 
         final var parcel = parcelService.getParcel(id, UUID.fromString(authentication.getName()));
+
         return ResponseEntity.ok(parcel);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ParcelDto> updateParcel(
-        @PathVariable final UUID id,
-        @Valid @RequestBody final ParcelDto parcelUpdate,
-        final Authentication authentication
-    ) {
-        log.info("Updating parcel with ID: {} for user: {}", id, authentication.getName());
-
-        final var updatedParcel = parcelService.updateParcel(id, parcelUpdate, UUID.fromString(authentication.getName()));
-
-        if(updatedParcel.currentStatus().equals(ParcelStatus.DELIVERED.toString())){
-            emailService.sendDeliveryCompleteEmail(updatedParcel.recipient().email(), updatedParcel.trackingCode());
-            log.info("Delivery completion email sent to email: {}", updatedParcel.recipient().email());
-        }
-        return ResponseEntity.ok(updatedParcel);
     }
 
     @DeleteMapping("/{id}")
@@ -104,6 +78,20 @@ public class ParcelsController {
         log.info("Deleting parcel with ID: {} for user: {}", id, authentication.getName());
 
         parcelService.deleteParcel(id, UUID.fromString(authentication.getName()));
+
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/address")
+    public ResponseEntity<Void> changeAddress(
+        @PathVariable final UUID id,
+        @Valid @RequestBody final AddressChangeDto requestDto,
+        final Authentication authentication
+    ) {
+        log.info("Changing Address for parcel {} by user: {}", id, authentication.getName());
+
+        addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
+
+        return ResponseEntity.ok().build();
     }
 }
