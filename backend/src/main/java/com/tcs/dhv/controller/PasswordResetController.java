@@ -1,6 +1,7 @@
 package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.ForgotPasswordDto;
+import com.tcs.dhv.domain.dto.ResetPasswordDto;
 import com.tcs.dhv.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,19 @@ public class PasswordResetController {
 
     private final PasswordResetService passwordResetService;
 
-    @PostMapping("/reset-link")
-    public ResponseEntity<String> requestPasswordReset(@Valid @RequestBody ForgotPasswordDto forgotPassword) {
+    @PostMapping("/forgot")
+    public ResponseEntity<String> requestPasswordReset(
+        @Valid @RequestBody ForgotPasswordDto forgotPassword
+    ) {
         passwordResetService.sendResetToken(forgotPassword.email());
         return ResponseEntity.ok("If email is registered a reset link will be sent!");
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<String> resetPassword(
+        @Valid @RequestBody ResetPasswordDto resetPassword
+    ) {
+        passwordResetService.resetPassword(resetPassword.token(), resetPassword.newPassword());
+        return ResponseEntity.ok("Password has been reset successfully");
     }
 }

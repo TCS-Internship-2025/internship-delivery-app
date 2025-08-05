@@ -75,8 +75,8 @@ public class EmailService {
     ) {
         final var token = otpService.generateAndStoreOtp(userId);
 
-        final var emailVerificationUrl = "%s/verified/%s/%s"
-            .formatted(clientUrl, userId, token);
+        final var emailVerificationUrl = "%s/api/auth/email/verify?uid=%s&t=%s"
+            .formatted(appBaseUrl, userId, token);
 
         final var context = new Context();
         context.setVariable("verifyLink", emailVerificationUrl);
@@ -212,8 +212,6 @@ public class EmailService {
         final String email,
         final String resetLink
     ) {
-        final var resetUrl = "%s/reset-password?token=%s".formatted(clientUrl, resetLink);
-
         final var emailText = """
             Hello,
             
@@ -226,7 +224,7 @@ public class EmailService {
             
             Regards,
             DHV Team
-            """.formatted(resetUrl);
+            """.formatted(resetLink);
 
         final var message = CreateMessage(
             "Password Reset Request",
