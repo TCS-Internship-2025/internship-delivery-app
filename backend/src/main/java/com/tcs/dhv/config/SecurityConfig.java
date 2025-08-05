@@ -33,7 +33,8 @@ public class SecurityConfig {
 
     public static final String[] PUBLIC_ENDPOINTS = {
         "/api/auth/**",
-        "/api/tracking/**"
+        "/api/tracking/**",
+        "/api/auth/password/**"
     };
 
     @Value("${dhv.client-url}")
