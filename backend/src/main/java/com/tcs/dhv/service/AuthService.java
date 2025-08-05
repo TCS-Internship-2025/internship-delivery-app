@@ -66,10 +66,8 @@ public class AuthService {
 
     @Transactional
     public User registerUser(RegisterRequest registerRequest) {
-        if (userRepository.existsByName(registerRequest.name()) ||
-            userRepository.existsByEmail(registerRequest.email())
-        ) {
-            throw new ValidationException("Username or Email already exists");
+        if (userRepository.existsByEmail(registerRequest.email())) {
+            throw new ValidationException("Email already exists");
         }
 
         final var user = User.builder()
