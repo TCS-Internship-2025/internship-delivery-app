@@ -11,8 +11,8 @@ const addressSchema = z.object({
   city: z.string(),
   postalCode: z.string(),
   country: z.string(),
-  latitude: z.number(),
-  longitude: z.number(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
 });
 
 export const recipientSchema = z.object({

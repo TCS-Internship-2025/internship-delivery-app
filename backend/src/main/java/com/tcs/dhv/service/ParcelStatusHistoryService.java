@@ -8,6 +8,7 @@ import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ParcelStatusHistoryService {
@@ -29,6 +31,7 @@ public class ParcelStatusHistoryService {
         if (historyList.isEmpty()) {
             throw new RuntimeException("No status history found for parcel ID: " + parcelId);
         }
+        log.info("getParcelTimeline for parcel ID: {}", parcelId);
         return historyList.stream()
                 .map(ParcelStatusHistoryDto::fromEntity)
                 .collect(Collectors.toList());
