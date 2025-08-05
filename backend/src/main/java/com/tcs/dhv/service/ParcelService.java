@@ -55,7 +55,7 @@ public class ParcelService {
         log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
         final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(  ), description);
+        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
         log.info("Parcel status entry created: {}", savedParcel.getId());
 
         return ParcelDto.fromEntity(savedParcel);
