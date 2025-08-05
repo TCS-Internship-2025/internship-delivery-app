@@ -50,7 +50,7 @@ public class ParcelStatusHistory {
 
     private String description;
 
-    @NotNull
+    @Builder.Default
     @CreationTimestamp
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp = LocalDateTime.now();
 }

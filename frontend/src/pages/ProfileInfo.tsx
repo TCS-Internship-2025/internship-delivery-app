@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
-import { useAuth } from '@/contexts/AuthContext.tsx';
-
 import { useGetAllParcels } from '@/apis/parcelGet';
 import { useGetProfileInfo } from '@/apis/profileInfo';
 
@@ -30,10 +28,9 @@ const Body2Typography = ({ children }: { children: React.ReactNode }) => {
 
 export const ProfileInfo = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
 
-  const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels(token);
-  const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo(token);
+  const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels();
+  const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
 
   const profile = profileData;
 

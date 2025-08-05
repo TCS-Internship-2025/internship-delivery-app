@@ -8,12 +8,16 @@ import Typography from '@mui/material/Typography';
 
 import './MapMarkerPopup.css';
 
+import { useFormContext } from '@/contexts/FormContext';
+
 interface MapMarkerPopupProps {
   selectedMarker: PickupPoint;
   setSelectedMarker: (point: PickupPoint | null) => void;
   setSelectedPoint: (point: PickupPoint | null) => void;
 }
 export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedPoint }: MapMarkerPopupProps) => {
+  const { updateFormData, getPointId } = useFormContext();
+
   return (
     <Popup
       key={selectedMarker.id}
@@ -46,17 +50,22 @@ export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedP
           <br />
           {selectedMarker.address.line2}
         </Typography>
-        <Button
-          onClick={() => {
-            setSelectedPoint(selectedMarker);
-            setSelectedMarker(null);
-          }}
-          variant="contained"
-          color="primary"
-          size="small"
-        >
-          Select
-        </Button>
+        {getPointId() === selectedMarker.id ? null : (
+          <Button
+            onClick={() => {
+              setSelectedPoint(selectedMarker);
+              updateFormData({
+                pointId: selectedMarker.id,
+              });
+              setSelectedMarker(null);
+            }}
+            variant="contained"
+            color="primary"
+            size="small"
+          >
+            Select
+          </Button>
+        )}
       </Box>
     </Popup>
   );
