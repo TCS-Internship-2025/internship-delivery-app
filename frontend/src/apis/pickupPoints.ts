@@ -22,24 +22,14 @@ export const pickupPointSchema = z.object({
 const pickupPointListSchema = z.array(pickupPointSchema);
 export type PickupPoint = z.infer<typeof pickupPointSchema>;
 export type PickupPointList = z.infer<typeof pickupPointListSchema>;
-export async function fetchPickupPoints(
-  JWTtoken: string | null,
-  searchParams: PickupPointSearchParams = {}
-): Promise<PickupPointList> {
-  const token = JWTtoken;
-
+export async function fetchPickupPoints(searchParams: PickupPointSearchParams = {}): Promise<PickupPointList> {
   const query = new URLSearchParams(searchParams as Record<string, string>).toString();
-  return await httpService.request(`/locations?${query}`, pickupPointListSchema, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return await httpService.get(`/locations?${query}`, pickupPointListSchema);
 }
 
-export function useGetAllPickupPoints(JWTtoken: string | null, searchParams: PickupPointSearchParams = {}) {
+export function useGetAllPickupPoints(searchParams: PickupPointSearchParams = {}) {
   return useQuery<PickupPointList>({
     queryKey: ['pickupPoints', searchParams],
-    queryFn: () => fetchPickupPoints(JWTtoken, searchParams),
+    queryFn: () => fetchPickupPoints(searchParams),
   });
 }
