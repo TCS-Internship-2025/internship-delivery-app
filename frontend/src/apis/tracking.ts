@@ -3,21 +3,29 @@ import z from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
 
-//probably wont be the response the backend sends
 export const trackSchema = z.object({
-  id: z.string(),
-  sender: z.string(),
-  method: z.string(),
-  address: z.string(),
-  status: z.array(
-    z.object({
-      changeDate: z.string(),
-      changeMessage: z.string(),
-      changeLocation: z.string(),
-    })
-  ),
+  parcelId: z.string(),
+  trackingCode: z.string(),
+  senderName: z.string(),
+  recipientName: z.string(),
+  currentStatus: z.string(),
+  estimatedDelivery: z.string(),
 });
+export const timelineSchema = z.array(
+  z.object({
+    id: z.string(),
+    parcelId: z.string(),
+    status: z.string(),
+    description: z.string(),
+    timestamp: z.string(),
+  })
+);
 export type TrackingData = z.infer<typeof trackSchema>;
+export type TimelineData = z.infer<typeof timelineSchema>;
+
+export async function fetchTimelineData(trackingNumber: string | undefined): Promise<TimelineData> {
+  return await httpService.get(`tracking/${trackingNumber}/timeline`, timelineSchema);
+}
 export async function fetchTrackingData(trackingNumber: string | undefined): Promise<TrackingData> {
   return await httpService.get(`tracking/${trackingNumber}`, trackSchema);
 }
@@ -29,3 +37,21 @@ export function useTracking(slug: string | undefined) {
     enabled: !!slug,
   });
 }
+
+export function useTimeline(slug: string | undefined) {
+  return useQuery<TimelineData>({
+    queryKey: ['timeline', slug],
+    queryFn: () => fetchTimelineData(slug),
+    enabled: !!slug,
+  });
+}
+
+export const TrackingNumberRegex = /^HU\d{10}[A-Z]{2}$/;
+
+export const TrackingFormSchema = z.object({
+  trackNumber: z.string().regex(TrackingNumberRegex, {
+    message: "Tracking number starts with 'HU', followed by 10 digits and 2 uppercase letters",
+  }),
+});
+
+export type TrackingFormValues = z.infer<typeof TrackingFormSchema>;

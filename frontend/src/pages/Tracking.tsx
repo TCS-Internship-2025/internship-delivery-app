@@ -1,5 +1,9 @@
+import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { TrackingFormSchema, type TrackingFormValues } from '@/apis/tracking';
 
 import SendIcon from '@mui/icons-material/Send';
 import Box from '@mui/material/Box';
@@ -8,20 +12,26 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-interface FormValues {
-  trackNumber: string;
-}
-
 export const Tracking = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<FormValues>();
 
-  const onSubmit = async (data: FormValues) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TrackingFormValues>({
+    resolver: zodResolver(TrackingFormSchema),
+  });
+  const handleFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    void handleSubmit(onSubmit)(event);
+  };
+  const onSubmit = async (data: TrackingFormValues) => {
     await navigate(`/tracking/${data.trackNumber}`);
   };
 
   return (
-    <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+    <form onSubmit={handleFormSubmit}>
       <Box
         sx={{
           display: 'flex',
@@ -33,9 +43,11 @@ export const Tracking = () => {
         }}
       >
         <TextField
-          sx={{ width: '66%', marginBottom: 3 }}
-          placeholder="SWIFT1875037"
-          {...register('trackNumber', { required: true })}
+          sx={{ width: '70%', marginBottom: 3 }}
+          placeholder="HU1234567890AA"
+          {...register('trackNumber')}
+          error={!!errors.trackNumber}
+          helperText={errors.trackNumber?.message}
           slotProps={{
             input: {
               endAdornment: (

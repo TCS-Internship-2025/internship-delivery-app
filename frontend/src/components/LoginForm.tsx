@@ -54,6 +54,11 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
               autoComplete="email"
               autoFocus
               disabled={isLoading}
+              slotProps={{
+                input: {
+                  style: { WebkitBoxShadow: 'none !important' },
+                },
+              }}
             />
           )}
         />

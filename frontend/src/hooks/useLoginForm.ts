@@ -35,8 +35,6 @@ export const useLoginForm = () => {
   } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      console.log('Login successful:', data);
-
       // Decode the token to extract user data
       const decodedToken = jwtDecode<{
         sub: string;
@@ -49,7 +47,7 @@ export const useLoginForm = () => {
         id: decodedToken.sub,
         name: decodedToken.name,
         email: decodedToken.email,
-        emailVerified: !decodedToken.emailVerified,
+        emailVerified: decodedToken.emailVerified,
       };
 
       setAuthData(data.token, data.refreshToken, user);
