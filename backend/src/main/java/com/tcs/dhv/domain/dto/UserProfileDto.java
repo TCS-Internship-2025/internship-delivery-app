@@ -18,7 +18,7 @@ public record UserProfileDto(
     @Size(max = 254, message = "Email cannot exceed 254 characters")
     String email,
 
-    @Pattern(regexp = "^\\+36[1-9][0-9]{7,8}$",
+    @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$",
         message = "Phone number must be 11 digits starting with 36 (format: 36XXXXXXXXX)"
     )
     String phone,
