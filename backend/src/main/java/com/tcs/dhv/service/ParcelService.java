@@ -92,6 +92,7 @@ public class ParcelService {
 
         final var parcel = getParcelByIdAndUser(id, sender);
 
+
         parcelRepository.delete(parcel);
         log.info("Parcel with ID: {} deleted successfully", id);
     }
@@ -109,7 +110,9 @@ public class ParcelService {
         return code;
     }
 
+
     public Parcel getParcelByIdAndUser(final UUID id, final User sender) {
+
         final var parcel = parcelRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
