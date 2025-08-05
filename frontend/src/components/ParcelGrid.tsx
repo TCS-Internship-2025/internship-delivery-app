@@ -121,11 +121,11 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
 
   useEffect(() => {
     if (parcels?.length && parcels.length > 0) {
-      setHeight(isSmallScreen ? parcels.length * 43.5 : parcels.length * 60.5);
+      setHeight(isSmallScreen ? parcels.length * 43 : parcels.length * 60);
     } else {
       setHeight(isSmallScreen ? 360 : 692);
     }
-  }, [parcels?.length, isSmallScreen]);
+  }, [parcels?.length, isSmallScreen, height]);
 
   const handleSelection = () => {
     const selected = gridRef.current?.api.getSelectedRows();
@@ -134,7 +134,6 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
       void navigate(`${ROUTES.DETAILS}?parcelId=${selected[0].parcelId}`);
     }
   };
-
   return (
     <Box
       className={`ag-theme-quartz${mode === 'dark' ? '-dark' : ''}`}
