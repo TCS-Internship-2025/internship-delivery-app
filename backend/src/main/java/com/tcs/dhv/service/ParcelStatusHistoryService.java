@@ -37,10 +37,9 @@ public class ParcelStatusHistoryService {
     @Transactional
     public void addStatusHistory(
         final UUID parcelId,
-        final UUID userId,
-        final String reason
+        final String description
     ) {
-        final var entity = createStatusHistoryEntry(parcelId, userId, reason);
+        final var entity = createStatusHistoryEntry(parcelId, description);
         statusHistoryRepository.save(entity);
     }
 
@@ -63,18 +62,9 @@ public class ParcelStatusHistoryService {
         statusHistoryRepository.deleteById(id);
     }
 
-    private ParcelStatusHistory createStatusHistoryEntry(final UUID parcelId, final UUID userId, final String reason) {
-        final var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-
+    private ParcelStatusHistory createStatusHistoryEntry(final UUID parcelId, final String description) {
         final var parcel = parcelRepository.findById(parcelId)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
-
-        final var isAddressChanged = reason != null && !reason.trim().isEmpty();
-
-        final var description = isAddressChanged
-            ? String.format("Address changed by %s. Reason: %s", user.getEmail(), reason)
-            : String.format("Parcel created by %s", user.getEmail());
 
         return ParcelStatusHistory.builder()
             .parcel(parcel)
