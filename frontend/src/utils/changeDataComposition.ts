@@ -3,6 +3,7 @@ import z from 'zod';
 import { addressSchema } from '@/apis/profileInfo';
 
 import type { FieldConfig } from '@/components/FormSectionFields.tsx';
+import { REGEX_PATTERNS } from './parcelComposition';
 
 export const MIN_BIRTH_DATE = new Date('1900-01-01');
 export const MAX_BIRTH_DATE = new Date();
@@ -10,11 +11,8 @@ MAX_BIRTH_DATE.setFullYear(MAX_BIRTH_DATE.getFullYear() - 18);
 export const changePasswordSchema = z.object({ current: z.string(), new: z.string(), confirm: z.string() });
 export const changeProfileSchema = z.object({
   title: z.string().optional(),
-  name: z.string().min(1, 'Full name is required'),
-  mobilePhone: z
-    .string()
-    .min(1, 'Mobile phone is required')
-    .regex(/^(?:(\+36|06)\s?)?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/, 'Please enter a valid Hungarian phone number'),
+  name: z.string().regex(REGEX_PATTERNS.HUNGARIAN_NAME),
+  mobilePhone: z.string().min(1, 'Mobile phone is required').regex(REGEX_PATTERNS.HUNGARIAN_PHONE),
   emailAddress: z.email('Please enter a valid email address').min(1),
 });
 
