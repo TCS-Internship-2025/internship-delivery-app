@@ -8,6 +8,7 @@ import com.tcs.dhv.repository.ParcelStatusHistoryRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ParcelStatusHistoryService {
@@ -29,16 +31,19 @@ public class ParcelStatusHistoryService {
         if (historyList.isEmpty()) {
             throw new RuntimeException("No status history found for parcel ID: " + parcelId);
         }
+        log.info("getParcelTimeline for parcel ID: {}", parcelId);
         return historyList.stream()
                 .map(ParcelStatusHistoryDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public ParcelStatusHistoryDto addStatusHistory(final UUID parcelId, final UUID userId) {
-        final var entity = createStatusHistoryEntry(parcelId, userId);
-        final var saved = statusHistoryRepository.save(entity);
-        return ParcelStatusHistoryDto.fromEntity(saved);
+    public void addStatusHistory(
+        final UUID parcelId,
+        final String description
+    ) {
+        final var entity = createStatusHistoryEntry(parcelId, description);
+        statusHistoryRepository.save(entity);
     }
 
     @Transactional
@@ -60,42 +65,14 @@ public class ParcelStatusHistoryService {
         statusHistoryRepository.deleteById(id);
     }
 
-    @Transactional
-    public void addAddressChangeHistory(
-        final UUID parcelId,
-        final UUID userId,
-        final String reason
-    ) {
-        final var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-
-        final var parcel = parcelRepository.findById(parcelId)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
-
-        final var description = String.format("Address changed by %s%s",
-            user.getEmail(),
-            reason != null && !reason.trim().isEmpty() ? ". Reason: " + reason : "");
-
-        final var historyEntry = ParcelStatusHistory.builder()
-            .parcel(parcel)
-            .status(parcel.getCurrentStatus())
-            .description(description)
-            .build();
-
-        statusHistoryRepository.save(historyEntry);
-    }
-
-    private ParcelStatusHistory createStatusHistoryEntry(final UUID parcelId, final UUID userId) {
-        final var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-
+    private ParcelStatusHistory createStatusHistoryEntry(final UUID parcelId, final String description) {
         final var parcel = parcelRepository.findById(parcelId)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
 
         return ParcelStatusHistory.builder()
             .parcel(parcel)
-            .status(ParcelStatus.CREATED)
-            .description("Parcel created by user: " + user.getEmail())
+            .status(parcel.getCurrentStatus())
+            .description(description)
             .build();
     }
 

@@ -5,7 +5,7 @@ import type { FieldConfig } from '@/components/FormSectionFields.tsx';
 
 const REGEX_PATTERNS = {
   HUNGARIAN_NAME: /^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű\s'-]+$/,
-  HUNGARIAN_PHONE: /^(?:(\+36|06)\s?)?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/,
+  HUNGARIAN_PHONE: /^(\+36|06)\s?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/,
   HUNGARY_ONLY: /^hungary$/i,
   POSTAL_CODE: /^\d{4}$/,
   HUNGARIAN_TEXT_WITH_SYMBOLS: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/,

@@ -67,7 +67,10 @@ public class AddressChangeService {
             parcel.getRecipient().setAddress(savedAddress);
             parcelRepository.save(parcel);
 
-            parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
+        final var description = String.format("Address changed by %s%s",
+            sender.getEmail(),
+            requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
+        parcelStatusHistoryService.addStatusHistory(parcelId, description);
 
             log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
 

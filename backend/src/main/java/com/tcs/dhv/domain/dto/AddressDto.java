@@ -1,11 +1,13 @@
 package com.tcs.dhv.domain.dto;
 
 import com.tcs.dhv.domain.entity.Address;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+@Schema(description = "Address request")
 public record AddressDto(
     @Size(max = 255, message = "Line 1 cannot exceed {max} characters")
     String line1,
