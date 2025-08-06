@@ -1,4 +1,3 @@
-import { TitleEnum } from '@/constants';
 import z from 'zod';
 
 import type { FieldConfig } from '@/components/FormSectionFields.tsx';
@@ -38,7 +37,6 @@ export type ChangeAddressFormSchema = z.infer<typeof changeAddressFormSchema>;
 
 export const changeProfileFields: FieldConfig<ChangeProfileSchema>[][] = [
   [
-    { name: 'title', label: 'Title', type: 'select', options: TitleEnum, sx: { flex: 0.3 }, rowGroup: 'name' },
     { name: 'name', label: 'Full name', required: true, sx: { flex: 1 }, rowGroup: 'name' },
     { name: 'mobilePhone', label: 'Mobile phone', required: true },
     { name: 'emailAddress', label: 'Email address', required: true },
@@ -50,8 +48,6 @@ export const changeAddressFields: FieldConfig<ChangeAddressFormSchema>[][] = [
     { name: 'building', label: 'Building', required: true },
     { name: 'postalCode', label: 'ZIP/Postal Code', required: true },
     { name: 'line1', label: 'Address Line 1', required: true },
-  ],
-  [
     { name: 'country', label: 'Country', required: true },
     { name: 'apartment', label: 'Apartment', required: true },
     { name: 'city', label: 'City', required: true },

@@ -1,5 +1,7 @@
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 
+import { useEditPassword } from '@/apis/profile';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -32,27 +34,18 @@ export default function ChangePasswordModal({ open, handleClose }: ChangePasswor
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<ChangePasswordFormData>({
-    defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    },
-  });
+  } = useForm<ChangePasswordFormData>();
 
   const passwordValue = watch('newPassword');
+  const { mutateAsync } = useEditPassword();
   const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
-    try {
-      const { currentPassword, newPassword } = data;
+    const { currentPassword, newPassword } = data;
 
-      console.log('Sending to API:', { currentPassword, newPassword });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    await mutateAsync({ currentPassword, newPassword });
 
-      handleClose();
-    } catch (err) {
-      console.error('Failed to change password:', err);
-    }
+    handleClose();
   };
+
   return (
     <Modal open={open} onClose={handleClose}>
       <Box

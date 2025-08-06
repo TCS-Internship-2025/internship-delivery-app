@@ -40,11 +40,21 @@ export default function ChangeAddressModal({ open, handleClose }: ChangePassword
   } = useForm<ChangeAddressFormSchema>({
     resolver: zodResolver(changeAddressFormSchema),
     mode: 'onChange',
+    defaultValues: {
+      addressName: '',
+      building: '',
+      postalCode: '',
+      line1: '',
+      country: '',
+      apartment: '',
+      city: '',
+      line2: '',
+    },
   });
-  const { mutate } = useEditAddress();
+  const { mutateAsync } = useEditAddress();
 
-  const onSubmit = (data: ChangeAddressFormSchema) => {
-    mutate(data);
+  const onSubmit = async (data: ChangeAddressFormSchema) => {
+    await mutateAsync(data);
   };
 
   const handleFormSubmit = (event: FormEvent) => {

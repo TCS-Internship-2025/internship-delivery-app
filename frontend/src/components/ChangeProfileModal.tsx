@@ -1,18 +1,21 @@
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 
+import { useEditProfile } from '@/apis/profile';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-interface EditProfileFormData {
-  username?: string;
-  email?: string;
-  password?: string;
-  phoneNumber?: string;
-}
+import type { ChangeProfileSchema } from '@/utils/changeDataComposition';
 
+interface EditProfileFormData {
+  name: string;
+  emailAddress: string;
+  mobilePhone: string;
+  title: string;
+}
 interface EditProfileModalProps {
   open: boolean;
   handleClose: () => void;
@@ -38,20 +41,15 @@ export default function ChangeProfileModal({ open, handleClose, formData }: Edit
     formState: { errors, isSubmitting },
   } = useForm<EditProfileFormData>({
     defaultValues: {
-      username: formData?.name,
-      email: formData?.email,
-      phoneNumber: formData?.phoneNumber,
+      name: formData?.name,
+      emailAddress: formData?.email,
+      mobilePhone: formData?.phoneNumber,
     },
   });
 
-  const onSubmit: SubmitHandler<EditProfileFormData> = async (data) => {
-    try {
-      console.log('Profile update submitted:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      handleClose();
-    } catch (err) {
-      console.error('Failed to update profile:', err);
-    }
+  const { mutateAsync } = useEditProfile();
+  const onSubmit: SubmitHandler<EditProfileFormData> = async (data: ChangeProfileSchema) => {
+    await mutateAsync(data);
   };
 
   return (
@@ -68,7 +66,7 @@ export default function ChangeProfileModal({ open, handleClose, formData }: Edit
         </Typography>
 
         <Controller
-          name="username"
+          name="name"
           control={control}
           rules={{ required: 'Username is required' }}
           render={({ field }) => (
@@ -76,15 +74,15 @@ export default function ChangeProfileModal({ open, handleClose, formData }: Edit
               {...field}
               fullWidth
               label="Username"
-              error={!!errors.username}
-              helperText={errors.username?.message}
+              error={!!errors.name}
+              helperText={errors.name?.message}
               sx={{ mb: 2 }}
             />
           )}
         />
 
         <Controller
-          name="email"
+          name="emailAddress"
           control={control}
           rules={{
             required: 'Email is required',
@@ -98,15 +96,15 @@ export default function ChangeProfileModal({ open, handleClose, formData }: Edit
               {...field}
               fullWidth
               label="Email"
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              error={!!errors.emailAddress}
+              helperText={errors.emailAddress?.message}
               sx={{ mb: 2 }}
             />
           )}
         />
 
         <Controller
-          name="phoneNumber"
+          name="mobilePhone"
           control={control}
           rules={{
             pattern: {
@@ -119,8 +117,8 @@ export default function ChangeProfileModal({ open, handleClose, formData }: Edit
               {...field}
               fullWidth
               label="Phone Number"
-              error={!!errors.phoneNumber}
-              helperText={errors.phoneNumber?.message}
+              error={!!errors.mobilePhone}
+              helperText={errors.mobilePhone?.message}
               sx={{ mb: 2 }}
             />
           )}
