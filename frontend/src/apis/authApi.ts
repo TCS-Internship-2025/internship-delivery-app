@@ -153,7 +153,6 @@ export async function verifyEmail(
   };
 }
 
-// Delete user
 export async function deleteUser(): Promise<void> {
   const authData = getStoredAuthData();
 
