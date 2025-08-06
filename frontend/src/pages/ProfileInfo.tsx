@@ -13,6 +13,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import DeleteUserButton from '@/components/DeleteUserButton';
 import { QueryStates } from '@/components/QueryStates';
 
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
@@ -68,13 +69,14 @@ export const ProfileInfo = () => {
 
           <Divider sx={{ my: 3 }} />
 
-          <Stack direction="column" spacing={2}>
-            <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
-            <ProfileInfoButton>Edit password</ProfileInfoButton>
-            <ProfileInfoButton>Edit address</ProfileInfoButton>
-            <ProfileInfoButton>Edit user info</ProfileInfoButton>
-          </Stack>
-        </Paper>
+        <Stack direction="column" spacing={2}>
+          <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
+          <ProfileInfoButton>Edit password</ProfileInfoButton>
+          <ProfileInfoButton>Edit address</ProfileInfoButton>
+          <ProfileInfoButton>Edit user info</ProfileInfoButton>
+          <DeleteUserButton showDangerZone={false} buttonVariant="contained" buttonColor="error" />
+        </Stack>
+      </Paper>
 
         <Box sx={{ mx: 'auto', mt: 4 }}>
           <Typography variant="h6" gutterBottom>

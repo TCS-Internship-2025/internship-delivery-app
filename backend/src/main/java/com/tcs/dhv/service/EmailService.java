@@ -190,8 +190,36 @@ public class EmailService {
         log.info("Address change notification email sent to {} for parcel {}", recipientEmail, trackingCode);
     }
 
+    public void sendPasswordResetEmail(
+        final String email,
+        final String resetLink
+    ) {
+        final var emailText = """
+            Hello,
+            
+            You requested a password reset for your DHV account. 
+            
+            Click the link below to reset your password:
+            %s
+            
+            if you didn't request this, please ignore this email.
+            
+            Regards,
+            DHV Team
+            """.formatted(resetLink);
+
+        final var message = CreateMessage(
+            "Password Reset Request",
+            EmailConstants.EMAIL_SENDER,
+            email,
+            emailText
+        );
+
+        mailSender.send(message);
+        log.info("Password reset email sent to {}", email);
+    }
+
     private String getAddressLine3(String city, String country, String postalCode){
         return city + ", " + country + " " + postalCode;
     }
-
 }

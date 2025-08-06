@@ -1,6 +1,7 @@
 package com.tcs.dhv.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.validation.UniquePhone;
 import jakarta.validation.Valid;
@@ -32,10 +33,10 @@ public record UserProfileDto(
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String currentPassword,
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(min = 8, max = 128,
         message = "New password must be between 8 and 128 characters")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!?.,;:~`<>{}\\[\\]()_-]).{8,128}$",
@@ -63,7 +64,19 @@ public record UserProfileDto(
             if (user.getAddress() != null){
                 address.updateEntity(user.getAddress());
             } else {
-                user.setAddress(address.toEntity());
+                final var newAddress = Address.builder()
+                    .line1(address.line1())
+                    .line2(address.line2())
+                    .building(address.building())
+                    .apartment(address.apartment())
+                    .city(address.city())
+                    .postalCode(address.postalCode())
+                    .country(address.country())
+                    .latitude(address.latitude())
+                    .longitude(address.longitude())
+                    .build();
+
+                user.setAddress(newAddress);
             }
         }
     }

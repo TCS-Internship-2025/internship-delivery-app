@@ -1,6 +1,7 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.RecipientDto;
+import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.RecipientRepository;
@@ -27,11 +28,29 @@ public class RecipientService {
                     .orElseThrow(() -> new EntityNotFoundException("Recipient not found with email: " + recipientDto.email()));
         } else {
             log.info("Creating new recipient for email: {}", recipientDto.email());
-            final var newAddress = recipientDto.address().toEntity();
+
+            final var newAddress = Address.builder()
+                .line1(recipientDto.address().line1())
+                .line2(recipientDto.address().line2())
+                .building(recipientDto.address().building())
+                .apartment(recipientDto.address().apartment())
+                .city(recipientDto.address().city())
+                .country(recipientDto.address().country())
+                .postalCode(recipientDto.address().postalCode())
+                .longitude(recipientDto.address().longitude())
+                .latitude(recipientDto.address().latitude())
+                .build();
+
             final var savedAddress = addressRepository.save(newAddress);
 
-            final var recipient = recipientDto.toEntity();
-            recipient.setAddress(savedAddress);
+            final var recipient = Recipient.builder()
+                .name(recipientDto.name())
+                .email(recipientDto.email())
+                .phone(recipientDto.phone())
+                .birthDate(recipientDto.birthDate())
+                .address(savedAddress)
+                .build();
+
             return recipientRepository.save(recipient);
         }
     }
@@ -41,7 +60,15 @@ public class RecipientService {
 
         final var recipientEntity = recipientRepository.findByEmail(recipientDto.email())
                 .orElseThrow(() -> new EntityNotFoundException("Recipient not found with email: " + recipientDto.email()));
-        final var newAddress = recipientDto.address().toEntity();
+
+        final var newAddress = Address.builder()
+                .line1(recipientDto.address().line1())
+                .line2(recipientDto.address().line2())
+                .city(recipientDto.address().city())
+                .postalCode(recipientDto.address().postalCode())
+                .country(recipientDto.address().country())
+                .build();
+
         final var savedAddress = addressRepository.save(newAddress);
 
         recipientEntity.setAddress(savedAddress);

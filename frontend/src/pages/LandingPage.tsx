@@ -1,6 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
+import { useAuth } from '@/contexts/AuthContext';
+
+import LogoutIcon from '@mui/icons-material/Logout';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -8,11 +11,12 @@ import Typography from '@mui/material/Typography';
 interface LandingPageButtonProps {
   children: React.ReactNode;
   onClick: () => void;
+  color?: 'primary' | 'error';
 }
 
-const LandingPageButton = ({ children, onClick }: LandingPageButtonProps) => {
+const LandingPageButton = ({ children, onClick, color = 'primary' }: LandingPageButtonProps) => {
   return (
-    <Button variant="contained" color="primary" size="large" onClick={onClick}>
+    <Button variant="contained" color={color} size="large" onClick={onClick}>
       {children}
     </Button>
   );
@@ -20,6 +24,17 @@ const LandingPageButton = ({ children, onClick }: LandingPageButtonProps) => {
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+
+  const handleAuthClick = () => {
+    if (isAuthenticated) {
+      void logout().then(() => {
+        void navigate(ROUTES.LOGIN);
+      });
+    } else {
+      void navigate(ROUTES.LOGIN);
+    }
+  };
 
   return (
     <Box
@@ -60,12 +75,15 @@ export const LandingPage = () => {
         Welcome to the best parcel service provider!
       </Typography>
       <Box display="flex" justifyContent="space-between" gap={2}>
-        <LandingPageButton
-          onClick={() => {
-            void navigate(ROUTES.LOGIN);
-          }}
-        >
-          Login
+        <LandingPageButton onClick={handleAuthClick} color={isAuthenticated ? 'error' : 'primary'}>
+          {isAuthenticated ? (
+            <>
+              <LogoutIcon />
+              Logout
+            </>
+          ) : (
+            'Login'
+          )}
         </LandingPageButton>
         <LandingPageButton
           onClick={() => {
