@@ -14,6 +14,15 @@ public record TrackingDto(
         String senderName,
         String recipientName,
         ParcelStatus currentStatus,
-        Optional<LocalDateTime> estimatedDelivery
+        Optional<LocalDateTime> estimatedDelivery,
+        String senderEmail,
+        String senderPhone,
+        String senderAddress,
+        String recipientEmail,
+        String recipientPhone,
+        String recipientAddress,
+        Optional<LocalDateTime> recipientBirthDate,
+        String paymentType,
+        String deliveryType
 ) {
 }

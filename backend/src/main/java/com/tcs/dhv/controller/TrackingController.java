@@ -2,6 +2,7 @@ package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.ParcelStatusHistoryDto;
 import com.tcs.dhv.domain.dto.TrackingDto;
+import com.tcs.dhv.security.DhvUserDetails;
 import com.tcs.dhv.service.ParcelStatusHistoryService;
 import com.tcs.dhv.service.TrackingService;
 import com.tcs.dhv.validation.TrackingCode;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +30,21 @@ public class TrackingController {
             @NotNull
             @TrackingCode
             @PathVariable
-            String trackingCode
+            String trackingCode,
+            Authentication authentication
     ) {
-        final var response = trackingService.getTrackingDetails(trackingCode);
+        TrackingDto response;
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            response = trackingService.getPublicTrackingDetails(trackingCode);
+        } else {
+            final var principal = (DhvUserDetails) authentication.getPrincipal();
+            response = trackingService.getTrackingDetailsForUser(
+                    trackingCode,
+                    principal.getId(),
+                    principal.getUsername()
+            );
+        }
 
         if (response == null) {
             return ResponseEntity.notFound().build();
@@ -48,7 +62,7 @@ public class TrackingController {
             String trackingCode
     ) {
 
-        final var trackingResponse = trackingService.getTrackingDetails(trackingCode);
+        final var trackingResponse = trackingService.getPublicTrackingDetails(trackingCode);
         final var timeline = parcelStatusHistoryService.getParcelTimeline(trackingResponse.parcelId());
 
         log.info("Received tracking with timeline request for parcel with id {}", trackingResponse.parcelId());
