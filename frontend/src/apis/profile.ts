@@ -1,50 +1,79 @@
-import { queryClient } from '@/queryClient';
-import { useMutation } from '@tanstack/react-query';
+import { QueryClient, useMutation } from '@tanstack/react-query';
 import z from 'zod';
 
 import { httpService } from '@/services/httpService';
 
-import {
-  changeAddressFormSchema,
-  changeProfileSchema,
-  type ChangeAddressFormSchema,
-  type ChangeProfileSchema,
-} from '@/utils/changeDataComposition';
+import { type ChangeAddressFormSchema, type ChangeProfileSchema } from '@/utils/changeDataComposition';
 
+const queryClient = new QueryClient();
+const response = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  phone: z.string().nullable(),
+  address: z
+    .object({
+      line1: z.string(),
+      line2: z.string(),
+      building: z.string(),
+      apartment: z.string(),
+      city: z.string(),
+      postalCode: z.string(),
+      country: z.string(),
+      latitude: z.number(),
+      longitude: z.number(),
+    })
+    .nullable(),
+  isVerified: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
 export const changePasswordSchema = z.object({ currentPassword: z.string(), newPassword: z.string() });
 export type ChangePasswordData = z.infer<typeof changePasswordSchema>;
 export const editAddress = (data: ChangeAddressFormSchema) => {
-  return httpService.request('/me', changeAddressFormSchema, { method: 'PUT', body: JSON.stringify(data) });
+  return httpService.request('/users/me', response, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
 };
 
 export const editProfile = (data: ChangeProfileSchema) => {
-  return httpService.request('/me', changeProfileSchema, { method: 'PUT', body: JSON.stringify(data) });
+  return httpService.request('/users/me', response, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
 };
 export const editPassword = (data: ChangePasswordData) => {
-  return httpService.request('/me', changePasswordSchema, { method: 'PUT', body: JSON.stringify(data) });
+  console.log(data);
+  return httpService.request('/users/me', response, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
 };
 export const useEditProfile = () => {
   return useMutation({
-    mutationFn: editProfile,
+    mutationFn: (data: ChangeProfileSchema) => editProfile(data),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['me-profile'] });
+      await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
     },
   });
 };
 
 export const useEditAddress = () => {
   return useMutation({
-    mutationFn: editAddress,
+    mutationFn: (data: ChangeAddressFormSchema) => editAddress(data),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['me-address'] });
+      await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
     },
   });
 };
 export const useEditPassword = () => {
   return useMutation({
-    mutationFn: editPassword,
+    mutationFn: (data: ChangePasswordData) => editPassword(data),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['me-password'] });
+      await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
     },
   });
 };

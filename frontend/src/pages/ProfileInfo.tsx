@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 import ChangeAddressModal from '@/components/ChangeAddressModal';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 import ChangeProfileModal from '@/components/ChangeProfileModal';
+
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
   return (
     <Button variant="contained" color="primary" onClick={onClick}>
@@ -33,18 +34,10 @@ type ModalType = 'changeProfile' | 'changePassword' | 'changeAddress';
 
 export const ProfileInfo = () => {
   const navigate = useNavigate();
-  const { data: parcels, isLoading, isError } = useGetAllParcels();
-  const name = 'Example Human';
-  const email = 'example.human@example.com';
-  const [openModal, setOpenModal] = useState<ModalType | null>(null);
-  const phoneNumber = '36209536049';
-
-export const ProfileInfo = () => {
-  const navigate = useNavigate();
 
   const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels();
   const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
-
+  const [openModal, setOpenModal] = useState<ModalType | null>(null);
   const profile = profileData;
 
   const getFirstThreeInitials = (fullName: string) => {
@@ -122,12 +115,11 @@ export const ProfileInfo = () => {
           >
             Edit user info
           </ProfileInfoButton>
-          <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
         </Stack>
         <ChangeProfileModal
           open={openModal === 'changeProfile'}
           handleClose={handleClose}
-          formData={{ name: name, email: email, phoneNumber: phoneNumber }}
+          formData={{ name: profile.name, email: profile.email, phoneNumber: profile.phone?.toString() }}
         />
         <ChangePasswordModal open={openModal === 'changePassword'} handleClose={handleClose} />
         <ChangeAddressModal open={openModal === 'changeAddress'} handleClose={handleClose} />

@@ -40,7 +40,7 @@ export default function ChangePasswordModal({ open, handleClose }: ChangePasswor
   const { mutateAsync } = useEditPassword();
   const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
     const { currentPassword, newPassword } = data;
-
+    console.log(currentPassword, newPassword);
     await mutateAsync({ currentPassword, newPassword });
 
     handleClose();
