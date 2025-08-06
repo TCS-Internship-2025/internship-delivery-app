@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
-import { useAuth } from '@/contexts/AuthContext.tsx';
-
 import { useGetAllParcels } from '@/apis/parcelGet';
 import { useGetProfileInfo } from '@/apis/profileInfo';
 
@@ -15,6 +13,8 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
+import DeleteUserButton from '@/components/DeleteUserButton';
 
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
   return (
@@ -30,10 +30,9 @@ const Body2Typography = ({ children }: { children: React.ReactNode }) => {
 
 export const ProfileInfo = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
 
-  const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels(token);
-  const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo(token);
+  const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels();
+  const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
 
   const profile = profileData;
 
@@ -89,6 +88,7 @@ export const ProfileInfo = () => {
           <ProfileInfoButton>Edit password</ProfileInfoButton>
           <ProfileInfoButton>Edit address</ProfileInfoButton>
           <ProfileInfoButton>Edit user info</ProfileInfoButton>
+          <DeleteUserButton showDangerZone={false} buttonVariant="contained" buttonColor="error" />
         </Stack>
       </Paper>
 

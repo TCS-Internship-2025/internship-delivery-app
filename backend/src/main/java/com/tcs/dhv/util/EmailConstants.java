@@ -18,4 +18,5 @@ public class EmailConstants {
     public static final String ENCODING = "UTF-8";
     public static final String DELIVERY_COMPLETE_SUBJECT = "Delivery is complete";
     public static final String TRACKING_PAGE_URL_ROUTE = "/tracking/";
+    public static final String ADDRESS_CHANGE_MAIL_SUBJECT = "Delivery Address Changed - ";
 }

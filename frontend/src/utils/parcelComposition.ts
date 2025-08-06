@@ -4,9 +4,8 @@ import z from 'zod';
 import type { FieldConfig } from '@/components/FormSectionFields.tsx';
 
 const REGEX_PATTERNS = {
-  TITLE: /^(Mr|Mrs|Ms|Dr|Prof)\.?$/i,
   HUNGARIAN_NAME: /^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű\s'-]+$/,
-  HUNGARIAN_PHONE: /^(?:(\+36|06)\s?)?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/,
+  HUNGARIAN_PHONE: /^(\+36|06)\s?([1-9][0-9])\s?[0-9]{3}\s?[0-9]{4}$/,
   HUNGARY_ONLY: /^hungary$/i,
   POSTAL_CODE: /^\d{4}$/,
   HUNGARIAN_TEXT_WITH_SYMBOLS: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/,
@@ -20,7 +19,7 @@ MAX_BIRTH_DATE.setFullYear(MAX_BIRTH_DATE.getFullYear() - 18);
 
 export const recipientFormSchema = z.object({
   // Section 1 fields
-  title: z.string().regex(REGEX_PATTERNS.TITLE, 'Please select a valid title').optional(),
+  title: z.string().optional(),
   name: z
     .string()
     .min(1, 'Full name is required')
@@ -45,17 +44,31 @@ export const recipientFormSchema = z.object({
 
 export const parcelFormSchema = z.object({
   // Section 2 fields
-  building: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid building name').optional(),
+  building: z
+    .string()
+    .trim()
+    .regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid building name')
+    .optional()
+    .nullable(),
   country: z.string().trim().regex(REGEX_PATTERNS.HUNGARY_ONLY, 'We only deliver in Hungary'),
   postalCode: z.string().regex(REGEX_PATTERNS.POSTAL_CODE, 'Invalid zip code'),
-  apartment: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid apartment name').optional(),
+  apartment: z
+    .string()
+    .trim()
+    .regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid apartment name')
+    .optional()
+    .nullable(),
   line1: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_REQUIRED, 'Invalid address line 1'),
   city: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_CITY, 'Invalid city name'),
   line2: z.string().trim().regex(REGEX_PATTERNS.HUNGARIAN_TEXT_WITH_SYMBOLS, 'Invalid address line 2').optional(),
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
 
   // Section 3 fields
   paymentType: z.string().min(1, 'Payment Type is required'),
   deliveryType: z.string().min(1, 'Delivery Type is required'),
+  //Using this for map
+  pointId: z.string().optional().nullable(),
 });
 
 export type RecipientFormSchema = z.infer<typeof recipientFormSchema>;

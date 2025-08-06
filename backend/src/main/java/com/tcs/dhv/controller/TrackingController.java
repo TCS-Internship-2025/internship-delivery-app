@@ -58,7 +58,7 @@ public class TrackingController {
     public ResponseEntity<List<ParcelStatusHistoryDto>> getParcelTimeline(
             @NotNull
             @TrackingCode
-            @PathVariable
+            @PathVariable final
             String trackingCode
     ) {
 

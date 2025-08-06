@@ -114,6 +114,32 @@ export async function handleHttpResponse<Z extends z.ZodTypeAny>(response: Respo
     }
     throw new Error(errorMessage);
   }
-  const json: unknown = await response.json();
-  return schema.parse(json);
+  /* Handle empty JSON responses (204 No Content) by checking headers and attempting schema validation with empty objects or text fallback.
+  Otherwise the frontend displays an error when resending verification email, even though the backend actually sends it.*/
+  const contentLength = response.headers.get('content-length');
+  const contentType = response.headers.get('content-type');
+
+  if (
+    response.status === 204 ||
+    contentLength === '0' ||
+    (!contentType?.includes('application/json') && !contentLength)
+  ) {
+    try {
+      return schema.parse({});
+    } catch {
+      return schema.parse((await response.text()) || '');
+    }
+  }
+
+  try {
+    const json: unknown = await response.json();
+    return schema.parse(json);
+  } catch (parseError) {
+    try {
+      const text = await response.text();
+      return schema.parse(text || {});
+    } catch {
+      throw parseError;
+    }
+  }
 }

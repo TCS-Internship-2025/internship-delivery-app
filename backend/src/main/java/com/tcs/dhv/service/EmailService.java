@@ -1,5 +1,6 @@
 package com.tcs.dhv.service;
 
+import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.exception.MailMessagingException;
 import com.tcs.dhv.repository.UserRepository;
@@ -74,8 +75,8 @@ public class EmailService {
     ) {
         final var token = otpService.generateAndStoreOtp(userId);
 
-        final var emailVerificationUrl = "%s/api/auth/email/verify?uid=%s&t=%s"
-            .formatted(appBaseUrl, userId, token);
+        final var emailVerificationUrl = "%s/verified/%s/%s"
+            .formatted(clientUrl, userId, token);
 
         final var context = new Context();
         context.setVariable("verifyLink", emailVerificationUrl);
@@ -150,6 +151,75 @@ public class EmailService {
         return user;
     }
 
+    @Async
+    public void sendAddressChangeNotification(
+        final String recipientEmail,
+        final String recipientName,
+        final String trackingCode,
+        final Address oldAddress,
+        final Address newAddress,
+        final String requestReason
+    ) {
+        final var context = new Context();
+        context.setVariable("name", recipientName);
+        context.setVariable("trackingCode", trackingCode);
+        context.setVariable("oldAddressLine1", oldAddress.getLine1());
+        context.setVariable("oldAddressLine2", oldAddress.getLine2());
+        context.setVariable("oldAddressLine3", getAddressLine3(
+            oldAddress.getCity(),
+            oldAddress.getCountry(),
+            oldAddress.getPostalCode()));
+        context.setVariable("newAddressLine1", newAddress.getLine1());
+        context.setVariable("newAddressLine2", newAddress.getLine2());
+        context.setVariable("newAddressLine3", getAddressLine3(
+            newAddress.getCity(),
+            newAddress.getCountry(),
+            newAddress.getPostalCode()));
+        context.setVariable("reason", requestReason != null && !requestReason.trim().isEmpty() ? "Reason: " + requestReason : "");
 
+        final var htmlContent = this.templateEngine.process("AddressChangeNotificationEmail.html", context);
 
+        final var message = CreateMessage(
+            EmailConstants.ADDRESS_CHANGE_MAIL_SUBJECT + trackingCode,
+            EmailConstants.EMAIL_SENDER,
+            recipientEmail,
+            htmlContent
+        );
+
+        mailSender.send(message);
+        log.info("Address change notification email sent to {} for parcel {}", recipientEmail, trackingCode);
+    }
+
+    public void sendPasswordResetEmail(
+        final String email,
+        final String resetLink
+    ) {
+        final var emailText = """
+            Hello,
+            
+            You requested a password reset for your DHV account. 
+            
+            Click the link below to reset your password:
+            %s
+            
+            if you didn't request this, please ignore this email.
+            
+            Regards,
+            DHV Team
+            """.formatted(resetLink);
+
+        final var message = CreateMessage(
+            "Password Reset Request",
+            EmailConstants.EMAIL_SENDER,
+            email,
+            emailText
+        );
+
+        mailSender.send(message);
+        log.info("Password reset email sent to {}", email);
+    }
+
+    private String getAddressLine3(String city, String country, String postalCode){
+        return city + ", " + country + " " + postalCode;
+    }
 }

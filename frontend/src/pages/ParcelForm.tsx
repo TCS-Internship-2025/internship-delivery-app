@@ -1,4 +1,4 @@
-import { useCallback, useState, type FormEvent } from 'react';
+import { useCallback, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -10,9 +10,11 @@ import {
   ROUTES,
 } from '@/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { enqueueSnackbar } from 'notistack';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useFormContext } from '@/contexts/FormContext';
+import type { CustomSnackbarOptions } from '@/providers/ToastProvider';
 
 import { useCreateParcel } from '@/apis/parcel';
 import type { PickupPoint } from '@/apis/pickupPoints';
@@ -20,6 +22,7 @@ import type { PickupPoint } from '@/apis/pickupPoints';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useTheme } from '@mui/material/styles';
 
 import { SectionFields } from '@/components/FormSectionFields';
 import { NavigationButtons } from '@/components/NavigationButtons.tsx';
@@ -30,10 +33,11 @@ import { SectionContainer } from '@/components/SectionContainer';
 import { parcelFields, parcelFormSchema, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
 
 export const ParcelForm = () => {
-  const [selectedParcel, setSelectedParcel] = useState<PickupPoint | null>();
+  // const [selectedParcel, setSelectedParcel] = useState<PickupPoint | null>();
   const { mutate, isPending } = useCreateParcel();
-  const { updateFormData, getParcelFormData, getRecipientFormData, resetParcelForm } = useFormContext();
+  const { updateFormData, getParcelFormData, getRecipientFormData, resetParcelForm, getPointId } = useFormContext();
   const isSmallScreen = useSmallScreen();
+  const theme = useTheme();
   const navigate = useNavigate();
 
   const { control, handleSubmit, watch, reset, getValues } = useForm<ParcelFormSchema>({
@@ -74,6 +78,7 @@ export const ParcelForm = () => {
     const submittedData = {
       recipient: {
         ...recipientFormData,
+        phone: recipientFormData.phone.replace(/ /g, ''),
         address: {
           ...addressData,
         },
@@ -86,6 +91,7 @@ export const ParcelForm = () => {
     mutate(submittedData, {
       onSuccess: () => {
         reset({ ...PARCEL_FORM_DEFAULT_VALUES });
+        enqueueSnackbar('Parcel created successfully!', { variant: 'success' });
         void navigate(`/${ROUTES.RECIPIENT_FORM}`);
       },
     });
@@ -101,10 +107,31 @@ export const ParcelForm = () => {
     void navigate(`/${ROUTES.RECIPIENT_FORM}`);
   };
 
+  const handleAddressSelect = useCallback(
+    (point: PickupPoint | null) => {
+      const currentDeliveryType = getValues('deliveryType');
+      const currentPaymentType = getValues('paymentType');
+
+      if (point)
+        reset({
+          ...point.address,
+          deliveryType: currentDeliveryType,
+          paymentType: currentPaymentType,
+        });
+    },
+    [reset, getValues]
+  );
+
   return (
     <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {isPending ? (
-        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
+        <Box
+          display={'flex'}
+          sx={{ height: '100%', bgcolor: theme.palette.primary.formBg, borderEndEndRadius: 6, borderEndStartRadius: 6 }}
+          justifyContent={'center'}
+          alignItems={'center'}
+          height={'100%'}
+        >
           <CircularProgress />
         </Box>
       ) : (
@@ -121,9 +148,12 @@ export const ParcelForm = () => {
               )}
               {deliveryType === 'Pickup Point' && (
                 <Box display="flex" justifyContent="center">
-                  <p>{selectedParcel?.name}</p>
-                  {/* Testing*/}
-                  <ParcelLocationMap setSelectedPoint={setSelectedParcel} deliveryType="PICKUP_POINT" />
+                  <ParcelLocationMap setSelectedPoint={handleAddressSelect} deliveryType="PICKUP_POINT" />
+                </Box>
+              )}
+              {deliveryType === 'Parcel Box' && (
+                <Box display="flex" justifyContent="center">
+                  <ParcelLocationMap setSelectedPoint={handleAddressSelect} deliveryType="PARCEL_BOX" />
                 </Box>
               )}
             </form>
@@ -131,6 +161,11 @@ export const ParcelForm = () => {
           <NavigationButtons
             onPrevious={handlePrevious}
             onNext={() => {
+              if (getValues('deliveryType') !== 'Home' && !getPointId())
+                enqueueSnackbar('Please choose an address from the map', {
+                  variant: 'error',
+                  headerMessage: 'No address was provided',
+                } as CustomSnackbarOptions);
               void handleSubmit(onSubmit)();
             }}
           />

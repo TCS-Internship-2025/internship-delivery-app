@@ -9,11 +9,15 @@ declare module '@mui/material/styles' {
   interface PaletteColor {
     marker?: string;
     markerSelected?: string;
+    markerActive?: string;
+    formBg?: string;
   }
 
   interface SimplePaletteColorOptions {
     marker?: string;
     markerSelected?: string;
+    markerActive?: string;
+    formBg?: string;
   }
 }
 
@@ -47,6 +51,8 @@ export const themes = {
         dark: '#2d6a4f',
         marker: '#1b4332',
         markerSelected: '#ff0000',
+        markerActive: '#FF8C00',
+        formBg: '#1018280D',
         contrastText: white,
       },
       secondary: {
@@ -163,7 +169,9 @@ export const themes = {
         light: '#74c69d',
         marker: '#b6e2ca',
         markerSelected: '#ff0000',
+        markerActive: '#FF8C00',
         dark: primaryColorDark,
+        formBg: '#2A2F2A',
         contrastText: white,
       },
       secondary: {
