@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type {
   LoginRequest,
   LoginResponse,
@@ -176,14 +177,15 @@ export async function deleteUser(): Promise<void> {
 }
 
 export function useDeleteUser() {
+  const navigate = useNavigate();
+
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
       queryClient.clear();
-      console.log('Account deleted successfully');
-      window.location.href = '/login';
+      void navigate('/login', { replace: true });
     },
     onError: (error) => {
       console.error('Failed to delete user:', error);

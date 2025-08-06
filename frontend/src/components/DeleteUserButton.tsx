@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import { useDeleteUser } from '@/apis/authApi';
 
@@ -7,7 +8,6 @@ import Warning from '@mui/icons-material/Warning';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -45,6 +45,7 @@ export default function DeleteUserButton({
   const handleConfirmDelete = () => {
     if (confirmText === 'DELETE') {
       deleteUserMutation.mutate();
+      enqueueSnackbar('Account Deleted!', { variant: 'info' });
     }
   };
 
@@ -133,9 +134,11 @@ export default function DeleteUserButton({
             <Button
               onClick={handleConfirmDelete}
               disabled={confirmText !== 'DELETE' || deleteUserMutation.isPending}
+              loading={deleteUserMutation.isPending}
+              loadingIndicator="Loading..."
+              loadingPosition="end"
               variant="contained"
               color="error"
-              startIcon={deleteUserMutation.isPending ? <CircularProgress size={16} /> : <Delete />}
               type="button"
             >
               {deleteUserMutation.isPending ? 'Deleting...' : 'Delete My Account'}
@@ -194,9 +197,11 @@ export default function DeleteUserButton({
           <Button
             onClick={handleConfirmDelete}
             disabled={confirmText !== 'DELETE' || deleteUserMutation.isPending}
+            loading={deleteUserMutation.isPending}
+            loadingIndicator="Loading..."
+            loadingPosition="end"
             variant="contained"
             color="error"
-            startIcon={deleteUserMutation.isPending ? <CircularProgress size={16} /> : <Delete />}
             type="button"
           >
             {deleteUserMutation.isPending ? 'Deleting...' : 'Delete My Account'}
