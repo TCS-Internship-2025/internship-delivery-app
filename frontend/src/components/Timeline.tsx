@@ -54,9 +54,6 @@ export default function TimelineComponent({ timeline }: { timeline: TimelineData
           <TimelineContent variant="subtitle2" fontSize={12}>
             {event.description}
             <br />
-            <Typography variant="caption" noWrap>
-              {event.status.replace('_', ' ')}
-            </Typography>
             <Typography variant="subtitle2" color="textSecondary">
               {new Date(event.timestamp).toLocaleDateString()}
             </Typography>
