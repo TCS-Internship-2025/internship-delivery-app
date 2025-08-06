@@ -82,6 +82,7 @@ export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
 };
 
 export const QUERY_STATUS = {
+  SUCCESS: 'success',
   PENDING: 'pending',
   ERROR: 'error',
 };
