@@ -38,3 +38,15 @@ export const resetPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
 });
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
+export const newPasswordSchema = z
+  .object({
+    newPassword: passwordStrengthSchema,
+    confirmPassword: z.string().min(1, 'Confirm Password must match the New Password'),
+  })
+  .refine((data: { newPassword: string; confirmPassword: string }) => data.newPassword === data.confirmPassword, {
+    message: 'Passwords must match',
+    path: ['confirmPassword'],
+  });
+
+export type NewPasswordFormData = z.infer<typeof newPasswordSchema>;

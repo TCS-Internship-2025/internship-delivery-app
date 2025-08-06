@@ -88,7 +88,7 @@ export const LoginForm = ({ onRegisterClick, onForgotPasswordClick }: LoginFormP
                         edge="end"
                         disabled={isLoading}
                       >
-                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                       </IconButton>
                     </InputAdornment>
                   ),
