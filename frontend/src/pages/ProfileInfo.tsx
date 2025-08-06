@@ -14,6 +14,8 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import DeleteUserButton from '@/components/DeleteUserButton';
+
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
   return (
     <Button variant="contained" color="primary" onClick={onClick}>
@@ -86,6 +88,7 @@ export const ProfileInfo = () => {
           <ProfileInfoButton>Edit password</ProfileInfoButton>
           <ProfileInfoButton>Edit address</ProfileInfoButton>
           <ProfileInfoButton>Edit user info</ProfileInfoButton>
+          <DeleteUserButton showDangerZone={false} buttonVariant="contained" buttonColor="error" />
         </Stack>
       </Paper>
 

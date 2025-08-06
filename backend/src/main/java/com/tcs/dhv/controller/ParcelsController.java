@@ -3,7 +3,6 @@ package com.tcs.dhv.controller;
 import com.tcs.dhv.domain.dto.AddressChangeDto;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.service.AddressChangeService;
-import com.tcs.dhv.service.EmailService;
 import com.tcs.dhv.service.ParcelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import com.tcs.dhv.service.ParcelStatusHistoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +38,6 @@ import java.util.UUID;
 public class ParcelsController {
 
     private final ParcelService parcelService;
-    private final EmailService emailService;
-    private final ParcelStatusHistoryService  parcelStatusHistoryService;
     private final AddressChangeService addressChangeService;
 
     @Operation(summary = "Create parcel", description = "Create a new parcel",
@@ -94,7 +90,7 @@ public class ParcelsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(parcel);
     }
 
-    @Operation(summary = "Get user's every parcels", description = "Get all of the parcels of the user")
+    @Operation(summary = "Get user's parcels", description = "Get all of the parcels of the authenticated user")
     @GetMapping
     public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
         log.info("Retrieving parcels for user: {}", authentication.getName());

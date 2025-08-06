@@ -150,6 +150,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
+  // Immediately set Authorization header if token exists on mount
+  if (typeof window !== 'undefined') {
+    const storedData = getStoredAuthData();
+    if (storedData?.token) {
+      httpService.setGlobalHeader('Authorization', `Bearer ${storedData.token}`);
+    }
+  }
+
   const contextValue = useMemo(() => {
     const isAuthenticated = Boolean(user && token);
     const isLoading = isRefreshing;
