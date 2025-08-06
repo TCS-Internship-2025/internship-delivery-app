@@ -1,15 +1,13 @@
 package com.tcs.dhv.domain.dto;
 
 import com.tcs.dhv.config.openapi.SchemaConstants;
+import com.tcs.dhv.domain.entity.Recipient;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import com.tcs.dhv.domain.entity.Recipient;
-
 
 import java.time.LocalDate;
 
@@ -46,15 +44,5 @@ public record RecipientDto(
             recipient.getBirthDate(),
             AddressDto.fromEntity(recipient.getAddress())
         );
-    }
-
-    public Recipient toEntity() {
-        return Recipient.builder()
-            .name(name)
-            .email(email)
-            .phone(phone)
-            .birthDate(birthDate)
-            .address(address.toEntity())
-            .build();
     }
 }

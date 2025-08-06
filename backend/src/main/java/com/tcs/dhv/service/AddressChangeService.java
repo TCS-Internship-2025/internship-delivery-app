@@ -1,6 +1,7 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.AddressChangeDto;
+import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
@@ -45,7 +46,18 @@ public class AddressChangeService {
         validateAddressChangeRequest(parcel);
 
         final var oldAddress = parcel.getRecipient().getAddress();
-        final var newAddress = requestDto.newAddress().toEntity();
+        final var newAddress = Address.builder()
+            .line1(requestDto.newAddress().line1())
+            .line2(requestDto.newAddress().line2())
+            .building(requestDto.newAddress().building())
+            .apartment(requestDto.newAddress().apartment())
+            .city(requestDto.newAddress().city())
+            .country(requestDto.newAddress().country())
+            .postalCode(requestDto.newAddress().postalCode())
+            .longitude(requestDto.newAddress().longitude())
+            .latitude(requestDto.newAddress().latitude())
+            .build();
+
         final var savedAddress = addressRepository.save(newAddress);
 
         // Status change emails should probably be sent in ParcelStatusHistoryService
