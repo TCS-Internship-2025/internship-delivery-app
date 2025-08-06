@@ -51,6 +51,7 @@ public class User {
     @NotNull
     private String password;
 
+    @Column(unique = true)
     private String phone;
 
     @OneToOne

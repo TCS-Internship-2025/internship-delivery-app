@@ -46,6 +46,12 @@ export const verifyEmailResponseSchema = z.object({
   emailVerified: z.boolean(),
 });
 
+export const resendVerificationEmailResponseSchema = z
+  .object({
+    message: z.string().optional(),
+  })
+  .or(z.object({}));
+
 export function saveAuthData(token: string, refreshToken: string, user: User) {
   sessionStorage.setItem(AUTH_TOKEN_KEY, token);
   sessionStorage.setItem(AUTH_REFRESH_TOKEN_KEY, refreshToken);
@@ -131,17 +137,14 @@ export async function refreshToken(): Promise<RefreshTokenResponse> {
   return response;
 }
 export async function resendVerificationEmail(email: string): Promise<void> {
-  await httpService.post(`/auth/email/resend-verification?email=${email}`, z.void());
+  await httpService.post(`/auth/email/resend-verification?email=${email}`, resendVerificationEmailResponseSchema);
 }
 
 export async function verifyEmail(
   userId: string,
   token: string
 ): Promise<{ name: string; email: string; emailVerified: boolean }> {
-  const response = await httpService.get(
-    `/auth/email/verify?userId=${userId}&token=${token}`,
-    verifyEmailResponseSchema
-  );
+  const response = await httpService.get(`/auth/email/verify?uid=${userId}&t=${token}`, verifyEmailResponseSchema);
 
   return {
     name: response.name,

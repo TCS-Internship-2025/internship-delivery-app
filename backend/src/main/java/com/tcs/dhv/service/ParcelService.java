@@ -54,7 +54,8 @@ public class ParcelService {
         emailService.sendShipmentCreationEmail(savedParcel.getRecipient().getEmail(), savedParcel.getTrackingCode());
         log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), userId);
+        final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
+        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
         log.info("Parcel status entry created: {}", savedParcel.getId());
 
         return ParcelDto.fromEntity(savedParcel);
@@ -92,6 +93,7 @@ public class ParcelService {
 
         final var parcel = getParcelByIdAndUser(id, sender);
 
+
         parcelRepository.delete(parcel);
         log.info("Parcel with ID: {} deleted successfully", id);
     }
@@ -109,7 +111,9 @@ public class ParcelService {
         return code;
     }
 
+
     public Parcel getParcelByIdAndUser(final UUID id, final User sender) {
+
         final var parcel = parcelRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 

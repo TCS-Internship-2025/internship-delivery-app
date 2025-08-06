@@ -78,6 +78,7 @@ export const ParcelForm = () => {
     const submittedData = {
       recipient: {
         ...recipientFormData,
+        phone: recipientFormData.phone.replace(/ /g, ''),
         address: {
           ...addressData,
         },

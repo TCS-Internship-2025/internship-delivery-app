@@ -57,6 +57,13 @@ public class UserService {
             throw new ValidationException("Email already exists");
         }
 
+        if(updateRequest.phone() != null &&
+            !updateRequest.phone().equals(user.getPhone()) &&
+            userRepository.existsByPhone(updateRequest.phone())
+        ) {
+            throw new ValidationException("Phone number already in use by other user");
+        }
+
         if(updateRequest.address() !=null && user.getAddress() == null) {
             final var newAddress = updateRequest.address().toEntity();
             final var savedAddress = addressRepository.save(newAddress);

@@ -160,48 +160,30 @@ public class EmailService {
         final Address newAddress,
         final String requestReason
     ) {
-        final var emailText = """
-            Hello %s,
-            
-            Your parcel delivery address has been changed for tracking number: %s
-            
-            Previous Address:
-            %s
-            %s
-            %s, %s %s
-            
-            New Address:
-            %s
-            %s
-            %s, %s %s
-            
-            %s
-            
-            If you did not request this change, please contact our support team immediately.
-            
-            Regards,
-            DHV Team
-            """.formatted(
-                recipientName,
-                trackingCode,
-                oldAddress.getLine1(),
-                oldAddress.getLine2() != null ? oldAddress.getLine2() : "",
-                oldAddress.getCity(),
-                oldAddress.getCountry(),
-                oldAddress.getPostalCode(),
-                newAddress.getLine1(),
-                newAddress.getLine2() != null ? newAddress.getLine2() : "",
-                newAddress.getCity(),
-                newAddress.getCountry(),
-                newAddress.getPostalCode(),
-                requestReason != null && !requestReason.trim().isEmpty() ? "Reason: " + requestReason : ""
-            );
+        final var context = new Context();
+        context.setVariable("name", recipientName);
+        context.setVariable("trackingCode", trackingCode);
+        context.setVariable("oldAddressLine1", oldAddress.getLine1());
+        context.setVariable("oldAddressLine2", oldAddress.getLine2());
+        context.setVariable("oldAddressLine3", getAddressLine3(
+            oldAddress.getCity(),
+            oldAddress.getCountry(),
+            oldAddress.getPostalCode()));
+        context.setVariable("newAddressLine1", newAddress.getLine1());
+        context.setVariable("newAddressLine2", newAddress.getLine2());
+        context.setVariable("newAddressLine3", getAddressLine3(
+            newAddress.getCity(),
+            newAddress.getCountry(),
+            newAddress.getPostalCode()));
+        context.setVariable("reason", requestReason != null && !requestReason.trim().isEmpty() ? "Reason: " + requestReason : "");
+
+        final var htmlContent = this.templateEngine.process("AddressChangeNotificationEmail.html", context);
 
         final var message = CreateMessage(
-            "Delivery Address Changed - " + trackingCode,
+            EmailConstants.ADDRESS_CHANGE_MAIL_SUBJECT + trackingCode,
             EmailConstants.EMAIL_SENDER,
             recipientEmail,
-            emailText
+            htmlContent
         );
 
         mailSender.send(message);
@@ -235,5 +217,9 @@ public class EmailService {
 
         mailSender.send(message);
         log.info("Password reset email sent to {}", email);
+    }
+
+    private String getAddressLine3(String city, String country, String postalCode){
+        return city + ", " + country + " " + postalCode;
     }
 }

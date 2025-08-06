@@ -48,6 +48,18 @@ logging:
   level:
     org.flywaydb: DEBUG
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  packages-to-scan: com.tcs.dhv.controller
+  paths-to-match: /api/**
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
 jwt:
   private-key: classpath:jwt/app.key
   public-key: classpath:jwt/app.pub
