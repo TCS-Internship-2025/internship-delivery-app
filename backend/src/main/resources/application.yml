@@ -67,6 +67,7 @@ jwt:
 
 auth:
   refresh-token-ttl: 24h
+  reset-token-ttl: 15m
 
 email-verification:
   required: true
