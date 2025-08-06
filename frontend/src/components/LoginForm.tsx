@@ -122,7 +122,7 @@ export const LoginForm = ({ onRegisterClick, onForgotPasswordClick }: LoginFormP
           fullWidth
           variant="contained"
           size="large"
-          disabled={!isValid || isLoading}
+          disabled={!isValid}
           sx={{
             mt: 1,
             mb: 2,

@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 
 import { LoginForm } from '@/components/LoginForm';
 import { LoginHeader } from '@/components/LoginHeader';
@@ -31,18 +30,16 @@ export const Login = () => {
       }}
     >
       <Container maxWidth="sm">
-        <Card
+        <Paper
           elevation={3}
           sx={{
             borderRadius: 3,
-            p: 3,
+            p: 6,
           }}
         >
-          <CardContent>
-            <LoginHeader />
-            <LoginForm onRegisterClick={handleRegisterClick} onForgotPasswordClick={handleForgotPasswordClick} />
-          </CardContent>
-        </Card>
+          <LoginHeader />
+          <LoginForm onRegisterClick={handleRegisterClick} onForgotPasswordClick={handleForgotPasswordClick} />
+        </Paper>
       </Container>
     </Box>
   );
