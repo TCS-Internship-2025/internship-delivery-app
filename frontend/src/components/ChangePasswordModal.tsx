@@ -1,6 +1,6 @@
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 
-import { useEditPassword } from '@/apis/profile';
+import { useEditPassword } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -9,12 +9,7 @@ import Typography from '@mui/material/Typography';
 
 import { PasswordField } from './PasswordField';
 
-import type { ChangePasswordFormData } from '@/utils/changeDataComposition';
-
-interface ChangePasswordModalProps {
-  open: boolean;
-  handleClose: () => void;
-}
+import type { ChangePasswordFormData, ModalProps } from '@/utils/changeDataComposition';
 
 const style = {
   position: 'absolute',
@@ -28,7 +23,7 @@ const style = {
   p: 4,
 };
 
-export default function ChangePasswordModal({ open, handleClose }: ChangePasswordModalProps) {
+export default function ChangePasswordModal({ open, handleClose }: ModalProps) {
   const {
     control,
     handleSubmit,

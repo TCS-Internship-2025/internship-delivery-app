@@ -2,7 +2,7 @@ import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useEditAddress } from '@/apis/profile';
+import { useEditAddress } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,6 +14,7 @@ import {
   changeAddressFields,
   changeAddressFormSchema,
   type ChangeAddressFormSchema,
+  type ModalProps,
 } from '@/utils/changeDataComposition';
 
 const style = {
@@ -28,11 +29,7 @@ const style = {
   p: 4,
 };
 
-interface ChangePasswordModalProps {
-  open: boolean;
-  handleClose: () => void;
-}
-export default function ChangeAddressModal({ open, handleClose }: ChangePasswordModalProps) {
+export default function ChangeAddressModal({ open, handleClose }: ModalProps) {
   const {
     control,
     handleSubmit,
@@ -40,16 +37,7 @@ export default function ChangeAddressModal({ open, handleClose }: ChangePassword
   } = useForm<ChangeAddressFormSchema>({
     resolver: zodResolver(changeAddressFormSchema),
     mode: 'onChange',
-    defaultValues: {
-      addressName: '',
-      building: '',
-      postalCode: '',
-      line1: '',
-      country: '',
-      apartment: '',
-      city: '',
-      line2: '',
-    },
+    defaultValues: {},
   });
   const { mutateAsync } = useEditAddress();
 

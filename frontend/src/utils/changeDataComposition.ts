@@ -17,14 +17,16 @@ export const changeProfileSchema = z.object({
 });
 
 export const changeAddressFormSchema = z.object({
-  addressName: z.string().min(1, 'Address Name is required'),
-  line1: z.string().min(1, 'Address Line 1 is required'),
-  line2: z.string().optional(),
-  building: z.string().min(1, 'Building is required'),
-  apartment: z.string().min(1, 'Apartment is required'),
-  city: z.string().min(1, 'City is required'),
-  postalCode: z.string().min(1, 'ZIP/POSTAL Code is required'),
-  country: z.string().min(1, 'Country is required'),
+  address: z.object({
+    addressName: z.string().min(1, 'Address Name is required'),
+    line1: z.string().min(1, 'Address Line 1 is required'),
+    line2: z.string().optional(),
+    building: z.string().min(1, 'Building is required'),
+    apartment: z.string().min(1, 'Apartment is required'),
+    city: z.string().min(1, 'City is required'),
+    postalCode: z.string().min(1, 'ZIP/POSTAL Code is required'),
+    country: z.string().min(1, 'Country is required'),
+  }),
 });
 
 export interface ChangePasswordFormData {
@@ -34,6 +36,29 @@ export interface ChangePasswordFormData {
 }
 export type ChangeProfileSchema = z.infer<typeof changeProfileSchema>;
 export type ChangeAddressFormSchema = z.infer<typeof changeAddressFormSchema>;
+export interface EditProfileFormData {
+  name: string;
+  emailAddress: string;
+  mobilePhone: string;
+  title: string;
+}
+export interface ModalProps {
+  open: boolean;
+  handleClose: () => void;
+  formData?: {
+    name?: string;
+    email?: string;
+    phoneNumber?: string;
+    addressName?: string;
+    building?: string;
+    postalCode?: string;
+    line1?: string;
+    country?: string;
+    apartment?: string;
+    city?: string;
+    line2?: string;
+  };
+}
 
 export const changeProfileFields: FieldConfig<ChangeProfileSchema>[][] = [
   [
@@ -44,13 +69,13 @@ export const changeProfileFields: FieldConfig<ChangeProfileSchema>[][] = [
 ];
 export const changeAddressFields: FieldConfig<ChangeAddressFormSchema>[][] = [
   [
-    { name: 'addressName', label: 'Address Name', required: true },
-    { name: 'building', label: 'Building', required: true },
-    { name: 'postalCode', label: 'ZIP/Postal Code', required: true },
-    { name: 'line1', label: 'Address Line 1', required: true },
-    { name: 'country', label: 'Country', required: true },
-    { name: 'apartment', label: 'Apartment', required: true },
-    { name: 'city', label: 'City', required: true },
-    { name: 'line2', label: 'Address Line 2' },
+    { name: 'address.addressName', label: 'Address Name', required: true },
+    { name: 'address.building', label: 'Building', required: true },
+    { name: 'address.postalCode', label: 'ZIP/Postal Code', required: true },
+    { name: 'address.line1', label: 'Address Line 1', required: true },
+    { name: 'address.country', label: 'Country', required: true },
+    { name: 'address.apartment', label: 'Apartment', required: true },
+    { name: 'address.city', label: 'City', required: true },
+    { name: 'address.line2', label: 'Address Line 2' },
   ],
 ];

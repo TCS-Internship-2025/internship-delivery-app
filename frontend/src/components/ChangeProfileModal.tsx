@@ -1,6 +1,6 @@
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 
-import { useEditProfile } from '@/apis/profile';
+import { useEditProfile } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,19 +8,7 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import type { ChangeProfileSchema } from '@/utils/changeDataComposition';
-
-interface EditProfileFormData {
-  name: string;
-  emailAddress: string;
-  mobilePhone: string;
-  title: string;
-}
-interface EditProfileModalProps {
-  open: boolean;
-  handleClose: () => void;
-  formData: { name?: string; email?: string; phoneNumber?: string };
-}
+import type { ChangeProfileSchema, EditProfileFormData, ModalProps } from '@/utils/changeDataComposition';
 
 const style = {
   position: 'absolute',
@@ -34,7 +22,7 @@ const style = {
   p: 4,
 };
 
-export default function ChangeProfileModal({ open, handleClose, formData }: EditProfileModalProps) {
+export default function ChangeProfileModal({ open, handleClose, formData }: ModalProps) {
   const {
     control,
     handleSubmit,
