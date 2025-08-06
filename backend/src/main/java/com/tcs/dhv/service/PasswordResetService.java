@@ -7,8 +7,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -70,18 +72,17 @@ public class PasswordResetService {
         final String newPassword
     ) {
         final var resetToken = resetTokenRepository.findByToken(token)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid or expired password reset token"));
-
-        if (resetToken.getExpiresAt().isBefore(Instant.now())) {
-            throw new IllegalArgumentException("Password reset token has expired");
-        }
+            .filter(t -> !t.isExpired())
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Token is invalid or expired"
+            ));
 
         final var user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-
         resetTokenRepository.delete(resetToken);
 
-        log.info("Password reset successfully for user: {}", user.getEmail());
+        log.info("Password successfully reset for user {}", user.getEmail());
     }
 }
