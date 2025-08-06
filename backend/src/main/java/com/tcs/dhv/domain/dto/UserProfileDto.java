@@ -2,6 +2,7 @@ package com.tcs.dhv.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.validation.UniquePhone;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -38,6 +39,7 @@ public record UserProfileDto(
         message = "New password must be between 8 and 128 characters")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!?.,;:~`<>{}\\[\\]()_-]).{8,128}$",
     message = "Password must contain at least 1 lowercase, uppercase letter, digit and special character")
+    @UniquePhone
     String newPassword
 ) {
     public static UserProfileDto fromEntity(final User user) {
