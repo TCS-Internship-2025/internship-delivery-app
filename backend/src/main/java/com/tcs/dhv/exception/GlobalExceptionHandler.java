@@ -146,7 +146,7 @@ public class GlobalExceptionHandler {
         log.error("Concurrency conflict: {}", ex.getMessage());
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.CONFLICT.value())
-            .message(ex.getMessage())
+            .message("Concurrency conflict: " +ex.getMessage())
             .timestamp(Instant.now())
             .build();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
