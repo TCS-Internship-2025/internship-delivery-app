@@ -1,8 +1,10 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.ParcelDto;
+import com.tcs.dhv.domain.dto.StatusUpdateDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -12,6 +14,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -122,6 +125,41 @@ public class ParcelService {
         }
 
         return parcel;
+    }
+
+    @Transactional
+    public void updateParcelStatus(final String trackingCode, final StatusUpdateDto statusDto){
+
+        final var parcel = parcelRepository.findByTrackingCode(trackingCode)
+                .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
+
+        parcel.setCurrentStatus(statusDto.status());
+        log.info("Parcel status updated: {}", parcel.getCurrentStatus());
+
+        final var description = makeDescription(statusDto.status(),statusDto.description());
+
+        parcelStatusHistoryService.addStatusHistory(parcel.getId(), description);
+        log.info("A new parcel status history added for parcel {}," +
+                " status {}", parcel.getId(),  parcel.getCurrentStatus());
+
+        //should trigger an email notification
+
+    }
+
+    private String makeDescription(ParcelStatus status, String description) {
+        if (description == null || description.isEmpty()) {
+            return switch(status){
+                case PICKED_UP -> "Parcel has been picked up";
+                case IN_TRANSIT -> "Parcel is in transit";
+                case OUT_FOR_DELIVERY -> "Parcel is out for delivery";
+                case DELIVERY_ATTEMPTED -> "Attempted delivery";// reattempt
+                case DELIVERED -> "Parcel has been delivered";
+                case CANCELLED-> "Parcel has been cancelled";
+                case RETURNED_TO_SENDER-> "Parcel has been  returned to sender";
+                default -> "Unknown parcel status"; //never
+            };
+        }
+        return description;
     }
 
 }
