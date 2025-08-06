@@ -61,30 +61,24 @@ const response = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
 });
+const changeReq = async (data: ChangeAddressFormSchema | ChangePasswordData | ChangeProfileSchema) => {
+  await httpService.request('/users/me', response, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+};
 export const changePasswordSchema = z.object({ currentPassword: z.string(), newPassword: z.string() });
 export type ChangePasswordData = z.infer<typeof changePasswordSchema>;
 export const editAddress = (data: ChangeAddressFormSchema) => {
-  return httpService.request('/users/me', response, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  return changeReq(data);
 };
 
 export const editProfile = (data: ChangeProfileSchema) => {
-  return httpService.request('/users/me', response, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  return changeReq(data);
 };
 export const editPassword = (data: ChangePasswordData) => {
-  console.log(data);
-  return httpService.request('/users/me', response, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  return changeReq(data);
 };
 export const useEditProfile = () => {
   return useMutation({
