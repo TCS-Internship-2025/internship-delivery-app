@@ -1,53 +1,54 @@
-import { PARCEL_DELIVERY_STATUSES, QUERY_STATUS } from '@/constants';
+import { PARCEL_DELIVERY_STATUSES, PARCEL_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
-import { useTimeline } from '@/apis/tracking';
+import { type TimelineData } from '@/apis/tracking';
 
+import InventoryIcon from '@mui/icons-material/Inventory';
+import LocalPostOfficeIcon from '@mui/icons-material/LocalPostOffice';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import Timeline from '@mui/lab/Timeline';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
-const notSmallScreenStyle = { top: '50%', left: '50%', transform: 'translate(50%, 0)' };
-export default function TimelineComponent({ trackingNumber }: { trackingNumber: string }) {
+const TimelineIcon = ({ status }: { status: string }) => {
+  if (status === PARCEL_STATUS.CREATED) {
+    return <ReceiptIcon />;
+  }
+  if (status === PARCEL_STATUS.DELIVERED) {
+    return <MarkEmailReadIcon />;
+  }
+  if (status === PARCEL_STATUS.IN_TRANSIT) {
+    return <LocalPostOfficeIcon />;
+  }
+  if (status === PARCEL_STATUS.PICKED_UP) {
+    return <InventoryIcon />;
+  }
+  if (status === PARCEL_STATUS.OUT_FOR_DELIVERY) {
+    return <LocalShippingIcon />;
+  }
+};
+export default function TimelineComponent({ timeline }: { timeline: TimelineData }) {
   const isSmallScreen = useSmallScreen();
-  const { data: timelineData, status: timelineStatus } = useTimeline(trackingNumber);
-  if (timelineStatus === QUERY_STATUS.PENDING) {
-    return (
-      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (timelineStatus === QUERY_STATUS.ERROR) {
-    return (
-      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
-        <Typography variant="h4">Something went wrong.</Typography>
-        <Typography variant="subtitle1">Please try again later!</Typography>
-      </Box>
-    );
-  }
+
   return (
     <Timeline
       sx={{
-        paddingTop: isSmallScreen ? 0 : 7,
-        ...(!isSmallScreen && notSmallScreenStyle),
         [`& .${timelineItemClasses.missingOppositeContent}:before`]: { display: 'none' },
         ...(isSmallScreen && {
           [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 },
         }),
       }}
     >
-      {timelineData?.map((event) => (
+      {timeline?.map((event) => (
         <TimelineItem key={event.id}>
           <TimelineSeparator>
-            <TimelineDot />
+            <TimelineIcon status={event.status} />
             {event.status !== PARCEL_DELIVERY_STATUSES.DELIVERED && <TimelineConnector />}
           </TimelineSeparator>
           <TimelineContent variant="subtitle2" fontSize={12}>

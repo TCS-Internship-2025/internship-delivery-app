@@ -26,33 +26,33 @@ export type TimelineData = z.infer<typeof timelineSchema>;
 export async function fetchTimelineData(trackingNumber: string | undefined): Promise<TimelineData> {
   return await httpService.request(`/tracking/${trackingNumber}/timeline`, timelineSchema, {
     method: 'GET',
-    headers: {
-      'X-API-KEY': 'my-secret-api-key-1234',
-    },
+    // headers: {
+    //   'X-API-KEY': 'my-secret-api-key-1234',
+    // },
   });
 }
 export async function fetchTrackingData(trackingNumber: string | undefined): Promise<TrackingData> {
   return await httpService.request(`/tracking/${trackingNumber}`, trackSchema, {
     method: 'GET',
-    headers: {
-      'X-API-KEY': 'my-secret-api-key-1234',
-    },
+    // headers: {
+    //   'X-API-KEY': 'my-secret-api-key-1234',
+    // },
   });
 }
 
-export function useTracking(slug: string | undefined) {
+export function useTracking(trackingNumber: string | undefined) {
   return useQuery<TrackingData>({
-    queryKey: ['tracking', slug],
-    queryFn: () => fetchTrackingData(slug),
-    enabled: !!slug,
+    queryKey: ['tracking', trackingNumber],
+    queryFn: () => fetchTrackingData(trackingNumber),
+    enabled: true,
   });
 }
 
-export function useTimeline(slug: string | undefined) {
+export function useTimeline(trackingNumber: string | undefined) {
   return useQuery<TimelineData>({
-    queryKey: ['timeline', slug],
-    queryFn: () => fetchTimelineData(slug),
-    enabled: !!slug,
+    queryKey: ['timeline', trackingNumber],
+    queryFn: () => fetchTimelineData(trackingNumber),
+    enabled: true,
   });
 }
 
