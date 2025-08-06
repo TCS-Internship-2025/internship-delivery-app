@@ -15,6 +15,10 @@ export const Login = () => {
     void navigate('/register');
   };
 
+  const handleForgotPasswordClick = () => {
+    void navigate('/password-reset');
+  };
+
   return (
     <Box
       sx={{
@@ -36,7 +40,7 @@ export const Login = () => {
         >
           <CardContent>
             <LoginHeader />
-            <LoginForm onRegisterClick={handleRegisterClick} />
+            <LoginForm onRegisterClick={handleRegisterClick} onForgotPasswordClick={handleForgotPasswordClick} />
           </CardContent>
         </Card>
       </Container>

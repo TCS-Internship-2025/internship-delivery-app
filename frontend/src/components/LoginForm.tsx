@@ -14,9 +14,10 @@ import TextField from '@mui/material/TextField';
 
 interface LoginFormProps {
   onRegisterClick: () => void;
+  onForgotPasswordClick?: () => void;
 }
 
-export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
+export const LoginForm = ({ onRegisterClick, onForgotPasswordClick }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const { form, onSubmit, isLoading } = useLoginForm();
   const {
@@ -74,7 +75,7 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
               type={showPassword ? 'text' : 'password'}
               error={!!error}
               helperText={error?.message}
-              sx={{ mb: 3 }}
+              sx={{ mb: 1 }}
               autoComplete="current-password"
               disabled={isLoading}
               slotProps={{
@@ -97,6 +98,25 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
           )}
         />
 
+        <Box sx={{ textAlign: 'left' }}>
+          <Button
+            variant="text"
+            size="small"
+            onClick={onForgotPasswordClick}
+            sx={{
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              color: 'text.secondary',
+              '&:hover': {
+                color: 'primary.main',
+              },
+            }}
+            disabled={isLoading}
+          >
+            Forgot password?
+          </Button>
+        </Box>
+
         <Button
           type="submit"
           fullWidth
@@ -104,7 +124,7 @@ export const LoginForm = ({ onRegisterClick }: LoginFormProps) => {
           size="large"
           disabled={!isValid || isLoading}
           sx={{
-            mt: 2,
+            mt: 1,
             mb: 2,
             height: 48,
             borderRadius: 2,
