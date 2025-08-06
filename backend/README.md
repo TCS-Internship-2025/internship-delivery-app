@@ -88,7 +88,7 @@ This command starts:
    ```
    DB_PASSWORD=<YOUR_POSTGRES_PASSWORD>
    MAIL_USERNAME=tcsinternshipdeliveryapp@gmail.com
-   MAIL_PASSWORD=kxkpultkqqodqqux
+   MAIL_PASSWORD= For the password, please contact our team.
    ```
 
 ### 5. Build and Run
