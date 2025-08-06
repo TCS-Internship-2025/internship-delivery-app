@@ -8,6 +8,7 @@ import com.tcs.dhv.domain.enums.PaymentType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public record ParcelDto(
 
     LocalDateTime createdAt,
     LocalDateTime updatedAt
-) {
+) implements Serializable {
     public static ParcelDto fromEntity(final Parcel parcel) {
         return new ParcelDto(
             parcel.getId(),

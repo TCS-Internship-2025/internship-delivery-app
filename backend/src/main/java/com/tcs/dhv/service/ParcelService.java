@@ -8,6 +8,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +61,6 @@ public class ParcelService {
 
         return ParcelDto.fromEntity(savedParcel);
     }
-
     public List<ParcelDto> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user: {}", userId);
 
@@ -71,7 +72,7 @@ public class ParcelService {
             .map(ParcelDto::fromEntity)
             .toList();
     }
-
+    @Cacheable(value = "parcels", key = "#userId.toString().concat('-').concat(#id.toString())")
     public ParcelDto getParcel(final UUID id, final UUID userId) {
         log.info("Retrieving parcel with ID: {}", id);
 
@@ -85,6 +86,7 @@ public class ParcelService {
 
 
     @Transactional
+    @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#id.toString())")
     public void deleteParcel(final UUID id, final UUID userId) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userId);
 

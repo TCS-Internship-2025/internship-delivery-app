@@ -8,6 +8,9 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,7 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Cacheable(value = "users", key = "#userIdentifier")
     public UserProfileDto getUserProfile(final String userIdentifier) {
         final var userId = UUID.fromString(userIdentifier);
         final var user = getUserById(userId);
@@ -32,6 +36,7 @@ public class UserService {
     }
 
     @Transactional
+    @CachePut(value = "users", key = "#userIdentifier")
     public UserProfileDto updateUserProfile(
         final String userIdentifier,
         final UserProfileDto updateRequest
@@ -73,6 +78,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "users", key = "#userId", beforeInvocation = true)
     public void deleteUserProfile(final UUID userId) {
         final var user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));

@@ -44,6 +44,9 @@ spring:
     compose:
       enabled: false
 
+  cache:
+    type: redis
+
 logging:
   level:
     org.flywaydb: DEBUG

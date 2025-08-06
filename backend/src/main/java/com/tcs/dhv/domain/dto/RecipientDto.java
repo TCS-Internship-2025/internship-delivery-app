@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 public record RecipientDto(
@@ -25,7 +26,7 @@ public record RecipientDto(
 
     @Valid
     AddressDto address
-) {
+) implements Serializable {
     public static RecipientDto fromEntity(final Recipient recipient) {
         return new RecipientDto(
             recipient.getName(),
