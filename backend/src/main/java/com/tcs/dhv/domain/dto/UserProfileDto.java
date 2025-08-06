@@ -1,6 +1,5 @@
 package com.tcs.dhv.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.validation.UniquePhone;
