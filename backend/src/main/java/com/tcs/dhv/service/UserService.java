@@ -77,6 +77,27 @@ public class UserService {
             log.warn("Optimistic lock occurred while trying to update user's profile: {}", userIdentifier);
             throw new ConcurrencyFailureException("Profile was updated by another session");
         }
+
+        if(updateRequest.phone() != null &&
+            !updateRequest.phone().equals(user.getPhone()) &&
+            userRepository.existsByPhone(updateRequest.phone())
+        ) {
+            throw new ValidationException("Phone number already in use by other user");
+        }
+
+        if(updateRequest.address() !=null && user.getAddress() == null) {
+            final var newAddress = updateRequest.address().toEntity();
+            final var savedAddress = addressRepository.save(newAddress);
+            user.setAddress(savedAddress);
+            log.info("Created and saved new address: {}", savedAddress);
+        }
+
+        updateRequest.updateEntity(user);
+        user.setUpdatedAt(LocalDateTime.now());
+
+        final var savedUser = userRepository.saveAndFlush(user);
+        log.info("3.Profile updated for user ID: {}", savedUser.getId());
+        return UserProfileDto.fromEntity(savedUser);
     }
 
     @Transactional
