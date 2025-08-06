@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { enqueueSnackbar } from 'notistack';
 
 import PasswordIcon from '@mui/icons-material/Password';
 import Box from '@mui/material/Box';
@@ -32,8 +33,8 @@ export const NewPassword = () => {
 
   const newPassword = watch('newPassword');
 
-  const onSubmit = (data: NewPasswordFormData) => {
-    console.log('New password set:', data.newPassword);
+  const onSubmit = () => {
+    enqueueSnackbar('New password set successfully!', { variant: 'success' });
     // TODO: Implement new password API call
 
     void navigate('/login');
