@@ -3,8 +3,8 @@ spring:
     name: dhv
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME:parcel_db}
-    username: ${DB_USER:postgres}
+    url: jdbc:postgresql://localhost:5432/${DB_NAME:parcel_db} # should be changed to default docker db (dhv)
+    username: ${DB_USER:postgres} # should be changed to default docker user (dhv_core)
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
@@ -46,7 +46,7 @@ spring:
 
 logging:
   level:
-    org.flywaydb: DEBUG
+    org.flywaydb: INFO
 
 springdoc:
   api-docs:
