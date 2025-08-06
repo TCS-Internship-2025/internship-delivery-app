@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { addressSchema } from '@/apis/profileInfo';
+
 import type { FieldConfig } from '@/components/FormSectionFields.tsx';
 
 export const MIN_BIRTH_DATE = new Date('1900-01-01');
@@ -17,16 +19,7 @@ export const changeProfileSchema = z.object({
 });
 
 export const changeAddressFormSchema = z.object({
-  address: z.object({
-    addressName: z.string().min(1, 'Address Name is required'),
-    line1: z.string().min(1, 'Address Line 1 is required'),
-    line2: z.string().optional(),
-    building: z.string().min(1, 'Building is required'),
-    apartment: z.string().min(1, 'Apartment is required'),
-    city: z.string().min(1, 'City is required'),
-    postalCode: z.string().min(1, 'ZIP/POSTAL Code is required'),
-    country: z.string().min(1, 'Country is required'),
-  }),
+  address: addressSchema,
 });
 
 export interface ChangePasswordFormData {

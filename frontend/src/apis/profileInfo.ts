@@ -7,6 +7,7 @@ import type { ChangeAddressFormSchema, ChangeProfileSchema } from '@/utils/chang
 
 const queryClient = new QueryClient();
 export const addressSchema = z.object({
+  addressName: z.string().nullable().optional(),
   line1: z.string(),
   line2: z.string(),
   building: z.string().nullable(),
@@ -14,8 +15,8 @@ export const addressSchema = z.object({
   city: z.string(),
   postalCode: z.string(),
   country: z.string(),
-  latitude: z.number().nullable(),
-  longitude: z.number().nullable(),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 });
 
 export const profileSchema = z.object({
@@ -44,19 +45,7 @@ const response = z.object({
   name: z.string(),
   email: z.string().email(),
   phone: z.string().nullable(),
-  address: z
-    .object({
-      line1: z.string(),
-      line2: z.string(),
-      building: z.string(),
-      apartment: z.string(),
-      city: z.string(),
-      postalCode: z.string(),
-      country: z.string(),
-      latitude: z.number().nullable(),
-      longitude: z.number().nullable(),
-    })
-    .nullable(),
+  address: addressSchema.nullable(),
   isVerified: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
