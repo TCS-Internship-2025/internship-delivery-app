@@ -1,4 +1,6 @@
+import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import HttpsIcon from '@mui/icons-material/Https';
 import Box from '@mui/material/Box';
@@ -10,8 +12,28 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { resetPasswordSchema, type ResetPasswordFormData } from '@/utils/authZodSchemas';
+
 export const PasswordReset = () => {
   const navigate = useNavigate();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: 'onChange',
+    defaultValues: {
+      email: '',
+    },
+  });
+
+  const onSubmit = (data: ResetPasswordFormData) => {
+    console.log('Reset password request for:', data.email);
+    // TODO: Implement password reset API call
+    // Example: await resetPassword(data.email);
+  };
 
   const handleLoginClick = () => {
     void navigate('/login');
@@ -44,22 +66,50 @@ export const PasswordReset = () => {
             <Typography variant="body2" sx={{ mb: 3 }}>
               Enter your email address to receive a link to reset your password.
             </Typography>
-            <TextField fullWidth label="Email Address" type="email" sx={{ mb: 1 }} autoComplete="email" />
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              sx={{
-                mt: 2,
-                mb: 2,
-                height: 48,
-                borderRadius: 2,
-                fontWeight: 600,
-                textTransform: 'none',
+
+            <Box
+              component="form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void handleSubmit(onSubmit)(e);
               }}
+              noValidate
             >
-              Send Reset Link
-            </Button>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Email Address"
+                    type="email"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    sx={{ mb: 1 }}
+                    autoComplete="email"
+                  />
+                )}
+              />
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                disabled={!isValid}
+                sx={{
+                  mt: 2,
+                  mb: 2,
+                  height: 48,
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  textTransform: 'none',
+                }}
+              >
+                Send Reset Link
+              </Button>
+            </Box>
+
             <Divider variant="middle" sx={{ mx: 8, my: 2 }} />
             <Box sx={{ mt: 1, mb: 2, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
