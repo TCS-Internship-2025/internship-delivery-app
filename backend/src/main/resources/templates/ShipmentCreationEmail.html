@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shipment created</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: lightgrey;
+            color: black;
+        }
+        .code {
+            font-size: 1.5em;
+            font-weight: bold;
+            color:  #52b788;
+        }
+        .link {
+            display: inline-block;
+            margin-top: 15px 10px;
+            padding: 10px;
+            background-color: #52b788;
+            border-radius: 5px;
+        }
+        .link:hover {
+            background-color:  #52b788;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Dear Customer!</h2>
+        <p>We are happy to let you know that your shipment is on the way.</p>
+        <p>Your tracking code:</p>
+        <div class="code" th:text="${trackingCode}">DefaultCode</div>
+        <p>Click on the following link to track your shipment:</p>
+        <a class="link" th:href="${trackingUrl}" target="_blank"
+           style="color: white;
+            text-decoration: none;">
+            Track shipment</a>
+        <p>Thank you for choosing us!</p>
+        <p><i>Team DHV</i></p>
+    </div>
+</body>
+</html>

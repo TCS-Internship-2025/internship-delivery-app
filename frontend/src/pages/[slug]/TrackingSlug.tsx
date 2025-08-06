@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { QUERY_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
@@ -13,17 +14,17 @@ import TimelineComponent from '@/components/Timeline';
 
 function TrackingSlug() {
   const { slug } = useParams();
-  const { data, status } = useTracking(slug);
-  const isSmallScreen = useSmallScreen();
+  const { data: trackingData, status: trackingStatus } = useTracking(slug);
 
-  if (status === 'pending') {
+  const isSmallScreen = useSmallScreen();
+  if (trackingStatus === QUERY_STATUS.PENDING) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <CircularProgress />
       </Box>
     );
   }
-  if (status === 'error') {
+  if (trackingStatus === QUERY_STATUS.ERROR) {
     return (
       <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
         <Typography variant="h4">Something went wrong.</Typography>
@@ -37,6 +38,7 @@ function TrackingSlug() {
         sx={{
           display: 'flex',
           height: '100%',
+          width: '100%',
           flexDirection: isSmallScreen ? 'column' : 'row',
           justifyContent: 'center',
           alignItems: isSmallScreen ? 'start' : 'center',
@@ -44,6 +46,7 @@ function TrackingSlug() {
       >
         <Box
           sx={{
+            width: '33%',
             ...(isSmallScreen && { paddingLeft: 2 }),
             '& > :not(:last-child)': {
               marginBottom: (theme) => theme.spacing(0.5),
@@ -53,22 +56,26 @@ function TrackingSlug() {
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             PARCEL NUMBER
           </Typography>
-          <Typography>{data.id}</Typography>
+          <Typography>{trackingData?.trackingCode}</Typography>
+          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
+            ESTIMATED TIME OF ARRIVAL
+          </Typography>
+          <Typography>{trackingData && new Date(trackingData.estimatedDelivery).toLocaleDateString()}</Typography>
+          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
+            RECIPIENT
+          </Typography>
+          <Typography>{trackingData?.recipientName}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
             SENDER
           </Typography>
-          <Typography>{data.sender}</Typography>
+          <Typography>{trackingData?.senderName}</Typography>
           <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
-            DELIVERY METHOD
+            CURRENT STATUS
           </Typography>
-          <Typography>{data.method}</Typography>
-          <Typography variant="subtitle2" color="textSecondary" fontSize={10}>
-            DELIVERY ADDRESS
-          </Typography>
-          <Typography>{data.address}</Typography>
+          <Typography>{trackingData?.currentStatus}</Typography>
         </Box>
-        <Box marginLeft={0}>
-          <TimelineComponent status={data.status} />
+        <Box sx={{ width: '33%' }}>
+          <TimelineComponent trackingNumber={slug ?? ''} />
         </Box>
       </Container>
     </Box>

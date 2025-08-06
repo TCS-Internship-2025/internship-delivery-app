@@ -1,9 +1,16 @@
 import React from 'react';
 import { getParcelChipData } from '../utils/parcelChipData.ts';
+import { DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum } from '@/constants.ts';
+
+import type { ParcelData } from '@/apis/parcelGet.ts';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
+
+import { CoordinatesMap } from './CoordinatesMap.tsx';
+
+import { deliveryConverter, paymentConverter } from '@/utils/parcelTypeConverter';
 
 const formatDate = (date: string | Date | undefined): string => {
   if (!date) return 'Not specified';
@@ -23,61 +30,90 @@ const formatDate = (date: string | Date | undefined): string => {
 };
 
 interface DataDisplayProps {
-  label: string;
+  label?: string;
   children: React.ReactNode;
 }
 
 const DataDisplay = ({ label, children, ...props }: DataDisplayProps) => {
   return (
-    <Typography variant="body1" fontSize={{ xs: 24, md: 28 }} ml={{ xs: 3, md: 6 }} {...props}>
-      {label}: {children}
+    <Typography variant="body1" fontSize={{ xs: 20, md: 24 }} ml={{ xs: 2, md: 5 }} {...props}>
+      {label}
+      {label && ': '}
+      {children}
     </Typography>
   );
 };
 
-interface ParcelItemProps {
-  parcelData?: {
-    parcelId?: number;
-    sender?: string;
-    recipient?: string;
-    delivery?: string;
-    payment?: string;
-    status?: string;
-    tracking_number?: string;
-    created_at?: Date;
-    updated_at?: Date;
-  };
-}
-
-export const ParcelDetailsContent = ({ parcelData }: ParcelItemProps) => {
-  const parcelChipData = getParcelChipData(parcelData?.status);
+export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }) => {
+  const parcelChipData = getParcelChipData(parcelData?.currentStatus);
 
   return (
-    <Box display={{ xs: 'block', md: 'flex' }}>
-      <Box width={{ xs: '100%', md: '50%' }}>
-        <Typography
-          variant="h3"
-          fontSize={{ xs: 36, md: 44 }}
-          ml={{ xs: 0, md: 2 }}
-          mt={{ xs: 0, md: 1 }}
-          mb={{ xs: 1.5, md: 3 }}
-        >
-          Parcel {parcelData?.parcelId ?? 'Unknown'}
-        </Typography>
-        <DataDisplay label="Sender">{parcelData?.sender ?? 'Not specified'}</DataDisplay>
-        <DataDisplay label="Recipient">{parcelData?.recipient ?? 'Not specified'}</DataDisplay>
-        <DataDisplay label="Delivery type">{parcelData?.delivery ?? 'Not specified'}</DataDisplay>
-        <DataDisplay label="Payment type">{parcelData?.payment ?? 'Not specified'}</DataDisplay>
+    <>
+      <Typography
+        variant="h3"
+        fontSize={{ xs: 28, md: 36 }}
+        ml={{ xs: 0, md: 2 }}
+        mt={{ xs: 0, md: 1 }}
+        mb={{ xs: 1.5, md: 3 }}
+      >
+        Parcel Details
+      </Typography>
+      <Box display={{ xs: 'block', md: 'flex' }}>
+        <Box width={{ xs: '100%', md: '50%' }}>
+          <DataDisplay label="Tracking code">{parcelData?.trackingCode ?? 'Unknown'}</DataDisplay>
+          <DataDisplay label="Delivery type">{deliveryConverter(parcelData?.deliveryType)}</DataDisplay>
+          <DataDisplay label="Payment type">{paymentConverter(parcelData?.paymentType)}</DataDisplay>
+        </Box>
+        <Box width={{ xs: '100%', md: '50%' }} mt={{ xs: 2, md: 0 }}>
+          <DataDisplay label="Created at">{formatDate(parcelData?.createdAt)}</DataDisplay>
+          <DataDisplay label="Updated at">{formatDate(parcelData?.updatedAt)}</DataDisplay>
+          <Box sx={{ float: 'right' }} mr={{ xs: 7, md: 15 }} mt={{ xs: 2.5, md: 5 }}>
+            <Chip {...parcelChipData} sx={{ fontSize: 20, padding: 2.5 }} />
+          </Box>
+        </Box>
       </Box>
-      <Box width={{ xs: '100%', md: '50%' }}>
-        <Chip {...parcelChipData} sx={{ float: 'right', fontSize: 20, padding: 3, mr: 10, mt: 3, mb: 3 }} />
-        <Typography variant="body1" fontSize={{ xs: 24, md: 28 }} ml={{ xs: 3, md: 6 }} mt={{ xs: 5, md: 15 }}>
-          Tracking number: {parcelData?.tracking_number ?? 'Not specified'}
-        </Typography>
-        <DataDisplay label="Created at">{formatDate(parcelData?.created_at)}</DataDisplay>
-        <DataDisplay label="Updated at">{formatDate(parcelData?.updated_at)}</DataDisplay>
+      <Typography
+        variant="h3"
+        fontSize={{ xs: 24, md: 32 }}
+        ml={{ xs: 0, md: 2 }}
+        mt={{ xs: 4, md: 6 }}
+        mb={{ xs: 1, md: 2 }}
+      >
+        Recipient data
+      </Typography>
+      <Box display={{ xs: 'block', md: 'flex' }} mb={{ xs: 4, md: 8 }}>
+        <Box width={{ xs: '100%', md: '50%' }}>
+          <DataDisplay label="Name">{parcelData?.recipient.name ?? 'Not specified'}</DataDisplay>
+          <DataDisplay label="Email">{parcelData?.recipient.email ?? 'Not specified'}</DataDisplay>
+          <DataDisplay label="Phone">{parcelData?.recipient.phone ?? 'Not specified'}</DataDisplay>
+          <DataDisplay label="Birth date">{parcelData?.recipient.birthDate ?? 'Not specified'}</DataDisplay>
+        </Box>
+        <Box width={{ xs: '100%', md: '50%' }}>
+          <Typography variant="body1" fontSize={{ xs: 21, md: 25 }} ml={{ xs: 1.5, md: 3 }} mt={{ xs: 3, md: 0 }}>
+            Address:
+          </Typography>
+          <DataDisplay>
+            {parcelData?.recipient.address.country}, {parcelData?.recipient.address.postalCode}{' '}
+            {parcelData?.recipient.address.city}
+          </DataDisplay>
+          <DataDisplay>
+            {parcelData?.recipient.address.line1}, {parcelData?.recipient.address.line2}
+          </DataDisplay>
+          <DataDisplay>
+            {parcelData?.recipient.address.building ?? undefined}
+            {parcelData?.recipient.address.building && parcelData?.recipient.address.apartment && ', '}
+            {parcelData?.recipient.address.building && `apartment ${parcelData?.recipient.address.apartment}`}
+          </DataDisplay>
+        </Box>
       </Box>
-      {/* TODO: Map */}
-    </Box>
+      <Box display={'flex'} justifyContent={'center'}>
+        {parcelData?.deliveryType !== DELIVERY_TYPE_NAME_CONVERTER[DeliveryEnum.enum.Home] && (
+          <CoordinatesMap
+            longitude={parcelData?.recipient.address.longitude ?? 0}
+            latitude={parcelData?.recipient.address.latitude ?? 0}
+          />
+        )}
+      </Box>
+    </>
   );
 };

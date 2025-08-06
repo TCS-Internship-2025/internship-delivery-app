@@ -5,7 +5,9 @@ import com.tcs.dhv.domain.dto.LoginRequest;
 import com.tcs.dhv.domain.dto.RegisterRequest;
 import com.tcs.dhv.domain.dto.RegisterResponse;
 import com.tcs.dhv.service.AuthService;
-import com.tcs.dhv.service.EmailVerificationService;
+import com.tcs.dhv.service.EmailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+
+@Tag(name= "Authentication", description = "User authentication and authorization operations")
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/auth")
@@ -28,11 +32,12 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService authService;
-    private final EmailVerificationService emailVerificationService;
+    private final EmailService emailService;
 
     @Value("${email-verification.required}")
     private boolean emailVerificationRequired;
 
+    @Operation(summary = "Login user", description = "Authenticate user with email and password")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody final LoginRequest loginRequest) {
         log.info("Login request for email: {}", loginRequest.email());
@@ -42,6 +47,7 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
 
+    @Operation(summary = "Register user", description = "Register user")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> registerUser(
         @Valid @RequestBody final RegisterRequest registerRequest
@@ -50,7 +56,7 @@ public class AuthController {
         final var registeredUser = authService.registerUser(registerRequest);
 
         if (emailVerificationRequired) {
-            emailVerificationService.sendVerificationTokenByEmail(
+            emailService.sendVerificationTokenByEmail(
                 registeredUser.getId(),
                 registeredUser.getEmail()
             );
@@ -66,21 +72,23 @@ public class AuthController {
             ));
     }
 
+    @Operation(summary = "Resend verification", description = "Resend the email verification")
     @PostMapping("/email/resend-verification")
     public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) {
         log.info("Resend verification email requested for: {}", email);
-        emailVerificationService.resendVerificationTokenByEmail(email);
+        emailService.resendVerificationTokenByEmail(email);
 
         log.info("Verification email successfully sent to: {}", email);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Email verification", description = "Verify user by the email")
     @GetMapping("/email/verify")
     public ResponseEntity<RegisterResponse> verifyEmail(
-        @RequestParam("uid") UUID userId,
-        @RequestParam("t") String token
+        @RequestParam("uid") final UUID userId,
+        @RequestParam("t") final String token
     ) {
-        final var verifiedUser = emailVerificationService.verifyEmail(userId, token);
+        final var verifiedUser = emailService.verifyEmail(userId, token);
 
         log.info("User with email {} successfully verified", verifiedUser.getEmail());
         return ResponseEntity.ok(new RegisterResponse(
@@ -90,15 +98,19 @@ public class AuthController {
         ));
     }
 
+
+    @Operation(summary = "Refresh token", description = "Refresh token")
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestParam UUID refreshToken) {
+    public ResponseEntity<AuthResponse> refreshToken(@RequestParam final UUID refreshToken) {
         log.info("Refresh token request: {}", refreshToken);
-        AuthResponse authResponse = authService.refreshToken(refreshToken);
+        final var authResponse = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(authResponse);
     }
 
+    @Operation(summary = "Logout user", description = "Logout the user by refresh token id")
+
     @PostMapping("/logout")
-    public ResponseEntity<Void> revokeToken(@RequestParam UUID refreshToken) {
+    public ResponseEntity<Void> revokeToken(@RequestParam final UUID refreshToken) {
         log.info("Logout request revoking token: {}", refreshToken);
         authService.revokeToken(refreshToken);
         return ResponseEntity.noContent().build();

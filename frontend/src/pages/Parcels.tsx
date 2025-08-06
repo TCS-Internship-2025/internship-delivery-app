@@ -34,18 +34,20 @@ export const ParcelPage = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
-        <Container
-          maxWidth={false}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <ParcelGrid parcels={data} />
-        </Container>
+    <>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          <Container
+            maxWidth={false}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <ParcelGrid parcels={data} />
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };

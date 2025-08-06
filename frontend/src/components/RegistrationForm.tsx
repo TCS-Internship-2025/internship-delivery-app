@@ -1,8 +1,8 @@
 import { Controller } from 'react-hook-form';
-import { useRegisterForm } from '../hooks/useRegisterForm';
-import { type RegistrationFormData } from '../utils/authZodSchemas';
+import { useNavigate } from 'react-router-dom';
 
-import Alert from '@mui/material/Alert';
+import { useRegisterForm } from '@/hooks/useRegisterForm';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -11,12 +11,27 @@ import TextField from '@mui/material/TextField';
 
 import { PasswordField } from './PasswordField';
 
+import { type RegistrationFormData } from '@/utils/authZodSchemas';
+
 interface RegistrationFormProps {
   onLoginClick: () => void;
 }
 
 export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
-  const { form, onSubmit, isLoading, error } = useRegisterForm();
+  const navigate = useNavigate();
+
+  const { form, onSubmit, isLoading } = useRegisterForm({
+    onSuccess: (data) => {
+      if (!data.emailVerified) {
+        void navigate('/verify', {
+          state: {
+            email: data.email,
+            name: data.name,
+          },
+        });
+      }
+    },
+  });
   const {
     control,
     handleSubmit,
@@ -28,12 +43,6 @@ export const RegistrationForm = ({ onLoginClick }: RegistrationFormProps) => {
 
   return (
     <>
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error.message}
-        </Alert>
-      )}
-
       <Box
         component="form"
         onSubmit={(e) => {

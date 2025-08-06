@@ -1,5 +1,6 @@
 import { Popup } from 'react-map-gl/mapbox';
-import type { PickupPoint } from '@/types/PickupPoint';
+
+import type { PickupPoint } from '@/apis/pickupPoints';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -7,12 +8,16 @@ import Typography from '@mui/material/Typography';
 
 import './MapMarkerPopup.css';
 
+import { useFormContext } from '@/contexts/FormContext';
+
 interface MapMarkerPopupProps {
   selectedMarker: PickupPoint;
   setSelectedMarker: (point: PickupPoint | null) => void;
   setSelectedPoint: (point: PickupPoint | null) => void;
 }
 export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedPoint }: MapMarkerPopupProps) => {
+  const { updateFormData, getPointId } = useFormContext();
+
   return (
     <Popup
       key={selectedMarker.id}
@@ -37,20 +42,30 @@ export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedP
           gap: 1.5,
         }}
       >
-        <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
+        <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 'bold' }} alignSelf={'center'}>
           {selectedMarker.name}
         </Typography>
-        <Button
-          onClick={() => {
-            setSelectedPoint(selectedMarker);
-            setSelectedMarker(null);
-          }}
-          variant="contained"
-          color="primary"
-          size="small"
-        >
-          Select
-        </Button>
+        <Typography variant="body2" sx={{ color: 'text.primary' }}>
+          {selectedMarker.address.line1}
+          <br />
+          {selectedMarker.address.line2}
+        </Typography>
+        {getPointId() === selectedMarker.id ? null : (
+          <Button
+            onClick={() => {
+              setSelectedPoint(selectedMarker);
+              updateFormData({
+                pointId: selectedMarker.id,
+              });
+              setSelectedMarker(null);
+            }}
+            variant="contained"
+            color="primary"
+            size="small"
+          >
+            Select
+          </Button>
+        )}
       </Box>
     </Popup>
   );

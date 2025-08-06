@@ -4,88 +4,116 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { useState } from 'react';
 import { mapboxAccessToken } from '@/constants';
-import type { PickupPoint } from '@/types/PickupPoint';
 
-import { useTheme } from '@/providers/ThemeProvider.tsx';
+import { useFormContext } from '@/contexts/FormContext';
+import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
+
+import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/apis/pickupPoints';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useTheme } from '@mui/material/styles';
 
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 
-// Mock data
-// cSpell:disable
-const pickupPoints = [
-  { id: 'pp1', name: 'Pickup Point 1 - Deák Ferenc tér', latitude: 47.4979, longitude: 19.0402 },
-  { id: 'pp2', name: 'Pickup Point 2 - Oktogon', latitude: 47.5056, longitude: 19.0659 },
-  { id: 'pp3', name: 'Pickup Point 3 - Kálvin tér', latitude: 47.4893, longitude: 19.0615 },
-  { id: 'pp4', name: 'Pickup Point 4 - Nyugati pályaudvar', latitude: 47.5104, longitude: 19.0561 },
-  { id: 'pp5', name: 'Pickup Point 5 - Keleti pályaudvar', latitude: 47.5009, longitude: 19.0821 },
-  { id: 'pp6', name: 'Pickup Point 6 - Buda Castle', latitude: 47.4962, longitude: 19.0399 },
-  { id: 'pp7', name: 'Pickup Point 7 - Móricz Zsigmond körtér', latitude: 47.4772, longitude: 19.0475 },
-  { id: 'pp8', name: 'Pickup Point 8 - Corvin-negyed', latitude: 47.4857, longitude: 19.0703 },
-  { id: 'pp9', name: 'Pickup Point 9 - Árpád híd', latitude: 47.5313, longitude: 19.0554 },
-  { id: 'pp10', name: 'Pickup Point 10 - Gellért tér', latitude: 47.4842, longitude: 19.0534 },
-  { id: 'pp11', name: "Pickup Point 11 - Heroes' Square", latitude: 47.5145, longitude: 19.0772 },
-  { id: 'pp12', name: 'Pickup Point 12 - Újbuda-központ', latitude: 47.4738, longitude: 19.0496 },
-  { id: 'pp13', name: 'Pickup Point 13 - Népliget', latitude: 47.4769, longitude: 19.0984 },
-  { id: 'pp14', name: 'Pickup Point 14 - Batthyány tér', latitude: 47.5074, longitude: 19.0381 },
-  { id: 'pp15', name: 'Pickup Point 15 - Blaha Lujza tér', latitude: 47.4972, longitude: 19.0704 },
-];
-/* cSpell:enable */
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
+  deliveryType: DeliveryType;
 }
 /**
  * Interactive map component displaying pickup points across Budapest.
  * Features clickable markers that show detailed popups and allows users to select pickup locations.
  * @param setSelectedPoint - Callback function triggered when a user selects a pickup point from the popup.
- *                          Receives the selected PickupPoint object or null when deselected.
- *                          Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
+ * @param deliveryType - the type of delivery selected.
+ * Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
-export const ParcelLocationMap = ({ setSelectedPoint }: ParcelLocationMapProps) => {
-  const { mapboxStyle } = useTheme();
+export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
+  const { mapboxStyle } = useMuiTheme();
+  const theme = useTheme();
+
+  const { getPointId } = useFormContext();
+
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
-  return (
-    <Box display="flex" justifyContent="center" width="100%" mt={2}>
-      <Box width="80%">
-        <Map
-          mapboxAccessToken={mapboxAccessToken}
-          initialViewState={{
-            longitude: 19.0402,
-            latitude: 47.4979,
-            zoom: 12,
-          }}
-          style={{ width: '100%', height: 500 }}
-          mapStyle={mapboxStyle}
-        >
-          {pickupPoints.map((point) => (
-            <Marker
-              key={point.id}
-              longitude={point.longitude}
-              latitude={point.latitude}
-              anchor="bottom"
-              onClick={(e) => {
-                e.originalEvent.stopPropagation();
-                setSelectedMarker(point);
-              }}
-            >
-              <LocationPinIcon
-                color={selectedMarker?.id === point.id ? 'error' : 'primary'}
-                sx={{ fontSize: 42, cursor: 'pointer' }}
-              />
-            </Marker>
-          ))}
-          {selectedMarker && (
-            <MapMarkerPopup
-              selectedMarker={selectedMarker}
-              setSelectedMarker={setSelectedMarker}
-              setSelectedPoint={setSelectedPoint}
-            />
-          )}
-        </Map>
+  const {
+    data: pickupPoints,
+    isLoading: isPickupPointsLoading,
+    isError,
+  } = useGetAllPickupPoints({ deliveryType: deliveryType });
+  if (isPickupPointsLoading) {
+    return <CircularProgress />;
+  } else if (isError) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+        <Box maxWidth={400} textAlign="center">
+          <Alert severity="error" variant="filled">
+            Failed to load pickup points. Please check your connection or try again later.
+          </Alert>
+        </Box>
       </Box>
-    </Box>
-  );
+    );
+  } else if (pickupPoints) {
+    return (
+      <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
+        <Box width="80%" flexGrow={1}>
+          <Map
+            mapboxAccessToken={mapboxAccessToken}
+            initialViewState={{
+              longitude: 19.0402,
+              latitude: 47.4979,
+              zoom: 12,
+            }}
+            style={{ width: '100%', height: '100%' }}
+            mapStyle={mapboxStyle}
+          >
+            {pickupPoints.map((point) => (
+              <Marker
+                key={point.id}
+                longitude={point.longitude}
+                latitude={point.latitude}
+                anchor="bottom"
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  setSelectedMarker(point);
+                }}
+              >
+                {getPointId() === point.id ? (
+                  <WhereToVoteIcon
+                    color="inherit"
+                    sx={{
+                      fontSize: 42,
+                      cursor: 'pointer',
+                      color: theme.palette.primary.markerSelected,
+                    }}
+                  />
+                ) : (
+                  <LocationPinIcon
+                    color="inherit"
+                    sx={{
+                      fontSize: 42,
+                      cursor: 'pointer',
+                      color:
+                        selectedMarker?.id === point.id
+                          ? theme.palette.primary.markerSelected
+                          : theme.palette.primary.marker,
+                    }}
+                  />
+                )}
+              </Marker>
+            ))}
+            {selectedMarker && (
+              <MapMarkerPopup
+                selectedMarker={selectedMarker}
+                setSelectedMarker={setSelectedMarker}
+                setSelectedPoint={setSelectedPoint}
+              />
+            )}
+          </Map>
+        </Box>
+      </Box>
+    );
+  }
 };

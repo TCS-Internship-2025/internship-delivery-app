@@ -22,13 +22,27 @@ function notifyError(error: unknown): void {
 }
 class HttpService {
   public baseUrl: string;
+  private defaultHeaders: Record<string, string>;
 
-  constructor(baseUrl = import.meta.env.VITE_API_BASE_URL ?? '') {
+  constructor(
+    baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
+    defaultHeaders: Record<string, string> = {}
+  ) {
     this.baseUrl = baseUrl;
+    this.defaultHeaders = defaultHeaders;
+  }
+
+  setGlobalHeader(key: string, value: string) {
+    this.defaultHeaders[key] = value;
+  }
+
+  removeGlobalHeader(key: string) {
+    delete this.defaultHeaders[key];
   }
 
   private createRequestConfig(options: RequestInit = {}): RequestInit {
     const headers: Record<string, string> = {
+      ...this.defaultHeaders,
       ...(options.headers as Record<string, string>),
     };
     return {

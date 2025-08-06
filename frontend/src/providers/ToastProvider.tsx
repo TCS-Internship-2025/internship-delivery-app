@@ -75,7 +75,15 @@ const ExpandableSnackbar = React.forwardRef<HTMLDivElement, CustomExpandableProp
       >
         <Box display="flex" alignItems="center" px={2} py={1.5}>
           <VariantIcon variant={variant} />
-          <Typography variant="subtitle2" px={1.5} style={{ flex: 1, whiteSpace: 'pre-line' }}>
+          <Typography
+            variant="subtitle2"
+            px={1.5}
+            style={{
+              flex: 1,
+              whiteSpace: 'pre-line',
+              color: 'inherit',
+            }}
+          >
             {headerMessage ?? first}
           </Typography>
           {hasDetails && (
@@ -90,7 +98,13 @@ const ExpandableSnackbar = React.forwardRef<HTMLDivElement, CustomExpandableProp
         {hasDetails && (
           <Collapse in={expanded}>
             <Box px={3} pb={2}>
-              <Typography variant="body2" style={{ whiteSpace: 'pre-line' }}>
+              <Typography
+                variant="body2"
+                style={{
+                  whiteSpace: 'pre-line',
+                  color: 'inherit',
+                }}
+              >
                 {rest.join('\n')}
               </Typography>
             </Box>

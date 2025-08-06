@@ -1,11 +1,8 @@
 package com.tcs.dhv.service;
 
-import com.tcs.dhv.domain.dto.ParcelRequest;
-import com.tcs.dhv.domain.dto.ParcelResponse;
-import com.tcs.dhv.domain.dto.ParcelUpdate;
+import com.tcs.dhv.domain.dto.ParcelDto;
+import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
-import com.tcs.dhv.mapper.AddressMapper;
-import com.tcs.dhv.mapper.ParcelMapper;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -31,80 +28,71 @@ public class ParcelService {
     private static final long TRACKING_NUMBER_MAX = 10_000_000_000L;
 
     private final ParcelRepository parcelRepository;
-    private final ParcelMapper parcelMapper;
-    private final AddressMapper addressMapper;
+    private final RecipientService recipientService;
+    private final UserService userService;
+    private final EmailService emailService;
+    private final ParcelStatusHistoryService parcelStatusHistoryService;
 
     private final Random random = new Random();
 
     @Transactional
-    public ParcelResponse createParcel(final ParcelRequest parcelRequest, final User sender) {
-        log.info("Creating parcel for user: {}", sender.getEmail());
+    public ParcelDto createParcel(final ParcelDto parcelDto, final UUID userId) {
+        log.info("Creating parcel for user: {}", userId);
+
+        final var sender = userService.getUserById(userId);
+
+        final var recipient = recipientService.findOrCreateRecipient(parcelDto.recipient());
 
         final var trackingCode = generateTrackingCode();
 
-        final var parcel = parcelMapper.toEntity(parcelRequest, sender, trackingCode);
-        final var savedParcel = parcelRepository.save(parcel);
+        final var parcel = parcelDto.toEntity(sender, trackingCode);
+        parcel.setRecipient(recipient);
 
+        final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
-        return parcelMapper.toResponse(savedParcel);
+
+        emailService.sendShipmentCreationEmail(savedParcel.getRecipient().getEmail(), savedParcel.getTrackingCode());
+        log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
+
+        final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
+        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
+        log.info("Parcel status entry created: {}", savedParcel.getId());
+
+        return ParcelDto.fromEntity(savedParcel);
     }
 
-    public List<ParcelResponse> getUserParcels(final UUID userId) {
-        log.info("Retrieving parcels for user ID: {}", userId);
+    public List<ParcelDto> getUserParcels(final UUID userId) {
+        log.info("Retrieving parcels for user: {}", userId);
 
-        final var parcels = parcelRepository.findAllBySenderId(userId);
+        final var sender = userService.getUserById(userId);
+
+        final var parcels = parcelRepository.findAllBySenderId(sender.getId());
+
         return parcels.stream()
-            .map(parcelMapper::toResponse)
+            .map(ParcelDto::fromEntity)
             .toList();
     }
 
-    public ParcelResponse getParcel(final UUID id, final User sender) {
+    public ParcelDto getParcel(final UUID id, final UUID userId) {
         log.info("Retrieving parcel with ID: {}", id);
 
-        final var parcel = parcelRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+        final var sender = userService.getUserById(userId);
 
-        if (!parcel.getSender().getId().equals(sender.getId())) {
-            throw new AccessDeniedException("Access denied");
-        }
+        final var parcel = getParcelByIdAndUser(id, sender);
 
-        log.info("Parcel with ID: {} retrieved successfully for user: {}", id, sender.getEmail());
-        return parcelMapper.toResponse(parcel);
+        log.info("Parcel with ID: {} retrieved successfully for user: {}", id, userId);
+        return ParcelDto.fromEntity(parcel);
     }
 
-    @Transactional
-    public ParcelResponse updateParcel(final UUID id, final ParcelUpdate parcelUpdate, final User sender) {
-        log.info("Updating parcel with ID: {} for user: {}", id, sender.getEmail());
-
-        final var parcel = parcelRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
-
-        if (!parcel.getSender().getId().equals(sender.getId())) {
-            throw new AccessDeniedException("Access denied");
-        }
-
-        parcelMapper.updateEntity(parcel, parcelUpdate);
-
-        if (parcelUpdate.address() != null) {
-            final var recipientAddress = parcel.getRecipient().getAddress();
-            addressMapper.updateEntity(recipientAddress, parcelUpdate.address());
-        }
-
-        final var updatedParcel = parcelRepository.save(parcel);
-        log.info("Parcel with ID: {} updated successfully", id);
-        return parcelMapper.toResponse(updatedParcel);
-    }
 
     @Transactional
-    public void deleteParcel(final UUID id, final User sender) {
-        log.info("Deleting parcel with ID: {} for user: {}", id, sender.getEmail());
+    public void deleteParcel(final UUID id, final UUID userId) {
+        log.info("Deleting parcel with ID: {} for user: {}", id, userId);
 
-        final var parcel = parcelRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+        final var sender = userService.getUserById(userId);
 
-        if (!parcel.getSender().getId().equals(sender.getId())) {
-            throw new AccessDeniedException("Access denied");
-        }
+        final var parcel = getParcelByIdAndUser(id, sender);
+
 
         parcelRepository.delete(parcel);
         log.info("Parcel with ID: {} deleted successfully", id);
@@ -122,4 +110,18 @@ public class ParcelService {
         } while (parcelRepository.existsByTrackingCode(code));
         return code;
     }
+
+
+    public Parcel getParcelByIdAndUser(final UUID id, final User sender) {
+
+        final var parcel = parcelRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
+
+        if (!parcel.getSender().getId().equals(sender.getId())) {
+            throw new AccessDeniedException("Access denied");
+        }
+
+        return parcel;
+    }
+
 }

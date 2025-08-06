@@ -1,18 +1,25 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ROUTES } from '@/constants';
+
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 
 import { useGetParcelById } from '@/apis/parcelGet';
 
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
 
 export const ParcelDetails = () => {
-  const { id } = useParams();
-  const { data, status } = useGetParcelById(id);
+  const [searchParams] = useSearchParams();
+  const parcelId = searchParams.get('parcelId') ?? undefined;
+  const { data, status } = useGetParcelById(parcelId);
+  const isSmallScreen = useSmallScreen();
   const navigate = useNavigate();
 
   if (status === 'pending') {
@@ -39,12 +46,7 @@ export const ParcelDetails = () => {
   }
 
   function handleBack() {
-    void navigate('..');
-  }
-
-  function handleDelete() {
-    // TODO: delete request
-    console.log('deleted');
+    void navigate(`/${ROUTES.PARCELS}`);
   }
 
   return (
@@ -59,25 +61,27 @@ export const ParcelDetails = () => {
             flexDirection: 'column',
           }}
         >
-          <ParcelDetailsContent parcelData={data} />
-          <Box alignSelf="center" mt={{ xs: 8, md: 15 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleBack}
-              sx={{ py: 2, px: 4, mr: 2, fontSize: 20, borderRadius: 3 }}
-            >
-              Back
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDelete}
-              sx={{ py: 2, px: 4, ml: 2, fontSize: 20, borderRadius: 3 }}
-            >
-              Delete
-            </Button>
+          <Box
+            alignSelf="flex-end"
+            mt={{ xs: 0, md: 1 }}
+            sx={
+              isSmallScreen
+                ? { position: 'fixed', top: 100, zIndex: 1000, right: 10 }
+                : { position: 'fixed', top: 100, zIndex: 1000, right: 30 }
+            }
+          >
+            <Tooltip title="Back to 'My Parcels' page">
+              <IconButton onClick={handleBack}>
+                <ArrowBackIosRoundedIcon color="primary" />
+                {!isSmallScreen && (
+                  <Typography variant="caption" fontWeight={600} color="secondary" ml={1} fontSize={18}>
+                    Back
+                  </Typography>
+                )}
+              </IconButton>
+            </Tooltip>
           </Box>
+          <ParcelDetailsContent parcelData={data} />
         </Container>
       </Box>
     </Box>

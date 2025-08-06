@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
 import { useGetAllParcels } from '@/apis/parcelGet';
+import { useGetProfileInfo } from '@/apis/profileInfo';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -17,7 +18,6 @@ import Typography from '@mui/material/Typography';
 import ChangeAddressModal from '@/components/ChangeAddressModal';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 import ChangeProfileModal from '@/components/ChangeProfileModal';
-
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
   return (
     <Button variant="contained" color="primary" onClick={onClick}>
@@ -39,6 +39,14 @@ export const ProfileInfo = () => {
   const [openModal, setOpenModal] = useState<ModalType | null>(null);
   const phoneNumber = '36209536049';
 
+export const ProfileInfo = () => {
+  const navigate = useNavigate();
+
+  const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels();
+  const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
+
+  const profile = profileData;
+
   const getFirstThreeInitials = (fullName: string) => {
     return fullName
       .split(' ')
@@ -56,26 +64,41 @@ export const ProfileInfo = () => {
   const handleClose = () => {
     setOpenModal(null);
   };
+  if (profileLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (profileError || !profile) {
+    return (
+      <Typography color="error" align="center">
+        Failed to load profile information.
+      </Typography>
+    );
+  }
+
   return (
     <Box sx={{ p: 4, mx: 'auto' }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
         <Grid container spacing={3} alignItems="center">
           <Grid>
             <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: 28 }}>
-              {getFirstThreeInitials(name)}
+              {getFirstThreeInitials(profile.name)}
             </Avatar>
           </Grid>
 
           <Grid>
             <Typography variant="h5" fontWeight={600}>
-              {name}
+              {profile.name}
             </Typography>
-            <Typography color="text.secondary">{email}</Typography>
+            <Typography color="text.secondary">{profile.email}</Typography>
           </Grid>
         </Grid>
 
         <Divider sx={{ my: 3 }} />
-
         <Stack direction={'column'} spacing={2}>
           <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
           <ProfileInfoButton
@@ -99,6 +122,7 @@ export const ProfileInfo = () => {
           >
             Edit user info
           </ProfileInfoButton>
+          <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
         </Stack>
         <ChangeProfileModal
           open={openModal === 'changeProfile'}
@@ -115,28 +139,28 @@ export const ProfileInfo = () => {
         </Typography>
 
         {(() => {
-          if (isLoading) {
+          if (parcelsLoading) {
             return (
               <Box display="flex" justifyContent="center" alignItems="center" height={100}>
                 <CircularProgress />
               </Box>
             );
           }
-          if (isError) {
+          if (parcelsError) {
             return <Typography color="error">Failed to load parcels.</Typography>;
           }
           return (
             <Stack spacing={2}>
-              {firstTwoParcels.map((parcel) => (
+              {firstTwoParcels?.map((parcel) => (
                 <Paper key={parcel.id} sx={{ p: 2 }} elevation={3}>
                   <Typography variant="subtitle1" fontWeight={600}>
                     Tracking: {parcel.trackingCode}
                   </Typography>
-                  <Body2Typography>From: Unknown &nbsp;&nbsp; To: {parcel.recipient.name}</Body2Typography>
+                  <Body2Typography>To: {parcel.recipient.name}</Body2Typography>
                   <Body2Typography>Delivery: {parcel.deliveryType}</Body2Typography>
                   <Body2Typography>Status: {parcel.currentStatus}</Body2Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Updated: {new Date(String(parcel.updatedAt)).toLocaleDateString()}
+                    Updated: {new Date(parcel.updatedAt).toLocaleDateString()}
                   </Typography>
                 </Paper>
               ))}

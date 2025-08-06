@@ -1,15 +1,18 @@
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { registrationSchema, type RegistrationFormData } from '../utils/authZodSchemas';
+import type { RegisterResponse } from '@/types/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { enqueueSnackbar } from 'notistack';
 
-import { useRegisterMutation } from '@/apis/authApi';
+import { register } from '@/apis/authApi';
 
-export const useRegisterForm = () => {
-  const navigate = useNavigate();
+import { registrationSchema, type RegistrationFormData } from '@/utils/authZodSchemas';
 
-  const registerMutation = useRegisterMutation();
+interface UseRegisterFormProps {
+  onSuccess?: (data: RegisterResponse) => void;
+}
 
+export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     mode: 'onChange',
@@ -21,20 +24,27 @@ export const useRegisterForm = () => {
     },
   });
 
-  const onSubmit = async (data: RegistrationFormData) => {
-    try {
-      await registerMutation.mutateAsync(data);
-      void navigate('/');
-    } catch {
-      // Error is now handled by TanStack Query
-    }
+  const { mutate: submitRegister, isPending } = useMutation({
+    mutationFn: register,
+    onSuccess: (data) => {
+      enqueueSnackbar(`Account created successfully! Please check your email for verification.`, {
+        variant: 'success',
+      });
+      form.reset();
+      onSuccess?.(data);
+    },
+    onError: (error) => {
+      console.error('Registration failed:', error);
+    },
+  });
+
+  const onSubmit = (data: RegistrationFormData) => {
+    submitRegister(data);
   };
 
   return {
     form,
     onSubmit,
-    isLoading: registerMutation.isPending,
-    error: registerMutation.error,
-    isError: registerMutation.isError,
+    isLoading: isPending,
   };
-};
+}
