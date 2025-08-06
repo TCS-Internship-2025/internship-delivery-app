@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 import ChangeAddressModal from '@/components/ChangeAddressModal';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 import ChangeProfileModal from '@/components/ChangeProfileModal';
+import DeleteUserButton from '@/components/DeleteUserButton';
 
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
   return (
@@ -115,6 +116,7 @@ export const ProfileInfo = () => {
           >
             Edit user info
           </ProfileInfoButton>
+          <DeleteUserButton showDangerZone={false} buttonVariant="contained" buttonColor="error" />
         </Stack>
         <ChangeProfileModal
           open={openModal === 'changeProfile'}
