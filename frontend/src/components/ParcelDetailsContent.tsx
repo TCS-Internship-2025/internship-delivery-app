@@ -1,5 +1,6 @@
 import React from 'react';
 import { getParcelChipData } from '../utils/parcelChipData.ts';
+import { DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum } from '@/constants.ts';
 
 import type { ParcelData } from '@/apis/parcelGet.ts';
 
@@ -99,15 +100,19 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }
             {parcelData?.recipient.address.line1}, {parcelData?.recipient.address.line2}
           </DataDisplay>
           <DataDisplay>
-            {parcelData?.recipient.address.building}, {parcelData?.recipient.address.apartment}. lakás
+            {parcelData?.recipient.address.building ?? undefined}
+            {parcelData?.recipient.address.building && parcelData?.recipient.address.apartment && ', '}
+            {parcelData?.recipient.address.building && `apartment ${parcelData?.recipient.address.apartment}`}
           </DataDisplay>
         </Box>
       </Box>
       <Box display={'flex'} justifyContent={'center'}>
-        <CoordinatesMap
-          longitude={parcelData?.recipient.address.longitude ?? 0}
-          latitude={parcelData?.recipient.address.latitude ?? 0}
-        />
+        {parcelData?.deliveryType !== DELIVERY_TYPE_NAME_CONVERTER[DeliveryEnum.enum.Home] && (
+          <CoordinatesMap
+            longitude={parcelData?.recipient.address.longitude ?? 0}
+            latitude={parcelData?.recipient.address.latitude ?? 0}
+          />
+        )}
       </Box>
     </>
   );
