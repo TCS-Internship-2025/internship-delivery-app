@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
+import { ErrorContent } from '@/components/ErrorContent';
+
 interface QueryStatesProps {
   state: string;
   pendingMessage?: string;
@@ -32,22 +34,7 @@ export const QueryStates = ({ state, pendingMessage, errorTitle, errorMessage, c
               </Typography>
             </>
           )}
-          {state === QUERY_STATUS.ERROR && (
-            <>
-              <Typography variant="h4" fontSize={isSmallScreen ? 28 : 40} textAlign="center">
-                {errorTitle ?? 'Something went wrong'}
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                fontSize={isSmallScreen ? 20 : 24}
-                textAlign="center"
-                color="primary"
-                mt={2}
-              >
-                {errorMessage ?? 'Please try again later!'}
-              </Typography>
-            </>
-          )}
+          {state === QUERY_STATUS.ERROR && <ErrorContent title={errorTitle} message={errorMessage} />}
         </Box>
       )}
     </>

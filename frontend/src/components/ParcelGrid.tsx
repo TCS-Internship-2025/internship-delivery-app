@@ -90,7 +90,7 @@ interface ParcelShortData {
   status: string;
 }
 
-export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
+export const ParcelGrid = ({ parcels }: { parcels: ParcelListData }) => {
   // TODO: Error handling
 
   const shortParcels: ParcelShortData[] =

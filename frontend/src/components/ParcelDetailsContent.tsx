@@ -50,7 +50,7 @@ interface Coordinates {
   longitude: number;
 }
 
-export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }) => {
+export const ParcelDetailsContent = ({ parcelData }: { parcelData: ParcelData }) => {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [isLoadingCoordinates, setIsLoadingCoordinates] = useState(false);
   const [geocodingError, setGeocodingError] = useState<string | null>(null);
