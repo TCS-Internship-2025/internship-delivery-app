@@ -4,7 +4,6 @@ import com.tcs.dhv.domain.entity.ParcelStatusHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ParcelStatusHistoryRepository extends JpaRepository<ParcelStatusHistory, UUID> {

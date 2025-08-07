@@ -8,6 +8,7 @@ import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
+    @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
     public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
         log.info("Address change for parcel {} by user {}", parcelId, userId);
 
