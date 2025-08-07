@@ -129,15 +129,15 @@ public class ParcelsController {
 
     @Operation(summary = "Update parcel address", description = "Update a parcel's delivery address by parcel's id")
     @PutMapping("/{id}/address")
-    public ResponseEntity<Void> changeAddress(
+    public ResponseEntity<ParcelDto> changeAddress(
         @PathVariable final UUID id,
         @Valid @RequestBody final AddressChangeDto requestDto,
         final Authentication authentication
     ) {
         log.info("Changing Address for parcel {} by user: {}", id, authentication.getName());
 
-        addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
+        final var updatedParcel = addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(updatedParcel);
     }
 }
