@@ -92,3 +92,8 @@ export const PARCEL_DELIVERY_STATUSES = {
   DELIVERED: 'DELIVERED',
   //add more if necessary
 };
+export const CHANGE_MODAL_TYPES = {
+  CHANGE_PASSWORD: 'changePassword',
+  CHANGE_ADDRESS: 'changeAddress',
+  CHANGE_PROFILE: 'changeProfile',
+};
