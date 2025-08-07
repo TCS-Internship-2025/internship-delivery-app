@@ -28,18 +28,20 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Dear Customer!</h2>
-        <p>We are happy to let you know that your shipment is on the way.</p>
-        <p>Your tracking code:</p>
-        <div class="code" th:text="${trackingCode}">DefaultCode</div>
-        <p>Click on the following link to track your shipment:</p>
-        <a class="link" th:href="${trackingUrl}" target="_blank"
-           style="color: white;
+<div class="container">
+    <h2>Dear Customer!</h2>
+    <p>The status of your shipment has changed!</p>
+    <h3>New Status:</h3>
+    <p th:text="${status}">DefaultNewStatus</p>
+    <h3>Your tracking code:</h3>
+    <div class="code" th:text="${trackingCode}">DefaultCode</div>
+    <p>Click on the following link to track your shipment:</p>
+    <a class="link" th:href="${trackingUrl}" target="_blank"
+       style="color: white;
             text-decoration: none;">
-            Track shipment</a>
-        <p>Thank you for choosing us!</p>
-        <p><i>Team DHV</i></p>
-    </div>
+        Track shipment</a>
+    <p>Thank you for choosing us!</p>
+    <p><i>Team DHV</i></p>
+</div>
 </body>
 </html>
