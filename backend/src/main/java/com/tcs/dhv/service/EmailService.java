@@ -197,13 +197,12 @@ public class EmailService {
     public void sendParcelStatusChangeNotification(
         final String email,
         final String status,
-        final String trackingCode,
-        final String trackingUrl
+        final String trackingCode
     ){
         final var context = new Context();
         context.setVariable("status", status);
         context.setVariable("trackingCode", trackingCode);
-        context.setVariable("trackingUrl", trackingUrl);
+        context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingCode);
 
         final var htmlContext = this.templateEngine.process("ParcelStatusChangedEmail.html", context);
 
