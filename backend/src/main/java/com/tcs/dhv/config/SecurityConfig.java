@@ -34,9 +34,18 @@ public class SecurityConfig {
     public static final String[] PUBLIC_ENDPOINTS = {
         "/api/auth/**",
         "/api/tracking/**",
-        "/public-api/parcels/**"
-    };
+        "/public-api/parcels/**",
 
+        //OPENAPI/SWAGGER
+        "/v3/api-docs",
+        "/v3/api-docs.yaml",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/swagger-resources/**",
+        "/webjars/**"
+
+    };
 
     @Value("${dhv.client-url}")
     private String clientUrl;

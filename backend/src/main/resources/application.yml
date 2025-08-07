@@ -3,8 +3,8 @@ spring:
     name: dhv
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME:parcel_db}
-    username: ${DB_USER:postgres}
+    url: jdbc:postgresql://localhost:5432/${DB_NAME:parcel_db} # should be changed to default docker db (dhv)
+    username: ${DB_USER:postgres} # should be changed to default docker user (dhv_core)
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
@@ -46,7 +46,19 @@ spring:
 
 logging:
   level:
-    org.flywaydb: DEBUG
+    org.flywaydb: INFO
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  packages-to-scan: com.tcs.dhv.controller
+  paths-to-match: /api/**
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
 
 jwt:
   private-key: classpath:jwt/app.key
@@ -55,6 +67,7 @@ jwt:
 
 auth:
   refresh-token-ttl: 24h
+  reset-token-ttl: 15m
 
 email-verification:
   required: true

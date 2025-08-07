@@ -16,4 +16,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @EntityGraph(attributePaths = {"address", "refreshTokens"})
     boolean existsByName(final String name);
+
+    @EntityGraph(attributePaths = {"address", "refreshTokens"})
+    Optional<User> findByPhone(final String phone);
+
+    boolean existsByPhone(final String phone);
 }

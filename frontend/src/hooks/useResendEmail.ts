@@ -5,7 +5,7 @@ import { enqueueSnackbar } from 'notistack';
 import { resendVerificationEmail } from '@/apis/authApi';
 
 export const useResendEmail = () => {
-  const [cooldown, setCooldown] = useState(true);
+  const [cooldown, setCooldown] = useState(false);
   const [countdown, setCountdown] = useState(30);
 
   const { mutate: resendEmail, isPending } = useMutation({
@@ -36,7 +36,10 @@ export const useResendEmail = () => {
         setCountdown(remainingSeconds);
       } else {
         localStorage.removeItem('cooldownExpiryTime');
+        setCooldown(false);
       }
+    } else {
+      setCooldown(false);
     }
   }, []);
 

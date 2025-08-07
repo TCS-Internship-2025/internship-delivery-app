@@ -1,9 +1,8 @@
 package com.tcs.dhv.exception;
 
 import com.tcs.dhv.domain.dto.ApiErrorResponse;
-
-import jakarta.validation.ConstraintViolationException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,11 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -137,5 +136,16 @@ public class GlobalExceptionHandler {
                 .timestamp(Instant.now())
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message("Invalid request body")
+            .timestamp(Instant.now())
+            .build();
+
+        return ResponseEntity.badRequest().body(err);
     }
 }

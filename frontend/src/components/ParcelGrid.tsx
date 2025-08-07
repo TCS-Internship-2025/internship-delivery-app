@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -105,6 +105,7 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
     })) ?? [];
 
   const [rowData] = useState(shortParcels ?? undefined);
+  const [height, setHeight] = useState<number>(0);
   const gridRef = useRef<AgGridReact<ParcelShortData>>(null);
   const isSmallScreen = useSmallScreen();
   const { mode } = useTheme();
@@ -118,6 +119,14 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (parcels?.length && parcels.length > 0) {
+      setHeight(isSmallScreen ? parcels.length * 43 : parcels.length * 60);
+    } else {
+      setHeight(isSmallScreen ? 360 : 692);
+    }
+  }, [parcels?.length, isSmallScreen, height]);
+
   const handleSelection = () => {
     const selected = gridRef.current?.api.getSelectedRows();
     if (selected?.length) {
@@ -125,14 +134,11 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
       void navigate(`${ROUTES.DETAILS}?parcelId=${selected[0].parcelId}`);
     }
   };
-
   return (
     <Box
       className={`ag-theme-quartz${mode === 'dark' ? '-dark' : ''}`}
       width={{ xs: '100%', md: '75%' }}
-      height={
-        isSmallScreen ? (parcels?.length ? parcels.length * 43.5 : 360) : parcels?.length ? parcels.length * 60.5 : 692
-      }
+      height={height}
       ml="auto"
       mr="auto"
       sx={
