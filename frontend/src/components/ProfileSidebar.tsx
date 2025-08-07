@@ -1,4 +1,6 @@
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -16,9 +18,16 @@ interface ProfileSidebarProps {
   onSelect: (page: ProfileSettingPages) => void;
   drawerOpen: boolean;
   useDrawer?: boolean;
+  closeDrawer?: () => void;
 }
 
-export const ProfileSidebar = ({ selected, onSelect, drawerOpen, useDrawer = false }: ProfileSidebarProps) => {
+export const ProfileSidebar = ({
+  selected,
+  onSelect,
+  drawerOpen,
+  closeDrawer,
+  useDrawer = false,
+}: ProfileSidebarProps) => {
   const sidebarContent = (
     <Paper
       elevation={3}
@@ -33,6 +42,11 @@ export const ProfileSidebar = ({ selected, onSelect, drawerOpen, useDrawer = fal
     >
       <Typography variant="h6" mb={2}>
         Profile Settings
+        {useDrawer && (
+          <IconButton onClick={closeDrawer}>
+            <ArrowBackIosRoundedIcon color="primary" />
+          </IconButton>
+        )}
       </Typography>
 
       <List sx={{ flexGrow: 1 }}>

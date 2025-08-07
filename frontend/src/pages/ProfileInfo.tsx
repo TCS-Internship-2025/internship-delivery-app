@@ -4,7 +4,9 @@ import { useSmallScreen } from '@/hooks/useSmallScreen';
 
 import { useGetProfileInfo } from '@/apis/profileInfo';
 
+import MenuIcon from '@mui/icons-material/Menu';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -17,8 +19,11 @@ export type ProfileSettingPages = 'profile' | 'address' | 'password';
 export const ProfileInfo = () => {
   const [selectedPage, setSelectedPage] = useState<ProfileSettingPages>('profile');
   const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useSmallScreen();
+
+  const closeDrawer = () => setDrawerOpen(false);
+  const openDrawer = () => setDrawerOpen(true);
 
   if (profileLoading) {
     return (
@@ -33,15 +38,41 @@ export const ProfileInfo = () => {
   }
 
   return (
-    <Paper sx={{ display: 'flex', justifyContent: 'center', width: '60%', alignSelf: 'center' }} elevation={2}>
-      <button onClick={() => setDrawerOpen(!drawerOpen)}>sadasads</button>
-      <ProfileSidebar
-        selected={selectedPage}
-        onSelect={setSelectedPage}
-        drawerOpen={drawerOpen}
-        useDrawer={isSmallScreen}
-      />
-      <ProfilePageContent page={selectedPage} />
-    </Paper>
+    <Box display="flex" flexDirection="column" alignItems="center" gap={2} width="100%" px={2} py={3}>
+      {isSmallScreen && (
+        <Button
+          variant="outlined"
+          startIcon={<MenuIcon />}
+          onClick={openDrawer}
+          sx={{
+            alignSelf: 'flex-start',
+            ml: 1,
+          }}
+        >
+          Profile Menu
+        </Button>
+      )}
+
+      <Paper
+        elevation={2}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: isSmallScreen ? '100%' : '60%',
+          maxWidth: 900,
+          p: 2,
+          gap: 2,
+        }}
+      >
+        <ProfileSidebar
+          selected={selectedPage}
+          onSelect={setSelectedPage}
+          drawerOpen={drawerOpen}
+          useDrawer={isSmallScreen}
+          closeDrawer={closeDrawer}
+        />
+        <ProfilePageContent page={selectedPage} />
+      </Paper>
+    </Box>
   );
 };

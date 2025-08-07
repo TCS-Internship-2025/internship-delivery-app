@@ -26,7 +26,7 @@ export const ProfilePageContent = ({ page }: ProfilePageContentProps) => {
   };
 
   return (
-    <Box flex={1} p={4}>
+    <Box flex={1} p={4} flexDirection={'column'}>
       {renderPage()}
     </Box>
   );
