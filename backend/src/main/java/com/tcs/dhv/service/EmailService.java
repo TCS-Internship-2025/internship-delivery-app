@@ -41,10 +41,12 @@ public class EmailService {
 
     public void sendShipmentCreationEmail(
         final String email,
+        final String name,
         final String trackingNumber
     ) {
         final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
+        context.setVariable("name", name);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
         final var htmlContent = this.templateEngine.process("ShipmentCreationEmail.html", context);
@@ -56,10 +58,12 @@ public class EmailService {
 
     public void sendDeliveryCompleteEmail(
             String email,
+            String name,
             String trackingNumber
     ) {
         final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
+        context.setVariable("name", name);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
         final var htmlContent = this.templateEngine.process("DeliveryCompletionEmail.html",context);

@@ -29,7 +29,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Dear Customer!</h2>
+        <h2 th:text="'Dear ' +  ${name}">Dear Customer!</h2>
         <p>We are happy to let you know that your shipment is on the way.</p>
         <p>Your tracking code:</p>
         <div class="code" th:text="${trackingCode}">DefaultCode</div>
