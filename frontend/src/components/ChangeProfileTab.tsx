@@ -114,7 +114,7 @@ export function ChangeProfileTab({ formData }: ChangeProfileTabProps) {
         )}
       />
 
-      <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2 }}>
+      <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2, width: '20%' }}>
         {isSubmitting ? 'Updating...' : 'Save Changes'}
       </Button>
     </Box>
