@@ -58,7 +58,7 @@ public class ParcelService {
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
 
-        emailService.sendShipmentCreationEmail(sender.getEmail(), savedParcel.getTrackingCode());
+        emailService.sendShipmentCreationEmail(sender.getEmail(), sender.getName(), savedParcel.getTrackingCode());
         log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
         final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
