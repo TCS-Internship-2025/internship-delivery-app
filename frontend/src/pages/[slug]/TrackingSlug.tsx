@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { QUERY_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
+import { FormProvider } from '@/providers/FormProvider';
 
 import { useTracking } from '@/apis/tracking';
 
@@ -75,7 +76,9 @@ function TrackingSlug() {
           </Typography>
           <Typography>{trackingData?.currentStatus}</Typography>
         </Box>
-        <AddressChangeModal parcelId={trackingData?.parcelId} />
+        <FormProvider>
+          <AddressChangeModal parcelId={trackingData?.parcelId} />
+        </FormProvider>
         <Box sx={{ width: '33%' }}>
           <TimelineComponent trackingNumber={slug ?? ''} />
         </Box>
