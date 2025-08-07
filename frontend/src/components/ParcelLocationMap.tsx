@@ -5,18 +5,18 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState } from 'react';
 import { mapboxAccessToken } from '@/constants';
 
-import { useAuth } from '@/contexts/AuthContext.tsx';
+import { useFormContext } from '@/contexts/FormContext';
 import { useTheme as useMuiTheme } from '@/providers/ThemeProvider.tsx';
 
 import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/apis/pickupPoints';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
-import Alert from '@mui/material/Alert';
+import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
+import { QueryStates } from './QueryStates';
 
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
@@ -33,28 +33,18 @@ interface ParcelLocationMapProps {
 export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
-  const { token } = useAuth();
+
+  const { getPointId } = useFormContext();
 
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
-  const {
-    data: pickupPoints,
-    isLoading: isPickupPointsLoading,
-    isError,
-  } = useGetAllPickupPoints(token, { deliveryType: deliveryType });
-  if (isPickupPointsLoading) {
-    return <CircularProgress />;
-  } else if (isError) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-        <Box maxWidth={400} textAlign="center">
-          <Alert severity="error" variant="filled">
-            Failed to load pickup points. Please check your connection or try again later.
-          </Alert>
-        </Box>
-      </Box>
-    );
-  } else if (pickupPoints) {
-    return (
+  const { data: pickupPoints, status: pickupPointsStatus } = useGetAllPickupPoints({ deliveryType: deliveryType });
+
+  return (
+    <QueryStates
+      state={pickupPointsStatus}
+      errorTitle="Failed to load pickup points"
+      errorMessage="Please check your connection or try again later!"
+    >
       <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
         <Box width="80%" flexGrow={1}>
           <Map
@@ -67,7 +57,7 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
             style={{ width: '100%', height: '100%' }}
             mapStyle={mapboxStyle}
           >
-            {pickupPoints.map((point) => (
+            {pickupPoints?.map((point) => (
               <Marker
                 key={point.id}
                 longitude={point.longitude}
@@ -78,17 +68,28 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
                   setSelectedMarker(point);
                 }}
               >
-                <LocationPinIcon
-                  color="inherit"
-                  sx={{
-                    fontSize: 42,
-                    cursor: 'pointer',
-                    color:
-                      selectedMarker?.id === point.id
-                        ? theme.palette.primary.markerSelected
-                        : theme.palette.primary.marker,
-                  }}
-                />
+                {getPointId() === point.id ? (
+                  <WhereToVoteIcon
+                    color="inherit"
+                    sx={{
+                      fontSize: 42,
+                      cursor: 'pointer',
+                      color: theme.palette.primary.markerSelected,
+                    }}
+                  />
+                ) : (
+                  <LocationPinIcon
+                    color="inherit"
+                    sx={{
+                      fontSize: 42,
+                      cursor: 'pointer',
+                      color:
+                        selectedMarker?.id === point.id
+                          ? theme.palette.primary.markerSelected
+                          : theme.palette.primary.marker,
+                    }}
+                  />
+                )}
               </Marker>
             ))}
             {selectedMarker && (
@@ -101,6 +102,6 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
           </Map>
         </Box>
       </Box>
-    );
-  }
+    </QueryStates>
+  );
 };

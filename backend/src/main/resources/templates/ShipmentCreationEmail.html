@@ -13,7 +13,7 @@
         .code {
             font-size: 1.5em;
             font-weight: bold;
-            color: darkgreen;
+            color:  green;
         }
         .link {
             display: inline-block;
@@ -23,13 +23,13 @@
             border-radius: 5px;
         }
         .link:hover {
-            background-color: darkgreen;
+            background-color:  darkgreen;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Dear Customer!</h2>
+        <h2 th:text="'Dear ' +  ${name}">Dear Customer!</h2>
         <p>We are happy to let you know that your shipment is on the way.</p>
         <p>Your tracking code:</p>
         <div class="code" th:text="${trackingCode}">DefaultCode</div>
@@ -37,7 +37,7 @@
         <a class="link" th:href="${trackingUrl}" target="_blank"
            style="color: white;
             text-decoration: none;">
-            Tracking shipment</a>
+            Track shipment</a>
         <p>Thank you for choosing us!</p>
         <p><i>Team DHV</i></p>
     </div>

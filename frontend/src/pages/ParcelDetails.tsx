@@ -1,98 +1,68 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ROUTES } from '@/constants';
 
-import { useAuth } from '@/contexts/AuthContext';
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 
-import { useDeleteParcelById, useGetParcelById } from '@/apis/parcelGet';
+import { useGetParcelById } from '@/apis/parcelGet';
 
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
+import { QueryStates } from '@/components/QueryStates';
 
 export const ParcelDetails = () => {
-  const { token } = useAuth();
-  const { parcelId } = useParams();
-  const { data, status } = useGetParcelById(parcelId, token);
-  const deleteParcelMutation = useDeleteParcelById();
+  const [searchParams] = useSearchParams();
+  const parcelId = searchParams.get('parcelId') ?? undefined;
+  const { data: thisParcelData, status: thisParcelStatus } = useGetParcelById(parcelId);
+  const isSmallScreen = useSmallScreen();
   const navigate = useNavigate();
 
-  if (status === 'pending') {
-    return (
-      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (status === 'error') {
-    return (
-      <Box
-        display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        height={'100%'}
-        flexDirection={'column'}
-        mt={10}
-      >
-        <Typography variant="h4">Something went wrong.</Typography>
-        <Typography variant="subtitle1">Please try again later!</Typography>
-      </Box>
-    );
-  }
-
   function handleBack() {
-    void navigate('..');
-  }
-
-  function handleDelete() {
-    if (!parcelId) return;
-
-    deleteParcelMutation.mutate(parcelId, {
-      onSuccess: () => {
-        console.log('Parcel deleted successfully');
-        void navigate('..');
-      },
-      onError: (error) => {
-        console.error('Failed to delete parcel:', error);
-      },
-    });
+    void navigate(`/${ROUTES.PARCELS}`);
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
-        <Container
-          maxWidth={false}
-          sx={{
-            width: '100%',
-            padding: 4,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <ParcelDetailsContent parcelData={data} />
-          <Box alignSelf="center" mt={{ xs: 5, md: 10 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleBack}
-              sx={{ py: 2, px: 4, mr: 2, fontSize: 20, borderRadius: 3 }}
+    <QueryStates state={thisParcelStatus} errorTitle="Could not fetch parcel details">
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box sx={{ flex: 1, overflow: 'auto' }}>
+          <Container
+            maxWidth={false}
+            sx={{
+              width: '100%',
+              padding: 4,
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Box
+              alignSelf="flex-end"
+              mt={{ xs: 0, md: 1 }}
+              sx={
+                isSmallScreen
+                  ? { position: 'fixed', top: 100, zIndex: 1000, right: 10 }
+                  : { position: 'fixed', top: 100, zIndex: 1000, right: 30 }
+              }
             >
-              Back
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDelete}
-              sx={{ py: 2, px: 4, ml: 2, fontSize: 20, borderRadius: 3 }}
-            >
-              Delete
-            </Button>
-          </Box>
-        </Container>
+              <Tooltip title="Back to 'My Parcels' page">
+                <IconButton onClick={handleBack}>
+                  <ArrowBackIosRoundedIcon color="primary" />
+                  {!isSmallScreen && (
+                    <Typography variant="caption" fontWeight={600} color="secondary" ml={1} fontSize={18}>
+                      Back
+                    </Typography>
+                  )}
+                </IconButton>
+              </Tooltip>
+            </Box>
+            <ParcelDetailsContent parcelData={thisParcelData} />
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </QueryStates>
   );
 };

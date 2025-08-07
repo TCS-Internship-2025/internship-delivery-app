@@ -1,11 +1,13 @@
 package com.tcs.dhv.domain.dto;
 
 import com.tcs.dhv.domain.entity.Address;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+@Schema(description = "Address request")
 public record AddressDto(
     @Size(max = 255, message = "Line 1 cannot exceed {max} characters")
     String line1,
@@ -50,20 +52,6 @@ public record AddressDto(
             address.getLatitude(),
             address.getLongitude()
         );
-    }
-
-    public Address toEntity() {
-        return Address.builder()
-            .line1(line1)
-            .line2(line2)
-            .building(building)
-            .apartment(apartment)
-            .city(city)
-            .postalCode(postalCode)
-            .country(country)
-            .latitude(latitude)
-            .longitude(longitude)
-            .build();
     }
 
     public void updateEntity(final Address address) {

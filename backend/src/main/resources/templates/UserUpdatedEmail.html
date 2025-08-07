@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: lightgrey;
+            color: black;
+        }
+        .important {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 th:text="'Dear ' +  ${newName}">Dear User!</h2>
+    <p>Your user profile was successfully updated</p>
+    <h3>Previous Profile:</h3>
+    <h4>Name:</h4>
+    <p th:text="${oldName}">default</p>
+    <h4>Email: </h4>
+    <p th:text="${oldEmail}">default</p>
+    <h4>Phone: </h4>
+    <p th:text="${oldPhone}">default</p>
+    <h4>Address: </h4>
+    <p th:text="${oldAddressLine1}">default</p>
+    <p th:text="${oldAddressLine2}">default</p>
+    <p th:text="${oldAddressLine3}">default</p>
+    <h3>New Profile:</h3>
+    <h4>Name:</h4>
+    <p th:text="${newName}">default</p>
+    <h4>Email: </h4>
+    <p th:text="${newEmail}">default</p>
+    <h4>Phone:</h4>
+    <p th:text="${newPhone}">default</p>
+    <h4>Address: </h4>
+    <p th:text="${newAddressLine1}">default</p>
+    <p th:text="${newAddressLine2}">default</p>
+    <p th:text="${newAddressLine3}">default</p>
+    <p class="important">If you did not request this change, please contact our support team immediately!</p>
+    <p><i>Team DHV</i></p>
+</div>
+</body>
+</html>

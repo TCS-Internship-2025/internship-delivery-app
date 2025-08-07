@@ -16,15 +16,20 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     mode: 'onChange',
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const { mutate: submitRegister, isPending } = useMutation({
     mutationFn: register,
     onSuccess: (data) => {
-      enqueueSnackbar(
-        `Account created successfully! ${data.emailVerified ? 'Please check your email for verification.' : 'You can now login.'}`,
-        { variant: 'success' }
-      );
+      enqueueSnackbar(`Account created successfully! Please check your email for verification.`, {
+        variant: 'success',
+      });
       form.reset();
       onSuccess?.(data);
     },

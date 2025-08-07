@@ -1,43 +1,16 @@
-import { useAuth } from '@/contexts/AuthContext';
-
 import { useGetAllParcels } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 
 import { ParcelGrid } from '@/components/ParcelGrid';
+import { QueryStates } from '@/components/QueryStates';
 
 export const ParcelPage = () => {
-  const { token } = useAuth();
-  const { data, status } = useGetAllParcels(token);
-
-  if (status === 'pending') {
-    return (
-      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} mt={10}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (status === 'error') {
-    return (
-      <Box
-        display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        height={'100%'}
-        flexDirection={'column'}
-        mt={10}
-      >
-        <Typography variant="h4">Something went wrong.</Typography>
-        <Typography variant="subtitle1">Please try again later!</Typography>
-      </Box>
-    );
-  }
+  const { data: allParcelData, status: allParcelStatus } = useGetAllParcels();
 
   return (
-    <>
+    <QueryStates state={allParcelStatus} errorTitle="Could not fetch parcels data">
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
           <Container
@@ -47,10 +20,10 @@ export const ParcelPage = () => {
               flexDirection: 'column',
             }}
           >
-            <ParcelGrid parcels={data} />
+            <ParcelGrid parcels={allParcelData} />
           </Container>
         </Box>
       </Box>
-    </>
+    </QueryStates>
   );
 };

@@ -1,51 +1,55 @@
+import { PARCEL_DELIVERY_STATUSES } from '@/constants';
+
 import { useSmallScreen } from '@/hooks/useSmallScreen';
+
+import { useTimeline } from '@/apis/tracking';
 
 import Timeline from '@mui/lab/Timeline';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
-import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import Typography from '@mui/material/Typography';
 
-interface TimelineProp {
-  status: {
-    changeDate: string;
-    changeMessage: string;
-    changeLocation: string;
-  }[];
-}
+import { QueryStates } from './QueryStates';
 
-export default function TimelineComponent({ status }: TimelineProp) {
+const notSmallScreenStyle = { top: '50%', left: '50%', transform: 'translate(50%, 0)' };
+export default function TimelineComponent({ trackingNumber }: { trackingNumber: string }) {
   const isSmallScreen = useSmallScreen();
+  const { data: timelineData, status: timelineStatus } = useTimeline(trackingNumber);
+
   return (
-    <Timeline sx={{ ...(isSmallScreen && { [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 } }) }}>
-      {status.map((value) => {
-        return (
-          <TimelineItem key={value.changeMessage}>
-            {!isSmallScreen && (
-              <TimelineOppositeContent color="textSecondary">
-                {new Date(value.changeDate).toLocaleDateString()}
-              </TimelineOppositeContent>
-            )}
+    <QueryStates state={timelineStatus}>
+      <Timeline
+        sx={{
+          paddingTop: isSmallScreen ? 0 : 7,
+          ...(!isSmallScreen && notSmallScreenStyle),
+          [`& .${timelineItemClasses.missingOppositeContent}:before`]: { display: 'none' },
+          ...(isSmallScreen && {
+            [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 },
+          }),
+        }}
+      >
+        {timelineData?.map((event) => (
+          <TimelineItem key={event.id}>
             <TimelineSeparator>
               <TimelineDot />
-              {value.changeMessage !== 'Delivered' && <TimelineConnector />}
+              {event.status !== PARCEL_DELIVERY_STATUSES.DELIVERED && <TimelineConnector />}
             </TimelineSeparator>
-            <TimelineContent variant="subtitle2">
-              {value.changeMessage}
+            <TimelineContent variant="subtitle2" fontSize={12}>
+              {event.description}
               <br />
-              <Typography variant="caption">{value.changeLocation}</Typography>
-              {isSmallScreen && (
-                <Typography variant="subtitle2" color="textSecondary">
-                  {new Date(value.changeDate).toLocaleDateString()}
-                </Typography>
-              )}
+              <Typography variant="caption" noWrap>
+                {event.status.replace('_', ' ')}
+              </Typography>
+              <Typography variant="subtitle2" color="textSecondary">
+                {new Date(event.timestamp).toLocaleDateString()}
+              </Typography>
             </TimelineContent>
           </TimelineItem>
-        );
-      })}
-    </Timeline>
+        ))}
+      </Timeline>
+    </QueryStates>
   );
 }

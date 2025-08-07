@@ -42,16 +42,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
 
-    @NotNull
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotNull
     private String password;
 
+    @Column(unique = true)
     private String phone;
 
     @OneToOne

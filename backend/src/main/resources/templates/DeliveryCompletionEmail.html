@@ -29,7 +29,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Dear User!</h2>
+        <h2 th:text="'Dear ' +  ${name}">Dear User!</h2>
         <p>We are happy to inform you that your package has been delivered!</p>
         <p>Your tracking code:</p>
         <div class="code" th:text="${trackingCode}">DefaultCode</div>
@@ -37,7 +37,7 @@
         <a class="link" th:href="${trackingUrl}" target="_blank"
            style="color: white;
             text-decoration: none;">
-            Tracking shipment</a>
+            Track shipment</a>
         <p>Thank you for choosing us!</p>
         <p><i>Team DHV</i></p>
     </div>
