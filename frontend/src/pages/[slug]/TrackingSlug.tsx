@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { QUERY_STATUS } from '@/constants';
+import { PARCEL_STATUS, QUERY_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
@@ -27,6 +27,14 @@ function TrackingSlug() {
   const [index, setIndex] = useState<number>(0);
   const handleOnClick = (index: number) => {
     setIndex(index);
+  };
+  const findNextStatus = () => {
+    if (timelineData?.length === 0) return PARCEL_STATUS.CREATED;
+    if (timelineData?.length === 1) return PARCEL_STATUS.PICKED_UP;
+    if (timelineData?.length === 2) return PARCEL_STATUS.IN_TRANSIT;
+    if (timelineData?.length === 3) return PARCEL_STATUS.OUT_FOR_DELIVERY;
+    if (timelineData?.length === 4) return 'ON THE WAY!';
+    return null;
   };
   const isSmallScreen = useSmallScreen();
   if (timelineStatus === QUERY_STATUS.PENDING || trackingStatus === QUERY_STATUS.PENDING) {
@@ -104,6 +112,12 @@ function TrackingSlug() {
                 </Box>
               );
             })}
+            {findNextStatus() !== null && (
+              <Box display={'flex'} alignItems={'center'} width={'20%'} gap={1}>
+                <CircularProgress size={12} />
+                <Typography fontSize={12}>{findNextStatus()}</Typography>
+              </Box>
+            )}
           </Box>
         </Box>
         <Box display={'flex'} flexDirection={'row'} gap={2}>
