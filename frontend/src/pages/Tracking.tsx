@@ -29,7 +29,6 @@ export const Tracking = () => {
   const onSubmit = async (data: TrackingFormValues) => {
     await navigate(`/tracking/${data.trackNumber}`);
   };
-  // to ammend
   return (
     <form onSubmit={handleFormSubmit}>
       <Box
