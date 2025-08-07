@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import type { ProfileSettingPages } from '@/pages/ProfileInfo';
 
 import { ChangePasswordTab } from './ChangePasswordTab';
+import { ChangeProfileTab } from './ChangeProfileTab';
 
 interface ProfilePageContentProps {
   page: ProfileSettingPages;
@@ -15,16 +16,7 @@ export const ProfilePageContent = ({ page }: ProfilePageContentProps) => {
   const renderPage = () => {
     switch (page) {
       case 'profile':
-        return (
-          <>
-            <Typography variant="h5" gutterBottom>
-              Profile Settings
-            </Typography>
-            <TextField label="Name" fullWidth margin="normal" />
-            <TextField label="Bio" fullWidth margin="normal" multiline />
-            <Button variant="contained">Save</Button>
-          </>
-        );
+        return <ChangeProfileTab />;
       case 'address':
         return (
           <>
