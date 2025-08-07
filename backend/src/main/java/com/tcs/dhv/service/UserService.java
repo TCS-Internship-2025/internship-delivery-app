@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -100,22 +98,13 @@ public class UserService {
         final var user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
-        final Set<ParcelStatus> undeliveredStatus = EnumSet.of(
-            ParcelStatus.CREATED,
-            ParcelStatus.PICKED_UP,
-            ParcelStatus.IN_TRANSIT,
-            ParcelStatus.OUT_FOR_DELIVERY,
-            ParcelStatus.DELIVERY_ATTEMPTED,
-            ParcelStatus.RETURNED_TO_SENDER
-        );
-
-        final boolean hasUndeliveredSentParcels = parcelRepository.existsBySenderIdAndCurrentStatusIn(
+        final var hasUndeliveredSentParcels = parcelRepository.existsBySenderIdAndCurrentStatus(
             userId,
-            undeliveredStatus
+            ParcelStatus.DELIVERED
         );
-        final boolean hasUndeliveredReceivedParcels = parcelRepository.existsByRecipientIdAndCurrentStatusIn(
+        final var hasUndeliveredReceivedParcels = parcelRepository.existsByRecipientIdAndCurrentStatus(
             userId,
-            undeliveredStatus
+            ParcelStatus.DELIVERED
         );
 
         if (hasUndeliveredSentParcels || hasUndeliveredReceivedParcels) {
