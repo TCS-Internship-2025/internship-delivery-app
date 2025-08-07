@@ -174,6 +174,27 @@ export async function sendForgotPasswordEmail(email: string): Promise<void> {
   }
 }
 
+export async function resetPasswordWithToken(token: string, newPassword: string): Promise<void> {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/auth/password/reset`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify({ newPassword }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Password reset failed: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ''}`
+    );
+  }
+}
+
 export async function deleteUser(): Promise<void> {
   const authData = getStoredAuthData();
 
