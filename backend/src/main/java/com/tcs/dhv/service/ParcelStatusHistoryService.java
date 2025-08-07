@@ -50,10 +50,15 @@ public class ParcelStatusHistoryService {
     public ParcelStatusHistoryDto updateStatusHistory(final UUID id, final ParcelStatusHistory updatedEntity) {
         final var existing = statusHistoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Status history not found for ID: " + id));
+
         existing.setStatus(updatedEntity.getStatus());
+
         existing.setDescription(updatedEntity.getDescription());
+
         existing.setTimestamp(updatedEntity.getTimestamp());
+
         final var saved = statusHistoryRepository.save(existing);
+
         return ParcelStatusHistoryDto.fromEntity(saved);
     }
 
