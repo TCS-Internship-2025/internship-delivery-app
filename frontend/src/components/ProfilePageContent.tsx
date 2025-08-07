@@ -1,10 +1,9 @@
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import type { ProfileSettingPages } from '@/pages/ProfileInfo';
 
+import { ChangeAddressTab } from './ChangeAddressTab';
 import { ChangePasswordTab } from './ChangePasswordTab';
 import { ChangeProfileTab } from './ChangeProfileTab';
 
@@ -18,16 +17,7 @@ export const ProfilePageContent = ({ page }: ProfilePageContentProps) => {
       case 'profile':
         return <ChangeProfileTab />;
       case 'address':
-        return (
-          <>
-            <Typography variant="h5" gutterBottom>
-              Account Settings
-            </Typography>
-            <TextField label="Email" fullWidth margin="normal" />
-            <TextField label="Password" type="password" fullWidth margin="normal" />
-            <Button variant="contained">Update</Button>
-          </>
-        );
+        return <ChangeAddressTab />;
       case 'password':
         return <ChangePasswordTab />;
       default:

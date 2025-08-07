@@ -6,7 +6,6 @@ import { useEditAddress } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
 
 import { SectionFields } from './FormSectionFields';
 
@@ -14,22 +13,9 @@ import {
   changeAddressFields,
   changeAddressFormSchema,
   type ChangeAddressFormSchema,
-  type ModalProps,
 } from '@/utils/changeDataComposition';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  borderRadius: 2,
-  boxShadow: 24,
-  p: 4,
-};
-
-export default function ChangeAddressModal({ open, handleClose }: ModalProps) {
+export function ChangeAddressTab() {
   const {
     control,
     handleSubmit,
@@ -51,19 +37,14 @@ export default function ChangeAddressModal({ open, handleClose }: ModalProps) {
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
-        <form onSubmit={handleFormSubmit}>
-          <SectionFields fields={changeAddressFields} control={control} />
+    <Box>
+      <form onSubmit={handleFormSubmit}>
+        <SectionFields fields={changeAddressFields} control={control} />
 
-          <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2 }}>
-            {isSubmitting ? 'Updating...' : 'Change Address'}
-          </Button>
-          <Button variant="outlined" fullWidth onClick={handleClose} sx={{ mt: 1 }}>
-            Cancel
-          </Button>
-        </form>
-      </Box>
-    </Modal>
+        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2 }}>
+          {isSubmitting ? 'Updating...' : 'Change Address'}
+        </Button>
+      </form>
+    </Box>
   );
 }
