@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Public Parcel API", description = "Endpoints for public parcel operations")
 @Slf4j
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/public-api/parcels")
 @RestController
@@ -27,10 +29,6 @@ public class PublicParcelsController {
 
     private final ParcelService parcelService;
 
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful"),
-            @ApiResponse(responseCode = "404", description = "Not found")
-    })
     @PostMapping("/{trackingCode}/status")
     public ResponseEntity<?> updateParcelStatus(
             @PathVariable @TrackingCode @NotNull String trackingCode,
