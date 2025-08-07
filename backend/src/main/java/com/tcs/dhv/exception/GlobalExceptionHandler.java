@@ -154,10 +154,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        final var errorList = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> new ApiErrorResponse.FieldError(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
+                ))
+                .collect(Collectors.toList());
+
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .message("Invalid request body")
+            .message("Validation failed")
             .timestamp(Instant.now())
+            .errors(errorList)
             .build();
 
         return ResponseEntity.badRequest().body(err);
