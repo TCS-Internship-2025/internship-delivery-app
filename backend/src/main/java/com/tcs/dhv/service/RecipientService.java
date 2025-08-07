@@ -21,11 +21,15 @@ public class RecipientService {
         log.info("Finding or creating recipient with email: {}", recipientDto.email());
         
         final var existingRecipient = recipientRepository.findByEmail(recipientDto.email());
+
         if (existingRecipient.isPresent()) {
             log.info("Updating existing recipient address for email: {}", recipientDto.email());
+
             updateAddress(recipientDto);
+
             return recipientRepository.findByEmail(recipientDto.email())
                     .orElseThrow(() -> new EntityNotFoundException("Recipient not found with email: " + recipientDto.email()));
+
         } else {
             log.info("Creating new recipient for email: {}", recipientDto.email());
 
@@ -41,7 +45,7 @@ public class RecipientService {
                 .latitude(recipientDto.address().latitude())
                 .build();
 
-            final var savedAddress = addressRepository.save(newAddress);
+            final var savedAddress = addressRepository.saveAndFlush(newAddress);
 
             final var recipient = Recipient.builder()
                 .name(recipientDto.name())
@@ -51,7 +55,7 @@ public class RecipientService {
                 .address(savedAddress)
                 .build();
 
-            return recipientRepository.save(recipient);
+            return recipientRepository.saveAndFlush(recipient);
         }
     }
 
@@ -61,18 +65,11 @@ public class RecipientService {
         final var recipientEntity = recipientRepository.findByEmail(recipientDto.email())
                 .orElseThrow(() -> new EntityNotFoundException("Recipient not found with email: " + recipientDto.email()));
 
-        final var newAddress = Address.builder()
-                .line1(recipientDto.address().line1())
-                .line2(recipientDto.address().line2())
-                .city(recipientDto.address().city())
-                .postalCode(recipientDto.address().postalCode())
-                .country(recipientDto.address().country())
-                .build();
-
-        final var savedAddress = addressRepository.save(newAddress);
+        final var newAddress = recipientDto.address().toEntity();
+        final var savedAddress = addressRepository.saveAndFlush(newAddress);
 
         recipientEntity.setAddress(savedAddress);
-        recipientRepository.save(recipientEntity);
+        recipientRepository.saveAndFlush(recipientEntity);
 
         log.info("Recipient address updated successfully for email: {}", recipientDto.email());
     }

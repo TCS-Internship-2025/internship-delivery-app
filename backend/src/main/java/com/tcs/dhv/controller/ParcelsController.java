@@ -1,6 +1,7 @@
 package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.AddressChangeDto;
+import com.tcs.dhv.domain.dto.AddressDto;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.service.AddressChangeService;
 import com.tcs.dhv.service.ParcelService;
@@ -129,15 +130,15 @@ public class ParcelsController {
 
     @Operation(summary = "Update parcel address", description = "Update a parcel's delivery address by parcel's id")
     @PutMapping("/{id}/address")
-    public ResponseEntity<ParcelDto> changeAddress(
+    public ResponseEntity<AddressDto> changeAddress(
         @PathVariable final UUID id,
         @Valid @RequestBody final AddressChangeDto requestDto,
         final Authentication authentication
     ) {
         log.info("Changing Address for parcel {} by user: {}", id, authentication.getName());
 
-        final var updatedParcel = addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
+        final var updatedAddress = addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
 
-        return ResponseEntity.ok(updatedParcel);
+        return ResponseEntity.ok(updatedAddress);
     }
 }

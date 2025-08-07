@@ -1,7 +1,7 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.AddressChangeDto;
-import com.tcs.dhv.domain.dto.ParcelDto;
+import com.tcs.dhv.domain.dto.AddressDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
@@ -37,7 +37,7 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
-    public ParcelDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
         log.info("Address change for parcel {} by user {}", parcelId, userId);
 
         final var sender = userService.getUserById(userId);
@@ -51,7 +51,7 @@ public class AddressChangeService {
 
         parcel.setDeliveryType(requestDto.deliveryType());
         parcel.getRecipient().setAddress(savedAddress);
-        final var savedParcel = parcelRepository.saveAndFlush(parcel);
+        parcelRepository.saveAndFlush(parcel);
 
         emailService.sendAddressChangeNotification(
             parcel.getRecipient().getEmail(),
@@ -70,7 +70,7 @@ public class AddressChangeService {
 
         log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
 
-        return ParcelDto.fromEntity(savedParcel);
+        return AddressDto.fromEntity(savedAddress);
     }
 
     private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
