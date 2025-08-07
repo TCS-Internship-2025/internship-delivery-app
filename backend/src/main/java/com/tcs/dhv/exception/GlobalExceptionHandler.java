@@ -1,5 +1,6 @@
 package com.tcs.dhv.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.tcs.dhv.domain.dto.ApiErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -28,6 +29,18 @@ public class GlobalExceptionHandler {
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .message("An unexpected error occurred")
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.internalServerError().body(err);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiErrorResponse> handleRuntimeException(RuntimeException ex) {
+        log.error("Caught RuntimeException", ex);
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .message("An unexpected error occurred")
+            .timestamp(Instant.now())
             .build();
         return ResponseEntity.internalServerError().body(err);
     }
@@ -141,23 +154,43 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        final var errorList = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> new ApiErrorResponse.FieldError(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
+                ))
+                .collect(Collectors.toList());
+
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .message("Invalid request body")
+            .message("Validation failed")
             .timestamp(Instant.now())
+            .errors(errorList)
             .build();
 
         return ResponseEntity.badRequest().body(err);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        final var error = ApiErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage()).
-                timestamp(Instant.now())
-                .build();
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidFormatException(InvalidFormatException ex) {
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message("Invalid format: " + ex.getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.badRequest().body(err);
+    }
 
-        return ResponseEntity.badRequest().body(error);
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.error("HTTP message not readable", ex);
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message("Malformed JSON request")
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.badRequest().body(err);
     }
 }
