@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/constants';
+import { CHANGE_MODAL_TYPES, ROUTES } from '@/constants';
 
 import { useGetAllParcels } from '@/apis/parcelGet';
 import { useGetProfileInfo } from '@/apis/profileInfo';
@@ -14,6 +15,9 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import ChangeAddressModal from '@/components/ChangeAddressModal';
+import ChangePasswordModal from '@/components/ChangePasswordModal';
+import ChangeProfileModal from '@/components/ChangeProfileModal';
 import DeleteUserButton from '@/components/DeleteUserButton';
 
 const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
@@ -33,7 +37,7 @@ export const ProfileInfo = () => {
 
   const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels();
   const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
-
+  const [openModal, setOpenModal] = useState<string | null>(null);
   const profile = profileData;
 
   const getFirstThreeInitials = (fullName: string) => {
@@ -47,6 +51,12 @@ export const ProfileInfo = () => {
 
   const firstTwoParcels = parcels?.slice(0, 2) ?? [];
 
+  const handleOpen = (identifier: string) => {
+    setOpenModal(identifier);
+  };
+  const handleClose = () => {
+    setOpenModal(null);
+  };
   if (profileLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height={200}>
@@ -82,14 +92,38 @@ export const ProfileInfo = () => {
         </Grid>
 
         <Divider sx={{ my: 3 }} />
-
-        <Stack direction="column" spacing={2}>
+        <Stack direction={'column'} spacing={2}>
           <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
-          <ProfileInfoButton>Edit password</ProfileInfoButton>
-          <ProfileInfoButton>Edit address</ProfileInfoButton>
-          <ProfileInfoButton>Edit user info</ProfileInfoButton>
+          <ProfileInfoButton
+            onClick={() => {
+              handleOpen(CHANGE_MODAL_TYPES.CHANGE_PASSWORD);
+            }}
+          >
+            Edit password
+          </ProfileInfoButton>
+          <ProfileInfoButton
+            onClick={() => {
+              handleOpen(CHANGE_MODAL_TYPES.CHANGE_ADDRESS);
+            }}
+          >
+            Edit address
+          </ProfileInfoButton>
+          <ProfileInfoButton
+            onClick={() => {
+              handleOpen(CHANGE_MODAL_TYPES.CHANGE_PROFILE);
+            }}
+          >
+            Edit user info
+          </ProfileInfoButton>
           <DeleteUserButton showDangerZone={false} buttonVariant="contained" buttonColor="error" />
         </Stack>
+        <ChangeProfileModal
+          open={openModal === CHANGE_MODAL_TYPES.CHANGE_PROFILE}
+          handleClose={handleClose}
+          formData={{ name: profile.name, email: profile.email, phoneNumber: profile.phone?.toString() }}
+        />
+        <ChangePasswordModal open={openModal === CHANGE_MODAL_TYPES.CHANGE_PASSWORD} handleClose={handleClose} />
+        <ChangeAddressModal open={openModal === CHANGE_MODAL_TYPES.CHANGE_ADDRESS} handleClose={handleClose} />
       </Paper>
 
       <Box sx={{ mx: 'auto', mt: 4 }}>

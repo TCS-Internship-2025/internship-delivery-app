@@ -16,6 +16,8 @@ export const ROUTES = {
   REGISTER: 'register',
   VERIFY: 'verify',
   VERIFIED: 'verified/:uid/:token',
+  PASSWORDRESET: 'password-reset',
+  NEWPASSWORD: 'new-password',
   APP: 'app',
   RECIPIENT_FORM: 'recipient-form',
   PARCEL_FORM: 'parcel-form',
@@ -89,4 +91,9 @@ export const QUERY_STATUS = {
 export const PARCEL_DELIVERY_STATUSES = {
   DELIVERED: 'DELIVERED',
   //add more if necessary
+};
+export const CHANGE_MODAL_TYPES = {
+  CHANGE_PASSWORD: 'changePassword',
+  CHANGE_ADDRESS: 'changeAddress',
+  CHANGE_PROFILE: 'changeProfile',
 };
