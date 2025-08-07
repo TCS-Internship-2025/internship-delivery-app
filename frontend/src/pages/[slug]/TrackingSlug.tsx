@@ -33,7 +33,6 @@ function TrackingSlug() {
     if (timelineData?.length === 1) return PARCEL_STATUS.PICKED_UP;
     if (timelineData?.length === 2) return PARCEL_STATUS.IN_TRANSIT;
     if (timelineData?.length === 3) return PARCEL_STATUS.OUT_FOR_DELIVERY;
-    if (timelineData?.length === 4) return 'ON THE WAY!';
     return null;
   };
   const isSmallScreen = useSmallScreen();
@@ -103,17 +102,28 @@ function TrackingSlug() {
             value={timelineData ? (timelineData.length !== 5 ? 2 + 20 * timelineData.length : 100) : 100}
             sx={{ borderRadius: 2, height: 8 }}
           />
-          <Box paddingTop={1} alignItems={'center'} display={'flex'} gap={2}>
+          <Box paddingTop={1} alignItems={'center'} display={'flex'} justifyContent={'space-between'} gap={2}>
             {timelineData?.map((event) => {
-              return (
-                <Box display={'flex'} alignItems={'center'} width={'20%'} key={event.id}>
-                  <CheckCircleIcon sx={{ height: 12 }} />
-                  <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
-                </Box>
-              );
+              if (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY && timelineData.length !== 5) {
+                return (
+                  <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id} gap={1}>
+                    <CircularProgress size={12} />
+                    <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
+                  </Box>
+                );
+              }
+              if (event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY) {
+                return (
+                  <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id}>
+                    <CheckCircleIcon sx={{ height: 12 }} />
+                    <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
+                  </Box>
+                );
+              }
+              return null;
             })}
             {findNextStatus() !== null && (
-              <Box display={'flex'} alignItems={'center'} width={'20%'} gap={1}>
+              <Box display={'flex'} alignItems={'center'} width={'25%'} gap={1}>
                 <CircularProgress size={12} />
                 <Typography fontSize={12}>{findNextStatus()}</Typography>
               </Box>
