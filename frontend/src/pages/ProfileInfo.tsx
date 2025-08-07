@@ -38,7 +38,7 @@ export const ProfileInfo = () => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap={2} width="100%" px={2} py={3}>
+    <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
       {isSmallScreen && (
         <Button
           variant="outlined"
