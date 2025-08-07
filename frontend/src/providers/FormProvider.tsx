@@ -3,7 +3,7 @@ import { PARCEL_FORM_DEFAULT_VALUES, RECIPIENT_FORM_DEFAULT_VALUES } from '@/con
 
 import { FormContext, type FormContextValue, type FormData } from '@/contexts/FormContext';
 
-import type { ParcelFormSchema, RecipientFormSchema } from '@/utils/parcelComposition';
+import type { ParcelFormSchema, PointSchema, RecipientFormSchema } from '@/utils/parcelComposition';
 
 const defaultFormData: FormData = {
   ...RECIPIENT_FORM_DEFAULT_VALUES,
@@ -69,8 +69,12 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
     };
   }, [formData]);
 
-  const getPointId = useCallback((): string | null | undefined => {
-    return formData.pointId;
+  const getPointId = useCallback((): PointSchema => {
+    return {
+      pointId: formData.pointId,
+      longitude: formData.longitude,
+      latitude: formData.latitude,
+    };
   }, [formData]);
 
   const contextValue: FormContextValue = useMemo(

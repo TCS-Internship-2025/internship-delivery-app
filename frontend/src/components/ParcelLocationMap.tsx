@@ -37,6 +37,10 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
 
   const { getPointId } = useFormContext();
 
+  const point_ = getPointId();
+
+  console.log('point: ', point_);
+
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const {
     data: pickupPoints,
@@ -80,7 +84,8 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
                   setSelectedMarker(point);
                 }}
               >
-                {getPointId() === point.id ? (
+                {point_.pointId === point.id ||
+                (point_.latitude === point.latitude && point_.longitude === point.longitude) ? (
                   <WhereToVoteIcon
                     color="inherit"
                     sx={{

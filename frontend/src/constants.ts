@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import type { ParcelFormSchema, RecipientFormSchema } from './utils/parcelComposition';
+import type { AddressChangeSchema, ParcelFormSchema, RecipientFormSchema } from './utils/parcelComposition';
 
 // Zod enums
 export const TitleEnum = z.enum(['Mr', 'Mrs', 'Ms', 'Dr', 'Prof']);
@@ -64,6 +64,20 @@ export const PARCEL_FORM_DEFAULT_VALUES: ParcelFormSchema = {
   country: '',
   building: '',
   paymentType: '',
+  deliveryType: 'Home',
+  longitude: null,
+  latitude: null,
+  pointId: null,
+};
+
+export const ADDRESS_CHANGE_DEFAULT_VALUES: AddressChangeSchema = {
+  line1: '',
+  line2: '',
+  apartment: '',
+  city: '',
+  postalCode: '',
+  country: '',
+  building: '',
   deliveryType: 'Home',
   longitude: null,
   latitude: null,

@@ -33,7 +33,6 @@ import { SectionContainer } from '@/components/SectionContainer';
 import { parcelFields, parcelFormSchema, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
 
 export const ParcelForm = () => {
-  // const [selectedParcel, setSelectedParcel] = useState<PickupPoint | null>();
   const { mutate, isPending } = useCreateParcel();
   const { updateFormData, getParcelFormData, getRecipientFormData, resetParcelForm, getPointId } = useFormContext();
   const isSmallScreen = useSmallScreen();
@@ -161,7 +160,7 @@ export const ParcelForm = () => {
           <NavigationButtons
             onPrevious={handlePrevious}
             onNext={() => {
-              if (getValues('deliveryType') !== 'Home' && !getPointId())
+              if (getValues('deliveryType') !== 'Home' && !getPointId().pointId)
                 enqueueSnackbar('Please choose an address from the map', {
                   variant: 'error',
                   headerMessage: 'No address was provided',

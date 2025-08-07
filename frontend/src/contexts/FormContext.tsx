@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 
 import type { FullFormSchema } from '@/apis/parcel';
 
-import type { ParcelFormSchema, RecipientFormSchema } from '@/utils/parcelComposition';
+import type { ParcelFormSchema, PointSchema, RecipientFormSchema } from '@/utils/parcelComposition';
 
 export type FormData = FullFormSchema;
 
@@ -13,7 +13,7 @@ export interface FormContextValue {
   resetParcelForm: (persistedData: Partial<ParcelFormSchema>) => void;
   getRecipientFormData: () => RecipientFormSchema;
   getParcelFormData: () => ParcelFormSchema;
-  getPointId: () => string | null | undefined;
+  getPointId: () => PointSchema;
 }
 
 export const FormContext = createContext<FormContextValue | undefined>(undefined);

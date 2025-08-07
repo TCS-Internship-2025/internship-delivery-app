@@ -10,6 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
+import { AddressChangeModal } from '@/components/AddressChangeModal';
 import TimelineComponent from '@/components/Timeline';
 
 function TrackingSlug() {
@@ -74,6 +75,7 @@ function TrackingSlug() {
           </Typography>
           <Typography>{trackingData?.currentStatus}</Typography>
         </Box>
+        <AddressChangeModal parcelId={trackingData?.parcelId} />
         <Box sx={{ width: '33%' }}>
           <TimelineComponent trackingNumber={slug ?? ''} />
         </Box>
