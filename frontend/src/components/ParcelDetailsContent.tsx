@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { getParcelChipData } from '../utils/parcelChipData.ts';
-import { DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum } from '@/constants.ts';
 
 import type { ParcelData } from '@/apis/parcelGet.ts';
+import { getLonLat } from '@/services/geoCoder.ts';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 
 import { CoordinatesMap } from './CoordinatesMap.tsx';
@@ -44,8 +45,52 @@ const DataDisplay = ({ label, children, ...props }: DataDisplayProps) => {
   );
 };
 
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
 export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }) => {
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+  const [isLoadingCoordinates, setIsLoadingCoordinates] = useState(false);
+  const [geocodingError, setGeocodingError] = useState<string | null>(null);
+
   const parcelChipData = getParcelChipData(parcelData?.currentStatus);
+
+  useEffect(() => {
+    const geocodeAddress = async () => {
+      if (!parcelData?.recipient.address) return;
+
+      const address = parcelData.recipient.address;
+
+      setIsLoadingCoordinates(true);
+      setGeocodingError(null);
+
+      try {
+        const result = await getLonLat(address);
+
+        if (result) {
+          setCoordinates({
+            latitude: result.lat,
+            longitude: result.lon,
+          });
+        } else {
+          setGeocodingError('Could not find coordinates for this address');
+        }
+      } catch (error) {
+        setGeocodingError('Failed to geocode address' + (error as string));
+      } finally {
+        setIsLoadingCoordinates(false);
+      }
+    };
+
+    void geocodeAddress();
+  }, [parcelData]);
+
+  const mapCoordinates = coordinates ?? {
+    latitude: parcelData?.recipient.address.latitude ?? 0,
+    longitude: parcelData?.recipient.address.longitude ?? 0,
+  };
 
   return (
     <>
@@ -106,13 +151,23 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }
           </DataDisplay>
         </Box>
       </Box>
-      <Box display={'flex'} justifyContent={'center'}>
-        {parcelData?.deliveryType !== DELIVERY_TYPE_NAME_CONVERTER[DeliveryEnum.enum.Home] && (
-          <CoordinatesMap
-            longitude={parcelData?.recipient.address.longitude ?? 0}
-            latitude={parcelData?.recipient.address.latitude ?? 0}
-          />
-        )}
+      <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'}>
+        <>
+          {isLoadingCoordinates && (
+            <Box display="flex" alignItems="center" mb={2}>
+              <CircularProgress size={20} sx={{ mr: 1 }} />
+              <Typography variant="body2">Loading map coordinates...</Typography>
+            </Box>
+          )}
+          {geocodingError && (
+            <Typography variant="body2" color="error" mb={2}>
+              {geocodingError}
+            </Typography>
+          )}
+          {!isLoadingCoordinates && !geocodingError && coordinates && (
+            <CoordinatesMap longitude={mapCoordinates.longitude} latitude={mapCoordinates.latitude} />
+          )}
+        </>
       </Box>
     </>
   );
