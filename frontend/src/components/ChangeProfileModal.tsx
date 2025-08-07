@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import type { ChangeProfileSchema, EditProfileFormData, ModalProps } from '@/utils/changeDataComposition';
+import { REGEX_PATTERNS } from '@/utils/parcelComposition';
 
 const style = {
   position: 'absolute',
@@ -75,7 +76,7 @@ export default function ChangeProfileModal({ open, handleClose, formData }: Moda
           rules={{
             required: 'Email is required',
             pattern: {
-              value: /^\S+@\S+\.\S+$/,
+              value: REGEX_PATTERNS.EMAIL,
               message: 'Invalid email address',
             },
           }}
@@ -96,7 +97,7 @@ export default function ChangeProfileModal({ open, handleClose, formData }: Moda
           control={control}
           rules={{
             pattern: {
-              value: /^[0-9]{10,}$/,
+              value: REGEX_PATTERNS.HUNGARIAN_PHONE,
               message: 'Invalid phone number',
             },
           }}
