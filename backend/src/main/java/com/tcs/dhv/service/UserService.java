@@ -109,8 +109,14 @@ public class UserService {
             ParcelStatus.RETURNED_TO_SENDER
         );
 
-        final boolean hasUndeliveredSentParcels = parcelRepository.existsBySenderIdAndCurrentStatusIn(userId, undeliveredStatus);
-        final boolean hasUndeliveredReceivedParcels = parcelRepository.existsByRecipientIdAndCurrentStatusIn(userId, undeliveredStatus);
+        final boolean hasUndeliveredSentParcels = parcelRepository.existsBySenderIdAndCurrentStatusIn(
+            userId,
+            undeliveredStatus
+        );
+        final boolean hasUndeliveredReceivedParcels = parcelRepository.existsByRecipientIdAndCurrentStatusIn(
+            userId,
+            undeliveredStatus
+        );
 
         if (hasUndeliveredSentParcels || hasUndeliveredReceivedParcels) {
             log.warn("Attempted to delete user with ID: {} who has undelivered parcels", userId);
