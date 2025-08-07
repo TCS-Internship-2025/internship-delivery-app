@@ -23,7 +23,6 @@ public class TrackingService {
     public TrackingDto getPublicTrackingDetails(String trackingCode){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
-        if (parcel == null) return null;
 
         log.info("Getting tracking data of parcel with id : {}", parcel.getId());
 
@@ -42,37 +41,36 @@ public class TrackingService {
     public TrackingDto getTrackingDetailsForUser(String trackingCode, UUID userId, String userEmail) {
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
-        if (parcel == null) return null;
 
         log.info("Getting tracking data of parcel with id: {} for user: {}", parcel.getId(), userId);
 
-        final boolean isSender = parcel.getSender().getId().equals(userId);
-        final boolean isRecipient = parcel.getRecipient().getEmail().equals(userEmail);
+        final var isSender = parcel.getSender().getId().equals(userId);
+        final var isRecipient = parcel.getRecipient().getEmail().equals(userEmail);
 
-        if (isSender || isRecipient) {
-            final var sender = parcel.getSender();
-            final var recipient = parcel.getRecipient();
-
-            return TrackingDto.builder()
-                    .parcelId(parcel.getId())
-                    .trackingCode(parcel.getTrackingCode())
-                    .senderName(sender.getName())
-                    .senderEmail(sender.getEmail())
-                    .senderPhone(sender.getPhone())
-                    .senderAddress(sender.getAddress() != null ? sender.getAddress().toString() : null)
-                    .recipientName(recipient.getName())
-                    .recipientEmail(recipient.getEmail())
-                    .recipientPhone(recipient.getPhone())
-                    .recipientAddress(recipient.getAddress() != null ? recipient.getAddress().toString() : null)
-                    .recipientBirthDate(Optional.of(recipient.getBirthDate().atStartOfDay()))
-                    .currentStatus(parcel.getCurrentStatus())
-                    .estimatedDelivery(calculateEstimatedDeliveryTime(parcel))
-                    .paymentType(String.valueOf(parcel.getPaymentType()))
-                    .deliveryType(String.valueOf(parcel.getDeliveryType()))
-                    .build();
-        } else {
+        if (!(isSender || isRecipient)) {
             return getPublicTrackingDetails(trackingCode);
         }
+
+        final var sender = parcel.getSender();
+        final var recipient = parcel.getRecipient();
+
+        return TrackingDto.builder()
+                .parcelId(parcel.getId())
+                .trackingCode(parcel.getTrackingCode())
+                .senderName(sender.getName())
+                .senderEmail(sender.getEmail())
+                .senderPhone(sender.getPhone())
+                .senderAddress(sender.getAddress() != null ? sender.getAddress().toString() : null)
+                .recipientName(recipient.getName())
+                .recipientEmail(recipient.getEmail())
+                .recipientPhone(recipient.getPhone())
+                .recipientAddress(recipient.getAddress() != null ? recipient.getAddress().toString() : null)
+                .recipientBirthDate(Optional.of(recipient.getBirthDate().atStartOfDay()))
+                .currentStatus(parcel.getCurrentStatus())
+                .estimatedDelivery(calculateEstimatedDeliveryTime(parcel))
+                .paymentType(String.valueOf(parcel.getPaymentType()))
+                .deliveryType(String.valueOf(parcel.getDeliveryType()))
+                .build();
     }
 
     private Optional<LocalDateTime> calculateEstimatedDeliveryTime(Parcel parcel){

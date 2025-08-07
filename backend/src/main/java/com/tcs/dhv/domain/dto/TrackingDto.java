@@ -9,20 +9,20 @@ import lombok.Builder;
 
 @Builder
 public record TrackingDto(
-        UUID parcelId,
-        String trackingCode,
-        String senderName,
-        String recipientName,
-        ParcelStatus currentStatus,
-        Optional<LocalDateTime> estimatedDelivery,
-        String senderEmail,
-        String senderPhone,
-        String senderAddress,
-        String recipientEmail,
-        String recipientPhone,
-        String recipientAddress,
-        Optional<LocalDateTime> recipientBirthDate,
-        String paymentType,
-        String deliveryType
+    UUID parcelId,
+    String trackingCode,
+    String senderName,
+    String recipientName,
+    ParcelStatus currentStatus,
+    Optional<LocalDateTime> estimatedDelivery,
+    String senderEmail,
+    String senderPhone,
+    String senderAddress,
+    String recipientEmail,
+    String recipientPhone,
+    String recipientAddress,
+    Optional<LocalDateTime> recipientBirthDate,
+    String paymentType,
+    String deliveryType
 ) {
 }
