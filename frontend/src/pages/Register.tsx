@@ -3,9 +3,8 @@ import { RegistrationForm } from '../components/RegistrationForm';
 import { RegistrationHeader } from '../components/RegistrationHeader';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -26,12 +25,10 @@ export const Register = () => {
       }}
     >
       <Container maxWidth="sm">
-        <Card elevation={3} sx={{ borderRadius: 3, p: 3 }}>
-          <CardContent>
-            <RegistrationHeader />
-            <RegistrationForm onLoginClick={handleLoginClick} />
-          </CardContent>
-        </Card>
+        <Paper elevation={3} sx={{ borderRadius: 3, p: 6 }}>
+          <RegistrationHeader />
+          <RegistrationForm onLoginClick={handleLoginClick} />
+        </Paper>
       </Container>
     </Box>
   );

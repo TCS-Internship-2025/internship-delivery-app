@@ -1,6 +1,7 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.UserProfileDto;
+import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.UserRepository;
@@ -40,8 +41,6 @@ public class UserService {
         final var userId = UUID.fromString(userIdentifier);
         log.info("Retrieving this user's profile by ID: {}", userId);
         final var user = getUserById(userId);
-        //log.info("Retrieving user profile: {}", user);
-
 
         if(updateRequest.currentPassword() != null ||
         updateRequest.newPassword() != null
@@ -65,9 +64,18 @@ public class UserService {
         }
 
         if(updateRequest.address() !=null && user.getAddress() == null) {
-            final var newAddress = updateRequest.address().toEntity();
+            final var newAddress = Address.builder()
+                .line1(updateRequest.address().line1())
+                .line2(updateRequest.address().line2())
+                .city(updateRequest.address().city())
+                .postalCode(updateRequest.address().postalCode())
+                .country(updateRequest.address().country())
+                .build();
+
             final var savedAddress = addressRepository.save(newAddress);
+
             user.setAddress(savedAddress);
+
             log.info("Created and saved new address: {}", savedAddress);
         }
 

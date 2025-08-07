@@ -3,6 +3,7 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -40,18 +41,22 @@ public class ParcelService {
         log.info("Creating parcel for user: {}", userId);
 
         final var sender = userService.getUserById(userId);
-
         final var recipient = recipientService.findOrCreateRecipient(parcelDto.recipient());
-
         final var trackingCode = generateTrackingCode();
 
-        final var parcel = parcelDto.toEntity(sender, trackingCode);
-        parcel.setRecipient(recipient);
+        final var parcel = Parcel.builder()
+            .sender(sender)
+            .trackingCode(trackingCode)
+            .recipient(recipient)
+            .currentStatus(ParcelStatus.CREATED)
+            .deliveryType(parcelDto.deliveryType())
+            .paymentType(parcelDto.paymentType())
+            .build();
 
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
 
-        emailService.sendShipmentCreationEmail(savedParcel.getRecipient().getEmail(), savedParcel.getTrackingCode());
+        emailService.sendShipmentCreationEmail(sender.getEmail(), savedParcel.getTrackingCode());
         log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
         final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
