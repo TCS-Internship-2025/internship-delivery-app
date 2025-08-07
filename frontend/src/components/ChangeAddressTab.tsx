@@ -6,6 +6,7 @@ import { useEditAddress } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 import { SectionFields } from './FormSectionFields';
 
@@ -38,10 +39,13 @@ export function ChangeAddressTab() {
 
   return (
     <Box>
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        Edit Address
+      </Typography>
       <form onSubmit={handleFormSubmit}>
         <SectionFields fields={changeAddressFields} control={control} />
 
-        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2 }}>
+        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2, width: '20%' }}>
           {isSubmitting ? 'Updating...' : 'Change Address'}
         </Button>
       </form>
