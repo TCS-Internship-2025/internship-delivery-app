@@ -71,6 +71,7 @@ public class EmailService {
     @Async
     public void sendVerificationTokenByEmail(
         final UUID userId,
+        final String name,
         final String email
     ) {
         final var token = otpService.generateAndStoreOtp(userId);
@@ -80,6 +81,7 @@ public class EmailService {
 
         final var context = new Context();
         context.setVariable("verifyLink", emailVerificationUrl);
+        context.setVariable("name", name);
 
         final var htmlContent = this.templateEngine.process("VerificationTokenEmail.html", context);
         final var message = CreateMessage(
@@ -115,7 +117,7 @@ public class EmailService {
                 "Email not found or already verified"
             ));
 
-        sendVerificationTokenByEmail(user.getId(), user.getEmail());
+        sendVerificationTokenByEmail(user.getId(), user.getName(), user.getEmail());
     }
 
     @Transactional
@@ -192,29 +194,21 @@ public class EmailService {
 
     public void sendPasswordResetEmail(
         final String email,
+        final String name,
         final String resetLink
     ) {
-        final var emailText = """
-            Hello,
-            
-            You requested a password reset for your DHV account. 
-            
-            Click the link below to reset your password:
-            %s
-            
-            if you didn't request this, please ignore this email.
-            
-            Regards,
-            DHV Team
-            """.formatted(resetLink);
+        final var context = new Context();
+        context.setVariable("name", name);
+        context.setVariable("resetLink", resetLink);
+
+        final var htmlContext = this.templateEngine.process("PasswordChangeRequestEmail.html", context);
 
         final var message = CreateMessage(
-            "Password Reset Request",
-            EmailConstants.EMAIL_SENDER,
-            email,
-            emailText
+                EmailConstants.PASSWORD_CHANGE_MAIL_SUBJECT,
+                EmailConstants.EMAIL_SENDER,
+                email,
+                htmlContext
         );
-
         mailSender.send(message);
         log.info("Password reset email sent to {}", email);
     }
@@ -225,12 +219,14 @@ public class EmailService {
 
     public void sendParcelStatusChangeNotification(
         final String email,
+        final String name,
         final String status,
         final String trackingCode
     ){
         final var context = new Context();
         context.setVariable("status", status);
         context.setVariable("trackingCode", trackingCode);
+        context.setVariable("name", name);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingCode);
 
         final var htmlContext = this.templateEngine.process("ParcelStatusChangedEmail.html", context);
@@ -245,18 +241,6 @@ public class EmailService {
         log.info("Parcel status change notification email sent to {} for parcel {}", email, trackingCode);
     }
 
-    public void sendPasswordChangeRequest(final String email) {
-        final var htmlContext = this.templateEngine.process("PasswordChangeRequestEmail.html", new Context());
-
-        final var message = CreateMessage(
-            EmailConstants.PASSWORD_CHANGE_MAIL_SUBJECT,
-            EmailConstants.EMAIL_SENDER,
-            email,
-            htmlContext
-        );
-        mailSender.send(message);
-        log.info("Change password notification email sent to {}", email);
-    }
     public void sendUserUpdatedNotification(
         final String email,
         final User oldUser,
@@ -282,13 +266,13 @@ public class EmailService {
                 newUser.getAddress().getCountry(),
                 newUser.getAddress().getPostalCode()));
 
-        final var htmlContect = this.templateEngine.process("UserUpdatedEmail.html", context);
+        final var htmlContext = this.templateEngine.process("UserUpdatedEmail.html", context);
 
         final var message = CreateMessage(
             EmailConstants.USER_UPDATE_MAIL_SUBJECT,
             EmailConstants.EMAIL_SENDER,
             email,
-            htmlContect
+            htmlContext
         );
         mailSender.send(message);
         log.info("User update notification email sent to {}", email);
