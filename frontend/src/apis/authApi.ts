@@ -154,6 +154,26 @@ export async function verifyEmail(
   };
 }
 
+export async function sendForgotPasswordEmail(email: string): Promise<void> {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/auth/password/forgot`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Password reset request failed: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ''}`
+    );
+  }
+}
+
 export async function deleteUser(): Promise<void> {
   const authData = getStoredAuthData();
 
