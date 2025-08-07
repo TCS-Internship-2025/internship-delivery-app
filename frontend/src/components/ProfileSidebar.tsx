@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import type { ProfileSettingPages } from '@/pages/ProfileInfo';
 
-const pages: ProfileSettingPages[] = ['profile', 'account', 'notifications'];
+const pages: ProfileSettingPages[] = ['profile', 'address', 'password'];
 
 interface ProfileSidebarProps {
   selected: ProfileSettingPages;
@@ -14,7 +14,7 @@ interface ProfileSidebarProps {
 }
 export const ProfileSidebar = ({ selected, onSelect }: ProfileSidebarProps) => {
   return (
-    <Paper sx={{ width: 220, height: '88vh', p: 2 }} elevation={2}>
+    <Paper sx={{ width: 220, height: '88vh', p: 2 }} elevation={3}>
       <Typography variant="h6" mb={2}>
         Profile Settings
       </Typography>

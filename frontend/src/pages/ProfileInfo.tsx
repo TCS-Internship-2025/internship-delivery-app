@@ -4,12 +4,13 @@ import { useGetProfileInfo } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import { ProfilePageContent } from '@/components/ProfilePageContent';
 import { ProfileSidebar } from '@/components/ProfileSidebar';
 
-export type ProfileSettingPages = 'profile' | 'account' | 'notifications';
+export type ProfileSettingPages = 'profile' | 'address' | 'password';
 
 export const ProfileInfo = () => {
   const [selectedPage, setSelectedPage] = useState<ProfileSettingPages>('profile');
@@ -28,9 +29,9 @@ export const ProfileInfo = () => {
   }
 
   return (
-    <Box display="flex">
+    <Paper sx={{ display: 'flex', justifyContent: 'center', width: '60%', alignSelf: 'center' }} elevation={2}>
       <ProfileSidebar selected={selectedPage} onSelect={setSelectedPage} />
       <ProfilePageContent page={selectedPage} />
-    </Box>
+    </Paper>
   );
 };
