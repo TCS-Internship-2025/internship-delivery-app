@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.UUID;
 
 @Slf4j
@@ -95,16 +96,24 @@ public class UserService {
     @Transactional
     public void deleteUserProfile(final UUID userId) {
         log.info("Request to delete user profile with ID: {}", userId);
-        final var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        final var user = getUserById(userId);
 
-        final var hasUndeliveredSentParcels = parcelRepository.existsBySenderIdAndCurrentStatus(
-            userId,
-            ParcelStatus.DELIVERED
+        final var undeliveredStatus = EnumSet.of(
+            ParcelStatus.CREATED,
+            ParcelStatus.PICKED_UP,
+            ParcelStatus.IN_TRANSIT,
+            ParcelStatus.OUT_FOR_DELIVERY,
+            ParcelStatus.DELIVERY_ATTEMPTED,
+            ParcelStatus.RETURNED_TO_SENDER
         );
-        final var hasUndeliveredReceivedParcels = parcelRepository.existsByRecipientIdAndCurrentStatus(
+
+        final var hasUndeliveredSentParcels = parcelRepository.existsBySenderIdAndCurrentStatusIn(
             userId,
-            ParcelStatus.DELIVERED
+            undeliveredStatus
+        );
+        final var hasUndeliveredReceivedParcels = parcelRepository.existsByRecipientIdAndCurrentStatusIn(
+            userId,
+            undeliveredStatus
         );
 
         if (hasUndeliveredSentParcels || hasUndeliveredReceivedParcels) {

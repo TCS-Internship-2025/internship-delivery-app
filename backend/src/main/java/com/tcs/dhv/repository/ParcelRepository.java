@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
@@ -20,6 +21,6 @@ public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
     @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
     Optional<Parcel> findByTrackingCode(String trackingCode);
 
-    boolean existsBySenderIdAndCurrentStatus(UUID senderId, ParcelStatus status);
-    boolean existsByRecipientIdAndCurrentStatus(UUID recipientId, ParcelStatus status);
+    boolean existsBySenderIdAndCurrentStatusIn(UUID senderId, Set<ParcelStatus> status);
+    boolean existsByRecipientIdAndCurrentStatusIn(UUID recipientId, Set<ParcelStatus> status);
 }
