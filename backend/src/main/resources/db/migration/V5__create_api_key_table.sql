@@ -1,6 +1,6 @@
 -- V5__create_api_keys.sql
 
-CREATE TABLE IF NOT EXISTS api_keys(
+CREATE TABLE IF NOT EXISTS api_keys (
     id UUID PRIMARY KEY,
     name TEXT NOT NULL,
     hashed_key TEXT NOT NULL,

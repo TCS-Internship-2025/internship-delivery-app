@@ -3,57 +3,57 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 -- TABLES
 
 CREATE TABLE addresses (
-                           id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-                           line1 text NOT NULL,
-                           line2 text,
-                           building text,
-                           apartment text,
-                           city text NOT NULL,
-                           postal_code text NOT NULL,
-                           country text DEFAULT 'Hungary' NOT NULL,
-                           latitude double precision,
-                           longitude double precision
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    line1 text NOT NULL,
+    line2 text,
+    building text,
+    apartment text,
+    city text NOT NULL,
+    postal_code text NOT NULL,
+    country text DEFAULT 'Hungary' NOT NULL,
+    latitude double precision,
+    longitude double precision
 );
 
 CREATE TABLE users (
-                       id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-                       name text NOT NULL,
-                       email text NOT NULL UNIQUE,
-                       password text NOT NULL,
-                       phone text,
-                       address_id uuid,
-                       created_at timestamptz DEFAULT now() NOT NULL,
-                       is_verified boolean DEFAULT false NOT NULL
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    name text NOT NULL,
+    email text NOT NULL UNIQUE,
+    password text NOT NULL,
+    phone text,
+    address_id uuid,
+    created_at timestamptz DEFAULT now() NOT NULL,
+    is_verified boolean DEFAULT false NOT NULL
 );
 
 CREATE TABLE parcels (
-                         id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-                         sender_id uuid NOT NULL,
-                         recipient_address_id uuid NOT NULL,
-                         delivery_type varchar(20) NOT NULL,
-                         tracking_code text NOT NULL UNIQUE,
-                         payment_type varchar(20) NOT NULL,
-                         current_status varchar(30) DEFAULT 'CREATED' NOT NULL,
-                         created_at timestamptz DEFAULT now() NOT NULL,
-                         updated_at timestamptz DEFAULT now() NOT NULL
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    sender_id uuid NOT NULL,
+    recipient_address_id uuid NOT NULL,
+    delivery_type varchar(20) NOT NULL,
+    tracking_code text NOT NULL UNIQUE,
+    payment_type varchar(20) NOT NULL,
+    current_status varchar(30) DEFAULT 'CREATED' NOT NULL,
+    created_at timestamptz DEFAULT now() NOT NULL,
+    updated_at timestamptz DEFAULT now() NOT NULL
 );
 
 CREATE TABLE predefined_locations (
-                                      id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-                                      name text NOT NULL,
-                                      type varchar(20) NOT NULL,
-                                      status text NOT NULL,
-                                      address_id uuid
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    name text NOT NULL,
+    type varchar(20) NOT NULL,
+    status text NOT NULL,
+    address_id uuid
 );
 
 CREATE SEQUENCE parcel_status_history_id_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE parcel_status_history (
-                                       id bigint PRIMARY KEY DEFAULT nextval('parcel_status_history_id_seq'),
-                                       parcel_id uuid NOT NULL,
-                                       status varchar(30) NOT NULL,
-                                       description text,
-                                       "timestamp" timestamptz DEFAULT now() NOT NULL
+    id bigint PRIMARY KEY DEFAULT nextval('parcel_status_history_id_seq'),
+    parcel_id uuid NOT NULL,
+    status varchar(30) NOT NULL,
+    description text,
+    "timestamp" timestamptz DEFAULT now() NOT NULL
 );
 
 -- FOREIGN KEYS
