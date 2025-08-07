@@ -22,6 +22,7 @@ import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
   deliveryType: DeliveryType;
+  height?: string;
 }
 /**
  * Interactive map component displaying pickup points across Budapest.
@@ -31,7 +32,7 @@ interface ParcelLocationMapProps {
  * Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
-export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
+export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60vh' }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
 
@@ -61,8 +62,8 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
     );
   } else if (pickupPoints) {
     return (
-      <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
-        <Box width="80%" flexGrow={1}>
+      <Box display="flex" justifyContent="center" width="100%" mt={2} height={height}>
+        <Box width="100%" flexGrow={1}>
           <Map
             mapboxAccessToken={mapboxAccessToken}
             initialViewState={{
