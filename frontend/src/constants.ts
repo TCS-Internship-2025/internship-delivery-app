@@ -82,6 +82,7 @@ export const ADDRESS_CHANGE_DEFAULT_VALUES: AddressChangeSchema = {
   longitude: null,
   latitude: null,
   pointId: null,
+  requestReason: '',
 };
 
 export const PAYMENT_TYPE_NAME_CONVERTER: Record<string, string> = {

@@ -3,24 +3,14 @@ import z from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
 
-const addressSchema = z.object({
-  line1: z.string(),
-  line2: z.string(),
-  building: z.string().nullable(),
-  apartment: z.string().nullable(),
-  city: z.string(),
-  postalCode: z.string(),
-  country: z.string(),
-  latitude: z.number().nullable(),
-  longitude: z.number().nullable(),
-});
+import { addressOnlySchema } from './parcel';
 
 export const recipientSchema = z.object({
   name: z.string(),
   email: z.email(),
   phone: z.string(),
   birthDate: z.string().nullable(),
-  address: addressSchema,
+  address: addressOnlySchema,
 });
 
 export const parcelSchema = z.object({

@@ -77,7 +77,9 @@ export const pointSchema = parcelFormSchema.pick({
   pointId: true,
 });
 
-export const addressChangeSchema = parcelFormSchema.omit({ paymentType: true });
+export const addressChangeSchema = parcelFormSchema.omit({ paymentType: true }).extend({
+  requestReason: z.string().optional().nullable(),
+});
 
 export type RecipientFormSchema = z.infer<typeof recipientFormSchema>;
 export type ParcelFormSchema = z.infer<typeof parcelFormSchema>;
@@ -118,4 +120,8 @@ export const shippingOptionsField: FieldConfig<ParcelFormSchema>[][] = [
 
 export const deliveryOnlyField: FieldConfig<AddressChangeSchema>[][] = [
   [{ name: 'deliveryType', label: 'Delivery Type', type: 'select', options: DeliveryEnum, required: true }],
+];
+
+export const requestReasonField: FieldConfig<AddressChangeSchema>[][] = [
+  [{ name: 'requestReason', label: 'Description', type: 'textarea' }],
 ];
