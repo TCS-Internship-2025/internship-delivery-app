@@ -140,16 +140,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
     }
 
-
     @ExceptionHandler(ConcurrencyFailureException.class)
     public ResponseEntity<ApiErrorResponse> handleConcurrencyFailureException(final ConcurrencyFailureException ex) {
         log.error("Concurrency conflict: {}", ex.getMessage());
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.CONFLICT.value())
-            .message("Concurrency conflict: " +ex.getMessage())
+            .message("Concurrency conflict: " + ex.getMessage())
             .timestamp(Instant.now())
             .build();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
     }
-
 }

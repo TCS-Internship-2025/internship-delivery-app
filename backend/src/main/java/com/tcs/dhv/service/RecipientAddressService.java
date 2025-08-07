@@ -21,7 +21,7 @@ public class RecipientAddressService {
 
     @Transactional
     void updateAddress(final RecipientDto recipientDto) {
-        try{
+        try {
             log.info("Updating address for recipient with email: {}", recipientDto.email());
 
             final var recipientEntity = recipientRepository.findByEmail(recipientDto.email())
@@ -33,8 +33,7 @@ public class RecipientAddressService {
             recipientRepository.save(recipientEntity);
 
             log.info("Recipient address updated successfully for email: {}", recipientDto.email());
-        }
-        catch(final OptimisticLockException | ObjectOptimisticLockingFailureException ex){
+        } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException ex) {
             log.warn("Optimistic-lock conflict for recipient {}: {}", recipientDto.email(), ex.getMessage());
             throw new ConcurrencyFailureException("Recipient's address was updated by another session" + recipientDto.email());
         }

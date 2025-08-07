@@ -39,7 +39,7 @@ public class UserService {
         final String userIdentifier,
         final UserProfileDto updateRequest
     ) {
-        try{
+        try {
             log.info("UserIdentifier: {}", userIdentifier);
             final var userId = UUID.fromString(userIdentifier);
             log.info("Retrieving this user's profile by ID: {}", userId);
@@ -76,7 +76,7 @@ public class UserService {
             updateRequest.updateEntity(user);
             user.setUpdatedAt(LocalDateTime.now());
 
-            final var savedUser = userRepository.saveAndFlush(user);
+            final var savedUser = userRepository.save(user);
             log.info("3.Profile updated for user ID: {}", savedUser.getId());
             return UserProfileDto.fromEntity(savedUser);
         }

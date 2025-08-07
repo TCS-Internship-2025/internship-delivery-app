@@ -40,7 +40,7 @@ public class AddressChangeService {
 
     @Transactional
     public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
-        try{
+        try {
             log.info("Address change for parcel {} by user {}", parcelId, userId);
 
             final var sender = userService.getUserById(userId);
@@ -69,13 +69,16 @@ public class AddressChangeService {
 
             final var description = String.format("Address changed by %s%s",
                 sender.getEmail(),
-                requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
+                requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ?
+                    ". Reason: " + requestDto.requestReason() : "");
             parcelStatusHistoryService.addStatusHistory(parcelId, description);
 
-            log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+            log.info("Address changed successfully for parcel: {} from {} to {}",
+                parcelId, oldAddress.getCity(), savedAddress.getCity());
 
-        }catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
-            log.warn("Optimistic lock conflict while changing address for parcel {} by user {}: {}",  parcelId, userId, e.getMessage());
+        } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+            log.warn("Optimistic lock conflict while changing address for parcel {} by user {}: {}",
+                parcelId, userId, e.getMessage());
             throw new ConcurrencyFailureException("Address was modified by another session");
         }
     }
@@ -93,12 +96,14 @@ public class AddressChangeService {
 
     private void validateAddressChangeRequest(final Parcel parcel) {
         if (!UPDATABLE_STATUSES.contains(parcel.getCurrentStatus())) {
-            throw new IllegalStateException("Cannot change address for parcel with status: " + parcel.getCurrentStatus());
+            throw new IllegalStateException("Cannot change address for parcel with status: "
+                + parcel.getCurrentStatus());
         }
 
         final var timeSinceCreation = Duration.between(parcel.getCreatedAt(), LocalDateTime.now());
         if (timeSinceCreation.toHours() > TIME_LIMIT_HOURS) {
-            throw new IllegalStateException("Address change request is beyond the allowed time limit of " + TIME_LIMIT_HOURS + " hours");
+            throw new IllegalStateException("Address change request is beyond the allowed time limit of "
+                + TIME_LIMIT_HOURS + " hours");
         }
     }
 }
