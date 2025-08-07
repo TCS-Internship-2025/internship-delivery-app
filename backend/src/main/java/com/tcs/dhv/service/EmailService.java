@@ -2,6 +2,7 @@ package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.exception.MailMessagingException;
 import com.tcs.dhv.repository.UserRepository;
 import com.tcs.dhv.util.EmailConstants;
@@ -224,7 +225,7 @@ public class EmailService {
     public void sendParcelStatusChangeNotification(
         final String email,
         final String name,
-        final String status,
+        final ParcelStatus status,
         final String trackingCode
     ){
         final var context = new Context();

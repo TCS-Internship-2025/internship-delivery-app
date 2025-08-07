@@ -138,15 +138,20 @@ public class ParcelService {
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
 
         parcel.setCurrentStatus(statusDto.status());
+
+        final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel status updated: {}", parcel.getCurrentStatus());
 
         final var description = makeDescription(statusDto.status(),statusDto.description());
 
-        parcelStatusHistoryService.addStatusHistory(parcel.getId(), description);
-        log.info("A new parcel status history added for parcel {}," +
-                " status {}", parcel.getId(),  parcel.getCurrentStatus());
+        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
+        log.info("A new parcel status history added for id {}," +
+                " new status {}", savedParcel.getId(),  savedParcel.getCurrentStatus());
 
-        //should trigger an email notification
+        emailService.sendParcelStatusChangeNotification(savedParcel.getRecipient().getEmail(),
+                savedParcel.getRecipient().getName(),
+                savedParcel.getCurrentStatus(),
+                savedParcel.getTrackingCode());
 
     }
 
