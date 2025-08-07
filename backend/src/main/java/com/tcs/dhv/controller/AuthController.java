@@ -58,6 +58,7 @@ public class AuthController {
         if (emailVerificationRequired) {
             emailService.sendVerificationTokenByEmail(
                 registeredUser.getId(),
+                registeredUser.getName(),
                 registeredUser.getEmail()
             );
         }
