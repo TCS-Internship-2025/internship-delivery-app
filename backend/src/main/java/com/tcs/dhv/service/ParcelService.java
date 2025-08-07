@@ -70,7 +70,6 @@ public class ParcelService {
         log.info("Retrieving parcels for user: {}", userId);
 
         final var sender = userService.getUserById(userId);
-
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
 
         return parcels.stream()
