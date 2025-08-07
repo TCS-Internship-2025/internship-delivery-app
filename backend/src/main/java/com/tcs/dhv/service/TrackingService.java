@@ -6,6 +6,7 @@ import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class TrackingService {
 
     private final ParcelRepository parcelRepository;
 
-    @Cacheable(value = "trackingDetails", key = "#trackingCode")
+    @CacheEvict(value = "trackingDetails", key = "#trackingCode")
     public TrackingDto getTrackingDetails(String trackingCode){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));

@@ -1,5 +1,6 @@
 package com.tcs.dhv.domain.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,5 +16,5 @@ public record TrackingDto(
         String recipientName,
         ParcelStatus currentStatus,
         Optional<LocalDateTime> estimatedDelivery
-) {
+) implements Serializable {
 }
