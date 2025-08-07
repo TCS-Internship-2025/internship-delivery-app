@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
+
 import { useGetProfileInfo } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
@@ -15,6 +17,8 @@ export type ProfileSettingPages = 'profile' | 'address' | 'password';
 export const ProfileInfo = () => {
   const [selectedPage, setSelectedPage] = useState<ProfileSettingPages>('profile');
   const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const isSmallScreen = useSmallScreen();
 
   if (profileLoading) {
     return (
@@ -30,7 +34,13 @@ export const ProfileInfo = () => {
 
   return (
     <Paper sx={{ display: 'flex', justifyContent: 'center', width: '60%', alignSelf: 'center' }} elevation={2}>
-      <ProfileSidebar selected={selectedPage} onSelect={setSelectedPage} />
+      <button onClick={() => setDrawerOpen(!drawerOpen)}>sadasads</button>
+      <ProfileSidebar
+        selected={selectedPage}
+        onSelect={setSelectedPage}
+        drawerOpen={drawerOpen}
+        useDrawer={isSmallScreen}
+      />
       <ProfilePageContent page={selectedPage} />
     </Paper>
   );
