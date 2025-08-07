@@ -53,7 +53,6 @@ public class AddressChangeService {
         parcel.getRecipient().setAddress(savedAddress);
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
 
-        // Status change emails should probably be sent in ParcelStatusHistoryService
         emailService.sendAddressChangeNotification(
             parcel.getRecipient().getEmail(),
             parcel.getRecipient().getName(),
