@@ -3,17 +3,23 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.UserProfileDto;
 import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
+import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -24,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ParcelRepository parcelRepository;
 
     public UserProfileDto getUserProfile(final String userIdentifier) {
         final var userId = UUID.fromString(userIdentifier);
@@ -89,8 +96,31 @@ public class UserService {
 
     @Transactional
     public void deleteUserProfile(final UUID userId) {
+        log.info("Request to delete user profile with ID: {}", userId);
         final var user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        final Set<ParcelStatus> undeliveredStatus = EnumSet.of(
+            ParcelStatus.CREATED,
+            ParcelStatus.PICKED_UP,
+            ParcelStatus.IN_TRANSIT,
+            ParcelStatus.OUT_FOR_DELIVERY,
+            ParcelStatus.DELIVERY_ATTEMPTED,
+            ParcelStatus.RETURNED_TO_SENDER
+        );
+
+        final boolean hasUndeliveredSentParcels = parcelRepository.existsBySenderIdAndCurrentStatusIn(userId, undeliveredStatus);
+        final boolean hasUndeliveredReceivedParcels = parcelRepository.existsByRecipientIdAndCurrentStatusIn(userId, undeliveredStatus);
+
+        if (hasUndeliveredSentParcels || hasUndeliveredReceivedParcels) {
+            log.warn("Attempted to delete user with ID: {} who has undelivered parcels", userId);
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Cannot delete user profile with undelivered parcels"
+            );
+        }
+
+        log.info("User profile deleted for ID: {}", userId);
         userRepository.delete(user);
     }
 
