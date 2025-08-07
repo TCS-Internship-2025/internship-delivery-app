@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/constants';
+import { CHANGE_MODAL_TYPES, ROUTES } from '@/constants';
 
 import { useGetAllParcels } from '@/apis/parcelGet';
 import { useGetProfileInfo } from '@/apis/profileInfo';
@@ -31,14 +31,13 @@ const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; o
 const Body2Typography = ({ children }: { children: React.ReactNode }) => {
   return <Typography variant="body2">{children}</Typography>;
 };
-type ModalType = 'changeProfile' | 'changePassword' | 'changeAddress';
 
 export const ProfileInfo = () => {
   const navigate = useNavigate();
 
   const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels();
   const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
-  const [openModal, setOpenModal] = useState<ModalType | null>(null);
+  const [openModal, setOpenModal] = useState<string | null>(null);
   const profile = profileData;
 
   const getFirstThreeInitials = (fullName: string) => {
@@ -52,7 +51,7 @@ export const ProfileInfo = () => {
 
   const firstTwoParcels = parcels?.slice(0, 2) ?? [];
 
-  const handleOpen = (identifier: ModalType) => {
+  const handleOpen = (identifier: string) => {
     setOpenModal(identifier);
   };
   const handleClose = () => {
@@ -97,21 +96,21 @@ export const ProfileInfo = () => {
           <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
           <ProfileInfoButton
             onClick={() => {
-              handleOpen('changePassword');
+              handleOpen(CHANGE_MODAL_TYPES.CHANGE_PASSWORD);
             }}
           >
             Edit password
           </ProfileInfoButton>
           <ProfileInfoButton
             onClick={() => {
-              handleOpen('changeAddress');
+              handleOpen(CHANGE_MODAL_TYPES.CHANGE_ADDRESS);
             }}
           >
             Edit address
           </ProfileInfoButton>
           <ProfileInfoButton
             onClick={() => {
-              handleOpen('changeProfile');
+              handleOpen(CHANGE_MODAL_TYPES.CHANGE_PROFILE);
             }}
           >
             Edit user info
@@ -119,12 +118,12 @@ export const ProfileInfo = () => {
           <DeleteUserButton showDangerZone={false} buttonVariant="contained" buttonColor="error" />
         </Stack>
         <ChangeProfileModal
-          open={openModal === 'changeProfile'}
+          open={openModal === CHANGE_MODAL_TYPES.CHANGE_PROFILE}
           handleClose={handleClose}
           formData={{ name: profile.name, email: profile.email, phoneNumber: profile.phone?.toString() }}
         />
-        <ChangePasswordModal open={openModal === 'changePassword'} handleClose={handleClose} />
-        <ChangeAddressModal open={openModal === 'changeAddress'} handleClose={handleClose} />
+        <ChangePasswordModal open={openModal === CHANGE_MODAL_TYPES.CHANGE_PASSWORD} handleClose={handleClose} />
+        <ChangeAddressModal open={openModal === CHANGE_MODAL_TYPES.CHANGE_ADDRESS} handleClose={handleClose} />
       </Paper>
 
       <Box sx={{ mx: 'auto', mt: 4 }}>
