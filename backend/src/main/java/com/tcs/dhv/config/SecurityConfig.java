@@ -34,6 +34,7 @@ public class SecurityConfig {
     public static final String[] PUBLIC_ENDPOINTS = {
         "/api/auth/**",
         "/api/tracking/**",
+        "/api/system/parcels/**",
 
         //OPENAPI/SWAGGER
         "/v3/api-docs",
@@ -92,7 +93,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-        final AuthenticationConfiguration configuration
+            final AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
     }
@@ -103,8 +104,9 @@ public class SecurityConfig {
     }
 
     private static void getSessionManagementConfig(
-        final SessionManagementConfigurer<HttpSecurity> session
+            final SessionManagementConfigurer<HttpSecurity> session
     ) {
         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
+
