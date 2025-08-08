@@ -16,9 +16,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class ApiKeyFilter extends OncePerRequestFilter {
 
     private final ApiKeyService apiKeyService;
@@ -63,5 +63,4 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             response.getWriter().write("Unauthorized: Invalid API Key");
         }
     }
-
 }
