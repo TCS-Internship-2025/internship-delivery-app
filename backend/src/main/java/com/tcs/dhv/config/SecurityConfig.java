@@ -65,27 +65,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            final HttpSecurity http,
-            final CorsConfigurationSource corsConfigurationSource,
-            final ApiKeyFilter apiKeyFilter
+        final HttpSecurity http,
+        final CorsConfigurationSource corsConfigurationSource,
+        final ApiKeyFilter apiKeyFilter
     ) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(PUBLIC_ENDPOINTS)
-                )
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
-                    auth.anyRequest().authenticated();
-                })
-                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(SecurityConfig::getSessionManagementConfig)
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(withDefaults())
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(csrf -> csrf
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers(PUBLIC_ENDPOINTS)
+            )
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
+                auth.anyRequest().authenticated();
+            })
+            .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
+            .sessionManagement(SecurityConfig::getSessionManagementConfig)
+            .oauth2ResourceServer(oauth2 -> oauth2
+                    .jwt(withDefaults())
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            );
 
         return http.build();
     }

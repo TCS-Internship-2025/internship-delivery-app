@@ -72,6 +72,4 @@ public class MailConfig {
         mail.setFrom(username);
         return mail;
     }
-
-
 }

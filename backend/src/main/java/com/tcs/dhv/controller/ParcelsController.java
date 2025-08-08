@@ -37,15 +37,15 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/parcels")
-@RestController
 @SecurityRequirement(name = "Bearer Authentication")
+@RestController
 public class ParcelsController {
 
     private final ParcelService parcelService;
     private final AddressChangeService addressChangeService;
 
     @Operation(
-        summary = "Create parcel", 
+        summary = "Create parcel",
         description = "Create (send) a new parcel.\n\nThe parcel will be assigned a unique tracking code and initial status.",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Parcel creation request",

@@ -32,7 +32,8 @@ public class UserController {
         description = "Retrieves user's profile info by its token")
     @GetMapping("/me")
     public ResponseEntity<UserProfileDto> getCurrentUserProfile(
-        final Authentication authentication){
+        final Authentication authentication
+    ){
         log.info("Retrieving profile for user: {}", authentication.getName());
 
         final var profile = userService.getUserProfile(authentication.getName());

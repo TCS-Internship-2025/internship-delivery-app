@@ -39,7 +39,9 @@ public class AuthController {
 
     @Operation(summary = "Login user", description = "Authenticate user with email and password")
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody final LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> login(
+        @Valid @RequestBody final LoginRequest loginRequest
+    ) {
         log.info("Login request for email: {}", loginRequest.email());
         final var authResponse = authService.authenticate(loginRequest);
 
@@ -75,7 +77,9 @@ public class AuthController {
 
     @Operation(summary = "Resend verification", description = "Resend the email verification")
     @PostMapping("/email/resend-verification")
-    public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) {
+    public ResponseEntity<Void> resendVerificationEmail(
+        @RequestParam final String email
+    ) {
         log.info("Resend verification email requested for: {}", email);
         emailService.resendVerificationTokenByEmail(email);
 
@@ -102,7 +106,9 @@ public class AuthController {
 
     @Operation(summary = "Refresh token", description = "Refresh token")
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestParam final UUID refreshToken) {
+    public ResponseEntity<AuthResponse> refreshToken(
+        @RequestParam final UUID refreshToken
+    ) {
         log.info("Refresh token request: {}", refreshToken);
         final var authResponse = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(authResponse);
@@ -111,7 +117,9 @@ public class AuthController {
     @Operation(summary = "Logout user", description = "Logout the user by refresh token id")
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> revokeToken(@RequestParam final UUID refreshToken) {
+    public ResponseEntity<Void> revokeToken(
+        @RequestParam final UUID refreshToken
+    ) {
         log.info("Logout request revoking token: {}", refreshToken);
         authService.revokeToken(refreshToken);
         return ResponseEntity.noContent().build();
