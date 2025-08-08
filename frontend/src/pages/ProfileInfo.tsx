@@ -38,7 +38,7 @@ export const ProfileInfo = () => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+    <Box display="flex" flexDirection="column" alignItems="center" gap={isSmallScreen ? 1 : 2}>
       {isSmallScreen && (
         <Button
           variant="outlined"
@@ -60,8 +60,8 @@ export const ProfileInfo = () => {
           flexDirection: 'row',
           width: isSmallScreen ? '100%' : '65%',
           maxWidth: 10000,
-          p: 2,
-          gap: 2,
+          p: isSmallScreen ? 0 : 2,
+          gap: isSmallScreen ? 0 : 2,
         }}
       >
         <ProfileSidebar

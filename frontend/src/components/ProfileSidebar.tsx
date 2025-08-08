@@ -28,6 +28,13 @@ export const ProfileSidebar = ({
   closeDrawer,
   useDrawer = false,
 }: ProfileSidebarProps) => {
+  const selectPage = (page: ProfileSettingPages) => {
+    onSelect(page);
+    if (useDrawer) {
+      closeDrawer?.();
+    }
+  };
+
   const sidebarContent = (
     <Paper
       elevation={3}
@@ -48,10 +55,9 @@ export const ProfileSidebar = ({
           </IconButton>
         )}
       </Typography>
-
       <List sx={{ flexGrow: 1 }}>
         {pages.map((page) => (
-          <ListItemButton key={page} selected={selected === page} onClick={() => onSelect(page)}>
+          <ListItemButton key={page} selected={selected === page} onClick={() => selectPage(page)}>
             <ListItemText primary={page.charAt(0).toUpperCase() + page.slice(1)} />
           </ListItemButton>
         ))}
