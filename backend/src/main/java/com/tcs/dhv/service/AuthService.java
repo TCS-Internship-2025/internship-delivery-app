@@ -15,11 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
@@ -38,7 +36,7 @@ public class AuthService {
     private Duration refreshTokenTtl;
 
     public AuthResponse authenticate(final LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
+        final var authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.email(),
                 loginRequest.password())
@@ -65,7 +63,7 @@ public class AuthService {
     }
 
     @Transactional
-    public User registerUser(RegisterRequest registerRequest) {
+    public User registerUser(final RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.email())) {
             throw new ValidationException("Email already exists");
         }
@@ -79,7 +77,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public AuthResponse refreshToken(UUID refreshToken) {
+    public AuthResponse refreshToken(final UUID refreshToken) {
         final var refreshTokenEntity = refreshTokenRepository
             .findByIdAndExpiresAtAfter(refreshToken, Instant.now())
             .orElseThrow(() -> new ResponseStatusException(
@@ -97,7 +95,7 @@ public class AuthService {
         return new AuthResponse(newToken, refreshTokenEntity.getId());
     }
 
-    public void revokeToken(UUID refreshToken) {
+    public void revokeToken(final UUID refreshToken) {
         refreshTokenRepository.deleteById(refreshToken);
     }
 }

@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +36,11 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
-    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+    public AddressDto changeAddress(
+        final UUID parcelId,
+        final AddressChangeDto requestDto,
+        final UUID userId
+    ) {
         log.info("Address change for parcel {} by user {}", parcelId, userId);
 
         final var sender = userService.getUserById(userId);
@@ -63,9 +66,11 @@ public class AddressChangeService {
         );
         log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
 
-        final var description = String.format("Address changed by %s%s",
+        final var description = String.format(
+            "Address changed by %s%s",
             sender.getEmail(),
-            requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
+            requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : ""
+        );
         parcelStatusHistoryService.addStatusHistory(parcelId, description);
 
         log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
@@ -73,7 +78,10 @@ public class AddressChangeService {
         return AddressDto.fromEntity(savedAddress);
     }
 
-    private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
+    private Parcel getParcelByIdAndUser(
+        final UUID parcelId,
+        final com.tcs.dhv.domain.entity.User sender
+    ) {
         final var parcel = parcelRepository.findById(parcelId)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
 

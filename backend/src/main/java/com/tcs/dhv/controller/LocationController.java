@@ -25,11 +25,12 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @Operation(summary = "Get locations", description = "Get the delivery locations by its types")
+    @Operation(
+        summary = "Get locations",
+        description = "Get the delivery locations by its types"
+    )
     @GetMapping
-    public ResponseEntity<List<LocationDto>> getLocations(
-        @Valid @RequestParam final DeliveryType deliveryType
-    ) {
+    public ResponseEntity<List<LocationDto>> getLocations(@Valid @RequestParam final DeliveryType deliveryType) {
         log.info("Received request for locations by delivery type {} :",  deliveryType);
         final var locations = locationService.getLocationsByDeliveryType(deliveryType);
         log.info("Found {} locations of type {}", locations.size(), deliveryType);

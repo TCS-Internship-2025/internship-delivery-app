@@ -57,9 +57,9 @@ public class EmailService {
     }
 
     public void sendDeliveryCompleteEmail(
-            String email,
-            String name,
-            String trackingNumber
+            final String email,
+            final String name,
+            final String trackingNumber
     ) {
         final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
@@ -94,13 +94,14 @@ public class EmailService {
     }
 
     private MimeMessage CreateMessage(
-            String subject,
-            String from,
-            String to,
-            String text
-    ){
+        final String subject,
+        final String from,
+        final String to,
+        final String text
+    ) {
         final var message = mailSender.createMimeMessage();
         final MimeMessageHelper helper;
+
         try {
             helper = new MimeMessageHelper(message, true, EmailConstants.ENCODING);
             helper.setSubject(subject);
@@ -108,12 +109,12 @@ public class EmailService {
             helper.setTo(to);
             helper.setText(text, true);
             return message;
-        } catch (MessagingException e) {
+        } catch (final MessagingException e) {
             throw new MailMessagingException(e.getMessage());
         }
     }
 
-    public void resendVerificationTokenByEmail(String email) {
+    public void resendVerificationTokenByEmail(final String email) {
         final var user = userRepository.findByEmail(email)
             .filter(usr -> !usr.getIsVerified())
             .orElseThrow(() -> new ResponseStatusException(
@@ -217,7 +218,11 @@ public class EmailService {
         log.info("Password reset email sent to {}", email);
     }
 
-    private String getAddressLine3(String city, String country, String postalCode){
+    private String getAddressLine3(
+        final String city,
+        final String country,
+        final String postalCode
+    ) {
         return city + ", " + country + " " + postalCode;
     }
 
@@ -226,7 +231,7 @@ public class EmailService {
         final String name,
         final String status,
         final String trackingCode
-    ){
+    ) {
         final var context = new Context();
         context.setVariable("status", status);
         context.setVariable("trackingCode", trackingCode);
@@ -249,7 +254,7 @@ public class EmailService {
         final String email,
         final User oldUser,
         final User newUser
-    ){
+    ) {
         final var context = new Context();
         context.setVariable("oldName", oldUser.getName());
         context.setVariable("oldEmail", oldUser.getEmail());
@@ -281,6 +286,4 @@ public class EmailService {
         mailSender.send(message);
         log.info("User update notification email sent to {}", email);
     }
-
 }
-

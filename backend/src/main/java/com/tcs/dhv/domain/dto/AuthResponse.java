@@ -2,7 +2,6 @@ package com.tcs.dhv.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-
 import java.util.UUID;
 
 @Schema(description = "Authentication response with JWT tokens")

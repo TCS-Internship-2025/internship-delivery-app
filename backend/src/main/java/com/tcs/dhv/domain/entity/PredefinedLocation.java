@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.util.UUID;
 
 @Getter
@@ -50,8 +49,8 @@ public class PredefinedLocation {
     @Builder.Default
     private LocationStatus status = LocationStatus.AVAILABLE;
 
-    @OneToOne
     @NotNull
+    @OneToOne
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 }

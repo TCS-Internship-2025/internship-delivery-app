@@ -21,7 +21,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -65,27 +64,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            final HttpSecurity http,
-            final CorsConfigurationSource corsConfigurationSource,
-            final ApiKeyFilter apiKeyFilter
+        final HttpSecurity http,
+        final CorsConfigurationSource corsConfigurationSource,
+        final ApiKeyFilter apiKeyFilter
     ) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(PUBLIC_ENDPOINTS)
-                )
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
-                    auth.anyRequest().authenticated();
-                })
-                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(SecurityConfig::getSessionManagementConfig)
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(withDefaults())
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(csrf -> csrf
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers(PUBLIC_ENDPOINTS)
+            )
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers(PUBLIC_ENDPOINTS).permitAll();
+                auth.anyRequest().authenticated();
+            })
+            .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
+            .sessionManagement(SecurityConfig::getSessionManagementConfig)
+            .oauth2ResourceServer(oauth2 -> oauth2
+                    .jwt(withDefaults())
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            );
 
         return http.build();
     }
@@ -102,9 +101,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    private static void getSessionManagementConfig(
-        final SessionManagementConfigurer<HttpSecurity> session
-    ) {
+    private static void getSessionManagementConfig(final SessionManagementConfigurer<HttpSecurity> session) {
         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }

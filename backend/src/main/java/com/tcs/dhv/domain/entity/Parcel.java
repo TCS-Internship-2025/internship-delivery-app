@@ -3,7 +3,6 @@ package com.tcs.dhv.domain.entity;
 import com.tcs.dhv.domain.enums.DeliveryType;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.domain.enums.PaymentType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,7 +22,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 

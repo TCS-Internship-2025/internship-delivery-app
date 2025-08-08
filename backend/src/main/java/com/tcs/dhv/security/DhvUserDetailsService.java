@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class DhvUserDetailsService implements UserDetailsService {
 
     @Value("${email-verification.required}")
@@ -20,17 +20,18 @@ public class DhvUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).map(user -> {
-            if (emailVerificationRequired && !user.getIsVerified()) {
-                throw new IllegalStateException("Email is not verified");
-            }
+        return userRepository.findByEmail(email)
+            .map(user -> {
+                if (emailVerificationRequired && !user.getIsVerified()) {
+                    throw new IllegalStateException("Email is not verified");
+                }
 
             return User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
                 .build();
-        }).orElseThrow(() -> new UsernameNotFoundException(
+            }).orElseThrow(() -> new UsernameNotFoundException(
             "User with username [%s] not found".formatted(email)
-        ));
+            ));
     }
 }

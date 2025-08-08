@@ -20,17 +20,15 @@ public class PasswordResetController {
     private final PasswordResetService passwordResetService;
 
     @PostMapping("/forgot")
-    public ResponseEntity<String> requestPasswordReset(
-        @Valid @RequestBody ForgotPasswordDto forgotPassword
-    ) {
+    public ResponseEntity<String> requestPasswordReset(@Valid @RequestBody final ForgotPasswordDto forgotPassword) {
         passwordResetService.sendResetToken(forgotPassword.email());
         return ResponseEntity.ok("If email is registered a reset link will be sent!");
     }
 
     @PostMapping("/reset")
     public ResponseEntity<String> resetPassword(
-        @RequestHeader("Authorization") String token,
-        @Valid @RequestBody ResetPasswordDto resetPassword
+        @RequestHeader("Authorization") final String token,
+        @Valid @RequestBody final ResetPasswordDto resetPassword
     ) {
         passwordResetService.resetPassword(token, resetPassword.newPassword());
         return ResponseEntity.ok("Password has been reset successfully");
