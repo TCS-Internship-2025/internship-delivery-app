@@ -19,6 +19,11 @@ public record ParcelDto(
     @Schema(description = "Parcel tracking code", example = "HU1363415219JN")
     String trackingCode,
 
+    @Schema(description = "Delivery address")
+    @NotNull(message = "Address is required")
+    @Valid
+    AddressDto address,
+
     @Schema(description = "Recipient information")
     @NotNull(message = "Recipient is required")
     @Valid
@@ -45,6 +50,7 @@ public record ParcelDto(
         return new ParcelDto(
             parcel.getId(),
             parcel.getTrackingCode(),
+            AddressDto.fromEntity(parcel.getAddress()),
             RecipientDto.fromEntity(parcel.getRecipient()),
             parcel.getCurrentStatus(),
             parcel.getDeliveryType(),
