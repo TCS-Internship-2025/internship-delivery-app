@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.Optional;
@@ -65,7 +66,7 @@ public class TrackingService {
                 .recipientEmail(recipient.getEmail())
                 .recipientPhone(recipient.getPhone())
                 .recipientAddress(recipient.getAddress() != null ? recipient.getAddress().toString() : null)
-                .recipientBirthDate(Optional.of(recipient.getBirthDate().atStartOfDay()))
+                .recipientBirthDate(Optional.ofNullable(recipient.getBirthDate()).map(LocalDate::atStartOfDay))
                 .currentStatus(parcel.getCurrentStatus())
                 .estimatedDelivery(calculateEstimatedDeliveryTime(parcel))
                 .paymentType(String.valueOf(parcel.getPaymentType()))
