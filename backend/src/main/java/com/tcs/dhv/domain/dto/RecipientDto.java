@@ -25,7 +25,8 @@ public record RecipientDto(
     String email,
 
     @Schema(description = "Recipient's phone number", example = "+36309876543")
-    @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$", message = "Invalid Hungarian phone number format (+36XXXXXXXXX)")
+    @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$",
+        message = "Invalid Hungarian phone number format (+36XXXXXXXXX)")
     String phone,
 
     @Schema(description = "Recipient's birthday", example = "2000-12-12")
