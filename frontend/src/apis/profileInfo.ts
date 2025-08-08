@@ -1,11 +1,10 @@
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { httpService } from '@/services/httpService';
 
 import type { ChangeAddressFormSchema, ChangeProfileSchema } from '@/utils/changeDataComposition';
 
-const queryClient = new QueryClient();
 export const addressSchema = z.object({
   line1: z.string(),
   line2: z.string(),
@@ -42,7 +41,7 @@ export function useGetProfileInfo() {
 }
 const response = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string().nullable(),
   address: addressSchema.nullable(),
   isVerified: z.boolean(),
@@ -69,6 +68,7 @@ export const editPassword = (data: ChangePasswordData) => {
   return changeReq(data);
 };
 export const useEditProfile = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ChangeProfileSchema) => editProfile(data),
     onSuccess: async () => {
@@ -78,6 +78,7 @@ export const useEditProfile = () => {
 };
 
 export const useEditAddress = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ChangeAddressFormSchema) => editAddress(data),
     onSuccess: async () => {
@@ -86,6 +87,7 @@ export const useEditAddress = () => {
   });
 };
 export const useEditPassword = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ChangePasswordData) => editPassword(data),
     onSuccess: async () => {
