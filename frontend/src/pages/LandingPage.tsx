@@ -9,6 +9,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+import { AnimatedHero } from '@/components/AnimatedHero';
+import { FeatureCard, features } from '@/components/FeatureCard';
+
 interface LandingPageButtonProps {
   children: React.ReactNode;
   onClick: () => void;
@@ -43,7 +46,7 @@ export const LandingPage = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '90vh',
+        minHeight: '100vh',
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: 'background.default',
@@ -52,35 +55,35 @@ export const LandingPage = () => {
         px: 2,
       }}
     >
-      <Box
-        sx={{
-          maxWidth: 400,
-          width: '100%',
-          mb: isSmallScreen ? 2 : 4,
-        }}
-      >
-        <img
-          src="/image.png"
-          alt="Logo"
-          style={{
-            width: '100%',
-            height: isSmallScreen ? 150 : 250,
-            objectFit: 'contain',
-            display: 'block',
-            margin: '0 auto',
-            borderRadius: 8,
-          }}
-        />
-      </Box>
+      {/* Animated Hero Image */}
+      <AnimatedHero />
 
-      <Typography variant={isSmallScreen ? 'h4' : 'h2'} sx={{ mb: 2 }}>
+      {/* Main Title */}
+      <Typography variant={isSmallScreen ? 'h4' : 'h2'} sx={{ mb: 2, fontWeight: 700, letterSpacing: 2 }}>
         SwiftParcel
       </Typography>
 
+      {/* Subtitle */}
       <Typography variant={isSmallScreen ? 'body1' : 'h5'} color="text.secondary" sx={{ mb: 4 }}>
         Welcome to the best parcel service provider!
       </Typography>
 
+      {/* Features */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: 3,
+          mb: 4,
+        }}
+      >
+        {features.map((f, i) => (
+          <FeatureCard key={i} {...f} />
+        ))}
+      </Box>
+
+      {/* Action Buttons */}
       <Box
         sx={{
           display: 'flex',
@@ -109,6 +112,15 @@ export const LandingPage = () => {
           Track parcel
         </LandingPageButton>
       </Box>
+
+      {/* Invite Section */}
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
+        New here?{' '}
+        <Button variant="text" onClick={() => void navigate(ROUTES.REGISTER)}>
+          Create an account
+        </Button>{' '}
+        and start sending parcels today!
+      </Typography>
     </Box>
   );
 };
