@@ -12,10 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TrackingCode {
-
     String message() default "Tracking code is invalid or not found";
-
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
 }
