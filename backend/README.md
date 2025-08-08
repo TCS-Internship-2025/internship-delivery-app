@@ -217,11 +217,6 @@ Include API key in custom header:
 X-API-Key: {api_key}
 ```
 
-### Token Configuration
-- **JWT TTL**: 15 minutes
-- **Refresh Token TTL**: 24 hours
-- **Verification Token TTL**: 24 hours
-
 ## Project Structure
 
 ```

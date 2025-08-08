@@ -17,7 +17,7 @@ export const ROUTES = {
   VERIFY: 'verify',
   VERIFIED: 'verified/:uid/:token',
   PASSWORDRESET: 'password-reset',
-  NEWPASSWORD: 'new-password',
+  NEWPASSWORD: 'reset-password',
   APP: 'app',
   RECIPIENT_FORM: 'recipient-form',
   PARCEL_FORM: 'parcel-form',
@@ -84,6 +84,7 @@ export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
 };
 
 export const QUERY_STATUS = {
+  SUCCESS: 'success',
   PENDING: 'pending',
   ERROR: 'error',
 };
