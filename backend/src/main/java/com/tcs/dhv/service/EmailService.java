@@ -94,13 +94,14 @@ public class EmailService {
     }
 
     private MimeMessage CreateMessage(
-            String subject,
-            String from,
-            String to,
-            String text
+        String subject,
+        String from,
+        String to,
+        String text
     ){
         final var message = mailSender.createMimeMessage();
         final MimeMessageHelper helper;
+
         try {
             helper = new MimeMessageHelper(message, true, EmailConstants.ENCODING);
             helper.setSubject(subject);
@@ -217,7 +218,11 @@ public class EmailService {
         log.info("Password reset email sent to {}", email);
     }
 
-    private String getAddressLine3(String city, String country, String postalCode){
+    private String getAddressLine3(
+        String city,
+        String country,
+        String postalCode
+    ){
         return city + ", " + country + " " + postalCode;
     }
 
@@ -281,6 +286,5 @@ public class EmailService {
         mailSender.send(message);
         log.info("User update notification email sent to {}", email);
     }
-
 }
 

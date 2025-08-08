@@ -49,5 +49,4 @@ public class TrackingService {
             case DELIVERED,CANCELLED,RETURNED_TO_SENDER-> Optional.empty();
         };
     }
-
 }
