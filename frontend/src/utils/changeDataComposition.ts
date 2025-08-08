@@ -36,12 +36,12 @@ export const changeProfileFields: FieldConfig<ChangeProfileSchema>[][] = [
 ];
 export const changeAddressFields: FieldConfig<ChangeAddressFormSchema>[][] = [
   [
-    { name: 'address.building', label: 'Building', required: true },
-    { name: 'address.postalCode', label: 'ZIP/Postal Code', required: true },
-    { name: 'address.line1', label: 'Address Line 1', required: true },
     { name: 'address.country', label: 'Country', required: true },
-    { name: 'address.apartment', label: 'Apartment', required: true },
+    { name: 'address.postalCode', label: 'ZIP/Postal Code', required: true },
     { name: 'address.city', label: 'City', required: true },
+    { name: 'address.building', label: 'Building', required: true },
+    { name: 'address.line1', label: 'Address Line 1', required: true },
     { name: 'address.line2', label: 'Address Line 2' },
+    { name: 'address.apartment', label: 'Apartment', required: true },
   ],
 ];
