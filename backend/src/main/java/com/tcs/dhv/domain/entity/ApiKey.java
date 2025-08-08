@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -43,5 +42,3 @@ public class ApiKey {
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 }
-
-

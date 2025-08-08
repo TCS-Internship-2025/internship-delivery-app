@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Slf4j
@@ -17,7 +16,7 @@ public class ApiKeyService {
     private final ApiKeyRepository apiKeyRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Optional<ApiKey> validate(String rawKey) {
+    public Optional<ApiKey> validate(final String rawKey) {
         if (rawKey == null || rawKey.isBlank()) {
             log.warn("API key is blank or null");
             return Optional.empty();

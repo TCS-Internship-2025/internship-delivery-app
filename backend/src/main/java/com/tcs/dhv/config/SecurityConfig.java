@@ -21,7 +21,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -102,9 +101,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    private static void getSessionManagementConfig(
-        final SessionManagementConfigurer<HttpSecurity> session
-    ) {
+    private static void getSessionManagementConfig(final SessionManagementConfigurer<HttpSecurity> session) {
         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }

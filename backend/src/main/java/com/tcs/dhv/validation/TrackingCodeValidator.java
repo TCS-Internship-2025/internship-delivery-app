@@ -6,7 +6,6 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-
 @AllArgsConstructor
 @Component
 public class TrackingCodeValidator implements ConstraintValidator<TrackingCode, String> {
@@ -15,16 +14,16 @@ public class TrackingCodeValidator implements ConstraintValidator<TrackingCode, 
     private final ParcelRepository parcelRepository;
 
     @Override
-    public void initialize(TrackingCode constraintAnnotation) {
+    public void initialize(final TrackingCode constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
     public boolean isValid(
-        String trackingCode,
-        ConstraintValidatorContext constraintValidatorContext
+        final String trackingCode,
+        final ConstraintValidatorContext constraintValidatorContext
     ) {
-        if(trackingCode == null || trackingCode.isBlank()){
+        if (trackingCode == null || trackingCode.isBlank()) {
             return false;
         }
 

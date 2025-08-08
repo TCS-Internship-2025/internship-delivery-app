@@ -1,27 +1,22 @@
 package com.tcs.dhv.exception;
 
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import org.springframework.dao.DataIntegrityViolationException;
+import com.tcs.dhv.domain.dto.ApiErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
-
-import com.tcs.dhv.domain.dto.ApiErrorResponse;
-
 import java.time.Instant;
 import java.util.stream.Collectors;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 
 
 @Slf4j
@@ -83,7 +78,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MailMessagingException.class)
-    public ResponseEntity<ApiErrorResponse> handleMailMessagingException(final MailMessagingException ex){
+    public ResponseEntity<ApiErrorResponse> handleMailMessagingException(final MailMessagingException ex) {
         log.error("Mail messaging error", ex);
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
@@ -104,19 +99,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(final ConstraintViolationException ex) {
         log.error("Constraint Violation", ex);
         final var errorList = ex.getConstraintViolations()
-                .stream()
-                .map(violation -> new ApiErrorResponse.FieldError(
-                        violation.getPropertyPath().toString(),
-                        violation.getMessage()
-                ))
-                .collect(Collectors.toList());
+            .stream()
+            .map(violation -> new ApiErrorResponse.FieldError(
+                violation.getPropertyPath().toString(),
+                violation.getMessage()
+            ))
+            .collect(Collectors.toList());
 
         final var err = ApiErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message("Validation failed")
-                .timestamp(Instant.now())
-                .errors(errorList)
-                .build();
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message("Validation failed")
+            .timestamp(Instant.now())
+            .errors(errorList)
+            .build();
         return ResponseEntity.badRequest().body(err);
     }
 
@@ -124,29 +119,29 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex) {
         log.error("Method argument not valid", ex);
         final var errorList = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError -> new ApiErrorResponse.FieldError(
-                        fieldError.getField(),
-                        fieldError.getDefaultMessage()
-                ))
-                .toList();
+            .getFieldErrors()
+            .stream()
+            .map(fieldError -> new ApiErrorResponse.FieldError(
+                fieldError.getField(),
+                fieldError.getDefaultMessage()
+            ))
+            .toList();
 
         final var err = ApiErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message("Validation failed")
-                .timestamp(Instant.now())
-                .errors(errorList)
-                .build();
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message("Validation failed")
+            .timestamp(Instant.now())
+            .errors(errorList)
+            .build();
         return ResponseEntity.badRequest().body(err);
     }
 
-    private ResponseEntity<ApiErrorResponse> buildError(HttpStatus status, String message) {
+    private ResponseEntity<ApiErrorResponse> buildError(final HttpStatus status, final String message) {
         final var err = ApiErrorResponse.builder()
-                .status(status.value())
-                .message(message)
-                .timestamp(Instant.now())
-                .build();
+            .status(status.value())
+            .message(message)
+            .timestamp(Instant.now())
+            .build();
         return ResponseEntity.status(status).body(err);
     }
 }

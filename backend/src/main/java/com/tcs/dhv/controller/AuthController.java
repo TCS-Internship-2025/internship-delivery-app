@@ -1,16 +1,7 @@
 package com.tcs.dhv.controller;
 
-import com.tcs.dhv.domain.dto.AuthResponse;
-import com.tcs.dhv.domain.dto.LoginRequest;
-import com.tcs.dhv.domain.dto.RegisterRequest;
-import com.tcs.dhv.domain.dto.RegisterResponse;
-import com.tcs.dhv.service.AuthService;
-import com.tcs.dhv.service.EmailService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.UUID;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +11,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
-
+import com.tcs.dhv.domain.dto.AuthResponse;
+import com.tcs.dhv.domain.dto.LoginRequest;
+import com.tcs.dhv.domain.dto.RegisterRequest;
+import com.tcs.dhv.domain.dto.RegisterResponse;
+import com.tcs.dhv.service.AuthService;
+import com.tcs.dhv.service.EmailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Tag(name= "Authentication", description = "User authentication and authorization operations")
 @Slf4j
@@ -37,11 +35,12 @@ public class AuthController {
     @Value("${email-verification.required}")
     private boolean emailVerificationRequired;
 
-    @Operation(summary = "Login user", description = "Authenticate user with email and password")
+    @Operation(
+        summary = "Login user",
+        description = "Authenticate user with email and password"
+    )
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(
-        @Valid @RequestBody final LoginRequest loginRequest
-    ) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody final LoginRequest loginRequest) {
         log.info("Login request for email: {}", loginRequest.email());
         final var authResponse = authService.authenticate(loginRequest);
 
@@ -49,11 +48,12 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
 
-    @Operation(summary = "Register user", description = "Register user")
+    @Operation(
+        summary = "Register user",
+        description = "Register user"
+    )
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> registerUser(
-        @Valid @RequestBody final RegisterRequest registerRequest
-    ) {
+    public ResponseEntity<RegisterResponse> registerUser(@Valid @RequestBody final RegisterRequest registerRequest) {
         log.info("Register request for email: {}", registerRequest.email());
         final var registeredUser = authService.registerUser(registerRequest);
 
@@ -75,11 +75,12 @@ public class AuthController {
             ));
     }
 
-    @Operation(summary = "Resend verification", description = "Resend the email verification")
+    @Operation(
+        summary = "Resend verification",
+        description = "Resend the email verification"
+    )
     @PostMapping("/email/resend-verification")
-    public ResponseEntity<Void> resendVerificationEmail(
-        @RequestParam final String email
-    ) {
+    public ResponseEntity<Void> resendVerificationEmail(@RequestParam final String email) {
         log.info("Resend verification email requested for: {}", email);
         emailService.resendVerificationTokenByEmail(email);
 
@@ -87,7 +88,10 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Email verification", description = "Verify user by the email")
+    @Operation(
+        summary = "Email verification",
+        description = "Verify user by the email"
+    )
     @GetMapping("/email/verify")
     public ResponseEntity<RegisterResponse> verifyEmail(
         @RequestParam("uid") final UUID userId,
@@ -103,23 +107,23 @@ public class AuthController {
         ));
     }
 
-
-    @Operation(summary = "Refresh token", description = "Refresh token")
+    @Operation(
+        summary = "Refresh token",
+        description = "Refresh token"
+    )
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(
-        @RequestParam final UUID refreshToken
-    ) {
+    public ResponseEntity<AuthResponse> refreshToken(@RequestParam final UUID refreshToken) {
         log.info("Refresh token request: {}", refreshToken);
         final var authResponse = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(authResponse);
     }
 
-    @Operation(summary = "Logout user", description = "Logout the user by refresh token id")
-
+    @Operation(
+        summary = "Logout user",
+        description = "Logout the user by refresh token id"
+    )
     @PostMapping("/logout")
-    public ResponseEntity<Void> revokeToken(
-        @RequestParam final UUID refreshToken
-    ) {
+    public ResponseEntity<Void> revokeToken(@RequestParam final UUID refreshToken) {
         log.info("Logout request revoking token: {}", refreshToken);
         authService.revokeToken(refreshToken);
         return ResponseEntity.noContent().build();

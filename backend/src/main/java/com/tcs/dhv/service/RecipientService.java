@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class RecipientService {
+
     private final RecipientRepository recipientRepository;
     private final AddressRepository addressRepository;
 
