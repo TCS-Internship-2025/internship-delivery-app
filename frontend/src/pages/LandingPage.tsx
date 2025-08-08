@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useAuth } from '@/contexts/AuthContext';
 
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -16,7 +17,7 @@ interface LandingPageButtonProps {
 
 const LandingPageButton = ({ children, onClick, color = 'primary' }: LandingPageButtonProps) => {
   return (
-    <Button variant="contained" color={color} size="large" onClick={onClick}>
+    <Button variant="contained" color={color} size="large" onClick={onClick} sx={{ whiteSpace: 'nowrap', px: 3 }}>
       {children}
     </Button>
   );
@@ -25,6 +26,7 @@ const LandingPageButton = ({ children, onClick, color = 'primary' }: LandingPage
 export const LandingPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+  const isSmallScreen = useSmallScreen();
 
   const handleAuthClick = () => {
     if (isAuthenticated) {
@@ -47,12 +49,14 @@ export const LandingPage = () => {
         bgcolor: 'background.default',
         color: 'text.primary',
         textAlign: 'center',
+        px: 2,
       }}
     >
       <Box
         sx={{
           maxWidth: 400,
           width: '100%',
+          mb: isSmallScreen ? 2 : 4,
         }}
       >
         <img
@@ -60,31 +64,43 @@ export const LandingPage = () => {
           alt="Logo"
           style={{
             width: '100%',
-            height: '80%',
+            height: isSmallScreen ? 150 : 250,
+            objectFit: 'contain',
             display: 'block',
             margin: '0 auto',
-            objectFit: 'contain',
-            borderRadius: 0.5,
+            borderRadius: 8,
           }}
         />
       </Box>
-      <Typography variant="h1" color="text.primary" sx={{ mb: 4 }}>
+
+      <Typography variant={isSmallScreen ? 'h4' : 'h2'} sx={{ mb: 2 }}>
         SwiftParcel
       </Typography>
-      <Typography variant="h5" color="text.secondary" sx={{ mb: 2 }}>
+
+      <Typography variant={isSmallScreen ? 'body1' : 'h5'} color="text.secondary" sx={{ mb: 4 }}>
         Welcome to the best parcel service provider!
       </Typography>
-      <Box display="flex" justifyContent="space-between" gap={2}>
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: 2,
+          maxWidth: 400,
+        }}
+      >
         <LandingPageButton onClick={handleAuthClick} color={isAuthenticated ? 'error' : 'primary'}>
           {isAuthenticated ? (
             <>
-              <LogoutIcon />
+              <LogoutIcon sx={{ mr: 1 }} />
               Logout
             </>
           ) : (
             'Login'
           )}
         </LandingPageButton>
+
         <LandingPageButton
           onClick={() => {
             void navigate(ROUTES.TRACKING);
