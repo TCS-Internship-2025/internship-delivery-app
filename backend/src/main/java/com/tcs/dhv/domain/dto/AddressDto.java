@@ -54,6 +54,20 @@ public record AddressDto(
         );
     }
 
+    public Address toEntity() {
+        return Address.builder()
+            .line1(line1)
+            .line2(line2)
+            .building(building)
+            .apartment(apartment)
+            .city(city)
+            .country(country)
+            .postalCode(postalCode)
+            .longitude(longitude)
+            .latitude(latitude)
+            .build();
+    }
+
     public void updateEntity(final Address address) {
         if (line1 != null && !line1.isBlank()) address.setLine1(line1);
         if (line2 != null && !line2.isBlank()) address.setLine2(line2);
