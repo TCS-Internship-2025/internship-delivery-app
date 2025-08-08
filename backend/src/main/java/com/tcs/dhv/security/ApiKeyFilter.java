@@ -35,7 +35,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         final var path = request.getRequestURI();
 
-        if (!path.startsWith("/api/tracking")) {
+        if (!path.startsWith("/api/tracking") && !path.startsWith("/api/system")) {
             log.debug("Skipping API key filter for path: {}", path);
             filterChain.doFilter(request, response);
             return;

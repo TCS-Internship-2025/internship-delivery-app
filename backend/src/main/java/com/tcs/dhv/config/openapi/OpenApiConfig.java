@@ -121,10 +121,8 @@ public class OpenApiConfig {
             final var parcelPaths = List.of(
                     "/api/parcels",
                     "/api/parcels/{id}",
-                    "/public-api/parcels/"
-
+                    "/api/system/parcels"
             );
-
 
             final var reorderedPaths = new Paths();
 
