@@ -13,12 +13,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import static com.tcs.dhv.util.EmailConstants.EMAIL_PROTOCOL;
-import static com.tcs.dhv.util.EmailConstants.MAIL_AUTH;
-import static com.tcs.dhv.util.EmailConstants.MAIL_DEBUG;
-import static com.tcs.dhv.util.EmailConstants.MAIL_PROPERTY_ENABLED;
-import static com.tcs.dhv.util.EmailConstants.MAIL_PROTOCOL;
-import static com.tcs.dhv.util.EmailConstants.MAIL_STARTTLS_ENABLE;
+import static com.tcs.dhv.util.EmailConstants.*;
 
 @Configuration
 public class MailConfig {
@@ -29,8 +24,8 @@ public class MailConfig {
     @Value("${MAIL_PASSWORD}")
     private String password;
 
-    private static final String HOST = "smtp.gmail.com";
-    private static final int PORT = 587;
+    private static final String HOST = MAIL_HOST;
+    private static final int PORT = MAIL_PORT;
 
     @Bean
     public JavaMailSender javaMailSender() {
@@ -58,10 +53,10 @@ public class MailConfig {
 
     private ITemplateResolver htmlTemplateResolver() {
         final var resolver = new ClassLoaderTemplateResolver();
-        resolver.setPrefix("templates/");
-        resolver.setSuffix(".html");
+        resolver.setPrefix(RESOLVER_PREFIX);
+        resolver.setSuffix(RESOLVER_SUFFIX);
         resolver.setTemplateMode(TemplateMode.HTML);
-        resolver.setCharacterEncoding("UTF-8");
+        resolver.setCharacterEncoding(ENCODING);
         resolver.setCacheable(false);
         return resolver;
     }
