@@ -17,6 +17,6 @@ public class UniquePhoneValidator implements ConstraintValidator<UniquePhone, St
             return true;
         }
 
-        return userRepository.existsByPhone(phone);
+        return !userRepository.existsByPhone(phone);
     }
 }
