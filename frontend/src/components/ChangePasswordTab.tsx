@@ -22,7 +22,6 @@ export function ChangePasswordTab() {
   const { mutateAsync } = useEditPassword();
   const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
     const { currentPassword, newPassword } = data;
-    console.log(currentPassword, newPassword);
     await mutateAsync({ currentPassword, newPassword });
   };
 
