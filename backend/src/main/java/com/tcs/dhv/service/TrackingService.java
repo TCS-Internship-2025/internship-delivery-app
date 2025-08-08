@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class TrackingService {
 
     private final ParcelRepository parcelRepository;
 
-    public TrackingDto getTrackingDetails(String trackingCode){
+    public TrackingDto getPublicTrackingDetails(String trackingCode){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
@@ -37,6 +39,40 @@ public class TrackingService {
                 .build();
     }
 
+    public TrackingDto getTrackingDetailsForUser(String trackingCode, UUID userId, String userEmail) {
+        final var parcel = parcelRepository.findByTrackingCode(trackingCode)
+                .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
+
+        log.info("Getting tracking data of parcel with id: {} for user: {}", parcel.getId(), userId);
+
+        final var isSender = parcel.getSender().getId().equals(userId);
+        final var isRecipient = parcel.getRecipient().getEmail().equals(userEmail);
+
+        if (!(isSender || isRecipient)) {
+            return getPublicTrackingDetails(trackingCode);
+        }
+
+        final var sender = parcel.getSender();
+        final var recipient = parcel.getRecipient();
+
+        return TrackingDto.builder()
+                .parcelId(parcel.getId())
+                .trackingCode(parcel.getTrackingCode())
+                .senderName(sender.getName())
+                .senderEmail(sender.getEmail())
+                .senderPhone(sender.getPhone())
+                .senderAddress(sender.getAddress() != null ? sender.getAddress().toString() : null)
+                .recipientName(recipient.getName())
+                .recipientEmail(recipient.getEmail())
+                .recipientPhone(recipient.getPhone())
+                .recipientAddress(recipient.getAddress() != null ? recipient.getAddress().toString() : null)
+                .recipientBirthDate(Optional.ofNullable(recipient.getBirthDate()).map(LocalDate::atStartOfDay))
+                .currentStatus(parcel.getCurrentStatus())
+                .estimatedDelivery(calculateEstimatedDeliveryTime(parcel))
+                .paymentType(String.valueOf(parcel.getPaymentType()))
+                .deliveryType(String.valueOf(parcel.getDeliveryType()))
+                .build();
+    }
 
     private Optional<LocalDateTime> calculateEstimatedDeliveryTime(Parcel parcel){
 
