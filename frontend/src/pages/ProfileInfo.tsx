@@ -58,8 +58,8 @@ export const ProfileInfo = () => {
         sx={{
           display: 'flex',
           flexDirection: 'row',
-          width: isSmallScreen ? '100%' : '60%',
-          maxWidth: 900,
+          width: isSmallScreen ? '100%' : '65%',
+          maxWidth: 10000,
           p: 2,
           gap: 2,
         }}

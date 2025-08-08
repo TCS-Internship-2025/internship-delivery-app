@@ -55,7 +55,7 @@ export function ChangeProfileTab({ formData }: ChangeProfileTabProps) {
       <form onSubmit={handleFormSubmit}>
         <SectionFields fields={changeProfileFields} control={control} />
 
-        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2, width: '20%' }}>
+        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2, width: 'auto' }}>
           {isSubmitting ? 'Updating...' : 'Change Profile'}
         </Button>
       </form>

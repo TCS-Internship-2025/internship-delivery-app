@@ -69,7 +69,7 @@ export function ChangePasswordTab() {
         variant="contained"
         fullWidth
         disabled={isSubmitting}
-        sx={{ width: '20%', alignSelf: 'left' }}
+        sx={{ width: 'auto', alignSelf: 'left' }}
       >
         {isSubmitting ? 'Updating...' : 'Change Password'}
       </Button>

@@ -45,7 +45,7 @@ export function ChangeAddressTab() {
       <form onSubmit={handleFormSubmit}>
         <SectionFields fields={changeAddressFields} control={control} />
 
-        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2, width: '20%' }}>
+        <Button type="submit" variant="contained" fullWidth disabled={isSubmitting} sx={{ mt: 2, width: 'auto' }}>
           {isSubmitting ? 'Updating...' : 'Change Address'}
         </Button>
       </form>

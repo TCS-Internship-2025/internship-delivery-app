@@ -33,7 +33,7 @@ export const ProfileSidebar = ({
       elevation={3}
       sx={{
         width: 220,
-        height: '88vh',
+        height: useDrawer ? '100%' : '88vh',
         p: 2,
         display: 'flex',
         flexDirection: 'column',
