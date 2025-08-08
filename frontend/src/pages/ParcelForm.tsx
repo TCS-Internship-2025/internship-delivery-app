@@ -24,11 +24,9 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 
-import { SectionFields } from '@/components/FormSectionFields';
 import { NavigationButtons } from '@/components/NavigationButtons.tsx';
 import { PageContainer } from '@/components/PageContainer';
-import { ParcelLocationMap } from '@/components/ParcelLocationMap';
-import { SectionContainer } from '@/components/SectionContainer';
+import { SharedForm } from '@/components/SharedForm';
 
 import { parcelFields, parcelFormSchema, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
 
@@ -136,26 +134,15 @@ export const ParcelForm = () => {
       ) : (
         <>
           <PageContainer icon={<LocationOnIcon />} title="Parcel Data">
-            <form onSubmit={handleFormSubmit}>
-              <SectionContainer title="Preferences">
-                <SectionFields fields={shippingOptionsField} control={control} />
-              </SectionContainer>
-              {deliveryType === 'Home' && (
-                <SectionContainer title="Recipient Address">
-                  <SectionFields fields={parcelFields} control={control} />
-                </SectionContainer>
-              )}
-              {deliveryType === 'Pickup Point' && (
-                <Box display="flex" justifyContent="center">
-                  <ParcelLocationMap setSelectedPoint={handleAddressSelect} deliveryType="PICKUP_POINT" />
-                </Box>
-              )}
-              {deliveryType === 'Parcel Box' && (
-                <Box display="flex" justifyContent="center">
-                  <ParcelLocationMap setSelectedPoint={handleAddressSelect} deliveryType="PARCEL_BOX" />
-                </Box>
-              )}
-            </form>
+            <SharedForm
+              handleFormSubmit={handleFormSubmit}
+              deliveryType={deliveryType}
+              control={control}
+              handleAddressSelect={handleAddressSelect}
+              height="50vh"
+              preferenceFields={shippingOptionsField}
+              recipientAddressFields={parcelFields}
+            />
           </PageContainer>
           <NavigationButtons
             onPrevious={handlePrevious}

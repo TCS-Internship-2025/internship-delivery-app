@@ -5,7 +5,7 @@ import { useFormContext } from '@/contexts/FormContext';
 
 import { httpService } from '@/services/httpService';
 
-import { addressChangeSchema, parcelFormSchema, recipientFormSchema } from '@/utils/parcelComposition';
+import { parcelFormSchema, recipientFormSchema } from '@/utils/parcelComposition';
 
 export const fullFormSchema = recipientFormSchema.extend(parcelFormSchema.shape);
 
@@ -52,9 +52,12 @@ export const createParcelResponseSchema = createParcelRequestSchema.extend({
 });
 
 export const updateParcelAddressRequestSchema = z.object({
-  newAddress: addressChangeSchema,
-  requestReason: z.string(),
+  newAddress: addressOnlySchema,
+  deliveryType: z.string(),
+  requestReason: z.string().optional().nullable(),
 });
+
+export const updateParcelAddressResponseSchema = z.void();
 
 export type FullFormSchema = z.infer<typeof fullFormSchema>;
 export type GetParcelDataSchema = z.infer<typeof getParcelDataSchema>;
@@ -62,6 +65,7 @@ export type CreateParcelRequestSchema = z.infer<typeof createParcelRequestSchema
 export type CreateParcelResponseSchema = z.infer<typeof createParcelResponseSchema>;
 export type AddressOnlySchema = z.infer<typeof addressOnlySchema>;
 export type UpdateParcelAddressRequestSchema = z.infer<typeof updateParcelAddressRequestSchema>;
+export type UpdateParcelAddressResponseSchema = z.infer<typeof updateParcelAddressResponseSchema>;
 
 const createParcel = (data: CreateParcelRequestSchema) => {
   return httpService.request('/parcels', createParcelResponseSchema, {
@@ -87,8 +91,8 @@ export const useCreateParcel = () => {
   });
 };
 
-export const updateParcelAddress = (data: UpdateParcelAddressRequestSchema, id: string) => {
-  return httpService.request(`/parcels/${id}/address`, createParcelResponseSchema, {
+export const updateParcelAddress = (data: UpdateParcelAddressRequestSchema, id?: string) => {
+  return httpService.request(`/parcels/${id}/address`, updateParcelAddressResponseSchema, {
     method: 'PUT',
     body: JSON.stringify(data),
     headers: {
@@ -101,7 +105,7 @@ export const useUpdateParcelAddress = () => {
 
   interface mutationProps {
     data: UpdateParcelAddressRequestSchema;
-    id: string;
+    id?: string;
     slug?: string;
   }
 
