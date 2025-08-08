@@ -1,7 +1,7 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.AddressChangeDto;
-import com.tcs.dhv.domain.entity.Address;
+import com.tcs.dhv.domain.dto.AddressDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
@@ -37,7 +37,7 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
-    public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
         log.info("Address change for parcel {} by user {}", parcelId, userId);
 
         final var sender = userService.getUserById(userId);
@@ -46,21 +46,13 @@ public class AddressChangeService {
         validateAddressChangeRequest(parcel);
 
         final var oldAddress = parcel.getRecipient().getAddress();
-        final var newAddress = Address.builder()
-            .line1(requestDto.newAddress().line1())
-            .line2(requestDto.newAddress().line2())
-            .building(requestDto.newAddress().building())
-            .apartment(requestDto.newAddress().apartment())
-            .city(requestDto.newAddress().city())
-            .country(requestDto.newAddress().country())
-            .postalCode(requestDto.newAddress().postalCode())
-            .longitude(requestDto.newAddress().longitude())
-            .latitude(requestDto.newAddress().latitude())
-            .build();
+        final var newAddress = requestDto.newAddress().toEntity();
+        final var savedAddress = addressRepository.saveAndFlush(newAddress);
 
-        final var savedAddress = addressRepository.save(newAddress);
+        parcel.setDeliveryType(requestDto.deliveryType());
+        parcel.getRecipient().setAddress(savedAddress);
+        parcelRepository.saveAndFlush(parcel);
 
-        // Status change emails should probably be sent in ParcelStatusHistoryService
         emailService.sendAddressChangeNotification(
             parcel.getRecipient().getEmail(),
             parcel.getRecipient().getName(),
@@ -69,11 +61,7 @@ public class AddressChangeService {
             newAddress,
             requestDto.requestReason()
         );
-
         log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
-
-        parcel.getRecipient().setAddress(savedAddress);
-        parcelRepository.save(parcel);
 
         final var description = String.format("Address changed by %s%s",
             sender.getEmail(),
@@ -81,6 +69,8 @@ public class AddressChangeService {
         parcelStatusHistoryService.addStatusHistory(parcelId, description);
 
         log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+
+        return AddressDto.fromEntity(savedAddress);
     }
 
     private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
