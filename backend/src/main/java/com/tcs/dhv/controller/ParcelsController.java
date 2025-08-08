@@ -128,10 +128,7 @@ public class ParcelsController {
         @Valid @RequestBody final ParcelDto parcelDto,
         final Authentication authentication
     ) {
-        log.info("Creating parcel request received from user: {}", authentication.getName());
-
         final var parcel = parcelService.createParcel(parcelDto, UUID.fromString(authentication.getName()));
-        log.info("Parcel created successfully with ID: {} for user: {}", parcel.id(), authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(parcel);
     }
@@ -210,10 +207,7 @@ public class ParcelsController {
     })
     @GetMapping
     public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
-        log.info("Retrieving parcels for user: {}", authentication.getName());
-
         final var parcels = parcelService.getUserParcels(UUID.fromString(authentication.getName()));
-        log.info("Retrieved {} parcels for user: {}", parcels.size(), authentication.getName());
 
         return ResponseEntity.ok(parcels);
     }
@@ -268,8 +262,6 @@ public class ParcelsController {
         @PathVariable final UUID id,
         final Authentication authentication
     ) {
-        log.info("Retrieving parcel with ID: {} for user: {}", id, authentication.getName());
-
         final var parcel = parcelService.getParcel(id, UUID.fromString(authentication.getName()));
 
         return ResponseEntity.ok(parcel);
@@ -291,8 +283,6 @@ public class ParcelsController {
         @PathVariable final UUID id,
         final Authentication authentication
     ) {
-        log.info("Deleting parcel with ID: {} for user: {}", id, authentication.getName());
-
         parcelService.deleteParcel(id, UUID.fromString(authentication.getName()));
 
         return ResponseEntity.noContent().build();
@@ -362,8 +352,6 @@ public class ParcelsController {
         @Valid @RequestBody final AddressChangeDto requestDto,
         final Authentication authentication
     ) {
-        log.info("Changing Address for parcel {} by user: {}", id, authentication.getName());
-
         final var updatedAddress = addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
 
         return ResponseEntity.ok(updatedAddress);

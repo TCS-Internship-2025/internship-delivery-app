@@ -18,3 +18,12 @@ ALTER TABLE recipients
 
 ALTER TABLE recipients
     DROP COLUMN IF EXISTS address_id;
+
+ALTER TABLE parcel_status_history
+    DROP CONSTRAINT parcel_status_history_parcel_id_fkey;
+
+ALTER TABLE parcel_status_history
+    ADD CONSTRAINT parcel_status_history_parcel_id_fkey
+        FOREIGN KEY (parcel_id)
+            REFERENCES parcels(id)
+            ON DELETE CASCADE;
