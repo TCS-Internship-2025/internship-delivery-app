@@ -71,7 +71,7 @@ export const ProfileInfo = () => {
           useDrawer={isSmallScreen}
           closeDrawer={closeDrawer}
         />
-        <ProfilePageContent page={selectedPage} />
+        <ProfilePageContent page={selectedPage} profile={profileData} />
       </Paper>
     </Box>
   );

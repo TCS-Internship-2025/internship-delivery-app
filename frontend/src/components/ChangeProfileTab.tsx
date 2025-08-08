@@ -2,7 +2,7 @@ import type { FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useEditProfile } from '@/apis/profileInfo';
+import { useEditProfile, type Profile } from '@/apis/profileInfo';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -18,9 +18,11 @@ interface ChangeProfileTabProps {
     email?: string;
     phoneNumber?: string;
   };
+
+  profile: Profile;
 }
 
-export function ChangeProfileTab({ formData }: ChangeProfileTabProps) {
+export function ChangeProfileTab({ formData, profile }: ChangeProfileTabProps) {
   const {
     control,
     handleSubmit,
@@ -29,9 +31,9 @@ export function ChangeProfileTab({ formData }: ChangeProfileTabProps) {
     resolver: zodResolver(changeProfileSchema),
     mode: 'onChange',
     defaultValues: {
-      name: formData?.name ?? '',
-      emailAddress: formData?.email ?? '',
-      mobilePhone: formData?.phoneNumber ?? '',
+      name: formData?.name ?? profile.name,
+      email: formData?.email ?? profile.email,
+      phone: formData?.phoneNumber ?? profile.phone ?? '',
     },
   });
 

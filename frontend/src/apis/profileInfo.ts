@@ -7,7 +7,6 @@ import type { ChangeAddressFormSchema, ChangeProfileSchema } from '@/utils/chang
 
 const queryClient = new QueryClient();
 export const addressSchema = z.object({
-  addressName: z.string().nullable().optional(),
   line1: z.string(),
   line2: z.string(),
   building: z.string().nullable(),

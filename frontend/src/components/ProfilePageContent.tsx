@@ -1,3 +1,5 @@
+import type { Profile } from '@/apis/profileInfo';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -9,15 +11,16 @@ import { ChangeProfileTab } from './ChangeProfileTab';
 
 interface ProfilePageContentProps {
   page: ProfileSettingPages;
+  profile: Profile;
 }
 
-export const ProfilePageContent = ({ page }: ProfilePageContentProps) => {
+export const ProfilePageContent = ({ page, profile }: ProfilePageContentProps) => {
   const renderPage = () => {
     switch (page) {
       case 'profile':
-        return <ChangeProfileTab />;
+        return <ChangeProfileTab profile={profile} />;
       case 'address':
-        return <ChangeAddressTab />;
+        return <ChangeAddressTab profile={profile} />;
       case 'password':
         return <ChangePasswordTab />;
       default:
