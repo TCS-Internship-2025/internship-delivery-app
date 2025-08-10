@@ -43,5 +43,3 @@ public class ApiKey {
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 }
-
-
