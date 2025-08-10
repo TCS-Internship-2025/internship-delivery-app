@@ -3,7 +3,6 @@ package com.tcs.dhv.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Objects;
@@ -48,12 +47,12 @@ public class OtpService {
     }
 
     private String generateOtp(
-        String characters,
-        Integer length
+        final String characters,
+        final Integer length
     ) {
         final var otp = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            final int index = SECURE_RANDOM.nextInt(characters.length());
+        for (var i = 0; i < length; i++) {
+            final var index = SECURE_RANDOM.nextInt(characters.length());
             otp.append(characters.charAt(index));
         }
         return otp.toString();

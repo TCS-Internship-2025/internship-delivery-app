@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.UUID;
@@ -53,7 +52,6 @@ public class UserService {
         ) {
             handlePasswordUpdate(user, updateRequest);
         }
-
 
         if (updateRequest.email() != null &&
             !user.getEmail().equals(updateRequest.email()) &&
@@ -137,15 +135,15 @@ public class UserService {
         final User user,
         final UserProfileDto updateRequest
     ) {
-        if(updateRequest.currentPassword() == null || updateRequest.currentPassword().isBlank()) {
+        if (updateRequest.currentPassword() == null || updateRequest.currentPassword().isBlank()) {
             throw new ValidationException("Current password is required");
         }
 
-        if(updateRequest.newPassword() == null || updateRequest.newPassword().isBlank()) {
+        if (updateRequest.newPassword() == null || updateRequest.newPassword().isBlank()) {
             throw new ValidationException("New password required");
         }
 
-        if(!passwordEncoder.matches(updateRequest.currentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(updateRequest.currentPassword(), user.getPassword())) {
             throw new ValidationException("Current password is incorrect");
         }
 

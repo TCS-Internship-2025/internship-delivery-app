@@ -12,7 +12,6 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +68,11 @@ public class OpenApiConfig {
         "500", "Internal Server Error"
     );
 
-    private static void addIfAbsent(final ApiResponses responses, final String code, final String description) {
+    private static void addIfAbsent(
+        final ApiResponses responses,
+        final String code,
+        final String description
+    ) {
         if (!responses.containsKey(code)) {
             responses.addApiResponse(code, new ApiResponse().description(description));
         }
@@ -100,7 +103,6 @@ public class OpenApiConfig {
                         addIfAbsent(operation.getResponses(), "404", "Not found");
                     }
                     default -> addIfAbsent(operation.getResponses(), "200", "OK");
-
                 }
                 addCommonResponses(operation);
             })
@@ -108,8 +110,8 @@ public class OpenApiConfig {
     }
 
     @Bean
-    public OpenApiCustomizer operationOrderCustomizer(){
-        return openApi ->{
+    public OpenApiCustomizer operationOrderCustomizer() {
+        return openApi -> {
             final var authOperationOrder = List.of(
                 "/api/auth/login",
                 "/api/auth/register",

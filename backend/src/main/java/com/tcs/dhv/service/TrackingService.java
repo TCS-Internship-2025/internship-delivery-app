@@ -7,9 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-
 import java.util.Optional;
 
 @Slf4j
@@ -19,7 +17,7 @@ public class TrackingService {
 
     private final ParcelRepository parcelRepository;
 
-    public TrackingDto getTrackingDetails(String trackingCode){
+    public TrackingDto getTrackingDetails(final String trackingCode) {
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
@@ -38,14 +36,14 @@ public class TrackingService {
     }
 
 
-    private Optional<LocalDateTime> calculateEstimatedDeliveryTime(Parcel parcel){
+    private Optional<LocalDateTime> calculateEstimatedDeliveryTime(final Parcel parcel) {
 
-        return switch(parcel.getCurrentStatus()){
+        return switch(parcel.getCurrentStatus()) {
             case CREATED -> Optional.of(parcel.getCreatedAt().plusDays(7));
-            case PICKED_UP -> Optional.of(parcel.getUpdatedAt().plusDays(5)); // the carier has it
+            case PICKED_UP -> Optional.of(parcel.getUpdatedAt().plusDays(5));
             case IN_TRANSIT -> Optional.of(parcel.getUpdatedAt().plusDays(4));
             case OUT_FOR_DELIVERY -> Optional.of(parcel.getUpdatedAt().plusDays(2));
-            case DELIVERY_ATTEMPTED -> Optional.of(parcel.getUpdatedAt().plusDays(1));// reattempt
+            case DELIVERY_ATTEMPTED -> Optional.of(parcel.getUpdatedAt().plusDays(1));
             case DELIVERED,CANCELLED,RETURNED_TO_SENDER-> Optional.empty();
         };
     }
