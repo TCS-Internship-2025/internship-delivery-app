@@ -8,16 +8,19 @@ import Typography from '@mui/material/Typography';
 // FeatureCard component
 export const features = [
   {
+    id: 1,
     icon: <LocalShippingIcon color="primary" sx={{ fontSize: 40 }} />,
     title: 'Fast Delivery',
     desc: 'Get your parcels delivered swiftly and securely.',
   },
   {
-    icon: <TrackChangesIcon color="success" sx={{ fontSize: 40 }} />,
+    id: 2,
+    icon: <TrackChangesIcon color="primary" sx={{ fontSize: 40 }} />,
     title: 'Live Tracking',
     desc: 'Track your parcel in real-time from pickup to delivery.',
   },
   {
+    id: 3,
     icon: <SupportAgentIcon color="secondary" sx={{ fontSize: 40 }} />,
     title: '24/7 Support',
     desc: 'Our team is always here to help you.',

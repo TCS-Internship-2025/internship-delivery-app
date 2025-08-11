@@ -9,7 +9,7 @@ import { useTheme } from '@/providers/ThemeProvider.tsx';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import HomeIcon from '@mui/icons-material/Home';
-import InventoyIcon from '@mui/icons-material/Inventory';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -127,7 +127,7 @@ export const Navbar = () => {
                 disabled={isAuthenticated ? false : true}
               />
               <NavItem
-                icon={<InventoyIcon />}
+                icon={<InventoryIcon />}
                 label="My Parcels"
                 isActive={currentIndex === 3}
                 onClick={() => handleNavigation(3)}

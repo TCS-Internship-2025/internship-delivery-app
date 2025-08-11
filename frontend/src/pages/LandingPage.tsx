@@ -55,35 +55,31 @@ export const LandingPage = () => {
         px: 2,
       }}
     >
-      {/* Animated Hero Image */}
       <AnimatedHero />
 
-      {/* Main Title */}
       <Typography variant={isSmallScreen ? 'h4' : 'h2'} sx={{ mb: 2, fontWeight: 700, letterSpacing: 2 }}>
         SwiftParcel
       </Typography>
 
-      {/* Subtitle */}
       <Typography variant={isSmallScreen ? 'body1' : 'h5'} color="text.secondary" sx={{ mb: 4 }}>
         Welcome to the best parcel service provider!
       </Typography>
+      {!isSmallScreen && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: 3,
+            mb: 4,
+          }}
+        >
+          {features.map((f) => (
+            <FeatureCard key={f.id} {...f} />
+          ))}
+        </Box>
+      )}
 
-      {/* Features */}
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: 3,
-          mb: 4,
-        }}
-      >
-        {features.map((f, i) => (
-          <FeatureCard key={i} {...f} />
-        ))}
-      </Box>
-
-      {/* Action Buttons */}
       <Box
         sx={{
           display: 'flex',
@@ -112,15 +108,15 @@ export const LandingPage = () => {
           Track parcel
         </LandingPageButton>
       </Box>
-
-      {/* Invite Section */}
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
-        New here?{' '}
-        <Button variant="text" onClick={() => void navigate(ROUTES.REGISTER)}>
-          Create an account
-        </Button>{' '}
-        and start sending parcels today!
-      </Typography>
+      {!isAuthenticated && (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
+          New here?{' '}
+          <Button variant="text" onClick={() => void navigate(ROUTES.REGISTER)}>
+            Create an account
+          </Button>{' '}
+          and start sending parcels today!
+        </Typography>
+      )}
     </Box>
   );
 };
