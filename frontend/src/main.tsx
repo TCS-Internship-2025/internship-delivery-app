@@ -11,7 +11,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 import { AuthProvider } from '@/providers/AuthProvider';
-import { FormProvider } from '@/providers/FormProvider.tsx';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
@@ -171,9 +170,7 @@ export function setupApp() {
             )}
             <ToastProvider>
               <AuthProvider>
-                <FormProvider>
-                  <RouterProvider router={router} />
-                </FormProvider>
+                <RouterProvider router={router} />
               </AuthProvider>
             </ToastProvider>
           </LocalizationProvider>

@@ -6,6 +6,7 @@ import com.tcs.dhv.repository.RecipientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class RecipientService {
         return recipientRepository.saveAndFlush(recipient);
     }
 
+    @Transactional
     public Recipient findOrCreateRecipient(final RecipientDto recipientDto) {
         log.info("Finding or creating recipient with email: {}", recipientDto.email());
         
