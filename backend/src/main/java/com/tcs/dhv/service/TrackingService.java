@@ -20,7 +20,7 @@ public class TrackingService {
     private final ParcelRepository parcelRepository;
 
     @CacheEvict(value = "trackingDetails", key = "#trackingCode")
-    public TrackingDto getTrackingDetails(String trackingCode){
+    public TrackingDto getTrackingDetails(final String trackingCode){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
