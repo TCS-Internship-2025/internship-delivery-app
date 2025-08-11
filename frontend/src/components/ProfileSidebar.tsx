@@ -9,8 +9,6 @@ import Typography from '@mui/material/Typography';
 
 import type { ProfileSettingPages } from '@/pages/ProfileInfo';
 
-import DeleteUserButton from './DeleteUserButton';
-
 const pages: ProfileSettingPages[] = ['profile', 'address', 'password'];
 
 interface ProfileSidebarProps {
@@ -62,8 +60,6 @@ export const ProfileSidebar = ({
           </ListItemButton>
         ))}
       </List>
-
-      <DeleteUserButton showDangerZone={false} />
     </Paper>
   );
 

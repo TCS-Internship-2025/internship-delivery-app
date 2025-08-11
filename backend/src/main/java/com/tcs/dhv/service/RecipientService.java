@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class RecipientService {
+
     private final RecipientRepository recipientRepository;
 
     public Recipient createRecipient(final RecipientDto recipientDto) {

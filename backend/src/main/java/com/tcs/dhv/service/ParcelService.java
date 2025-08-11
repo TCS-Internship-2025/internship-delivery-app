@@ -41,7 +41,10 @@ public class ParcelService {
     private final Random random = new Random();
 
     @Transactional
-    public ParcelDto createParcel(final ParcelDto parcelDto, final UUID userId) {
+    public ParcelDto createParcel(
+        final ParcelDto parcelDto,
+        final UUID userId
+    ) {
         log.info("Creating parcel for user: {}", userId);
 
         final var sender = userService.getUserById(userId);
@@ -86,7 +89,10 @@ public class ParcelService {
     }
 
     @Cacheable(value = "parcels", key = "#userId.toString().concat('-').concat(#id.toString())")
-    public ParcelDto getParcel(final UUID id, final UUID userId) {
+    public ParcelDto getParcel(
+        final UUID id,
+        final UUID userId
+    ) {
         log.info("Retrieving parcel with ID: {}", id);
 
         final var sender = userService.getUserById(userId);
@@ -100,7 +106,10 @@ public class ParcelService {
 
     @Transactional
     @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#id.toString())")
-    public void deleteParcel(final UUID id, final UUID userId) {
+    public void deleteParcel(
+        final UUID id,
+        final UUID userId
+    ) {
         log.info("Deleting parcel with ID: {} for user: {}", id, userId);
 
         final var sender = userService.getUserById(userId);
@@ -126,8 +135,10 @@ public class ParcelService {
     }
 
 
-    public Parcel getParcelByIdAndUser(final UUID id, final User sender) {
-
+    public Parcel getParcelByIdAndUser(
+        final UUID id,
+        final User sender
+    ) {
         final var parcel = parcelRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + id));
 
@@ -137,5 +148,4 @@ public class ParcelService {
 
         return parcel;
     }
-
 }

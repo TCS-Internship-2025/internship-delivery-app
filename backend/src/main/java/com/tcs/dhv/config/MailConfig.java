@@ -1,6 +1,5 @@
 package com.tcs.dhv.config;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,7 +54,7 @@ public class MailConfig {
     }
 
     @Bean
-    public TemplateEngine emailTemplateEngine(){
+    public TemplateEngine emailTemplateEngine() {
         final var templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(htmlTemplateResolver());
         return templateEngine;
@@ -77,6 +76,4 @@ public class MailConfig {
         mail.setFrom(username);
         return mail;
     }
-
-
 }
