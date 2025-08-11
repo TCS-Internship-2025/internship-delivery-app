@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
@@ -20,7 +22,8 @@ public record UserProfileDto(
     String email,
 
     @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$",
-        message = "Phone number must be 11 digits starting with 36 (format: 36XXXXXXXXX)")
+        message = "Phone number must be 11 digits starting with 36 (format: 36XXXXXXXXX)"
+    )
     @UniquePhone
     String phone,
 
@@ -39,7 +42,7 @@ public record UserProfileDto(
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!?.,;:~`<>{}\\[\\]()_-]).{8,128}$",
         message = "Password must contain at least 1 lowercase, uppercase letter, digit and special character")
     String newPassword
-) {
+) implements  Serializable {
     public static UserProfileDto fromEntity(final User user) {
         return UserProfileDto.builder()
             .name(user.getName())

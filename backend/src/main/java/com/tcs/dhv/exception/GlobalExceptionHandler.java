@@ -20,6 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -128,20 +129,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(
         final InternalAuthenticationServiceException ex
     ) {
-        final var message = (ex.getMessage() != null && ex.getCause().getMessage() != null)
-            ? ex.getCause().getMessage()
-            : "Authentication Failed";
+        final var message = Optional.ofNullable(ex.getMessage())
+                .orElse("Authentication Failed");
 
-        final var status = HttpStatus.UNAUTHORIZED;
-
-        log.warn("Authentication failed: {}", message);
-
+        log.warn("Authentication blocked: {}", message);
         final var err = ApiErrorResponse.builder()
-            .status(status.value())
+            .status(HttpStatus.FORBIDDEN.value())
             .message(message)
             .timestamp(Instant.now())
             .build();
-        return ResponseEntity.status(status).body(err);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
     }
 
     @ExceptionHandler(IllegalStateException.class)

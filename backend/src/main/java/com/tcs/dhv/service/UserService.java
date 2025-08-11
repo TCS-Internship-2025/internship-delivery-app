@@ -12,6 +12,9 @@ import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
@@ -33,6 +36,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final ParcelRepository parcelRepository;
 
+    @Cacheable(value = "users", key = "#userIdentifier")
     public UserProfileDto getUserProfile(final String userIdentifier) {
         final var userId = UUID.fromString(userIdentifier);
         final var user = getUserById(userId);
@@ -41,6 +45,7 @@ public class UserService {
     }
 
     @Transactional
+    @CachePut(value = "users", key = "#userIdentifier")
     public UserProfileDto updateUserProfile(
         final String userIdentifier,
         final UserProfileDto updateRequest
@@ -100,6 +105,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "users", key = "#userId", beforeInvocation = true)
     public void deleteUserProfile(final UUID userId) {
         log.info("Request to delete user profile with ID: {}", userId);
         final var user = getUserById(userId);

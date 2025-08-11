@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Schema(description = "Recipient information for parcel delivery")
@@ -31,13 +32,14 @@ public record RecipientDto(
     @Schema(description = "Recipient's birthday", example = "2000-12-12")
     @Past(message = "Date of birth must be in the past")
     LocalDate birthDate
-) {
+
+) implements Serializable {
     public static RecipientDto fromEntity(final Recipient recipient) {
         return new RecipientDto(
             recipient.getName(),
             recipient.getEmail(),
             recipient.getPhone(),
             recipient.getBirthDate()
-        );
+         );
     }
 }

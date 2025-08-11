@@ -10,11 +10,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,13 +41,14 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
+    @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
     public AddressDto changeAddress(
         final UUID parcelId,
         final AddressChangeDto requestDto,
         final UUID userId
     ) {
         try {
-            log.info("Address change for parcel {} by user {}", parcelId, userId); 
+            log.info("Address change for parcel {} by user {}", parcelId, userId);
 
             final var sender = userService.getUserById(userId);
             final var parcel = getParcelByIdAndUser(parcelId, sender);
@@ -73,14 +76,13 @@ public class AddressChangeService {
             final var description = String.format(
                 "Address changed by %s%s",
                 sender.getEmail(),
-                requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : ""
-            );
+                requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
             parcelStatusHistoryService.addStatusHistory(parcelId, description);
 
             log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
 
             return AddressDto.fromEntity(savedAddress);
-        } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+        } catch (final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
             log.warn("Optimistic lock conflict while changing address for parcel {} by user {}: {}",
                 parcelId, userId, e.getMessage());
             throw new ConcurrencyFailureException("Address was modified by another session");

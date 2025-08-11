@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -45,7 +46,7 @@ public record ParcelDto(
 
     @Schema(description = "Last update time of parcel", example = "2025-07-30T10:30:00")
     LocalDateTime updatedAt
-) {
+) implements Serializable {
     public static ParcelDto fromEntity(final Parcel parcel) {
         return new ParcelDto(
             parcel.getId(),
