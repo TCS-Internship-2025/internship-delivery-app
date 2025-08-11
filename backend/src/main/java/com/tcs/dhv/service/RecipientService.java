@@ -3,10 +3,10 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.RecipientDto;
 import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.repository.RecipientRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -15,10 +15,12 @@ public class RecipientService {
 
     private final RecipientRepository recipientRepository;
 
+    @Transactional
     public Recipient createRecipient(final RecipientDto recipientDto) {
         log.info("Creating recipient with email: {}", recipientDto.email());
 
         final var recipient = Recipient.builder()
+            .title(recipientDto.title())
             .name(recipientDto.name())
             .email(recipientDto.email())
             .phone(recipientDto.phone())
@@ -26,12 +28,5 @@ public class RecipientService {
             .build();
 
         return recipientRepository.saveAndFlush(recipient);
-    }
-
-    @Transactional
-    public Recipient findOrCreateRecipient(final RecipientDto recipientDto) {
-        log.info("Finding or creating recipient with email: {}", recipientDto.email());
-        
-        return recipientRepository.findByEmail(recipientDto.email()).orElseGet(() -> createRecipient(recipientDto));
     }
 }
