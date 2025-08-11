@@ -2,6 +2,7 @@ package com.tcs.dhv.domain.dto;
 
 import com.tcs.dhv.config.openapi.SchemaConstants;
 import com.tcs.dhv.domain.entity.Recipient;
+import com.tcs.dhv.domain.enums.RecipientTitle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
@@ -13,8 +14,8 @@ import java.time.LocalDate;
 
 @Schema(description = "Recipient information for parcel delivery")
 public record RecipientDto(
-    @Schema(description = "Title of the recipient", example = "Mr.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    String title,
+    @Schema(description = "Title of the recipient", example = "MR", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    RecipientTitle title,
 
     @Schema(description = SchemaConstants.RECIPIENT_NAME_DESC, example = SchemaConstants.RECIPIENT_NAME_EX,
         requiredMode = Schema.RequiredMode.REQUIRED)
