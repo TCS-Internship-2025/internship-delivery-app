@@ -39,8 +39,6 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60
 
   const point_ = getPointId();
 
-  console.log('point: ', point_);
-
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const { data: pickupPoints, status: pickupPointsStatus } = useGetAllPickupPoints({ deliveryType: deliveryType });
 
@@ -50,7 +48,7 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60
       errorTitle="Failed to load pickup points"
       errorMessage="Please check your connection or try again later!"
     >
-      <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
+      <Box display="flex" justifyContent="center" width="90%" mt={2} height={height}>
         <Box width="80%" flexGrow={1}>
           <Map
             mapboxAccessToken={mapboxAccessToken}

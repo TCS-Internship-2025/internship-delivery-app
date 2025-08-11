@@ -118,7 +118,7 @@ export const AddressChangeModal = ({ parcelId }: AddressChangeModalProps) => {
   });
 
   return (
-    <div>
+    <Box>
       <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         aria-labelledby="transition-modal-title"
@@ -234,6 +234,6 @@ export const AddressChangeModal = ({ parcelId }: AddressChangeModalProps) => {
           )}
         </Box>
       </Modal>
-    </div>
+    </Box>
   );
 };
