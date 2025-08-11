@@ -8,9 +8,12 @@ import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,33 +46,33 @@ public class UserService {
         final String userIdentifier,
         final UserProfileDto updateRequest
     ) {
-        log.info("UserIdentifier: {}", userIdentifier);
-        final var userId = UUID.fromString(userIdentifier);
-        log.info("Retrieving this user's profile by ID: {}", userId);
-        final var user = getUserById(userId);
+        try {
+            log.info("UserIdentifier: {}", userIdentifier);
+            final var userId = UUID.fromString(userIdentifier);
+            log.info("Retrieving this user's profile by ID: {}", userId);
+            final var user = getUserById(userId);
 
-        if(updateRequest.currentPassword() != null ||
-        updateRequest.newPassword() != null
-        ) {
-            handlePasswordUpdate(user, updateRequest);
-        }
+            if (updateRequest.currentPassword() != null ||
+                updateRequest.newPassword() != null
+            ) {
+                handlePasswordUpdate(user, updateRequest);
+            }
 
+            if (updateRequest.email() != null &&
+                !user.getEmail().equals(updateRequest.email()) &&
+                userRepository.existsByEmail(updateRequest.email())
+            ) {
+                throw new ValidationException("Email already exists");
+            }
 
-        if(updateRequest.email() != null &&
-            !user.getEmail().equals(updateRequest.email()) &&
-            userRepository.existsByEmail(updateRequest.email())
-        ) {
-            throw new ValidationException("Email already exists");
-        }
+            if (updateRequest.phone() != null &&
+                !updateRequest.phone().equals(user.getPhone()) &&
+                userRepository.existsByPhone(updateRequest.phone())
+            ) {
+                throw new ValidationException("Phone number already in use by other user");
+            }
 
-        if(updateRequest.phone() != null &&
-            !updateRequest.phone().equals(user.getPhone()) &&
-            userRepository.existsByPhone(updateRequest.phone())
-        ) {
-            throw new ValidationException("Phone number already in use by other user");
-        }
-
-        if(updateRequest.address() !=null && user.getAddress() == null) {
+            if (updateRequest.address() !=null && user.getAddress() == null) {
             final var newAddress = Address.builder()
                 .line1(updateRequest.address().line1())
                 .line2(updateRequest.address().line2())
@@ -85,12 +88,16 @@ public class UserService {
             log.info("Created and saved new address: {}", savedAddress);
         }
 
-        updateRequest.updateEntity(user);
-        user.setUpdatedAt(LocalDateTime.now());
+            updateRequest.updateEntity(user);
+            user.setUpdatedAt(LocalDateTime.now());
 
-        final var savedUser = userRepository.saveAndFlush(user);
-        log.info("3.Profile updated for user ID: {}", savedUser.getId());
-        return UserProfileDto.fromEntity(savedUser);
+            final var savedUser = userRepository.saveAndFlush(user);
+            log.info("3.Profile updated for user ID: {}", savedUser.getId());
+            return UserProfileDto.fromEntity(savedUser);
+        } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+            log.warn("Optimistic lock occurred while trying to update user's profile: {}", userIdentifier);
+            throw new ConcurrencyFailureException("Profile was updated by another session");
+        }
     }
 
     @Transactional
@@ -134,15 +141,15 @@ public class UserService {
     }
 
     private void handlePasswordUpdate(final User user, final UserProfileDto updateRequest) {
-        if(updateRequest.currentPassword() == null || updateRequest.currentPassword().isBlank()) {
+        if (updateRequest.currentPassword() == null || updateRequest.currentPassword().isBlank()) {
             throw new ValidationException("Current password is required");
         }
 
-        if(updateRequest.newPassword() == null || updateRequest.newPassword().isBlank()) {
+        if (updateRequest.newPassword() == null || updateRequest.newPassword().isBlank()) {
             throw new ValidationException("New password required");
         }
 
-        if(!passwordEncoder.matches(updateRequest.currentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(updateRequest.currentPassword(), user.getPassword())) {
             throw new ValidationException("Current password is incorrect");
         }
 
