@@ -42,7 +42,11 @@ public class AddressChangeService {
 
     @Transactional
     @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
-    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+    public AddressDto changeAddress(
+        final UUID parcelId,
+        final AddressChangeDto requestDto,
+        final UUID userId
+    ) {
         try {
             log.info("Address change for parcel {} by user {}", parcelId, userId);
 
