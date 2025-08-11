@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MailMessagingException.class)
-    public ResponseEntity<ApiErrorResponse> handleMailMessagingException(final MailMessagingException exception){
+    public ResponseEntity<ApiErrorResponse> handleMailMessagingException(final MailMessagingException exception) {
         log.error("Mail messaging error", exception);
         final var err = ApiErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
