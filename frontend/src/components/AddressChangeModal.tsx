@@ -1,13 +1,12 @@
-import { useCallback, useMemo, useState, type FormEvent } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, type FormEvent } from 'react';
 import { ADDRESS_CHANGE_DEFAULT_VALUES, DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum } from '@/constants';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { enqueueSnackbar } from 'notistack';
 
+import { useAddressChangeForm } from '@/hooks/useAddressChangeForm';
 import { useFormContext } from '@/contexts/FormContext';
 
 import { useUpdateParcelAddress } from '@/apis/parcel';
 import { useGetParcelById } from '@/apis/parcelGet';
-import type { PickupPoint } from '@/apis/pickupPoints';
 
 import CloseIcon from '@mui/icons-material/Close';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
@@ -26,16 +25,10 @@ import { SharedForm } from './SharedForm';
 
 import {
   addressChangeFields,
-  addressChangeSchema,
   deliveryOnlyField,
   requestReasonField,
   type AddressChangeSchema,
 } from '@/utils/parcelComposition';
-import { deliveryConverter } from '@/utils/parcelTypeConverter';
-
-//TODO: use the modal only when status lets you change
-//TODO: fix the error message when backend responds with you cannot update parcel because of status
-//TODO: extract the logic from here
 
 interface AddressChangeModalProps {
   parcelId?: string;
@@ -43,86 +36,25 @@ interface AddressChangeModalProps {
 export const AddressChangeModal = ({ parcelId }: AddressChangeModalProps) => {
   const [open, setOpen] = useState(false);
 
-  const { updateFormData, resetForm } = useFormContext();
+  const { resetForm } = useFormContext();
 
   const { mutate, isPending } = useUpdateParcelAddress();
 
   const { data } = useGetParcelById(parcelId);
 
-  const { control, handleSubmit, watch, reset, getValues } = useForm<AddressChangeSchema>({
-    resolver: zodResolver(addressChangeSchema),
-    mode: 'onChange',
-    defaultValues: ADDRESS_CHANGE_DEFAULT_VALUES,
-  });
+  console.log('data:', data);
 
-  const deliveryType = watch('deliveryType');
-
-  const address = data ? data.recipient.address : ADDRESS_CHANGE_DEFAULT_VALUES;
-
-  const initialDeliveryType = deliveryConverter(data?.deliveryType);
-
-  const watchedFields = watch([
-    'country',
-    'postalCode',
-    'line1',
-    'city',
-    'line2',
-    'apartment',
-    'building',
-    'latitude',
-    'longitude',
-  ]);
-  const hasFormChanged = useMemo(() => {
-    if (!data) return false;
-
-    const [country, postalCode, line1, city, line2, apartment, building, latitude, longitude] = watchedFields;
-
-    const allEmpty =
-      !country &&
-      !postalCode &&
-      !line1 &&
-      !city &&
-      !line2 &&
-      !apartment &&
-      !building &&
-      (latitude === null || latitude === undefined || !latitude) &&
-      (longitude === null || longitude === undefined || !longitude);
-
-    if (deliveryType !== initialDeliveryType && allEmpty) {
-      return false;
-    }
-
-    const addressFieldsChanged =
-      country !== address.country ||
-      postalCode !== address.postalCode ||
-      line1 !== address.line1 ||
-      city !== address.city ||
-      (line2 ?? '') !== (address.line2 ?? '') ||
-      (apartment ?? '') !== (address.apartment ?? '') ||
-      (building ?? '') !== (address.building ?? '') ||
-      latitude !== address.latitude ||
-      longitude !== address.longitude;
-
-    return addressFieldsChanged;
-  }, [data, address, deliveryType, watchedFields, initialDeliveryType]);
-
-  const handleCurrentAddressData = useCallback(
-    (deliveryType?: DeliveryEnum, requestReason?: string | null) => {
-      if (data) {
-        reset({
-          ...address,
-          deliveryType: deliveryType ?? initialDeliveryType,
-          requestReason: requestReason,
-        });
-        updateFormData({
-          longitude: address.longitude,
-          latitude: address.latitude,
-          pointId: null,
-        });
-      }
-    },
-    [reset, data, updateFormData, address, initialDeliveryType]
-  );
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    deliveryType,
+    hasFormChanged,
+    handleCurrentAddressData,
+    handleAddressSelect,
+    initialDeliveryType,
+  } = useAddressChangeForm({ data });
 
   const handleOpen = () => {
     handleCurrentAddressData();
@@ -136,20 +68,6 @@ export const AddressChangeModal = ({ parcelId }: AddressChangeModalProps) => {
     event.preventDefault();
     void handleSubmit(onSubmit)(event);
   };
-
-  const handleAddressSelect = useCallback(
-    (point: PickupPoint | null) => {
-      const currentDeliveryType = getValues('deliveryType');
-
-      if (point) {
-        reset({
-          ...point.address,
-          deliveryType: currentDeliveryType,
-        });
-      }
-    },
-    [reset, getValues]
-  );
 
   const onSubmit = (data: AddressChangeSchema) => {
     const {
@@ -178,6 +96,7 @@ export const AddressChangeModal = ({ parcelId }: AddressChangeModalProps) => {
       {
         onSuccess: () => {
           setOpen(false);
+          enqueueSnackbar('Address updated successfully!', { variant: 'success' });
         },
       }
     );

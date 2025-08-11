@@ -1,5 +1,4 @@
-import { useCallback, type FormEvent } from 'react';
-import { useForm } from 'react-hook-form';
+import { type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   DELIVERY_TYPE_NAME_CONVERTER,
@@ -9,15 +8,14 @@ import {
   PaymentEnum,
   ROUTES,
 } from '@/constants';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { enqueueSnackbar } from 'notistack';
 
+import { useParcelForm } from '@/hooks/useParcelForm';
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useFormContext } from '@/contexts/FormContext';
 import type { CustomSnackbarOptions } from '@/providers/ToastProvider';
 
 import { useCreateParcel } from '@/apis/parcel';
-import type { PickupPoint } from '@/apis/pickupPoints';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
@@ -28,39 +26,26 @@ import { NavigationButtons } from '@/components/NavigationButtons.tsx';
 import { PageContainer } from '@/components/PageContainer';
 import { SharedForm } from '@/components/SharedForm';
 
-import { parcelFields, parcelFormSchema, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
+import { parcelFields, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
 
 export const ParcelForm = () => {
   const { mutate, isPending } = useCreateParcel();
-  const { updateFormData, getParcelFormData, getRecipientFormData, resetParcelForm, getPointId } = useFormContext();
+  const { getRecipientFormData, getPointId } = useFormContext();
   const isSmallScreen = useSmallScreen();
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { control, handleSubmit, watch, reset, getValues } = useForm<ParcelFormSchema>({
-    resolver: zodResolver(parcelFormSchema),
-    mode: 'onChange',
-    defaultValues: getParcelFormData(),
-  });
-  const deliveryType = watch('deliveryType');
-
-  const handleReset = useCallback(
-    (deliveryType: DeliveryEnum, paymentType: PaymentEnum | '') => {
-      console.log('resetting');
-
-      resetParcelForm({
-        deliveryType,
-        paymentType,
-      });
-
-      reset({
-        ...PARCEL_FORM_DEFAULT_VALUES,
-        deliveryType,
-        paymentType,
-      });
-    },
-    [reset, resetParcelForm]
-  );
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    getValues,
+    deliveryType,
+    handleReset,
+    handleAddressSelect,
+    handlePrevious,
+  } = useParcelForm();
 
   watch((data, { name }) => {
     if (name === 'deliveryType') {
@@ -98,26 +83,6 @@ export const ParcelForm = () => {
     event.preventDefault();
     void handleSubmit(onSubmit)(event);
   };
-
-  const handlePrevious = () => {
-    updateFormData({ ...getValues() });
-    void navigate(`/${ROUTES.RECIPIENT_FORM}`);
-  };
-
-  const handleAddressSelect = useCallback(
-    (point: PickupPoint | null) => {
-      const currentDeliveryType = getValues('deliveryType');
-      const currentPaymentType = getValues('paymentType');
-
-      if (point)
-        reset({
-          ...point.address,
-          deliveryType: currentDeliveryType,
-          paymentType: currentPaymentType,
-        });
-    },
-    [reset, getValues]
-  );
 
   return (
     <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
