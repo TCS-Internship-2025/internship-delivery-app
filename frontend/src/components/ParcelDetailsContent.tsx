@@ -119,8 +119,6 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData: ParcelData })
     longitude: parcelData?.recipient.address.longitude ?? 0,
   };
 
-  console.log(parcelData?.recipient.address.latitude, parcelData?.recipient.address.longitude);
-
   return (
     <>
       <Typography
