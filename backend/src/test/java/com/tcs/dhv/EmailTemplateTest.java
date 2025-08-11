@@ -9,13 +9,8 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.context.Context;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @SpringBootTest
 public class EmailTemplateTest {
@@ -169,6 +164,5 @@ public class EmailTemplateTest {
             assertTrue(output.contains((String)ctxVars.get(key)));
         assertTrue(output.contains("</html>"));
         assertTrue(output.contains("</body>"));
-
     }
 }

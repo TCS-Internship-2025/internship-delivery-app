@@ -26,5 +26,6 @@ public class EmailConstants {
     public static final String RESOLVER_SUFFIX = ".html";
     public static final String MAIL_HOST = "smtp.gmail.com";
     public static final int MAIL_PORT = 587;
+    public static final int TEST_MAIL_PORT = 3025;
 
 }
