@@ -22,14 +22,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.UUID;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
@@ -78,20 +77,20 @@ public class UserService {
             }
 
             if (updateRequest.address() !=null && user.getAddress() == null) {
-            final var newAddress = Address.builder()
-                .line1(updateRequest.address().line1())
-                .line2(updateRequest.address().line2())
-                .city(updateRequest.address().city())
-                .postalCode(updateRequest.address().postalCode())
-                .country(updateRequest.address().country())
-                .build();
+                final var newAddress = Address.builder()
+                    .line1(updateRequest.address().line1())
+                    .line2(updateRequest.address().line2())
+                    .city(updateRequest.address().city())
+                    .postalCode(updateRequest.address().postalCode())
+                    .country(updateRequest.address().country())
+                    .build();
 
-            final var savedAddress = addressRepository.save(newAddress);
+                final var savedAddress = addressRepository.save(newAddress);
 
-            user.setAddress(savedAddress);
+                user.setAddress(savedAddress);
 
-            log.info("Created and saved new address: {}", savedAddress);
-        }
+                log.info("Created and saved new address: {}", savedAddress);
+            }
 
             updateRequest.updateEntity(user);
             user.setUpdatedAt(LocalDateTime.now());
@@ -146,7 +145,10 @@ public class UserService {
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }
 
-    private void handlePasswordUpdate(final User user, final UserProfileDto updateRequest) {
+    private void handlePasswordUpdate(
+        final User user,
+        final UserProfileDto updateRequest
+    ) {
         if (updateRequest.currentPassword() == null || updateRequest.currentPassword().isBlank()) {
             throw new ValidationException("Current password is required");
         }

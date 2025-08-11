@@ -73,7 +73,8 @@ public class AddressChangeService {
             );
             log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
 
-            final var description = String.format("Address changed by %s%s",
+            final var description = String.format(
+                "Address changed by %s%s",
                 sender.getEmail(),
                 requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
             parcelStatusHistoryService.addStatusHistory(parcelId, description);
@@ -88,7 +89,10 @@ public class AddressChangeService {
         }
     }
 
-    private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
+    private Parcel getParcelByIdAndUser(
+        final UUID parcelId,
+        final com.tcs.dhv.domain.entity.User sender
+    ) {
         final var parcel = parcelRepository.findById(parcelId)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
 

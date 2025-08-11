@@ -12,13 +12,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.Collections;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class ApiKeyFilter extends OncePerRequestFilter {
 
     private final ApiKeyService apiKeyService;
@@ -53,8 +52,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         if (apiKeyService.validate(rawKey).isPresent()) {
             log.info("API Key validated successfully");
             final var authentication = new UsernamePasswordAuthenticationToken(
-                "apiKeyUser", null, Collections.emptyList()
-            );
+                "apiKeyUser", null, Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } else {
@@ -63,5 +61,4 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             response.getWriter().write("Unauthorized: Invalid API Key");
         }
     }
-
 }

@@ -22,5 +22,4 @@ public class EmailConstants {
     public static final String STATUS_UPDATE_MAIl_SUBJECT = "Delivery Status Changed - ";
     public static final String PASSWORD_CHANGE_MAIL_SUBJECT = "Password successfully changed";
     public static final String USER_UPDATE_MAIL_SUBJECT = "User profile successfully updated";
-
 }
