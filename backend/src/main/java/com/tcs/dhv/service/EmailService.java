@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 @Slf4j
@@ -41,18 +42,22 @@ public class EmailService {
 
 
     public void sendShipmentCreationEmail(
-        final String email,
-        final String name,
+        final String senderEmail,
+        final String recipientEmail,
+        final String recipientName,
         final String trackingNumber
     ) {
         final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
-        context.setVariable("name", name);
+        context.setVariable("name", recipientName);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
         final var htmlContent = this.templateEngine.process("ShipmentCreationEmail.html", context);
         final var message = CreateMessage(
-                EmailConstants.SHIPMENT_MAIL_SUBJECT, EmailConstants.EMAIL_SENDER, email, htmlContent);
+                EmailConstants.SHIPMENT_MAIL_SUBJECT,
+                EmailConstants.EMAIL_SENDER,
+                (new String[]{senderEmail, recipientEmail}),
+                htmlContent);
         mailSender.send(message);
 
     }
@@ -69,7 +74,7 @@ public class EmailService {
 
         final var htmlContent = this.templateEngine.process("DeliveryCompletionEmail.html",context);
         final var message = CreateMessage(
-                EmailConstants.DELIVERY_COMPLETE_SUBJECT, EmailConstants.EMAIL_SENDER, email, htmlContent);
+                EmailConstants.DELIVERY_COMPLETE_SUBJECT, EmailConstants.EMAIL_SENDER,new String[]{email}, htmlContent);
         mailSender.send(message);
     }
 
@@ -90,14 +95,14 @@ public class EmailService {
 
         final var htmlContent = this.templateEngine.process("VerificationTokenEmail.html", context);
         final var message = CreateMessage(
-                EmailConstants.VERIFICATION_MAIL_SUBJECT, EmailConstants.EMAIL_SENDER, email, htmlContent);
+                EmailConstants.VERIFICATION_MAIL_SUBJECT, EmailConstants.EMAIL_SENDER, new String[]{email}, htmlContent);
         mailSender.send(message);
     }
 
     private MimeMessage CreateMessage(
             String subject,
             String from,
-            String to,
+            String[] to,
             String text
     ){
         final var message = mailSender.createMimeMessage();
@@ -189,7 +194,7 @@ public class EmailService {
         final var message = CreateMessage(
             EmailConstants.ADDRESS_CHANGE_MAIL_SUBJECT + trackingCode,
             EmailConstants.EMAIL_SENDER,
-            recipientEmail,
+                new String[]{recipientEmail},
             htmlContent
         );
 
@@ -211,7 +216,7 @@ public class EmailService {
         final var message = CreateMessage(
                 EmailConstants.PASSWORD_CHANGE_MAIL_SUBJECT,
                 EmailConstants.EMAIL_SENDER,
-                email,
+                new String[]{email},
                 htmlContext
         );
         mailSender.send(message);
@@ -223,15 +228,16 @@ public class EmailService {
     }
 
     public void sendParcelStatusChangeNotification(
-        final String email,
-        final String name,
+        final String senderEmail,
+        final String recipientEmail,
+        final String recipientName,
         final ParcelStatus status,
         final String trackingCode
     ){
         final var context = new Context();
         context.setVariable("status", status);
         context.setVariable("trackingCode", trackingCode);
-        context.setVariable("name", name);
+        context.setVariable("name", recipientName);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingCode);
 
         final var htmlContext = this.templateEngine.process("ParcelStatusChangedEmail.html", context);
@@ -239,11 +245,11 @@ public class EmailService {
         final var message = CreateMessage(
             EmailConstants.STATUS_UPDATE_MAIl_SUBJECT + trackingCode,
             EmailConstants.EMAIL_SENDER,
-            email,
+                (new String[] {recipientEmail, senderEmail}),
             htmlContext
         );
         mailSender.send(message);
-        log.info("Parcel status change notification email sent to {} for parcel {}", email, trackingCode);
+        log.info("Parcel status change notification email sent to {} and {} for parcel {}", senderEmail, recipientEmail, trackingCode);
     }
 
     public void sendUserUpdatedNotification(
@@ -276,7 +282,7 @@ public class EmailService {
         final var message = CreateMessage(
             EmailConstants.USER_UPDATE_MAIL_SUBJECT,
             EmailConstants.EMAIL_SENDER,
-            email,
+                new String[]{email},
             htmlContext
         );
         mailSender.send(message);

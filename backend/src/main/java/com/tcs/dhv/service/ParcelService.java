@@ -76,7 +76,7 @@ public class ParcelService {
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
 
-        emailService.sendShipmentCreationEmail(sender.getEmail(), sender.getName(), savedParcel.getTrackingCode());
+        emailService.sendShipmentCreationEmail(sender.getEmail(), recipient.getEmail(), recipient.getName(), savedParcel.getTrackingCode());
         log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
         final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
@@ -154,7 +154,7 @@ public class ParcelService {
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
 
-        if(!isValidStatusFlow(parcel, statusDto)) {
+        if (!isValidStatusFlow(parcel, statusDto)) {
             throw new IllegalArgumentException("Invalid status change from "
                     + parcel.getCurrentStatus() + " to " + statusDto.status());
         }
@@ -172,7 +172,8 @@ public class ParcelService {
         log.info("A new parcel status history added for id {}," +
                 " new status {}", savedParcel.getId(), savedParcel.getCurrentStatus());
 
-        emailService.sendParcelStatusChangeNotification(savedParcel.getRecipient().getEmail(),
+        emailService.sendParcelStatusChangeNotification(savedParcel.getSender().getEmail(),
+                savedParcel.getRecipient().getEmail(),
                 savedParcel.getRecipient().getName(),
                 savedParcel.getCurrentStatus(),
                 savedParcel.getTrackingCode());
