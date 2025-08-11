@@ -33,7 +33,7 @@ public record LocationDto(
     @Valid
     AddressDto address
 ) {
-    public static LocationDto fromEntity(PredefinedLocation location) {
+    public static LocationDto fromEntity(final PredefinedLocation location) {
         return new LocationDto(
             location.getId(),
             location.getName(),

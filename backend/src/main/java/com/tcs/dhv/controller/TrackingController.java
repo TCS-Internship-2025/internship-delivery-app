@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -25,10 +28,10 @@ public class TrackingController {
 
     @GetMapping("/{trackingCode}")
     public ResponseEntity<TrackingDto> trackParcel(
-            @NotNull
-            @TrackingCode
-            @PathVariable final
-            String trackingCode
+        @NotNull
+        @TrackingCode
+        @PathVariable final
+        String trackingCode
     ) {
         final var response = trackingService.getTrackingDetails(trackingCode);
 
@@ -42,12 +45,11 @@ public class TrackingController {
 
     @GetMapping("/{trackingCode}/timeline")
     public ResponseEntity<List<ParcelStatusHistoryDto>> getParcelTimeline(
-            @NotNull
-            @TrackingCode
-            @PathVariable final
-            String trackingCode
+        @NotNull
+        @TrackingCode
+        @PathVariable
+        final String trackingCode
     ) {
-
         final var trackingResponse = trackingService.getTrackingDetails(trackingCode);
         final var timeline = parcelStatusHistoryService.getParcelTimeline(trackingResponse.parcelId());
 
