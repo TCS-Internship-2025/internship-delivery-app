@@ -50,7 +50,9 @@ public class ParcelStatusHistoryService {
                 .orElseThrow(() -> new EntityNotFoundException("Status history not found for ID: " + id));
 
         existing.setStatus(updatedEntity.getStatus());
+
         existing.setDescription(updatedEntity.getDescription());
+
         existing.setTimestamp(updatedEntity.getTimestamp());
 
         final var saved = statusHistoryRepository.save(existing);
