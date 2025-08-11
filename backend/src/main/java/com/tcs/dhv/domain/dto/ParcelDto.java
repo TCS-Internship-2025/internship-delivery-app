@@ -1,5 +1,6 @@
 package com.tcs.dhv.domain.dto;
 
+import com.tcs.dhv.config.openapi.SchemaConstants;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.DeliveryType;
 import com.tcs.dhv.domain.enums.ParcelStatus;
@@ -14,10 +15,10 @@ import java.util.UUID;
 
 @Schema(description = "Parcel record")
 public record ParcelDto(
-    @Schema(description = "Parcel id", example = "123e4567-e89b-12d3-a456-426614174000")
+    @Schema(description = SchemaConstants.PARCEL_ID_DESC, example = SchemaConstants.PARCEL_ID_EX)
     UUID id,
 
-    @Schema(description = "Parcel tracking code", example = "HU1363415219JN")
+    @Schema(description = SchemaConstants.TRACKING_CODE_DESC, example = SchemaConstants.TRACKING_CODE_EX)
     String trackingCode,
 
     @Schema(description = "Delivery address")

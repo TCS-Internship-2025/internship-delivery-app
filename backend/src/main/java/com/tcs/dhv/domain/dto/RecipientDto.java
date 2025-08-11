@@ -12,20 +12,22 @@ import java.time.LocalDate;
 
 @Schema(description = "Recipient information for parcel delivery")
 public record RecipientDto(
-    @Schema(description = SchemaConstants.NAME_DESC, example = SchemaConstants.NAME_EX,
+    @Schema(description = "Title of the recipient", example = "Mr.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    String title,
+
+    @Schema(description = SchemaConstants.RECIPIENT_NAME_DESC, example = SchemaConstants.RECIPIENT_NAME_EX,
         requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(min = 1, max = 100, message = "Name must be between {min} and {max} characters")
     String name,
 
-    @Schema(description = SchemaConstants.EMAIL_DESC, example = SchemaConstants.EMAIL_EX,
+    @Schema(description = SchemaConstants.RECIPIENT_EMAIL_DESC, example = SchemaConstants.RECIPIENT_EMAIL_EX,
         requiredMode = Schema.RequiredMode.REQUIRED)
     @Email(message = "Invalid email format")
     @Size(max = 254, message = "Email cannot exceed {max} characters")
     String email,
 
-    @Schema(description = "Recipient's phone number", example = "+36309876543")
-    @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$",
-        message = "Invalid Hungarian phone number format (+36XXXXXXXXX)")
+    @Schema(description = SchemaConstants.RECIPIENT_PHONE_DESC, example = SchemaConstants.RECIPIENT_PHONE_EX)
+    @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$", message = "Invalid Hungarian phone number format (+36XXXXXXXXX)")
     String phone,
 
     @Schema(description = "Recipient's birthday", example = "2000-12-12")
@@ -35,6 +37,7 @@ public record RecipientDto(
 ) implements Serializable {
     public static RecipientDto fromEntity(final Recipient recipient) {
         return new RecipientDto(
+            recipient.getTitle(),
             recipient.getName(),
             recipient.getEmail(),
             recipient.getPhone(),

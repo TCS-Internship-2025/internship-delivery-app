@@ -2,6 +2,7 @@ package com.tcs.dhv.controller;
 
 import com.tcs.dhv.domain.dto.AddressChangeDto;
 import com.tcs.dhv.domain.dto.AddressDto;
+import com.tcs.dhv.domain.dto.ApiErrorResponse;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.service.AddressChangeService;
 import com.tcs.dhv.service.ParcelService;
@@ -32,33 +33,47 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-@Tag(name = "Parcels", description = "Parcels controller operations")
+import static com.tcs.dhv.config.openapi.SchemaConstants.PARCEL_ID_DESC;
+import static com.tcs.dhv.config.openapi.SchemaConstants.PARCEL_ID_EX;
 
+@Tag(name = "Parcels", description = "Parcel management operations for DHV delivery service. Handles parcel creation, tracking, status management and address modifications.")
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/parcels")
-@SecurityRequirement(name = "Bearer Authentication")
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
 public class ParcelsController {
 
     private final ParcelService parcelService;
     private final AddressChangeService addressChangeService;
 
     @Operation(
-        summary = "Create parcel",
-        description = "Create (send) a new parcel.\n\nThe parcel will be assigned a unique tracking code and initial status.",
+        summary = "Create parcel", 
+        description = """
+            Create (send) a new parcel for delivery through the DHV service.
+            
+            The system will automatically:
+            - Generate a unique tracking code (format: HU + 10 digits + 2 letters)
+            - Set initial status to CREATED
+            - Create recipient record with provided details
+            - Send email confirmation to both sender and recipient
+            - Log the creation in parcel status history
+            
+            **Note:** Recipients are created fresh for each parcel to preserve exact sender input at time of creation.""",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Parcel creation request",
             required = true,
             content = @Content(
                 schema = @Schema(implementation = ParcelDto.class),
-                examples =
+                examples = {
                     @ExampleObject(
+                        name = "homeDelivery",
                         summary = "Create parcel for home delivery",
+                        description = "Example of creating a parcel to be delivered to a home address with sender paying",
                         value = """
                             {
                                 "address": {
-                                    "line1": "Bartók Béla út",
+                                    "line1": "Bartók Béla út 42",
                                     "line2": "1. emelet",
                                     "building": "C épület",
                                     "apartment": "7",
@@ -78,7 +93,36 @@ public class ParcelsController {
                                 "deliveryType": "HOME"
                             }
                         """
+                    ),
+                    @ExampleObject(
+                        name = "pickupPoint",
+                        summary = "Create parcel for pickup point delivery",
+                        description = "Example of creating a parcel to be delivered to a pickup point with recipient paying",
+                        value = """
+                            {
+                                "address": {
+                                    "line1": "Váci út 1-3",
+                                    "line2": "WestEnd City Center",
+                                    "building": "Main Building",
+                                    "apartment": null,
+                                    "city": "Budapest",
+                                    "postalCode": "1062",
+                                    "country": "Hungary",
+                                    "latitude": 47.5108,
+                                    "longitude": 19.0573
+                                },
+                                "recipient": {
+                                    "name": "Anna Kovács",
+                                    "email": "anna.kovacs@example.hu",
+                                    "phone": "+36701234567",
+                                    "birthDate": "1992-03-15"
+                                },
+                                "paymentType": "RECIPIENT_PAYS",
+                                "deliveryType": "PICKUP_POINT"
+                            }
+                        """
                     )
+                }
 
             )
         )
@@ -121,12 +165,75 @@ public class ParcelsController {
                     """
                 )
             )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request data - validation errors",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 400,
+                            "message": "Validation failed",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": [
+                                {
+                                    "field": "recipient.email",
+                                    "message": "must be a well-formed email address"
+                                },
+                                {
+                                    "field": "address.postalCode",
+                                    "message": "must not be blank"
+                                }
+                            ]
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - invalid or missing authentication token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 401,
+                            "message": "Unauthorized",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 500,
+                            "message": "Internal server error",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
         )
     })
     @PostMapping
     public ResponseEntity<ParcelDto> createParcel(
         @Valid @RequestBody final ParcelDto parcelDto,
-        final Authentication authentication
+        @Parameter(hidden = true) final Authentication authentication
     ) {
         final var parcel = parcelService.createParcel(parcelDto, UUID.fromString(authentication.getName()));
 
@@ -135,7 +242,15 @@ public class ParcelsController {
 
     @Operation(
         summary = "Get user's parcels", 
-        description = "Retrieve all parcels belonging to the authenticated user"
+        description = """
+            Retrieve all parcels sent by the authenticated user.
+            
+            Returns a list including:
+            - All parcel details (tracking code, addresses, recipients)
+            - Current delivery status and timestamps
+            - Payment and delivery type information
+            
+            Results are sorted by creation date (newest first)."""
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -203,10 +318,28 @@ public class ParcelsController {
                     """
                 )
             )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - invalid or missing authentication token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
         )
     })
     @GetMapping
-    public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
+    public ResponseEntity<List<ParcelDto>> getUserParcels(
+        @Parameter(hidden = true) final Authentication authentication
+    ) {
         final var parcels = parcelService.getUserParcels(UUID.fromString(authentication.getName()));
 
         return ResponseEntity.ok(parcels);
@@ -214,7 +347,17 @@ public class ParcelsController {
 
     @Operation(
         summary = "Get parcel by ID", 
-        description = "Retrieve detailed information about a specific parcel by its ID. Only the parcel owner can access this information."
+        description = """
+            Retrieve detailed information about a specific parcel by its unique ID.
+            
+            **Security:** Only the parcel sender (owner) can access their parcel details.
+            Includes complete information about:
+            - Delivery address and coordinates
+            - Recipient contact information
+            - Current status and tracking code
+            - Creation and modification timestamps
+            
+            **Performance:** This endpoint is cached for improved response times."""
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -254,13 +397,65 @@ public class ParcelsController {
                     """
                 )
             )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - invalid or missing authentication token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden - user cannot access this parcel",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 403,
+                            "message": "Access denied",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Parcel not found",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 404,
+                            "message": "Parcel not found with ID: c6b578b8-7a72-4628-9a46-66c950f08c05",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
         )
     })
     @GetMapping("/{id}")
     public ResponseEntity<ParcelDto> getParcel(
-        @Parameter(description = "Unique identifier of the parcel", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+        @Parameter(description = PARCEL_ID_DESC, required = true, example = PARCEL_ID_EX)
         @PathVariable final UUID id,
-        final Authentication authentication
+        @Parameter(hidden = true) final Authentication authentication
     ) {
         final var parcel = parcelService.getParcel(id, UUID.fromString(authentication.getName()));
 
@@ -269,19 +464,80 @@ public class ParcelsController {
 
     @Operation(
         summary = "Delete parcel", 
-        description = "Permanently delete a parcel by its ID. Only the parcel owner can delete their parcels."
+        description = """
+            Permanently delete a parcel from the system.
+            
+            **Security:** Only the parcel sender (owner) can delete their own parcels.
+            **Warning:** This action is irreversible and will:
+            - Remove all parcel data including status history
+            - Delete associated recipient and address records
+            - Invalidate the tracking code
+            
+            **Performance:** Cache entries are automatically cleared upon deletion."""
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "204",
             description = "Parcel deleted successfully"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - invalid or missing authentication token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden - user cannot delete this parcel",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 403,
+                            "message": "Access denied",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Parcel not found",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 404,
+                            "message": "Parcel not found with ID: c6b578b8-7a72-4628-9a46-66c950f08c05",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
         )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParcel(
-        @Parameter(description = "Unique identifier of the parcel to delete", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+        @Parameter(description = PARCEL_ID_DESC, required = true, example = PARCEL_ID_EX)
         @PathVariable final UUID id,
-        final Authentication authentication
+        @Parameter(hidden = true) final Authentication authentication
     ) {
         parcelService.deleteParcel(id, UUID.fromString(authentication.getName()));
 
@@ -290,15 +546,28 @@ public class ParcelsController {
 
     @Operation(
         summary = "Change parcel address", 
-        description = "Update a parcel's delivery address and delivery type.",
+        description = """
+            Update a parcel's delivery address and delivery type during transit.
+            
+            **Business Rules:**
+            - Only the parcel sender can request address changes
+            - Some delivery statuses may prevent address modification
+            
+            **Process:**
+            - Validates new address information
+            - Updates delivery coordinates if provided
+            - Sends notification email to recipient about address change
+            - Logs the change in parcel status history""",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Address change request with new delivery details",
             required = true,
             content = @Content(
                 schema = @Schema(implementation = AddressChangeDto.class),
-                examples =
+                examples = {
                     @ExampleObject(
-                        summary = "Update address for home delivery",
+                        name = "homeAddressChange",
+                        summary = "Change to home delivery address",
+                        description = "Example of changing parcel delivery address to a home address",
                         value = """
                             {
                               "newAddress": {
@@ -316,7 +585,30 @@ public class ParcelsController {
                               "requestReason": "Recipient moved to new address"
                             }
                         """
+                    ),
+                    @ExampleObject(
+                        name = "pickupPointChange",
+                        summary = "Change to pickup point delivery",
+                        description = "Example of changing parcel delivery from home to pickup point",
+                        value = """
+                            {
+                              "newAddress": {
+                                "line1": "Kossuth Lajos tér 1-3",
+                                "line2": "Hungarian Parliament Building area",
+                                "building": "Pickup Point Hub",
+                                "apartment": null,
+                                "city": "Budapest",
+                                "postalCode": "1055",
+                                "country": "Hungary",
+                                "latitude": 47.5072,
+                                "longitude": 19.0458
+                              },
+                              "deliveryType": "PICKUP_POINT",
+                              "requestReason": "Recipient prefers pickup point for convenience"
+                            }
+                        """
                     )
+                }
             )
         )
     )
@@ -343,14 +635,89 @@ public class ParcelsController {
                     """
                 )
             )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request data - validation errors",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 400,
+                            "message": "Validation failed",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": [
+                                {
+                                    "field": "newAddress.city",
+                                    "message": "must not be blank"
+                                }
+                            ]
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - invalid or missing authentication token",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden - user cannot modify this parcel",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 403,
+                            "message": "Access denied",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Parcel not found",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(
+                    value = """
+                        {
+                            "status": 404,
+                            "message": "Parcel not found with ID: c6b578b8-7a72-4628-9a46-66c950f08c05",
+                            "timestamp": "2025-08-07T14:21:44.393952Z",
+                            "errors": []
+                        }
+                    """
+                )
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)
+            )
         )
     })
     @PutMapping("/{id}/address")
     public ResponseEntity<AddressDto> changeAddress(
-        @Parameter(description = "Unique identifier of the parcel to update", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+        @Parameter(description = PARCEL_ID_DESC, required = true, example = PARCEL_ID_EX)
         @PathVariable final UUID id,
         @Valid @RequestBody final AddressChangeDto requestDto,
-        final Authentication authentication
+        @Parameter(hidden = true) final Authentication authentication
     ) {
         final var updatedAddress = addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
 

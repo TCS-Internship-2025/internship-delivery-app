@@ -1,5 +1,6 @@
 package com.tcs.dhv.domain.dto;
 
+import com.tcs.dhv.config.openapi.SchemaConstants;
 import com.tcs.dhv.domain.entity.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 
 @Schema(description = "Address request")
 public record AddressDto(
+    @Schema(description = SchemaConstants.ADDRESS_LINE1_DESC, example = SchemaConstants.ADDRESS_LINE1_EX)
     @Size(max = 255, message = "Line 1 cannot exceed {max} characters")
     String line1,
 
@@ -23,12 +25,15 @@ public record AddressDto(
     @Size(max = 50, message = "Apartment cannot exceed {max} characters")
     String apartment,
 
+    @Schema(description = SchemaConstants.ADDRESS_CITY_DESC, example = SchemaConstants.ADDRESS_CITY_EX)
     @Size(max = 100, message = "City cannot exceed {max} characters")
     String city,
 
+    @Schema(description = SchemaConstants.ADDRESS_POSTAL_DESC, example = SchemaConstants.ADDRESS_POSTAL_EX)
     @Pattern(regexp = "^\\d{4}$", message = "Hungarian postal code must be 4 digits")
     String postalCode,
 
+    @Schema(description = SchemaConstants.ADDRESS_COUNTRY_DESC, example = SchemaConstants.ADDRESS_COUNTRY_EX)
     @Size(max = 100, message = "Country cannot exceed {max} characters")
     String country,
 

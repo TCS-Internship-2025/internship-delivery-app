@@ -20,6 +20,7 @@ public class RecipientService {
         log.info("Creating recipient with email: {}", recipientDto.email());
 
         final var recipient = Recipient.builder()
+            .title(recipientDto.title())
             .name(recipientDto.name())
             .email(recipientDto.email())
             .phone(recipientDto.phone())
