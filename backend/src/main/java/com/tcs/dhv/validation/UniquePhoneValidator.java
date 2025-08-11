@@ -13,9 +13,7 @@ public class UniquePhoneValidator implements ConstraintValidator<UniquePhone, St
 
     @Override
     public boolean isValid(final String phone, final ConstraintValidatorContext context) {
-        if(phone == null || phone.isEmpty()){
-            return true;
-        }
+        if(phone == null || phone.isEmpty()) return true;
 
         return !userRepository.existsByPhone(phone);
     }

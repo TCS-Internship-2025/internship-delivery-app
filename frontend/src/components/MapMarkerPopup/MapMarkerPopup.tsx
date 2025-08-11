@@ -18,6 +18,8 @@ interface MapMarkerPopupProps {
 export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedPoint }: MapMarkerPopupProps) => {
   const { updateFormData, getPointId } = useFormContext();
 
+  const point_ = getPointId();
+
   return (
     <Popup
       key={selectedMarker.id}
@@ -50,12 +52,15 @@ export const MapMarkerPopup = ({ selectedMarker, setSelectedMarker, setSelectedP
           <br />
           {selectedMarker.address.line2}
         </Typography>
-        {getPointId() === selectedMarker.id ? null : (
+        {point_.pointId === selectedMarker.id ||
+        (point_.latitude === selectedMarker.latitude && point_.longitude === selectedMarker.longitude) ? null : (
           <Button
             onClick={() => {
               setSelectedPoint(selectedMarker);
               updateFormData({
                 pointId: selectedMarker.id,
+                longitude: selectedMarker.longitude,
+                latitude: selectedMarker.latitude,
               });
               setSelectedMarker(null);
             }}

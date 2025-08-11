@@ -10,10 +10,11 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
-public record UserProfileDto(
+public record UserProfileDto (
     String name,
 
     @Email
@@ -42,7 +43,7 @@ public record UserProfileDto(
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!?.,;:~`<>{}\\[\\]()_-]).{8,128}$",
     message = "Password must contain at least 1 lowercase, uppercase letter, digit and special character")
     String newPassword
-) {
+) implements  Serializable {
     public static UserProfileDto fromEntity(final User user) {
         return UserProfileDto.builder()
             .name(user.getName())
