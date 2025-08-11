@@ -33,7 +33,17 @@ public class SecurityConfig {
 
     public static final String[] PUBLIC_ENDPOINTS = {
         "/api/auth/**",
-        "/api/tracking/**"
+        "/api/tracking/**",
+
+        //OPENAPI/SWAGGER
+        "/v3/api-docs",
+        "/v3/api-docs.yaml",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/swagger-resources/**",
+        "/webjars/**"
+
     };
 
     @Value("${dhv.client-url}")
@@ -82,7 +92,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            final AuthenticationConfiguration configuration
+        final AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
     }
@@ -93,9 +103,8 @@ public class SecurityConfig {
     }
 
     private static void getSessionManagementConfig(
-            final SessionManagementConfigurer<HttpSecurity> session
+        final SessionManagementConfigurer<HttpSecurity> session
     ) {
         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
-

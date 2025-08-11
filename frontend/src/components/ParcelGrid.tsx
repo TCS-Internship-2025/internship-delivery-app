@@ -5,7 +5,8 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-import type { ColDef, ICellRendererParams, RowSelectionOptions } from 'ag-grid-community';
+import { ROUTES } from '@/constants';
+import type { ICellRendererParams, RowSelectionOptions } from 'ag-grid-community';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -13,7 +14,6 @@ import { useTheme } from '@/providers/ThemeProvider';
 import type { ParcelListData } from '@/apis/parcelGet';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 
 import { getParcelChipData } from '@/utils/parcelChipData';
@@ -35,32 +35,38 @@ const StatusChipRenderer = (params: ICellRendererParams<ParcelShortData, string>
   );
 };
 
-const colDefs: ColDef<ParcelShortData>[] = [
-  {
-    field: 'parcelId',
-    headerName: 'Parcel ID',
+const PARCEL_COLUMNS = {
+  CODE: {
+    field: 'code',
+    headerName: 'Code',
     sortable: true,
     filter: true,
   },
-  {
+  RECIPIENT: {
+    field: 'recipient',
+    headerName: 'Recipient',
+    sortable: true,
+    filter: true,
+  },
+  ADDRESS: {
     field: 'address',
     headerName: 'Address',
     sortable: true,
     filter: true,
   },
-  {
+  DELIVERY: {
     field: 'delivery',
-    headerName: 'Delivery Type',
+    headerName: 'Delivery',
     sortable: true,
     filter: true,
   },
-  {
+  PAYMENT: {
     field: 'payment',
     headerName: 'Payment',
     sortable: true,
     filter: true,
   },
-  {
+  STATUS: {
     field: 'status',
     headerName: 'Status',
     sortable: true,
@@ -72,7 +78,7 @@ const colDefs: ColDef<ParcelShortData>[] = [
       justifyContent: 'center',
     },
   },
-];
+};
 
 interface ParcelShortData {
   parcelId?: string;
@@ -84,11 +90,9 @@ interface ParcelShortData {
   status: string;
 }
 
-export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
-  // TODO: Error handling
-
+export const ParcelGrid = ({ parcels }: { parcels: ParcelListData }) => {
   const shortParcels: ParcelShortData[] =
-    parcels?.map((parcel) => ({
+    parcels.map((parcel) => ({
       parcelId: parcel.id,
       address: parcel.recipient.address.line1,
       code: parcel.trackingCode,
@@ -99,11 +103,21 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
     })) ?? [];
 
   const [rowData] = useState(shortParcels ?? undefined);
-  const [isRowSelected, setIsRowSelected] = useState(false);
   const gridRef = useRef<AgGridReact<ParcelShortData>>(null);
   const isSmallScreen = useSmallScreen();
   const { mode } = useTheme();
   const navigate = useNavigate();
+
+  const colDefs = isSmallScreen
+    ? [PARCEL_COLUMNS.CODE, PARCEL_COLUMNS.RECIPIENT, PARCEL_COLUMNS.ADDRESS]
+    : [
+        PARCEL_COLUMNS.CODE,
+        PARCEL_COLUMNS.RECIPIENT,
+        PARCEL_COLUMNS.ADDRESS,
+        PARCEL_COLUMNS.DELIVERY,
+        PARCEL_COLUMNS.PAYMENT,
+        PARCEL_COLUMNS.STATUS,
+      ];
 
   const rowSelection: RowSelectionOptions = useMemo(() => {
     return {
@@ -113,24 +127,19 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
     };
   }, []);
 
-  const handleDetails = () => {
+  const handleSelection = () => {
     const selected = gridRef.current?.api.getSelectedRows();
     if (selected?.length) {
       console.log('Selected row:', selected[0]);
-      void navigate(`details/${selected[0].parcelId}`);
+      void navigate(`${ROUTES.DETAILS}?parcelId=${selected[0].parcelId}`);
     }
   };
-
-  const handleSelection = () => {
-    const selected = gridRef.current?.api.getSelectedRows() ?? [];
-    setIsRowSelected(selected.length > 0);
-  };
-
   return (
     <Box
       className={`ag-theme-quartz${mode === 'dark' ? '-dark' : ''}`}
-      width={{ xs: '100%', md: '75%' }}
-      height={{ xs: 360, md: 692 }}
+      width={isSmallScreen ? '100%' : '85%'}
+      height={685}
+      mt={isSmallScreen ? 2 : 5}
       ml="auto"
       mr="auto"
       sx={
@@ -159,14 +168,6 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
             }
       }
     >
-      <Button
-        onClick={handleDetails}
-        disabled={!isRowSelected}
-        variant="contained"
-        sx={isSmallScreen ? { fontSize: 14, my: 1 } : { fontSize: 16, my: 3 }}
-      >
-        See details
-      </Button>
       <AgGridReact
         ref={gridRef}
         rowData={rowData}
@@ -180,9 +181,6 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
         theme="legacy"
         rowSelection={rowSelection}
         onRowSelected={handleSelection}
-        pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={[10, 20]}
       />
     </Box>
   );

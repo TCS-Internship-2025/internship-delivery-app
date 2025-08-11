@@ -1,7 +1,9 @@
 package com.tcs.dhv.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.validation.UniquePhone;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -19,9 +21,10 @@ public record UserProfileDto (
     @Size(max = 254, message = "Email cannot exceed 254 characters")
     String email,
 
-    @Pattern(regexp = "^\\+36[1-9][0-9]{7,8}$",
+    @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$",
         message = "Phone number must be 11 digits starting with 36 (format: 36XXXXXXXXX)"
     )
+    @UniquePhone
     String phone,
 
     @Valid
@@ -31,10 +34,10 @@ public record UserProfileDto (
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String currentPassword,
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(min = 8, max = 128,
         message = "New password must be between 8 and 128 characters")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!?.,;:~`<>{}\\[\\]()_-]).{8,128}$",
@@ -62,7 +65,19 @@ public record UserProfileDto (
             if (user.getAddress() != null){
                 address.updateEntity(user.getAddress());
             } else {
-                user.setAddress(address.toEntity());
+                final var newAddress = Address.builder()
+                    .line1(address.line1())
+                    .line2(address.line2())
+                    .building(address.building())
+                    .apartment(address.apartment())
+                    .city(address.city())
+                    .postalCode(address.postalCode())
+                    .country(address.country())
+                    .latitude(address.latitude())
+                    .longitude(address.longitude())
+                    .build();
+
+                user.setAddress(newAddress);
             }
         }
     }

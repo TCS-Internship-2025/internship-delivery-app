@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useEmailVerification } from '@/hooks/useEmailVerification';
+import { useAuth } from '@/contexts/AuthContext';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -13,39 +14,20 @@ import Typography from '@mui/material/Typography';
 
 export const Verified = () => {
   const { uid, token } = useParams<{ uid: string; token: string }>();
-  const { verify, isPending, verificationResult } = useEmailVerification();
+  const { user, isAuthenticated } = useAuth();
+  const { verify, verificationResult } = useEmailVerification();
+  const hasVerified = useRef(false);
 
   useEffect(() => {
-    if (uid && token) {
+    if (isAuthenticated && user?.emailVerified) {
+      return;
+    }
+
+    if (uid && token && !hasVerified.current && !verificationResult) {
+      hasVerified.current = true;
       verify({ userId: uid, token });
     }
-  }, [uid, token, verify]);
-
-  if (isPending) {
-    return (
-      <Container maxWidth="sm">
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            minHeight: '100vh',
-            justifyContent: 'center',
-          }}
-        >
-          <Paper elevation={3} sx={{ padding: 10, textAlign: 'center' }}>
-            <CircularProgress size={64} sx={{ mb: 2 }} />
-            <Typography variant="h4" align="center" sx={{ fontWeight: 600 }}>
-              Verifying Your Email
-            </Typography>
-            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-              Please wait while we verify your email address...
-            </Typography>
-          </Paper>
-        </Box>
-      </Container>
-    );
-  }
+  }, [uid, token, verify, verificationResult, isAuthenticated, user?.emailVerified]);
 
   return (
     <Container maxWidth="sm">
@@ -71,10 +53,10 @@ export const Verified = () => {
                 </Typography>
               )}
               <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                You will be redirected to the home page in a few seconds
+                You will be redirected to the login page in a few seconds
               </Typography>
             </>
-          ) : (
+          ) : verificationResult?.success === false ? (
             <>
               <ErrorIcon color="error" sx={{ fontSize: 104, mb: 2 }} />
               <Typography variant="h3" align="center" sx={{ fontWeight: 600, color: 'error.main' }}>
@@ -82,6 +64,16 @@ export const Verified = () => {
               </Typography>
               <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                 The verification link is invalid or expired. You will be redirected to login.
+              </Typography>
+            </>
+          ) : (
+            <>
+              <CircularProgress size={64} sx={{ mb: 2 }} />
+              <Typography variant="h4" align="center" sx={{ fontWeight: 600 }}>
+                Verifying Your Email
+              </Typography>
+              <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                Please wait while we verify your email address...
               </Typography>
             </>
           )}

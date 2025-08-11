@@ -11,7 +11,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 import { AuthProvider } from '@/providers/AuthProvider';
-import { FormProvider } from '@/providers/FormProvider.tsx';
 import { ThemeProvider } from '@/providers/ThemeProvider.tsx';
 import { ToastProvider } from '@/providers/ToastProvider.tsx';
 
@@ -30,7 +29,9 @@ import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
 import { Login } from './pages/Login.tsx';
+import { NewPassword } from './pages/NewPassword.tsx';
 import { ParcelDetails } from './pages/ParcelDetails.tsx';
+import { PasswordReset } from './pages/PasswordReset.tsx';
 import { ProfileInfo } from './pages/ProfileInfo.tsx';
 import { Register } from './pages/Register.tsx';
 import { SiteNotFound } from './pages/SiteNotFound.tsx';
@@ -63,6 +64,14 @@ const router = createBrowserRouter([
       {
         path: ROUTES.VERIFIED,
         element: <Verified />,
+      },
+      {
+        path: ROUTES.PASSWORDRESET,
+        element: <PasswordReset />,
+      },
+      {
+        path: ROUTES.NEWPASSWORD,
+        element: <NewPassword />,
       },
 
       // App layout shared for public + protected pages
@@ -116,6 +125,10 @@ const router = createBrowserRouter([
                 path: ROUTES.PROFILE,
                 element: <ProfileInfo />,
               },
+              {
+                path: ROUTES.PROFILE,
+                element: <ProfileInfo />,
+              },
 
               {
                 path: ROUTES.PAGE5,
@@ -157,9 +170,7 @@ export function setupApp() {
             )}
             <ToastProvider>
               <AuthProvider>
-                <FormProvider>
-                  <RouterProvider router={router} />
-                </FormProvider>
+                <RouterProvider router={router} />
               </AuthProvider>
             </ToastProvider>
           </LocalizationProvider>
