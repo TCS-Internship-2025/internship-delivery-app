@@ -41,10 +41,12 @@ public class EmailService {
 
     public void sendShipmentCreationEmail(
         final String email,
+        final String name,
         final String trackingNumber
     ) {
         final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
+        context.setVariable("name", name);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
         final var htmlContent = this.templateEngine.process("ShipmentCreationEmail.html", context);
@@ -56,10 +58,12 @@ public class EmailService {
 
     public void sendDeliveryCompleteEmail(
             String email,
+            String name,
             String trackingNumber
     ) {
         final var context = new Context();
         context.setVariable("trackingCode", trackingNumber);
+        context.setVariable("name", name);
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
         final var htmlContent = this.templateEngine.process("DeliveryCompletionEmail.html",context);
@@ -71,6 +75,7 @@ public class EmailService {
     @Async
     public void sendVerificationTokenByEmail(
         final UUID userId,
+        final String name,
         final String email
     ) {
         final var token = otpService.generateAndStoreOtp(userId);
@@ -80,6 +85,7 @@ public class EmailService {
 
         final var context = new Context();
         context.setVariable("verifyLink", emailVerificationUrl);
+        context.setVariable("name", name);
 
         final var htmlContent = this.templateEngine.process("VerificationTokenEmail.html", context);
         final var message = CreateMessage(
@@ -115,7 +121,7 @@ public class EmailService {
                 "Email not found or already verified"
             ));
 
-        sendVerificationTokenByEmail(user.getId(), user.getEmail());
+        sendVerificationTokenByEmail(user.getId(), user.getName(), user.getEmail());
     }
 
     @Transactional
@@ -190,8 +196,91 @@ public class EmailService {
         log.info("Address change notification email sent to {} for parcel {}", recipientEmail, trackingCode);
     }
 
+    public void sendPasswordResetEmail(
+        final String email,
+        final String name,
+        final String resetLink
+    ) {
+        final var context = new Context();
+        context.setVariable("name", name);
+        context.setVariable("resetLink", resetLink);
+
+        final var htmlContext = this.templateEngine.process("PasswordChangeRequestEmail.html", context);
+
+        final var message = CreateMessage(
+                EmailConstants.PASSWORD_CHANGE_MAIL_SUBJECT,
+                EmailConstants.EMAIL_SENDER,
+                email,
+                htmlContext
+        );
+        mailSender.send(message);
+        log.info("Password reset email sent to {}", email);
+    }
+
     private String getAddressLine3(String city, String country, String postalCode){
         return city + ", " + country + " " + postalCode;
     }
 
+    public void sendParcelStatusChangeNotification(
+        final String email,
+        final String name,
+        final String status,
+        final String trackingCode
+    ){
+        final var context = new Context();
+        context.setVariable("status", status);
+        context.setVariable("trackingCode", trackingCode);
+        context.setVariable("name", name);
+        context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingCode);
+
+        final var htmlContext = this.templateEngine.process("ParcelStatusChangedEmail.html", context);
+
+        final var message = CreateMessage(
+            EmailConstants.STATUS_UPDATE_MAIl_SUBJECT + trackingCode,
+            EmailConstants.EMAIL_SENDER,
+            email,
+            htmlContext
+        );
+        mailSender.send(message);
+        log.info("Parcel status change notification email sent to {} for parcel {}", email, trackingCode);
+    }
+
+    public void sendUserUpdatedNotification(
+        final String email,
+        final User oldUser,
+        final User newUser
+    ){
+        final var context = new Context();
+        context.setVariable("oldName", oldUser.getName());
+        context.setVariable("oldEmail", oldUser.getEmail());
+        context.setVariable("oldPhone", oldUser.getPhone());
+        context.setVariable("oldAddressLine1", oldUser.getAddress().getLine1());
+        context.setVariable("oldAddressLine2", oldUser.getAddress().getLine2());
+        context.setVariable("oldAddressLine3", getAddressLine3(
+            oldUser.getAddress().getCity(),
+            oldUser.getAddress().getCountry(),
+            oldUser.getAddress().getPostalCode()));
+        context.setVariable("newName", newUser.getName());
+        context.setVariable("newEmail", newUser.getEmail());
+        context.setVariable("newPhone", newUser.getPhone());
+        context.setVariable("newAddressLine1", newUser.getAddress().getLine1());
+        context.setVariable("newAddressLine2", newUser.getAddress().getLine2());
+        context.setVariable("newAddressLine3", getAddressLine3(
+                newUser.getAddress().getCity(),
+                newUser.getAddress().getCountry(),
+                newUser.getAddress().getPostalCode()));
+
+        final var htmlContext = this.templateEngine.process("UserUpdatedEmail.html", context);
+
+        final var message = CreateMessage(
+            EmailConstants.USER_UPDATE_MAIL_SUBJECT,
+            EmailConstants.EMAIL_SENDER,
+            email,
+            htmlContext
+        );
+        mailSender.send(message);
+        log.info("User update notification email sent to {}", email);
+    }
+
 }
+

@@ -12,12 +12,11 @@ import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/ap
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
+import { QueryStates } from './QueryStates';
 
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
@@ -43,27 +42,16 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60
   console.log('point: ', point_);
 
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
-  const {
-    data: pickupPoints,
-    isLoading: isPickupPointsLoading,
-    isError,
-  } = useGetAllPickupPoints({ deliveryType: deliveryType });
-  if (isPickupPointsLoading) {
-    return <CircularProgress />;
-  } else if (isError) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-        <Box maxWidth={400} textAlign="center">
-          <Alert severity="error" variant="filled">
-            Failed to load pickup points. Please check your connection or try again later.
-          </Alert>
-        </Box>
-      </Box>
-    );
-  } else if (pickupPoints) {
-    return (
-      <Box display="flex" justifyContent="center" width="100%" mt={2} height={height}>
-        <Box width="100%" flexGrow={1}>
+  const { data: pickupPoints, status: pickupPointsStatus } = useGetAllPickupPoints({ deliveryType: deliveryType });
+
+  return (
+    <QueryStates
+      state={pickupPointsStatus}
+      errorTitle="Failed to load pickup points"
+      errorMessage="Please check your connection or try again later!"
+    >
+      <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
+        <Box width="80%" flexGrow={1}>
           <Map
             mapboxAccessToken={mapboxAccessToken}
             initialViewState={{
@@ -74,7 +62,7 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60
             style={{ width: '100%', height: '100%' }}
             mapStyle={mapboxStyle}
           >
-            {pickupPoints.map((point) => (
+            {pickupPoints?.map((point) => (
               <Marker
                 key={point.id}
                 longitude={point.longitude}
@@ -120,6 +108,6 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60
           </Map>
         </Box>
       </Box>
-    );
-  }
+    </QueryStates>
+  );
 };

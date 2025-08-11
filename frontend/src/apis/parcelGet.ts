@@ -24,6 +24,7 @@ export const parcelSchema = z.object({
   updatedAt: z.string(),
 });
 
+export type AddressData = z.infer<typeof addressSchema>;
 export const parcelListSchema = z.array(parcelSchema);
 
 export type ParcelData = z.infer<typeof parcelSchema>;

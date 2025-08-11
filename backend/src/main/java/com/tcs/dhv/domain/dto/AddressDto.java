@@ -61,10 +61,10 @@ public record AddressDto(
             .building(building)
             .apartment(apartment)
             .city(city)
-            .postalCode(postalCode)
             .country(country)
-            .latitude(latitude)
+            .postalCode(postalCode)
             .longitude(longitude)
+            .latitude(latitude)
             .build();
     }
 
