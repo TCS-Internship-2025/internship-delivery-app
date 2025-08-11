@@ -12,13 +12,13 @@ import java.util.UUID;
 
 public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
 
-    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
+    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "address"})
     List<Parcel> findAllBySenderId(UUID userId);
 
-    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
+    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "address"})
     boolean existsByTrackingCode(String trackingCode);
 
-    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "recipient.address"})
+    @EntityGraph(attributePaths = {"sender", "sender.address", "recipient", "address"})
     Optional<Parcel> findByTrackingCode(String trackingCode);
 
     boolean existsBySenderIdAndCurrentStatusIn(UUID senderId, Set<ParcelStatus> status);
