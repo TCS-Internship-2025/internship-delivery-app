@@ -125,10 +125,6 @@ const router = createBrowserRouter([
                 path: ROUTES.PROFILE,
                 element: <ProfileInfo />,
               },
-              {
-                path: ROUTES.PROFILE,
-                element: <ProfileInfo />,
-              },
 
               {
                 path: ROUTES.PAGE5,

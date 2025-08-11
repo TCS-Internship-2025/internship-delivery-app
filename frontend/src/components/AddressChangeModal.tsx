@@ -13,12 +13,12 @@ import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
 import { SectionFields } from '@/components/FormSectionFields';
+import { QueryStates } from '@/components/QueryStates';
 import { SectionContainer } from '@/components/SectionContainer';
 import { BoxIcon } from './BoxIcon';
 import { SharedForm } from './SharedForm';
@@ -38,7 +38,7 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
 
   const { resetForm } = useFormContext();
 
-  const { mutate, isPending } = useUpdateParcelAddress();
+  const { mutate, status: addressStatus } = useUpdateParcelAddress();
 
   const parcelId = parcelData?.id;
 
@@ -132,107 +132,82 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
           },
         }}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-            minWidth: {
-              xs: 340,
-              sm: 500,
-              lg: 900,
-            },
-            maxHeight: {
-              xs: 600,
-              sm: 800,
-              lg: 'none',
-            },
-            overflowY: {
-              xs: 'scroll',
-              lg: 'hidden',
-            },
-          }}
-        >
-          {isPending ? (
+        <QueryStates state={addressStatus}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+              minWidth: {
+                xs: 340,
+                sm: 500,
+                lg: 900,
+              },
+              maxHeight: {
+                xs: 600,
+                sm: 800,
+                lg: 'none',
+              },
+              overflowY: {
+                xs: 'scroll',
+                lg: 'hidden',
+              },
+            }}
+          >
             <Box
-              display={'flex'}
               sx={{
-                borderEndEndRadius: 6,
-                borderEndStartRadius: 6,
-                width: {
-                  xs: 340,
-                  sm: 500,
-                  lg: 900,
-                },
-                height: {
-                  xs: 600,
-                  sm: 500,
-                  lg: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                mb: {
+                  md: 2,
                 },
               }}
-              justifyContent={'center'}
-              alignItems={'center'}
-              height={'100%'}
             >
-              <CircularProgress />
+              <BoxIcon icon={<EditLocationAltIcon />} />
+              <Typography variant="h6" fontWeight={600}>
+                Address Change
+              </Typography>
+              <IconButton onClick={handleClose} sx={{ ml: 'auto' }}>
+                <CloseIcon />
+              </IconButton>
             </Box>
-          ) : (
-            <>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  mb: {
-                    md: 2,
-                  },
-                }}
-              >
-                <BoxIcon icon={<EditLocationAltIcon />} />
-                <Typography variant="h6" fontWeight={600}>
-                  Address Change
-                </Typography>
-                <IconButton onClick={handleClose} sx={{ ml: 'auto' }}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-              <SharedForm
-                handleFormSubmit={handleFormSubmit}
-                deliveryType={deliveryType}
-                control={control}
-                handleAddressSelect={handleAddressSelect}
-                height="50vh"
-                preferenceFields={deliveryOnlyField}
-                recipientAddressFields={addressChangeFields}
-              >
-                <SectionContainer title="Update Reason">
-                  <SectionFields fields={requestReasonField} control={control}></SectionFields>
-                </SectionContainer>
-              </SharedForm>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  void handleSubmit(onSubmit)();
-                }}
-                fullWidth
-                disabled={!hasFormChanged}
-                color="primary"
-                sx={{
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  borderColor: 'action.disabled',
-                }}
-              >
-                Update
-              </Button>
-            </>
-          )}
-        </Box>
+            <SharedForm
+              handleFormSubmit={handleFormSubmit}
+              deliveryType={deliveryType}
+              control={control}
+              handleAddressSelect={handleAddressSelect}
+              height="50vh"
+              preferenceFields={deliveryOnlyField}
+              recipientAddressFields={addressChangeFields}
+            >
+              <SectionContainer title="Update Reason">
+                <SectionFields fields={requestReasonField} control={control}></SectionFields>
+              </SectionContainer>
+            </SharedForm>
+            <Button
+              variant="contained"
+              onClick={() => {
+                void handleSubmit(onSubmit)();
+              }}
+              fullWidth
+              disabled={!hasFormChanged}
+              color="primary"
+              sx={{
+                textTransform: 'none',
+                fontWeight: 600,
+                borderRadius: 2,
+                borderColor: 'action.disabled',
+              }}
+            >
+              Update
+            </Button>
+          </Box>
+        </QueryStates>
       </Modal>
     </Box>
   );
