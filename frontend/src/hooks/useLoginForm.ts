@@ -94,29 +94,30 @@ export const useLoginForm = () => {
         error?.status ??
         (error?.message && typeof error.message === 'string' && /401|unauthorized/i.test(error.message)
           ? 401
-          : undefined);
+          : error?.message && typeof error.message === 'string' && /403|forbidden/i.test(error.message)
+            ? 403
+            : undefined);
 
       let errorMessage = '';
-      if (error?.response?.data && typeof error.response.data === 'object' && error.response.data.message) {
-        errorMessage = error.response.data.message;
+
+      if (error?.response?.data && typeof error.response.data === 'object') {
+        const maybeMsg = (error.response.data as { message?: unknown }).message;
+        if (typeof maybeMsg === 'string') {
+          errorMessage = maybeMsg;
+        } else {
+          try {
+            errorMessage = JSON.stringify(error.response.data);
+          } catch {
+            errorMessage = 'An error occurred';
+          }
+        }
       } else if (error?.response?.data && typeof error.response.data === 'string') {
         errorMessage = error.response.data;
-      } else if (error?.response?.data) {
-        try {
-          errorMessage = JSON.stringify(error.response.data);
-        } catch {
-          errorMessage = 'An error occurred. Could not parse error details.';
-        }
-      } else if (error?.message) {
+      } else if (typeof error?.message === 'string') {
         errorMessage = error.message;
       }
 
-      const isUnverifiedEmail =
-        (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('email is not verified')) ||
-        status === 401 ||
-        (typeof errorMessage === 'string' && /unauthorized|401/i.test(errorMessage));
-
-      if (isUnverifiedEmail) {
+      if (status === 403 || /email.*not.*verified/i.test(errorMessage)) {
         const email = variables?.email ?? form.getValues('email');
 
         if (email) {
@@ -132,22 +133,30 @@ export const useLoginForm = () => {
           }
         } else {
           console.warn('No email available to resend verification to.');
+          enqueueSnackbar('Please enter your email to resend the verification link.', { variant: 'warning' });
         }
 
         try {
           void navigate('/verify', { state: { email } });
-          return;
         } catch (navErr) {
           console.error('navigate to /verify failed, falling back to location.href', navErr);
           const fallbackUrl = `/verify${email ? `?email=${encodeURIComponent(email)}` : ''}`;
           window.location.href = fallbackUrl;
-          return;
         }
+        return;
+      }
+
+      if (status === 401) {
+        form.setError('root', {
+          type: 'manual',
+          message: 'Invalid email or password. Please check your credentials.',
+        });
+        return;
       }
 
       form.setError('root', {
         type: 'manual',
-        message: 'Login failed. Please check your credentials.',
+        message: errorMessage || 'Login failed. Please try again.',
       });
     },
   });
