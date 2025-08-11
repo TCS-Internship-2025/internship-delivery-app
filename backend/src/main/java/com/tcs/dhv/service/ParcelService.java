@@ -62,7 +62,7 @@ public class ParcelService {
         log.info("Creating parcel for user: {}", userId);
 
         final var sender = userService.getUserById(userId);
-        final var recipient = recipientService.findOrCreateRecipient(parcelDto.recipient());
+        final var recipient = recipientService.createRecipient(parcelDto.recipient());
         final var trackingCode = generateTrackingCode();
 
         final var address = parcelDto.address().toEntity();

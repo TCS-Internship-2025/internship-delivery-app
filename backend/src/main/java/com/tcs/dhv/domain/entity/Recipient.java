@@ -36,7 +36,6 @@ public class Recipient {
     private String name;
 
     @NotNull
-    @Column(unique = true)
     private String email;
 
     private String phone;

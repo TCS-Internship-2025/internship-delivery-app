@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 @Schema(description = "Recipient information for parcel delivery")
