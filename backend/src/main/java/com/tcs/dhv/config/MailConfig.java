@@ -13,7 +13,17 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import static com.tcs.dhv.util.EmailConstants.*;
+import static com.tcs.dhv.util.EmailConstants.ENCODING;
+import static com.tcs.dhv.util.EmailConstants.MAIL_AUTH;
+import static com.tcs.dhv.util.EmailConstants.MAIL_DEBUG;
+import static com.tcs.dhv.util.EmailConstants.MAIL_HOST;
+import static com.tcs.dhv.util.EmailConstants.MAIL_PORT;
+import static com.tcs.dhv.util.EmailConstants.MAIL_PROPERTY_ENABLED;
+import static com.tcs.dhv.util.EmailConstants.MAIL_PROTOCOL;
+import static com.tcs.dhv.util.EmailConstants.EMAIL_PROTOCOL;
+import static com.tcs.dhv.util.EmailConstants.MAIL_STARTTLS_ENABLE;
+import static com.tcs.dhv.util.EmailConstants.RESOLVER_PREFIX;
+import static com.tcs.dhv.util.EmailConstants.RESOLVER_SUFFIX;
 
 @Configuration
 public class MailConfig {
