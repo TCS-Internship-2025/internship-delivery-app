@@ -35,10 +35,10 @@ public record RecipientDto(
 ) implements Serializable {
     public static RecipientDto fromEntity(final Recipient recipient) {
         return new RecipientDto(
-        recipient.getName(),
-        recipient.getEmail(),
-        recipient.getPhone(),
-        recipient.getBirthDate()
+            recipient.getName(),
+            recipient.getEmail(),
+            recipient.getPhone(),
+            recipient.getBirthDate()
     );
 }
 }
