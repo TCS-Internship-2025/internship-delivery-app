@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 @Schema(description = "Recipient information for parcel delivery")
 public record RecipientDto(
-    @Schema(description = "Title of the recipient", example = "MR", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = SchemaConstants.RECIPIENT_TITLE_DESC, example = SchemaConstants.RECIPIENT_TITLE_EX, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     RecipientTitle title,
 
     @Schema(description = SchemaConstants.RECIPIENT_NAME_DESC, example = SchemaConstants.RECIPIENT_NAME_EX,
@@ -32,7 +32,7 @@ public record RecipientDto(
     @Pattern(regexp = "^(\\+36|0036|06)((20|30|31|50|70)[0-9]{7}|1[0-9]{8}|((?!(97|98|86|81|67|65|64|61|60|58|51|43|41|40|39))[2-9][0-9])[0-9]{7})$", message = "Invalid Hungarian phone number format (+36XXXXXXXXX)")
     String phone,
 
-    @Schema(description = "Recipient's birthday", example = "2000-12-12")
+    @Schema(description = SchemaConstants.RECIPIENT_BIRTH_DATE_DESC, example = SchemaConstants.RECIPIENT_BIRTH_DATE_EX)
     @Past(message = "Date of birth must be in the past")
     LocalDate birthDate
 

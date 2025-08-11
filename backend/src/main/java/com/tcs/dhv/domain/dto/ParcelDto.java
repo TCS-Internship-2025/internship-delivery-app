@@ -21,31 +21,31 @@ public record ParcelDto(
     @Schema(description = SchemaConstants.TRACKING_CODE_DESC, example = SchemaConstants.TRACKING_CODE_EX)
     String trackingCode,
 
-    @Schema(description = "Delivery address")
+    @Schema(description = SchemaConstants.PARCEL_ADDRESS_DESC)
     @NotNull(message = "Address is required")
     @Valid
     AddressDto address,
 
-    @Schema(description = "Recipient information")
+    @Schema(description = SchemaConstants.PARCEL_RECIPIENT_DESC)
     @NotNull(message = "Recipient is required")
     @Valid
     RecipientDto recipient,
 
-    @Schema(description = "Parcel status", example = "CREATED")
+    @Schema(description = SchemaConstants.PARCEL_STATUS_DESC, example = SchemaConstants.PARCEL_STATUS_EX)
     ParcelStatus currentStatus,
 
-    @Schema(description = "Delivery type",example = "PICKUP_POINT")
+    @Schema(description = SchemaConstants.PARCEL_DELIVERY_TYPE_DESC, example = SchemaConstants.PARCEL_DELIVERY_TYPE_EX)
     @NotNull(message = "Delivery type is required")
     DeliveryType deliveryType,
 
-    @Schema(description = "Payment type", example = "SENDER_PAYS")
+    @Schema(description = SchemaConstants.PARCEL_PAYMENT_TYPE_DESC, example = SchemaConstants.PARCEL_PAYMENT_TYPE_EX)
     @NotNull(message = "Payment type is required")
     PaymentType paymentType,
 
-    @Schema(description = "Creation time of parcel", example = "2025-07-30T10:30:00")
+    @Schema(description = SchemaConstants.PARCEL_CREATED_AT_DESC, example = SchemaConstants.PARCEL_CREATED_AT_EX)
     LocalDateTime createdAt,
 
-    @Schema(description = "Last update time of parcel", example = "2025-07-30T10:30:00")
+    @Schema(description = SchemaConstants.PARCEL_UPDATED_AT_DESC, example = SchemaConstants.PARCEL_UPDATED_AT_EX)
     LocalDateTime updatedAt
 ) implements Serializable {
     public static ParcelDto fromEntity(final Parcel parcel) {

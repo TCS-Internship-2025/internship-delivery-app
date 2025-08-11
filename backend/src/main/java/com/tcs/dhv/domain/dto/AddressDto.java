@@ -16,12 +16,15 @@ public record AddressDto(
     @Size(max = 255, message = "Line 1 cannot exceed {max} characters")
     String line1,
 
+    @Schema(description = SchemaConstants.ADDRESS_LINE2_DESC, example = SchemaConstants.ADDRESS_LINE2_EX)
     @Size(max = 255, message = "Line 2 cannot exceed {max} characters")
     String line2,
 
+    @Schema(description = SchemaConstants.ADDRESS_BUILDING_DESC, example = SchemaConstants.ADDRESS_BUILDING_EX)
     @Size(max = 100, message = "Building cannot exceed {max} characters")
     String building,
 
+    @Schema(description = SchemaConstants.ADDRESS_APARTMENT_DESC, example = SchemaConstants.ADDRESS_APARTMENT_EX)
     @Size(max = 50, message = "Apartment cannot exceed {max} characters")
     String apartment,
 
@@ -39,10 +42,12 @@ public record AddressDto(
 
     // Source: https://www.latlong.net/place/budapest-hungary-23565.html
     // Ranges are an approximation
+    @Schema(description = SchemaConstants.ADDRESS_LATITUDE_DESC, example = SchemaConstants.ADDRESS_LATITUDE_EX)
     @DecimalMin(value = "47.0", message = "Latitude must be between 47.0 and 48.0")
     @DecimalMax(value = "48.0", message = "Latitude must be between 47.0 and 48.0")
     Double latitude,
 
+    @Schema(description = SchemaConstants.ADDRESS_LONGITUDE_DESC, example = SchemaConstants.ADDRESS_LONGITUDE_EX)
     @DecimalMin(value = "18.0", message = "Longitude must be between 18.0 and 20.0")
     @DecimalMax(value = "20.0", message = "Longitude must be between 18.0 and 20.0")
     Double longitude
