@@ -39,6 +39,6 @@ public record RecipientDto(
             recipient.getEmail(),
             recipient.getPhone(),
             recipient.getBirthDate()
-    );
-}
+         );
+    }
 }
