@@ -3,6 +3,8 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -27,11 +29,12 @@ public class ParcelService {
     private static final long TRACKING_NUMBER_MIN = 1_000_000_000L;
     private static final long TRACKING_NUMBER_MAX = 10_000_000_000L;
 
-    private final ParcelRepository parcelRepository;
+    private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final RecipientService recipientService;
     private final UserService userService;
     private final EmailService emailService;
-    private final ParcelStatusHistoryService parcelStatusHistoryService;
+    private final ParcelRepository parcelRepository;
+    private final AddressRepository addressRepository;
 
     private final Random random = new Random();
 
@@ -40,18 +43,26 @@ public class ParcelService {
         log.info("Creating parcel for user: {}", userId);
 
         final var sender = userService.getUserById(userId);
-
         final var recipient = recipientService.findOrCreateRecipient(parcelDto.recipient());
-
         final var trackingCode = generateTrackingCode();
 
-        final var parcel = parcelDto.toEntity(sender, trackingCode);
-        parcel.setRecipient(recipient);
+        final var address = parcelDto.address().toEntity();
+        final var savedAddress = addressRepository.saveAndFlush(address);
+
+        final var parcel = Parcel.builder()
+            .sender(sender)
+            .trackingCode(trackingCode)
+            .address(savedAddress)
+            .recipient(recipient)
+            .currentStatus(ParcelStatus.CREATED)
+            .deliveryType(parcelDto.deliveryType())
+            .paymentType(parcelDto.paymentType())
+            .build();
 
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
         log.info("Parcel created with tracking code: {}", trackingCode);
 
-        emailService.sendShipmentCreationEmail(savedParcel.getRecipient().getEmail(), savedParcel.getTrackingCode());
+        emailService.sendShipmentCreationEmail(sender.getEmail(), sender.getName(), savedParcel.getTrackingCode());
         log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
 
         final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
@@ -65,7 +76,6 @@ public class ParcelService {
         log.info("Retrieving parcels for user: {}", userId);
 
         final var sender = userService.getUserById(userId);
-
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
 
         return parcels.stream()

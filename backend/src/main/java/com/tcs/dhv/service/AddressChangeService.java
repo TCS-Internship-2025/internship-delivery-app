@@ -1,6 +1,7 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.dto.AddressChangeDto;
+import com.tcs.dhv.domain.dto.AddressDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
@@ -39,20 +40,23 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
-    public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
         try {
-            log.info("Address change for parcel {} by user {}", parcelId, userId);
+            log.info("Address change for parcel {} by user {}", parcelId, userId); 
 
             final var sender = userService.getUserById(userId);
             final var parcel = getParcelByIdAndUser(parcelId, sender);
 
             validateAddressChangeRequest(parcel);
 
-            final var oldAddress = parcel.getRecipient().getAddress();
+            final var oldAddress = parcel.getAddress();
             final var newAddress = requestDto.newAddress().toEntity();
-            final var savedAddress = addressRepository.save(newAddress);
+            final var savedAddress = addressRepository.saveAndFlush(newAddress);
 
-            // Status change emails should probably be sent in ParcelStatusHistoryService
+            parcel.setDeliveryType(requestDto.deliveryType());
+            parcel.setAddress(savedAddress);
+            parcelRepository.saveAndFlush(parcel);
+
             emailService.sendAddressChangeNotification(
                 parcel.getRecipient().getEmail(),
                 parcel.getRecipient().getName(),
@@ -61,21 +65,16 @@ public class AddressChangeService {
                 newAddress,
                 requestDto.requestReason()
             );
-
             log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
-
-            parcel.getRecipient().setAddress(savedAddress);
-            parcelRepository.save(parcel);
 
             final var description = String.format("Address changed by %s%s",
                 sender.getEmail(),
-                requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ?
-                    ". Reason: " + requestDto.requestReason() : "");
+                requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
             parcelStatusHistoryService.addStatusHistory(parcelId, description);
 
-            log.info("Address changed successfully for parcel: {} from {} to {}",
-                parcelId, oldAddress.getCity(), savedAddress.getCity());
+            log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
 
+            return AddressDto.fromEntity(savedAddress);
         } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
             log.warn("Optimistic lock conflict while changing address for parcel {} by user {}: {}",
                 parcelId, userId, e.getMessage());

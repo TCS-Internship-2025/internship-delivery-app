@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type {
   LoginRequest,
   LoginResponse,
@@ -6,7 +7,7 @@ import type {
   RegisterResponse,
   User,
 } from '@/types/auth';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
@@ -42,7 +43,7 @@ export const refreshTokenResponseSchema = z.object({
 
 export const verifyEmailResponseSchema = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   emailVerified: z.boolean(),
 });
 
@@ -151,4 +152,84 @@ export async function verifyEmail(
     email: response.email,
     emailVerified: response.emailVerified,
   };
+}
+
+export async function sendForgotPasswordEmail(email: string): Promise<void> {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/auth/password/forgot`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Password reset request failed: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ''}`
+    );
+  }
+}
+
+export async function resetPasswordWithToken(token: string, newPassword: string): Promise<void> {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/auth/password/reset`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify({ newPassword }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Password reset failed: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ''}`
+    );
+  }
+}
+
+export async function deleteUser(): Promise<void> {
+  const authData = getStoredAuthData();
+
+  // Use direct fetch for delete since we know it returns empty response (204 No Content)
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/users/me`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(authData?.token && { Authorization: `Bearer ${authData.token}` }),
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Delete user failed: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ''}`
+    );
+  }
+
+  clearAuthData();
+}
+
+export function useDeleteUser() {
+  const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.clear();
+      void navigate('/login', { replace: true });
+    },
+    onError: (error) => {
+      console.error('Failed to delete user:', error);
+    },
+  });
 }

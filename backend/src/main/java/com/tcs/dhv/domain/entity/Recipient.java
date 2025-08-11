@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
@@ -51,9 +49,4 @@ public class Recipient {
     @Column(nullable = false)
     @Builder.Default
     private Long version = 0L;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
 }
