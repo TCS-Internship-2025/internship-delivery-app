@@ -85,7 +85,7 @@ export const useEditAddress = () => {
     mutationFn: (data: ChangeAddressFormSchema) => editAddress(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
-      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
+      enqueueSnackbar('Address updated successfully', { variant: 'success' });
     },
   });
 };
@@ -95,7 +95,7 @@ export const useEditPassword = () => {
     mutationFn: (data: ChangePasswordData) => editPassword(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
-      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
+      enqueueSnackbar('Password updated successfully', { variant: 'success' });
     },
   });
 };
