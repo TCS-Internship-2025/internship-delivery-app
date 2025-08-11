@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
+
     @EntityGraph(attributePaths = {"address", "refreshTokens"})
     Optional<User> findByEmail(final String email);
 

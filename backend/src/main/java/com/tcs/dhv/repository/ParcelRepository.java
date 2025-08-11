@@ -21,5 +21,6 @@ public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
     Optional<Parcel> findByTrackingCode(String trackingCode);
 
     boolean existsBySenderIdAndCurrentStatusIn(UUID senderId, Set<ParcelStatus> status);
+
     boolean existsByRecipientIdAndCurrentStatusIn(UUID recipientId, Set<ParcelStatus> status);
 }
