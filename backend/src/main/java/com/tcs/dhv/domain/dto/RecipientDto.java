@@ -3,12 +3,12 @@ package com.tcs.dhv.domain.dto;
 import com.tcs.dhv.config.openapi.SchemaConstants;
 import com.tcs.dhv.domain.entity.Recipient;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Schema(description = "Recipient information for parcel delivery")
@@ -32,17 +32,18 @@ public record RecipientDto(
     @Past(message = "Date of birth must be in the past")
     LocalDate birthDate,
 
-    @Schema(description = "Recipient's delivery address")
     @Valid
     AddressDto address
+) implements Serializable {
+
+    LocalDate birthDate
 ) {
     public static RecipientDto fromEntity(final Recipient recipient) {
         return new RecipientDto(
             recipient.getName(),
             recipient.getEmail(),
             recipient.getPhone(),
-            recipient.getBirthDate(),
-            AddressDto.fromEntity(recipient.getAddress())
+            recipient.getBirthDate()
         );
     }
 }

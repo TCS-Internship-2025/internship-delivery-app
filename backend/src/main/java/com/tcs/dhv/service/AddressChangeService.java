@@ -7,8 +7,12 @@ import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +41,8 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
-    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+    @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
+    public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
         log.info("Address change for parcel {} by user {}", parcelId, userId);
 
         final var sender = userService.getUserById(userId);
@@ -47,12 +52,9 @@ public class AddressChangeService {
 
         final var oldAddress = parcel.getRecipient().getAddress();
         final var newAddress = requestDto.newAddress().toEntity();
-        final var savedAddress = addressRepository.saveAndFlush(newAddress);
+        final var savedAddress = addressRepository.save(newAddress);
 
-        parcel.setDeliveryType(requestDto.deliveryType());
-        parcel.getRecipient().setAddress(savedAddress);
-        parcelRepository.saveAndFlush(parcel);
-
+        // Status change emails should probably be sent in ParcelStatusHistoryService
         emailService.sendAddressChangeNotification(
             parcel.getRecipient().getEmail(),
             parcel.getRecipient().getName(),
@@ -61,16 +63,56 @@ public class AddressChangeService {
             newAddress,
             requestDto.requestReason()
         );
+
         log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
 
-        final var description = String.format("Address changed by %s%s",
-            sender.getEmail(),
-            requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
-        parcelStatusHistoryService.addStatusHistory(parcelId, description);
+        parcel.getRecipient().setAddress(savedAddress);
+        parcelRepository.save(parcel);
+
+        parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
 
         log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+  
+    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+        try {
+            log.info("Address change for parcel {} by user {}", parcelId, userId); 
 
-        return AddressDto.fromEntity(savedAddress);
+            final var sender = userService.getUserById(userId);
+            final var parcel = getParcelByIdAndUser(parcelId, sender);
+
+            validateAddressChangeRequest(parcel);
+
+            final var oldAddress = parcel.getAddress();
+            final var newAddress = requestDto.newAddress().toEntity();
+            final var savedAddress = addressRepository.saveAndFlush(newAddress);
+
+            parcel.setDeliveryType(requestDto.deliveryType());
+            parcel.setAddress(savedAddress);
+            parcelRepository.saveAndFlush(parcel);
+
+            emailService.sendAddressChangeNotification(
+                parcel.getRecipient().getEmail(),
+                parcel.getRecipient().getName(),
+                parcel.getTrackingCode(),
+                oldAddress,
+                newAddress,
+                requestDto.requestReason()
+            );
+            log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
+
+            final var description = String.format("Address changed by %s%s",
+                sender.getEmail(),
+                requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
+            parcelStatusHistoryService.addStatusHistory(parcelId, description);
+
+            log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+
+            return AddressDto.fromEntity(savedAddress);
+        } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+            log.warn("Optimistic lock conflict while changing address for parcel {} by user {}: {}",
+                parcelId, userId, e.getMessage());
+            throw new ConcurrencyFailureException("Address was modified by another session");
+        }
     }
 
     private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
@@ -86,12 +128,14 @@ public class AddressChangeService {
 
     private void validateAddressChangeRequest(final Parcel parcel) {
         if (!UPDATABLE_STATUSES.contains(parcel.getCurrentStatus())) {
-            throw new IllegalStateException("Cannot change address for parcel with status: " + parcel.getCurrentStatus());
+            throw new IllegalStateException("Cannot change address for parcel with status: "
+                + parcel.getCurrentStatus());
         }
 
         final var timeSinceCreation = Duration.between(parcel.getCreatedAt(), LocalDateTime.now());
         if (timeSinceCreation.toHours() > TIME_LIMIT_HOURS) {
-            throw new IllegalStateException("Address change request is beyond the allowed time limit of " + TIME_LIMIT_HOURS + " hours");
+            throw new IllegalStateException("Address change request is beyond the allowed time limit of "
+                + TIME_LIMIT_HOURS + " hours");
         }
     }
 }
