@@ -10,11 +10,11 @@ import lombok.Builder;
 
 @Builder
 public record TrackingDto(
-        UUID parcelId,
-        String trackingCode,
-        String senderName,
-        String recipientName,
-        ParcelStatus currentStatus,
-        Optional<LocalDateTime> estimatedDelivery
+    UUID parcelId,
+    String trackingCode,
+    String senderName,
+    String recipientName,
+    ParcelStatus currentStatus,
+    Optional<LocalDateTime> estimatedDelivery
 ) implements Serializable {
 }
