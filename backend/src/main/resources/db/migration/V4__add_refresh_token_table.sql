@@ -1,5 +1,4 @@
-CREATE TABLE refresh_tokens
-(
+CREATE TABLE refresh_tokens (
     id         UUID PRIMARY KEY,
     user_id    UUID NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
