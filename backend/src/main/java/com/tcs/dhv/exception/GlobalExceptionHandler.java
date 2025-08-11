@@ -20,6 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleUsernameNotFoundException(Exception ex) {
+    public ResponseEntity<ApiErrorResponse> handleUsernameNotFoundException(final Exception ex) {
         log.error("Caught Exception", ex);
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiErrorResponse> handleRuntimeException(RuntimeException ex) {
+    public ResponseEntity<ApiErrorResponse> handleRuntimeException(final RuntimeException ex) {
         log.error("Caught RuntimeException", ex);
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(final BadCredentialsException ex) {
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.UNAUTHORIZED.value())
             .message("Incorrect username or password")
@@ -59,7 +60,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(final IllegalArgumentException ex) {
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
             .message(ex.getMessage())
@@ -69,7 +70,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ApiErrorResponse> handleValidationException(ValidationException ex) {
+    public ResponseEntity<ApiErrorResponse> handleValidationException(final ValidationException ex) {
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
             .message(ex.getMessage())
@@ -80,7 +81,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(final ConstraintViolationException ex) {
         final var errorList = ex.getConstraintViolations()
                 .stream()
                 .map(violation -> new ApiErrorResponse.FieldError(
@@ -101,7 +102,9 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(
+        final DataIntegrityViolationException ex
+    ) {
         log.error("Data integrity violation", ex);
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.CONFLICT.value())
@@ -112,7 +115,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+    public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(final EntityNotFoundException ex) {
         log.error("Entity not found", ex);
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.NOT_FOUND.value())
@@ -126,20 +129,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(
         final InternalAuthenticationServiceException ex
     ) {
-        final var message = (ex.getMessage() != null && ex.getCause().getMessage() != null)
-            ? ex.getCause().getMessage()
-            : "Authentication Failed";
+        final var message = Optional.ofNullable(ex.getMessage())
+                .orElse("Authentication Failed");
 
-        final var status = HttpStatus.UNAUTHORIZED;
-
-        log.warn("Authentication failed: {}", message);
-
+        log.warn("Authentication blocked: {}", message);
         final var err = ApiErrorResponse.builder()
-            .status(status.value())
+            .status(HttpStatus.FORBIDDEN.value())
             .message(message)
             .timestamp(Instant.now())
             .build();
-        return ResponseEntity.status(status).body(err);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MailMessagingException.class)
-    public ResponseEntity<ApiErrorResponse> handleMailMessagingException(final MailMessagingException exception){
+    public ResponseEntity<ApiErrorResponse> handleMailMessagingException(final MailMessagingException exception) {
         log.error("Mail messaging error", exception);
         final var err = ApiErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -165,7 +165,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConcurrencyFailureException.class)
-    public ResponseEntity<ApiErrorResponse> handleConcurrencyFailureException(final ConcurrencyFailureException ex) {
+    public ResponseEntity<ApiErrorResponse> handleConcurrencyFailureException(
+        final ConcurrencyFailureException ex
+    ) {
         log.error("Concurrency conflict: {}", ex.getMessage());
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.CONFLICT.value())
@@ -175,7 +177,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex) {
         final var errorList = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -196,7 +198,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<ApiErrorResponse> handleInvalidFormatException(InvalidFormatException ex) {
+    public ResponseEntity<ApiErrorResponse> handleInvalidFormatException(final InvalidFormatException ex) {
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
             .message("Invalid format: " + ex.getMessage())
@@ -206,7 +208,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(
+        final HttpMessageNotReadableException ex
+    ) {
         log.error("HTTP message not readable", ex);
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
@@ -217,7 +221,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(
+        final MethodArgumentTypeMismatchException ex
+    ) {
         final var message = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s",
                 ex.getValue(), ex.getName(), ex.getRequiredType().getSimpleName());
         final var err = ApiErrorResponse.builder()
@@ -229,7 +235,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex) {
+    public ResponseEntity<ApiErrorResponse> handleNoResourceFoundException(final NoResourceFoundException ex) {
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.NOT_FOUND.value())
             .message("Endpoint not found")

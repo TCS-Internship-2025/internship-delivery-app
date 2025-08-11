@@ -4,4 +4,3 @@ public enum LocationStatus {
     AVAILABLE,
     UNAVAILABLE,
 }
-

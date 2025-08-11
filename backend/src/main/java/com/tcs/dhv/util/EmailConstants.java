@@ -22,5 +22,9 @@ public class EmailConstants {
     public static final String STATUS_UPDATE_MAIl_SUBJECT = "Delivery Status Changed - ";
     public static final String PASSWORD_CHANGE_MAIL_SUBJECT = "Password successfully changed";
     public static final String USER_UPDATE_MAIL_SUBJECT = "User profile successfully updated";
-
+    public static final String RESOLVER_PREFIX = "templates/";
+    public static final String RESOLVER_SUFFIX = ".html";
+    public static final String MAIL_HOST = "smtp.gmail.com";
+    public static final int MAIL_PORT = 587;
+    public static final int TEST_MAIL_PORT = 3025;
 }

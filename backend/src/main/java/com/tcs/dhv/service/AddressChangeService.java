@@ -42,40 +42,13 @@ public class AddressChangeService {
 
     @Transactional
     @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
-    public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
-        log.info("Address change for parcel {} by user {}", parcelId, userId);
-
-        final var sender = userService.getUserById(userId);
-        final var parcel = getParcelByIdAndUser(parcelId, sender);
-
-        validateAddressChangeRequest(parcel);
-
-        final var oldAddress = parcel.getRecipient().getAddress();
-        final var newAddress = requestDto.newAddress().toEntity();
-        final var savedAddress = addressRepository.save(newAddress);
-
-        // Status change emails should probably be sent in ParcelStatusHistoryService
-        emailService.sendAddressChangeNotification(
-            parcel.getRecipient().getEmail(),
-            parcel.getRecipient().getName(),
-            parcel.getTrackingCode(),
-            oldAddress,
-            newAddress,
-            requestDto.requestReason()
-        );
-
-        log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
-
-        parcel.getRecipient().setAddress(savedAddress);
-        parcelRepository.save(parcel);
-
-        parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
-
-        log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
-  
-    public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+    public AddressDto changeAddress(
+        final UUID parcelId,
+        final AddressChangeDto requestDto,
+        final UUID userId
+    ) {
         try {
-            log.info("Address change for parcel {} by user {}", parcelId, userId); 
+            log.info("Address change for parcel {} by user {}", parcelId, userId);
 
             final var sender = userService.getUserById(userId);
             final var parcel = getParcelByIdAndUser(parcelId, sender);
@@ -100,7 +73,8 @@ public class AddressChangeService {
             );
             log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
 
-            final var description = String.format("Address changed by %s%s",
+            final var description = String.format(
+                "Address changed by %s%s",
                 sender.getEmail(),
                 requestDto.requestReason() != null && !requestDto.requestReason().trim().isEmpty() ? ". Reason: " + requestDto.requestReason() : "");
             parcelStatusHistoryService.addStatusHistory(parcelId, description);
@@ -108,14 +82,17 @@ public class AddressChangeService {
             log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
 
             return AddressDto.fromEntity(savedAddress);
-        } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+        } catch (final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
             log.warn("Optimistic lock conflict while changing address for parcel {} by user {}: {}",
                 parcelId, userId, e.getMessage());
             throw new ConcurrencyFailureException("Address was modified by another session");
         }
     }
 
-    private Parcel getParcelByIdAndUser(final UUID parcelId, final com.tcs.dhv.domain.entity.User sender) {
+    private Parcel getParcelByIdAndUser(
+        final UUID parcelId,
+        final com.tcs.dhv.domain.entity.User sender
+    ) {
         final var parcel = parcelRepository.findById(parcelId)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with ID: " + parcelId));
 
