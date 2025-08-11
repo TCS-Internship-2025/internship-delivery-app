@@ -94,7 +94,7 @@ export const ParcelGrid = ({ parcels }: { parcels: ParcelListData }) => {
   const shortParcels: ParcelShortData[] =
     parcels.map((parcel) => ({
       parcelId: parcel.id,
-      address: parcel.recipient.address.line1,
+      address: parcel.address.line1,
       code: parcel.trackingCode,
       recipient: parcel.recipient.name,
       delivery: deliveryConverter(parcel.deliveryType),

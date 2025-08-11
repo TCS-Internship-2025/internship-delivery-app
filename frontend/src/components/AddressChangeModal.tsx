@@ -6,7 +6,7 @@ import { useAddressChangeForm } from '@/hooks/useAddressChangeForm';
 import { useFormContext } from '@/contexts/FormContext';
 
 import { useUpdateParcelAddress } from '@/apis/parcel';
-import { useGetParcelById } from '@/apis/parcelGet';
+import { type ParcelData } from '@/apis/parcelGet';
 
 import CloseIcon from '@mui/icons-material/Close';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
@@ -31,18 +31,18 @@ import {
 } from '@/utils/parcelComposition';
 
 interface AddressChangeModalProps {
-  parcelId?: string;
+  parcelData?: ParcelData;
 }
-export const AddressChangeModal = ({ parcelId }: AddressChangeModalProps) => {
+export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
   const [open, setOpen] = useState(false);
 
   const { resetForm } = useFormContext();
 
   const { mutate, isPending } = useUpdateParcelAddress();
 
-  const { data } = useGetParcelById(parcelId);
+  const parcelId = parcelData?.id;
 
-  console.log('data:', data);
+  console.log('data:', parcelData);
 
   const {
     control,
@@ -54,7 +54,7 @@ export const AddressChangeModal = ({ parcelId }: AddressChangeModalProps) => {
     handleCurrentAddressData,
     handleAddressSelect,
     initialDeliveryType,
-  } = useAddressChangeForm({ data });
+  } = useAddressChangeForm({ parcelData });
 
   const handleOpen = () => {
     handleCurrentAddressData();

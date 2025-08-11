@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getParcelChipData } from '../utils/parcelChipData.ts';
 
+import { FormProvider } from '@/providers/FormProvider.tsx';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
 import type { ParcelData } from '@/apis/parcelGet.ts';
@@ -12,9 +12,11 @@ import Chip from '@mui/material/Chip';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
+import { AddressChangeModal } from '@/components/AddressChangeModal';
 import { CoordinatesMap } from '@/components/CoordinatesMap.tsx';
 import { QueryStates } from '@/components/QueryStates.tsx';
 
+import { getParcelChipData } from '@/utils/parcelChipData.ts';
 import { deliveryConverter, paymentConverter } from '@/utils/parcelTypeConverter';
 
 const formatDate = (date: string | Date | undefined): string => {
@@ -86,9 +88,9 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData: ParcelData })
 
   useEffect(() => {
     const geocodeAddress = async () => {
-      if (!parcelData?.recipient.address) return;
+      if (!parcelData?.address) return;
 
-      const address = parcelData.recipient.address;
+      const address = parcelData.address;
 
       setIsLoadingCoordinates(true);
       setGeocodingError(null);
@@ -115,8 +117,8 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData: ParcelData })
   }, [parcelData]);
 
   const mapCoordinates = coordinates ?? {
-    latitude: parcelData?.recipient.address.latitude ?? 0,
-    longitude: parcelData?.recipient.address.longitude ?? 0,
+    latitude: parcelData?.address.latitude ?? 0,
+    longitude: parcelData?.address.longitude ?? 0,
   };
 
   return (
@@ -167,19 +169,21 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData: ParcelData })
             Address:
           </Typography>
           <DataDisplay>
-            {parcelData?.recipient.address.country}, {parcelData?.recipient.address.postalCode}{' '}
-            {parcelData?.recipient.address.city}
+            {parcelData?.address.country}, {parcelData?.address.postalCode} {parcelData?.address.city}
           </DataDisplay>
           <DataDisplay>
-            {parcelData?.recipient.address.line1}, {parcelData?.recipient.address.line2}
+            {parcelData?.address.line1}, {parcelData?.address.line2}
           </DataDisplay>
           <DataDisplay>
-            {parcelData?.recipient.address.building ?? undefined}
-            {parcelData?.recipient.address.building && parcelData?.recipient.address.apartment && ', '}
-            {parcelData?.recipient.address.building && `apartment ${parcelData?.recipient.address.apartment}`}
+            {parcelData?.address.building ?? undefined}
+            {parcelData?.address.building && parcelData?.address.apartment && ', '}
+            {parcelData?.address.building && `apartment ${parcelData?.address.apartment}`}
           </DataDisplay>
         </CardDisplay>
       </Box>
+      <FormProvider>
+        <AddressChangeModal parcelData={parcelData} />
+      </FormProvider>
       <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'}>
         <QueryStates
           isPending={isLoadingCoordinates}

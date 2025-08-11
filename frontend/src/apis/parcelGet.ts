@@ -19,13 +19,13 @@ export const recipientSchema = z.object({
   email: z.email(),
   phone: z.string(),
   birthDate: z.string().nullable(),
-  address: addressSchema,
 });
 
 export const parcelSchema = z.object({
   id: z.string(),
   trackingCode: z.string(),
   recipient: recipientSchema,
+  address: addressSchema,
   currentStatus: z.string(),
   deliveryType: z.string(),
   paymentType: z.string(),

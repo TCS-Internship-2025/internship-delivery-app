@@ -61,10 +61,8 @@ export const ParcelForm = () => {
       recipient: {
         ...recipientFormData,
         phone: recipientFormData.phone.replace(/ /g, ''),
-        address: {
-          ...addressData,
-        },
       },
+      address: addressData,
       paymentType: PAYMENT_TYPE_NAME_CONVERTER[paymentType],
       deliveryType: DELIVERY_TYPE_NAME_CONVERTER[deliveryType],
     };

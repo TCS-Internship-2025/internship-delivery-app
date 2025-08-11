@@ -28,12 +28,12 @@ export const paymentDeliverySchema = parcelFormSchema.pick({
 export const createParcelRequestSchema = z.object({
   recipient: z.object({
     ...recipientFormSchema.shape,
-    address: addressOnlySchema,
     birthDate: z
       .string()
       .transform((str) => new Date(str))
       .nullable(),
   }),
+  address: addressOnlySchema,
   ...paymentDeliverySchema.shape,
 });
 
@@ -57,7 +57,7 @@ export const updateParcelAddressRequestSchema = z.object({
   requestReason: z.string().optional().nullable(),
 });
 
-export const updateParcelAddressResponseSchema = z.void();
+export const updateParcelAddressResponseSchema = addressOnlySchema;
 
 export type FullFormSchema = z.infer<typeof fullFormSchema>;
 export type GetParcelDataSchema = z.infer<typeof getParcelDataSchema>;
