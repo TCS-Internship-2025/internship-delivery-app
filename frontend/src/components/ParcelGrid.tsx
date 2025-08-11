@@ -170,7 +170,7 @@ export const ParcelGrid = ({ parcels }: { parcels: ParcelListData }) => {
     >
       <AgGridReact
         ref={gridRef}
-        rowData={rowData}
+        rowData={[...rowData].reverse()}
         columnDefs={colDefs}
         defaultColDef={{
           resizable: true,
