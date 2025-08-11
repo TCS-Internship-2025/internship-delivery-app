@@ -44,9 +44,4 @@ public class Recipient {
     private String phone;
 
     private LocalDate birthDate;
-
-    @Version
-    @Column(nullable = false)
-    @Builder.Default
-    private Long version = 0L;
 }

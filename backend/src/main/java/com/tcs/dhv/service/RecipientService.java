@@ -3,12 +3,8 @@ package com.tcs.dhv.service;
 import com.tcs.dhv.domain.dto.RecipientDto;
 import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.repository.RecipientRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
