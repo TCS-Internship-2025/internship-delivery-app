@@ -15,6 +15,8 @@ import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 
+import { ErrorPage } from '@/pages/Error';
+
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 import { QueryStates } from './QueryStates';
 
@@ -42,6 +44,10 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const { data: pickupPoints, status: pickupPointsStatus } = useGetAllPickupPoints({ deliveryType: deliveryType });
 
+  if (!pickupPoints) {
+    return <ErrorPage title="Could not fetch Pickup Points" />;
+  }
+
   return (
     <QueryStates
       state={pickupPointsStatus}
@@ -60,7 +66,7 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60
             style={{ width: '100%', height: '100%' }}
             mapStyle={mapboxStyle}
           >
-            {pickupPoints?.map((point) => (
+            {pickupPoints.map((point) => (
               <Marker
                 key={point.id}
                 longitude={point.longitude}
