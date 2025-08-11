@@ -39,7 +39,6 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
-
     public AddressDto changeAddress(
         final UUID parcelId,
         final AddressChangeDto requestDto,

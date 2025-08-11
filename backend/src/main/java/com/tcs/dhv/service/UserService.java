@@ -80,12 +80,12 @@ public class UserService {
                     .country(updateRequest.address().country())
                     .build();
 
-            final var savedAddress = addressRepository.save(newAddress);
+                final var savedAddress = addressRepository.save(newAddress);
 
-            user.setAddress(savedAddress);
+                user.setAddress(savedAddress);
 
-            log.info("Created and saved new address: {}", savedAddress);
-        }
+                log.info("Created and saved new address: {}", savedAddress);
+            }
 
             updateRequest.updateEntity(user);
             user.setUpdatedAt(LocalDateTime.now());
