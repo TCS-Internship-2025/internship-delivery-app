@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { enqueueSnackbar } from 'notistack';
 import { z } from 'zod';
 
 import { httpService } from '@/services/httpService';
@@ -73,6 +74,7 @@ export const useEditProfile = () => {
     mutationFn: (data: ChangeProfileSchema) => editProfile(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
+      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
     },
   });
 };
@@ -83,6 +85,7 @@ export const useEditAddress = () => {
     mutationFn: (data: ChangeAddressFormSchema) => editAddress(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
+      enqueueSnackbar('Address updated successfully', { variant: 'success' });
     },
   });
 };
@@ -92,6 +95,7 @@ export const useEditPassword = () => {
     mutationFn: (data: ChangePasswordData) => editPassword(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
+      enqueueSnackbar('Password updated successfully', { variant: 'success' });
     },
   });
 };
