@@ -33,7 +33,7 @@ public class SchemaConstants {
     public static final String ADDRESS_LONGITUDE_EX = "19.0573";
 
     public static final String RECIPIENT_TITLE_DESC = "Title of the recipient";
-    public static final String RECIPIENT_TITLE_EX = "MR";
+    public static final String RECIPIENT_TITLE_EX = "Mr";
     public static final String RECIPIENT_NAME_DESC = "Full name of the parcel recipient";
     public static final String RECIPIENT_NAME_EX = "Miklós Tóth";
     public static final String RECIPIENT_EMAIL_DESC = "Email address of the parcel recipient";
