@@ -19,20 +19,18 @@ import { useCreateParcel } from '@/apis/parcel';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import { useTheme } from '@mui/material/styles';
 
 import { NavigationButtons } from '@/components/NavigationButtons.tsx';
 import { PageContainer } from '@/components/PageContainer';
+import { QueryStates } from '@/components/QueryStates';
 import { SharedForm } from '@/components/SharedForm';
 
 import { parcelFields, shippingOptionsField, type ParcelFormSchema } from '@/utils/parcelComposition';
 
 export const ParcelForm = () => {
-  const { mutate, isPending } = useCreateParcel();
+  const { mutate, status: createParcelStatus } = useCreateParcel();
   const { getRecipientFormData, getPointId } = useFormContext();
   const isSmallScreen = useSmallScreen();
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const {
@@ -83,43 +81,31 @@ export const ParcelForm = () => {
   };
 
   return (
-    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {isPending ? (
-        <Box
-          display={'flex'}
-          sx={{ height: '100%', bgcolor: theme.palette.primary.formBg, borderEndEndRadius: 6, borderEndStartRadius: 6 }}
-          justifyContent={'center'}
-          alignItems={'center'}
-          height={'100%'}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        <>
-          <PageContainer icon={<LocationOnIcon />} title="Parcel Data">
-            <SharedForm
-              handleFormSubmit={handleFormSubmit}
-              deliveryType={deliveryType}
-              control={control}
-              handleAddressSelect={handleAddressSelect}
-              height="50vh"
-              preferenceFields={shippingOptionsField}
-              recipientAddressFields={parcelFields}
-            />
-          </PageContainer>
-          <NavigationButtons
-            onPrevious={handlePrevious}
-            onNext={() => {
-              if (getValues('deliveryType') !== 'Home' && !getPointId().pointId)
-                enqueueSnackbar('Please choose an address from the map', {
-                  variant: 'error',
-                  headerMessage: 'No address was provided',
-                } as CustomSnackbarOptions);
-              void handleSubmit(onSubmit)();
-            }}
+    <QueryStates state={createParcelStatus}>
+      <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <PageContainer icon={<LocationOnIcon />} title="Parcel Data">
+          <SharedForm
+            handleFormSubmit={handleFormSubmit}
+            deliveryType={deliveryType}
+            control={control}
+            handleAddressSelect={handleAddressSelect}
+            height="50vh"
+            preferenceFields={shippingOptionsField}
+            recipientAddressFields={parcelFields}
           />
-        </>
-      )}
-    </Box>
+        </PageContainer>
+        <NavigationButtons
+          onPrevious={handlePrevious}
+          onNext={() => {
+            if (getValues('deliveryType') !== 'Home' && !getPointId().pointId)
+              enqueueSnackbar('Please choose an address from the map', {
+                variant: 'error',
+                headerMessage: 'No address was provided',
+              } as CustomSnackbarOptions);
+            void handleSubmit(onSubmit)();
+          }}
+        />
+      </Box>
+    </QueryStates>
   );
 };
