@@ -3,6 +3,7 @@ package com.tcs.dhv.domain.entity;
 import com.tcs.dhv.domain.enums.DeliveryType;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.domain.enums.PaymentType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +25,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -78,4 +79,9 @@ public class Parcel {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Version
+    @Column(nullable = false)
+    @Builder.Default
+    private Long version = 0L;
 }

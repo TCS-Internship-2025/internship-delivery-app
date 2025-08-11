@@ -3,9 +3,9 @@ export const deliveryConverter = (delivery?: string) => {
     case 'HOME':
       return 'Home';
     case 'PICKUP_POINT':
-      return 'Pickup point';
+      return 'Pickup Point';
     case 'PARCEL_BOX':
-      return 'Parcel box';
+      return 'Parcel Box';
     default:
       return 'Unknokwn';
   }

@@ -1,21 +1,20 @@
 package com.tcs.dhv.config.openapi;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.models.responses.ApiResponse;
-import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.util.List;
 import java.util.Map;
 
-@Configuration
 @SecurityScheme(
     name = "Bearer Authentication",
     type = SecuritySchemeType.HTTP,
@@ -59,6 +58,7 @@ import java.util.Map;
     ),
     security = @SecurityRequirement(name = "bearerAuth")
 )
+@Configuration
 public class OpenApiConfig {
 
     private static final Map<String, String> COMMON_RESPONSES = Map.of(
@@ -68,8 +68,12 @@ public class OpenApiConfig {
         "500", "Internal Server Error"
     );
 
-    private static void addIfAbsent(final ApiResponses responses, final String code, final String description) {
-        if(!responses.containsKey(code)) {
+    private static void addIfAbsent(
+        final ApiResponses responses,
+        final String code,
+        final String description
+    ) {
+        if (!responses.containsKey(code)) {
             responses.addApiResponse(code, new ApiResponse().description(description));
         }
     }
@@ -83,23 +87,22 @@ public class OpenApiConfig {
     public OpenApiCustomizer globalResponses() {
         return openApi -> openApi.getPaths().values().forEach(pathItem ->
             pathItem.readOperationsMap().forEach((method, operation) -> {
-                switch(method) {
+                switch (method) {
                     case POST -> addIfAbsent(operation.getResponses(),"201", "Created");
                     case PUT, PATCH -> {
                         addIfAbsent(operation.getResponses(), "200", "OK");
                         addIfAbsent(operation.getResponses(), "204", "No content");
                         addIfAbsent(operation.getResponses(), "404", "Accepted");
                     }
-                    case DELETE->{
+                    case DELETE -> {
                         addIfAbsent(operation.getResponses(),"204", "No Content");
                         addIfAbsent(operation.getResponses(),"404", "Not Found");
                     }
-                    case GET->{
+                    case GET -> {
                         addIfAbsent(operation.getResponses(), "200", "OK");
                         addIfAbsent(operation.getResponses(), "404", "Not found");
                     }
-                    default ->  addIfAbsent(operation.getResponses(), "200", "OK");
-
+                    default -> addIfAbsent(operation.getResponses(), "200", "OK");
                 }
                 addCommonResponses(operation);
             })
@@ -107,8 +110,8 @@ public class OpenApiConfig {
     }
 
     @Bean
-    public OpenApiCustomizer operationOrderCustomizer(){
-        return openApi ->{
+    public OpenApiCustomizer operationOrderCustomizer() {
+        return openApi -> {
             final var authOperationOrder = List.of(
                 "/api/auth/login",
                 "/api/auth/register",
@@ -140,7 +143,6 @@ public class OpenApiConfig {
                 }
             });
 
-            // Add any remaining paths
             openApi.getPaths().forEach((path, pathItem) -> {
                 if (!reorderedPaths.containsKey(path)) {
                     reorderedPaths.addPathItem(path, pathItem);

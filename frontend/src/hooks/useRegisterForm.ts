@@ -27,7 +27,7 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormProps = {}) {
   const { mutate: submitRegister, isPending } = useMutation({
     mutationFn: register,
     onSuccess: (data) => {
-      enqueueSnackbar(`Account created successfully! Please check your email for verification.`, {
+      enqueueSnackbar(`Registration successful! Please verify your email to complete account setup.`, {
         variant: 'success',
       });
       form.reset();
