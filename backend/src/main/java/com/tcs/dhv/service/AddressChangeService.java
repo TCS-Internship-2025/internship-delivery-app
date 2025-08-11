@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -40,6 +41,38 @@ public class AddressChangeService {
     private final EmailService emailService;
 
     @Transactional
+    @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
+    public void changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
+        log.info("Address change for parcel {} by user {}", parcelId, userId);
+
+        final var sender = userService.getUserById(userId);
+        final var parcel = getParcelByIdAndUser(parcelId, sender);
+
+        validateAddressChangeRequest(parcel);
+
+        final var oldAddress = parcel.getRecipient().getAddress();
+        final var newAddress = requestDto.newAddress().toEntity();
+        final var savedAddress = addressRepository.save(newAddress);
+
+        // Status change emails should probably be sent in ParcelStatusHistoryService
+        emailService.sendAddressChangeNotification(
+            parcel.getRecipient().getEmail(),
+            parcel.getRecipient().getName(),
+            parcel.getTrackingCode(),
+            oldAddress,
+            newAddress,
+            requestDto.requestReason()
+        );
+
+        log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
+
+        parcel.getRecipient().setAddress(savedAddress);
+        parcelRepository.save(parcel);
+
+        parcelStatusHistoryService.addAddressChangeHistory(parcelId, userId, requestDto.requestReason());
+
+        log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+  
     public AddressDto changeAddress(final UUID parcelId, final AddressChangeDto requestDto, final UUID userId) {
         try {
             log.info("Address change for parcel {} by user {}", parcelId, userId); 
