@@ -252,7 +252,8 @@ public class EmailService {
     public void sendUserUpdatedNotification(
         final String email,
         final User oldUser,
-        final User newUser
+        final User newUser,
+        final boolean isPasswordChanged
     ) {
         final var context = new Context();
         context.setVariable("oldName", oldUser.getName());
@@ -273,6 +274,7 @@ public class EmailService {
                 newUser.getAddress().getCity(),
                 newUser.getAddress().getCountry(),
                 newUser.getAddress().getPostalCode()));
+        context.setVariable("isPasswordChanged", isPasswordChanged);
 
         final var htmlContext = this.templateEngine.process("UserUpdatedEmail.html", context);
 

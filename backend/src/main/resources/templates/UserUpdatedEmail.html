@@ -20,6 +20,11 @@
 <div class="container">
     <h2 th:text="'Dear ' +  ${newName}">Dear User!</h2>
     <p>Your user profile was successfully updated</p>
+
+    <div th:if="${isPasswordChanged}" class="password-changed">
+        🔒 <strong>Password Changed:</strong> Your password has been successfully updated.
+    </div>
+
     <h3>Previous Profile:</h3>
     <h4>Name:</h4>
     <p th:text="${oldName}">default</p>
@@ -27,6 +32,10 @@
     <p th:text="${oldEmail}">default</p>
     <h4>Phone: </h4>
     <p th:text="${oldPhone}">default</p>
+    <div th:if="${isPasswordChanged}">
+        <h4>Password:</h4>
+        <p>••••••••</p>
+    </div>
     <h4>Address: </h4>
     <p th:text="${oldAddressLine1}">default</p>
     <p th:text="${oldAddressLine2}">default</p>
@@ -38,6 +47,10 @@
     <p th:text="${newEmail}">default</p>
     <h4>Phone:</h4>
     <p th:text="${newPhone}">default</p>
+    <div th:if="${isPasswordChanged}">
+        <h4>Password:</h4>
+        <p><strong>✓ Updated</strong></p>
+    </div>
     <h4>Address: </h4>
     <p th:text="${newAddressLine1}">default</p>
     <p th:text="${newAddressLine2}">default</p>
