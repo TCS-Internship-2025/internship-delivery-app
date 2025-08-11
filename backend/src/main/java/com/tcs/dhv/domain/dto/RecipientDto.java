@@ -3,7 +3,6 @@ package com.tcs.dhv.domain.dto;
 import com.tcs.dhv.config.openapi.SchemaConstants;
 import com.tcs.dhv.domain.entity.Recipient;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
@@ -31,19 +30,14 @@ public record RecipientDto(
 
     @Schema(description = "Recipient's birthday", example = "2000-12-12")
     @Past(message = "Date of birth must be in the past")
-    LocalDate birthDate,
-
-    @Schema(description = "Recipient's delivery address")
-    @Valid
-    AddressDto address
+    LocalDate birthDate
 ) {
     public static RecipientDto fromEntity(final Recipient recipient) {
         return new RecipientDto(
             recipient.getName(),
             recipient.getEmail(),
             recipient.getPhone(),
-            recipient.getBirthDate(),
-            AddressDto.fromEntity(recipient.getAddress())
+            recipient.getBirthDate()
         );
     }
 }
