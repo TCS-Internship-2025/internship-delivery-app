@@ -94,8 +94,12 @@ public class EmailService {
         context.setVariable("name", name);
 
         final var htmlContent = this.templateEngine.process("VerificationTokenEmail.html", context);
+
         final var message = CreateMessage(
-                EmailConstants.VERIFICATION_MAIL_SUBJECT, EmailConstants.EMAIL_SENDER, new String[]{email}, htmlContent);
+                EmailConstants.VERIFICATION_MAIL_SUBJECT,
+                EmailConstants.EMAIL_SENDER,
+                new String[]{email}, htmlContent);
+
         mailSender.send(message);
     }
 
@@ -194,7 +198,7 @@ public class EmailService {
         final var message = CreateMessage(
             EmailConstants.ADDRESS_CHANGE_MAIL_SUBJECT + trackingCode,
             EmailConstants.EMAIL_SENDER,
-                new String[]{recipientEmail},
+            new String[]{recipientEmail},
             htmlContent
         );
 
@@ -245,7 +249,7 @@ public class EmailService {
         final var message = CreateMessage(
             EmailConstants.STATUS_UPDATE_MAIl_SUBJECT + trackingCode,
             EmailConstants.EMAIL_SENDER,
-                (new String[] {recipientEmail, senderEmail}),
+            new String[] {recipientEmail, senderEmail},
             htmlContext
         );
         mailSender.send(message);
@@ -282,7 +286,7 @@ public class EmailService {
         final var message = CreateMessage(
             EmailConstants.USER_UPDATE_MAIL_SUBJECT,
             EmailConstants.EMAIL_SENDER,
-                new String[]{email},
+            new String[]{email},
             htmlContext
         );
         mailSender.send(message);
