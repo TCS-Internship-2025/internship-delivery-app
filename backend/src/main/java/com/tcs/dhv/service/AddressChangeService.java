@@ -48,12 +48,12 @@ public class AddressChangeService {
 
         validateAddressChangeRequest(parcel);
 
-        final var oldAddress = parcel.getRecipient().getAddress();
+        final var oldAddress = parcel.getAddress();
         final var newAddress = requestDto.newAddress().toEntity();
         final var savedAddress = addressRepository.saveAndFlush(newAddress);
 
         parcel.setDeliveryType(requestDto.deliveryType());
-        parcel.getRecipient().setAddress(savedAddress);
+        parcel.setAddress(savedAddress);
         parcelRepository.saveAndFlush(parcel);
 
         emailService.sendAddressChangeNotification(
