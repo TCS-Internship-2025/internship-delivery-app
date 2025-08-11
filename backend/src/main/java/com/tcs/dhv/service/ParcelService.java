@@ -37,9 +37,9 @@ public class ParcelService {
             ParcelStatus.IN_TRANSIT, Set.of(ParcelStatus.OUT_FOR_DELIVERY, ParcelStatus.RETURNED_TO_SENDER),
             ParcelStatus.OUT_FOR_DELIVERY, Set.of(ParcelStatus.DELIVERED, ParcelStatus.DELIVERY_ATTEMPTED),
             ParcelStatus.DELIVERY_ATTEMPTED, Set.of(ParcelStatus.PICKED_UP,ParcelStatus.RETURNED_TO_SENDER),
-            ParcelStatus.RETURNED_TO_SENDER, Set.of(),// terminal state
-            ParcelStatus.DELIVERED, Set.of(), // terminal state
-            ParcelStatus.CANCELLED, Set.of()  // terminal state
+            ParcelStatus.RETURNED_TO_SENDER, Set.of(),
+            ParcelStatus.DELIVERED, Set.of(), 
+            ParcelStatus.CANCELLED, Set.of()
     );
 
     private final ParcelRepository parcelRepository;
