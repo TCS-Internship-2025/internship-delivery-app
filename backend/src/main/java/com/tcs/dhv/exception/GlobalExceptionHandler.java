@@ -101,7 +101,9 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(
+        DataIntegrityViolationException ex
+    ) {
         log.error("Data integrity violation", ex);
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.CONFLICT.value())
@@ -165,7 +167,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConcurrencyFailureException.class)
-    public ResponseEntity<ApiErrorResponse> handleConcurrencyFailureException(final ConcurrencyFailureException ex) {
+    public ResponseEntity<ApiErrorResponse> handleConcurrencyFailureException(
+        final ConcurrencyFailureException ex
+    ) {
         log.error("Concurrency conflict: {}", ex.getMessage());
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.CONFLICT.value())
@@ -206,7 +210,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(
+        HttpMessageNotReadableException ex
+    ) {
         log.error("HTTP message not readable", ex);
         final var err = ApiErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
@@ -217,7 +223,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(
+        final MethodArgumentTypeMismatchException ex
+    ) {
         final var message = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s",
                 ex.getValue(), ex.getName(), ex.getRequiredType().getSimpleName());
         final var err = ApiErrorResponse.builder()
