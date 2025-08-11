@@ -91,7 +91,8 @@ public class EmailDeliveryTest {
             "country",
             "postalCode",
             2.0,
-            3.0
+            3.0,
+            0L
         );
         final var newAddress = new Address(
             UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc15f3"),
@@ -103,7 +104,8 @@ public class EmailDeliveryTest {
             "country",
             "postalCode",
             2.0,
-            3.0
+            3.0,
+            0L
         );
         emailService.sendAddressChangeNotification("test@gmail.com", "testName", "HU10digitsand2letters", oldAddress, newAddress, "Testing");
         final var messages = greenMail.getReceivedMessages();
@@ -163,7 +165,8 @@ public class EmailDeliveryTest {
                 "country",
                 "postalCode",
                 2.0,
-                3.0
+                3.0,
+                0L
         );
         final var newAddress = new Address(
                 UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc15f3"),
@@ -175,7 +178,8 @@ public class EmailDeliveryTest {
                 "country",
                 "postalCode",
                 2.0,
-                3.0
+                3.0,
+                0L
         );
         final var oldUser = new User();
         oldUser.setEmail("a");
