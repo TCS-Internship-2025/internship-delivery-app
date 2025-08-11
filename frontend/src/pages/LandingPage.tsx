@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SecurityIcon from '@mui/icons-material/Security';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -26,6 +27,12 @@ const features = [
     icon: <TrackChangesIcon color="primary" sx={{ fontSize: 40 }} />,
     title: 'Live Tracking',
     desc: 'Track your parcel in real-time from pickup to delivery.',
+  },
+  {
+    id: 3,
+    icon: <SecurityIcon color="primary" sx={{ fontSize: 40 }} />,
+    title: 'Secure Packaging',
+    desc: 'We ensure your parcels are packed safely to avoid any damage.',
   },
 ];
 
