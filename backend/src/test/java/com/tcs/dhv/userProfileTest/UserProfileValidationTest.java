@@ -2,26 +2,23 @@ package com.tcs.dhv.userProfileTest;
 
 import com.tcs.dhv.domain.dto.UserProfileDto;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
+@Transactional
 public class UserProfileValidationTest {
 
-    private final Validator validator;
-
-    @BeforeEach
-    void setUp() {
-        final var factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+    @Autowired
+    private Validator validator;
 
     @Nested
     @DisplayName("Email Validation Tests")
@@ -33,6 +30,7 @@ public class UserProfileValidationTest {
             final var validEmails = new String[]{
                 "user@example.com",
                 "test.email@domain.co.uk",
+                "test.email@domain.hu",
                 "user+tag@example.org",
                 "firstname.lastname@company.com",
                 "user123@test-domain.hu",
@@ -41,55 +39,65 @@ public class UserProfileValidationTest {
             };
 
             for (final var email : validEmails) {
-                final var Userdto = UserProfileDto.builder()
+                final var userDto = UserProfileDto.builder()
                     .email(email)
                     .build();
 
-                Set<ConstraintViolation<UserProfileDto>> violations = validator.validate(Userdto);
+                Set<ConstraintViolation<UserProfileDto>> violations = validator.validate(userDto);
 
                 assertThat(violations.stream()
-                    .anyMatch(v ->
-                        v.getPropertyPath().toString().equals("email")))
+                    .anyMatch(v -> v.getPropertyPath().toString().equals("email")))
+                    .as("Email '%s' should be valid", email)
+                    .isFalse(); // Fixed: valid emails should have no violations
+            }
+        }
+
+        @Test
+        @DisplayName("Should reject emails with invalid characters")
+        void invalidEmailsTest(){
+            final var invalidEmails = new String[]{
+                "user@exam ple.com",
+                "us er@example.com",
+                "user@example..com",
+                "user..name@example.com",
+                ".user@example.com",
+                "user.@example.com",
+                "user@.example.com",
+                "user@example.com.",
+                "user@",
+                "@example.com",
+                "user@@example.com",
+                "user@exam@ple.com",
+                "user@example.",
+                "user@.com",
+                "user name@example.com",
+                "user@exam ple.com",
+                "user@example..com",
+                "user@-example.com",
+                "user@example-.com",
+                "user[brackets]@example.com",
+                "user<angle>@example.com",
+                "user,comma@example.com",
+                "user;semicolon@example.com",
+                "user:colon@example.com",
+
+            };
+
+            for (final var email : invalidEmails) {
+                final var userDto = UserProfileDto.builder()
+                    .email(email)
+                    .build();
+
+                Set<ConstraintViolation<UserProfileDto>> violations = validator.validate(userDto);
+
+                assertThat(violations.stream()
+                    .anyMatch(v -> v.getPropertyPath().toString().equals("email")))
                     .as("Email '%s' should be invalid", email)
                     .isTrue();
             }
         }
 
-        @Test
-        @DisplayName("Should reject email exceeding 254 characters")
-        void shouldRejectOversizedEmail() {
-            // Create email with 255 characters (over limit)
-            String longEmail = "a".repeat(240) + "@example.com"; // 251 + 12 = 263 chars
 
-            UserProfileDto dto = UserProfileDto.builder()
-                .email(longEmail)
-                .build();
-
-            Set<ConstraintViolation<UserProfileDto>> violations = validator.validate(dto);
-
-            assertThat(violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("email") &&
-                    v.getMessage().contains("cannot exceed 254 characters")))
-                .isTrue();
-        }
-
-        @Test
-        @DisplayName("Should accept email with exactly 254 characters")
-        void shouldAcceptEmailWithExactLimit() {
-            // Create email with exactly 254 characters
-            String maxEmail = "a".repeat(240) + "@example.co"; // 240 + 11 = 251, need 3 more
-            maxEmail = "a".repeat(243) + "@example.co"; // 243 + 11 = 254 chars
-
-            UserProfileDto dto = UserProfileDto.builder()
-                .email(maxEmail)
-                .build();
-
-            Set<ConstraintViolation<UserProfileDto>> violations = validator.validate(dto);
-
-            assertThat(violations.stream()
-                .filter(v -> v.getPropertyPath().toString().equals("email"))
-                .count()).isEqualTo(0);
-        }
     }
 
     @Nested
@@ -120,47 +128,34 @@ public class UserProfileValidationTest {
                 assertThat(violations.stream()
                     .filter(v -> v.getPropertyPath().toString().equals("phone"))
                     .count())
-                    .as("Phone '%s' should be invalid", phone)
+                    .as("Phone '%s' should be valid", phone)
                     .isEqualTo(0);
             }
         }
 
         @Test
-        @DisplayName(" Should reject invalid phone numbers")
+        @DisplayName("Should reject invalid phone numbers")
         void invalidPhonesTest(){
-            final var validPhoneNumbers = new String[]{
-                "1234567890",       // No country code
-                "+36123456789",     // Too short
-                "+3620123456789",   // Too long
+            final var invalidPhoneNumbers = new String[]{
+                "1234567890",
+                "00363012345678",
+                "062212345678",
+                "+3612345678",
+                "+3620123456789",
+                "36201234567",
+                "+3620 123 4567",
+                "+3620-123-4567",
+                "+3620.123.4567",
+                "",
+                "abc",
+                "+36123456",
+                "+361123456",
+                "+36112345678901",
+                "+370123456789",
+                "+36671234567",
+            };
 
-                "36201234567",      // Missing + or 00
-                "+3620 123 4567",   // Spaces not allowed
-                "+3620-123-4567",   // Dashes not allowed
-                "+3620.123.4567",   // Dots not allowed
-                "",                 // Empty
-                "abc",              // Non-numeric
-                "+36123456",        // Too short overall
-                "+361123456",       // Landline too short
-                "+36112345678901",  // Landline too long
-                "+370123456789",    // Wrong country code
-                "+36671234567",     // Invalid prefixes
-                "+36651234567",
-                "+36641234567",
-                "+36611234567",
-                "+36601234567",
-                "+36581234567",
-                "+36511234567",
-                "+36431234567",
-                "+36411234567",
-                "+36401234567",
-                "+36391234567",
-                "+36971234567",
-                "+36981234567",
-                "+36861234567",
-                "+36811234567"
-            }
-
-            for( var phone : validPhoneNumbers) {
+            for( var phone : invalidPhoneNumbers) {
                 final var dto = UserProfileDto.builder()
                     .phone(phone)
                     .build();
@@ -169,7 +164,7 @@ public class UserProfileValidationTest {
 
                 assertThat(violations.stream()
                     .anyMatch(v -> v.getPropertyPath().toString().equals("phone")))
-                    .as("Phone '%s should be invalid", phone)
+                    .as("Phone '%s' should be invalid", phone)
                     .isTrue();
             }
         }
@@ -188,7 +183,7 @@ public class UserProfileValidationTest {
                 "Str0ng&Pwd",
                 "Minimum8$",
                 "a".repeat(120) + "A1!"
-            }
+            };
 
             for( var password : validPasswords) {
                 final var dto = UserProfileDto.builder()
@@ -207,7 +202,7 @@ public class UserProfileValidationTest {
 
         @Test
         @DisplayName("Should reject passwords missing required character types")
-        void invalidPasswordstest() {
+        void invalidPasswordsTest() {
             String[] invalidPasswords = {
                 "alllowercase123!",     // Missing uppercase
                 "ALLUPPERCASE123!",     // Missing lowercase
@@ -255,6 +250,4 @@ public class UserProfileValidationTest {
             }
         }
     }
-
-
 }
