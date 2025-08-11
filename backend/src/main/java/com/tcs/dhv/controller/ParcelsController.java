@@ -57,25 +57,25 @@ public class ParcelsController {
                         summary = "Create parcel for home delivery",
                         value = """
                             {
-                                 "recipient": {
-                                     "name": "Miklós Tóth",
-                                     "email": "miklos.toth@example.com",
-                                     "phone": "+36309876543",
-                                     "birthDate": "1988-06-22",
-                                     "address": {
-                                         "line1": "Bartók Béla út",
-                                         "line2": "1. emelet",
-                                         "building": "C épület",
-                                         "apartment": "7",
-                                         "city": "Budapest",
-                                         "postalCode": "1114",
-                                         "country": "Hungary",
-                                         "latitude": 47.4750,
-                                         "longitude": 19.0478
-                                     }
-                                 },
-                                 "paymentType": "SENDER_PAYS",
-                                 "deliveryType": "HOME"
+                                "address": {
+                                    "line1": "Bartók Béla út",
+                                    "line2": "1. emelet",
+                                    "building": "C épület",
+                                    "apartment": "7",
+                                    "city": "Budapest",
+                                    "postalCode": "1114",
+                                    "country": "Hungary",
+                                    "latitude": 47.4750,
+                                    "longitude": 19.0478
+                                },
+                                "recipient": {
+                                    "name": "Miklós Tóth",
+                                    "email": "miklos.toth@example.com",
+                                    "phone": "+36309876543",
+                                    "birthDate": "1988-06-22"
+                                },
+                                "paymentType": "SENDER_PAYS",
+                                "deliveryType": "HOME"
                             }
                         """
                     )
@@ -95,22 +95,22 @@ public class ParcelsController {
                         {
                             "id": "c6b578b8-7a72-4628-9a46-66c950f08c05",
                             "trackingCode": "HU2606574833TV",
+                            "address": {
+                                "line1": "Bartók Béla út",
+                                "line2": "1. emelet",
+                                "building": "C épület",
+                                "apartment": "7",
+                                "city": "Budapest",
+                                "postalCode": "1114",
+                                "country": "Hungary",
+                                "latitude": 47.475,
+                                "longitude": 19.0478
+                            },
                             "recipient": {
                                 "name": "Miklós Tóth",
                                 "email": "miklos.toth@example.com",
                                 "phone": "+36309876543",
-                                "birthDate": "1988-06-22",
-                                "address": {
-                                    "line1": "Bartók Béla út",
-                                    "line2": "1. emelet",
-                                    "building": "C épület",
-                                    "apartment": "7",
-                                    "city": "Budapest",
-                                    "postalCode": "1114",
-                                    "country": "Hungary",
-                                    "latitude": 47.475,
-                                    "longitude": 19.0478
-                                }
+                                "birthDate": "1988-06-22"
                             },
                             "currentStatus": "CREATED",
                             "deliveryType": "HOME",
@@ -128,10 +128,7 @@ public class ParcelsController {
         @Valid @RequestBody final ParcelDto parcelDto,
         final Authentication authentication
     ) {
-        log.info("Creating parcel request received from user: {}", authentication.getName());
-
         final var parcel = parcelService.createParcel(parcelDto, UUID.fromString(authentication.getName()));
-        log.info("Parcel created successfully with ID: {} for user: {}", parcel.id(), authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(parcel);
     }
@@ -153,22 +150,22 @@ public class ParcelsController {
                          {
                              "id": "a3ac35b1-78e5-4f4a-bd30-646b8936d4d4",
                              "trackingCode": "HU6651429307ID",
+                             "address": {
+                                 "line1": "Petőfi Sándor utca",
+                                 "line2": "2. lépcsőház",
+                                 "building": "A épület",
+                                 "apartment": "12",
+                                 "city": "Debrecen",
+                                 "postalCode": "4032",
+                                 "country": "Hungary",
+                                 "latitude": 47.5312,
+                                 "longitude": 19.4823
+                             },
                              "recipient": {
                                  "name": "Erika Szabó",
                                  "email": "erika.szabo@example.hu",
                                  "phone": "+36205556677",
-                                 "birthDate": "1972-11-08",
-                                 "address": {
-                                     "line1": "Petőfi Sándor utca",
-                                     "line2": "2. lépcsőház",
-                                     "building": "A épület",
-                                     "apartment": "12",
-                                     "city": "Debrecen",
-                                     "postalCode": "4032",
-                                     "country": "Hungary",
-                                     "latitude": 47.5312,
-                                     "longitude": 19.4823
-                                 }
+                                 "birthDate": "1972-11-08"
                              },
                              "currentStatus": "CREATED",
                              "deliveryType": "PICKUP_POINT",
@@ -179,22 +176,22 @@ public class ParcelsController {
                          {
                              "id": "c6b578b8-7a72-4628-9a46-66c950f08c05",
                              "trackingCode": "HU2606574833TV",
+                             "address": {
+                                 "line1": "Bartók Béla út",
+                                 "line2": "1. emelet",
+                                 "building": "C épület",
+                                 "apartment": "7",
+                                 "city": "Budapest",
+                                 "postalCode": "1114",
+                                 "country": "Hungary",
+                                 "latitude": 47.475,
+                                 "longitude": 19.0478
+                             },
                              "recipient": {
                                  "name": "Miklós Tóth",
                                  "email": "miklos.toth@example.com",
                                  "phone": "+36309876543",
-                                 "birthDate": "1988-06-22",
-                                 "address": {
-                                     "line1": "Bartók Béla út",
-                                     "line2": "1. emelet",
-                                     "building": "C épület",
-                                     "apartment": "7",
-                                     "city": "Budapest",
-                                     "postalCode": "1114",
-                                     "country": "Hungary",
-                                     "latitude": 47.475,
-                                     "longitude": 19.0478
-                                 }
+                                 "birthDate": "1988-06-22"
                              },
                              "currentStatus": "CREATED",
                              "deliveryType": "HOME",
@@ -210,10 +207,7 @@ public class ParcelsController {
     })
     @GetMapping
     public ResponseEntity<List<ParcelDto>> getUserParcels(final Authentication authentication) {
-        log.info("Retrieving parcels for user: {}", authentication.getName());
-
         final var parcels = parcelService.getUserParcels(UUID.fromString(authentication.getName()));
-        log.info("Retrieved {} parcels for user: {}", parcels.size(), authentication.getName());
 
         return ResponseEntity.ok(parcels);
     }
@@ -234,22 +228,22 @@ public class ParcelsController {
                         {
                             "id": "c6b578b8-7a72-4628-9a46-66c950f08c05",
                             "trackingCode": "HU2606574833TV",
+                            "address": {
+                                "line1": "Bartók Béla út",
+                                "line2": "1. emelet",
+                                "building": "C épület",
+                                "apartment": "7",
+                                "city": "Budapest",
+                                "postalCode": "1114",
+                                "country": "Hungary",
+                                "latitude": 47.475,
+                                "longitude": 19.0478
+                            },
                             "recipient": {
                                 "name": "Miklós Tóth",
                                 "email": "miklos.toth@example.com",
                                 "phone": "+36309876543",
-                                "birthDate": "1988-06-22",
-                                "address": {
-                                    "line1": "Bartók Béla út",
-                                    "line2": "1. emelet",
-                                    "building": "C épület",
-                                    "apartment": "7",
-                                    "city": "Budapest",
-                                    "postalCode": "1114",
-                                    "country": "Hungary",
-                                    "latitude": 47.475,
-                                    "longitude": 19.0478
-                                }
+                                "birthDate": "1988-06-22"
                             },
                             "currentStatus": "CREATED",
                             "deliveryType": "HOME",
@@ -268,8 +262,6 @@ public class ParcelsController {
         @PathVariable final UUID id,
         final Authentication authentication
     ) {
-        log.info("Retrieving parcel with ID: {} for user: {}", id, authentication.getName());
-
         final var parcel = parcelService.getParcel(id, UUID.fromString(authentication.getName()));
 
         return ResponseEntity.ok(parcel);
@@ -291,8 +283,6 @@ public class ParcelsController {
         @PathVariable final UUID id,
         final Authentication authentication
     ) {
-        log.info("Deleting parcel with ID: {} for user: {}", id, authentication.getName());
-
         parcelService.deleteParcel(id, UUID.fromString(authentication.getName()));
 
         return ResponseEntity.noContent().build();
@@ -340,19 +330,15 @@ public class ParcelsController {
                 examples = @ExampleObject(
                     value = """
                         {
-                            "newAddress": {
-                                "line1": "Andrássy út 66",
-                                "line2": "3. emelet",
-                                "building": "A épület",
-                                "apartment": "9",
-                                "city": "Budapest",
-                                "postalCode": "1062",
-                                "country": "Hungary",
-                                "latitude": 47.5089,
-                                "longitude": 19.0657
-                            },
-                            "deliveryType": "HOME",
-                            "requestReason": "Address update after renovation"
+                            "line1": "Andrássy út 66",
+                            "line2": "3. emelet",
+                            "building": "A épület",
+                            "apartment": "9",
+                            "city": "Budapest",
+                            "postalCode": "1062",
+                            "country": "Hungary",
+                            "latitude": 47.5089,
+                            "longitude": 19.0657
                         }
                     """
                 )
@@ -366,8 +352,6 @@ public class ParcelsController {
         @Valid @RequestBody final AddressChangeDto requestDto,
         final Authentication authentication
     ) {
-        log.info("Changing Address for parcel {} by user: {}", id, authentication.getName());
-
         final var updatedAddress = addressChangeService.changeAddress(id, requestDto, UUID.fromString(authentication.getName()));
 
         return ResponseEntity.ok(updatedAddress);

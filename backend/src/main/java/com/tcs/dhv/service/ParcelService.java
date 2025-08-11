@@ -5,6 +5,7 @@ import com.tcs.dhv.domain.dto.StatusUpdateDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -42,11 +43,12 @@ public class ParcelService {
             ParcelStatus.CANCELLED, Set.of()  // terminal state
     );
 
-    private final ParcelRepository parcelRepository;
+    private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final RecipientService recipientService;
     private final UserService userService;
     private final EmailService emailService;
-    private final ParcelStatusHistoryService parcelStatusHistoryService;
+    private final ParcelRepository parcelRepository;
+    private final AddressRepository addressRepository;
 
     private final Random random = new Random();
 
@@ -58,9 +60,13 @@ public class ParcelService {
         final var recipient = recipientService.findOrCreateRecipient(parcelDto.recipient());
         final var trackingCode = generateTrackingCode();
 
+        final var address = parcelDto.address().toEntity();
+        final var savedAddress = addressRepository.saveAndFlush(address);
+
         final var parcel = Parcel.builder()
             .sender(sender)
             .trackingCode(trackingCode)
+            .address(savedAddress)
             .recipient(recipient)
             .currentStatus(ParcelStatus.CREATED)
             .deliveryType(parcelDto.deliveryType())
@@ -84,7 +90,6 @@ public class ParcelService {
         log.info("Retrieving parcels for user: {}", userId);
 
         final var sender = userService.getUserById(userId);
-
         final var parcels = parcelRepository.findAllBySenderId(sender.getId());
 
         return parcels.stream()

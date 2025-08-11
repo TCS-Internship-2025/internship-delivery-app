@@ -15,6 +15,8 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -120,14 +122,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
-    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(final InternalAuthenticationServiceException ex) {
-        log.error("Internal authentication service error", ex);
+    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(
+        final InternalAuthenticationServiceException ex
+    ) {
+        final var message = (ex.getMessage() != null && ex.getCause().getMessage() != null)
+            ? ex.getCause().getMessage()
+            : "Authentication Failed";
+
+        final var status = HttpStatus.UNAUTHORIZED;
+
+        log.warn("Authentication failed: {}", message);
+
         final var err = ApiErrorResponse.builder()
-            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .message(ex.getMessage())
+            .status(status.value())
+            .message(message)
             .timestamp(Instant.now())
             .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+        return ResponseEntity.status(status).body(err);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -192,5 +203,27 @@ public class GlobalExceptionHandler {
             .timestamp(Instant.now())
             .build();
         return ResponseEntity.badRequest().body(err);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException ex) {
+        final var message = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s",
+                ex.getValue(), ex.getName(), ex.getRequiredType().getSimpleName());
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message(message)
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.badRequest().body(err);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex) {
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.NOT_FOUND.value())
+            .message("Endpoint not found")
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 }
