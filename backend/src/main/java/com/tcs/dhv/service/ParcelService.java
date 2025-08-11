@@ -172,11 +172,18 @@ public class ParcelService {
         log.info("A new parcel status history added for id {}," +
                 " new status {}", savedParcel.getId(), savedParcel.getCurrentStatus());
 
-        emailService.sendParcelStatusChangeNotification(savedParcel.getSender().getEmail(),
-                savedParcel.getRecipient().getEmail(),
-                savedParcel.getRecipient().getName(),
-                savedParcel.getCurrentStatus(),
-                savedParcel.getTrackingCode());
+        if(savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED){
+            emailService.sendDeliveryCompleteEmail(
+                    savedParcel.getRecipient().getEmail(),
+                    savedParcel.getRecipient().getName(),
+                    savedParcel.getTrackingCode());
+        }else {
+            emailService.sendParcelStatusChangeNotification(savedParcel.getSender().getEmail(),
+                    savedParcel.getRecipient().getEmail(),
+                    savedParcel.getRecipient().getName(),
+                    savedParcel.getCurrentStatus(),
+                    savedParcel.getTrackingCode());
+        }
     }
 
     private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto){

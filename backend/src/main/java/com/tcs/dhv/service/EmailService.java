@@ -53,6 +53,7 @@ public class EmailService {
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
         final var htmlContent = this.templateEngine.process("ShipmentCreationEmail.html", context);
+
         final var message = CreateMessage(
                 EmailConstants.SHIPMENT_MAIL_SUBJECT,
                 EmailConstants.EMAIL_SENDER,
@@ -73,8 +74,12 @@ public class EmailService {
         context.setVariable("trackingUrl", clientUrl + EmailConstants.TRACKING_PAGE_URL_ROUTE + trackingNumber);
 
         final var htmlContent = this.templateEngine.process("DeliveryCompletionEmail.html",context);
+
         final var message = CreateMessage(
-                EmailConstants.DELIVERY_COMPLETE_SUBJECT, EmailConstants.EMAIL_SENDER,new String[]{email}, htmlContent);
+                EmailConstants.DELIVERY_COMPLETE_SUBJECT,
+                EmailConstants.EMAIL_SENDER,
+                new String[]{email},
+                htmlContent);
         mailSender.send(message);
     }
 
