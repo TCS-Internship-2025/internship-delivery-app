@@ -120,14 +120,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
-    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(final InternalAuthenticationServiceException ex) {
-        log.error("Internal authentication service error", ex);
+    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(
+        final InternalAuthenticationServiceException ex
+    ) {
+        final var message = (ex.getMessage() != null && ex.getCause().getMessage() != null)
+            ? ex.getCause().getMessage()
+            : "Authentication Failed";
+
+        final var status = HttpStatus.UNAUTHORIZED;
+
+        log.warn("Authentication failed: {}", message);
+
         final var err = ApiErrorResponse.builder()
-            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .message(ex.getMessage())
+            .status(status.value())
+            .message(message)
             .timestamp(Instant.now())
             .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+        return ResponseEntity.status(status).body(err);
     }
 
     @ExceptionHandler(IllegalStateException.class)
