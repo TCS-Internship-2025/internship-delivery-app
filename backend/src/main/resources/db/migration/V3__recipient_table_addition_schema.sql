@@ -1,15 +1,15 @@
 -- 1. Create recipients table
 CREATE TABLE recipients (
-                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                            name TEXT NOT NULL,
-                            email TEXT NOT NULL UNIQUE,
-                            phone TEXT,
-                            birth_date DATE,
-                            address_id UUID NOT NULL,
-                            CONSTRAINT recipients_address_fk
-                                FOREIGN KEY (address_id)
-                                    REFERENCES addresses(id)
-                                    ON DELETE CASCADE
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT,
+    birth_date DATE,
+    address_id UUID NOT NULL,
+    CONSTRAINT recipients_address_fk
+        FOREIGN KEY (address_id)
+            REFERENCES addresses(id)
+            ON DELETE CASCADE
 );
 
 -- 2. Modify parcels table

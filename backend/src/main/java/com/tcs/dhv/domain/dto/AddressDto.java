@@ -7,6 +7,8 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
+
 @Schema(description = "Address request")
 public record AddressDto(
     @Size(max = 255, message = "Line 1 cannot exceed {max} characters")
@@ -39,7 +41,7 @@ public record AddressDto(
     @DecimalMin(value = "18.0", message = "Longitude must be between 18.0 and 20.0")
     @DecimalMax(value = "20.0", message = "Longitude must be between 18.0 and 20.0")
     Double longitude
-) {
+) implements Serializable {
     public static AddressDto fromEntity(final Address address) {
         return new AddressDto(
             address.getLine1(),

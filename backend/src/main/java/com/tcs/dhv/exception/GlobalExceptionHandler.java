@@ -6,6 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,11 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -120,14 +124,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
-    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(final InternalAuthenticationServiceException ex) {
-        log.error("Internal authentication service error", ex);
+    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(
+        final InternalAuthenticationServiceException ex
+    ) {
+        final var message = Optional.ofNullable(ex.getMessage())
+                .orElse("Authentication Failed");
+
+        log.warn("Authentication blocked: {}", message);
         final var err = ApiErrorResponse.builder()
-            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .message(ex.getMessage())
+            .status(HttpStatus.FORBIDDEN.value())
+            .message(message)
             .timestamp(Instant.now())
             .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -152,6 +162,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
     }
 
+    @ExceptionHandler(ConcurrencyFailureException.class)
+    public ResponseEntity<ApiErrorResponse> handleConcurrencyFailureException(final ConcurrencyFailureException ex) {
+        log.error("Concurrency conflict: {}", ex.getMessage());
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.CONFLICT.value())
+            .message("Concurrency conflict: " + ex.getMessage())
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         final var errorList = ex.getBindingResult()
@@ -192,5 +212,27 @@ public class GlobalExceptionHandler {
             .timestamp(Instant.now())
             .build();
         return ResponseEntity.badRequest().body(err);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException ex) {
+        final var message = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s",
+                ex.getValue(), ex.getName(), ex.getRequiredType().getSimpleName());
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .message(message)
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.badRequest().body(err);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex) {
+        final var err = ApiErrorResponse.builder()
+            .status(HttpStatus.NOT_FOUND.value())
+            .message("Endpoint not found")
+            .timestamp(Instant.now())
+            .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 }

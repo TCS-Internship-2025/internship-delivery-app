@@ -1,12 +1,40 @@
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useAuth } from '@/contexts/AuthContext';
 
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+
+import { AnimatedHero } from '@/components/AnimatedHero';
+import { FeatureCard } from '@/components/FeatureCard';
+
+const features = [
+  {
+    id: 1,
+    icon: <LocalShippingIcon color="primary" sx={{ fontSize: 40 }} />,
+    title: 'Fast Delivery',
+    desc: 'Get your parcels delivered swiftly and securely.',
+  },
+  {
+    id: 2,
+    icon: <TrackChangesIcon color="primary" sx={{ fontSize: 40 }} />,
+    title: 'Live Tracking',
+    desc: 'Track your parcel in real-time from pickup to delivery.',
+  },
+  {
+    id: 3,
+    icon: <SupportAgentIcon color="secondary" sx={{ fontSize: 40 }} />,
+    title: '24/7 Support',
+    desc: 'Our team is always here to help you.',
+  },
+];
 
 interface LandingPageButtonProps {
   children: React.ReactNode;
@@ -16,7 +44,7 @@ interface LandingPageButtonProps {
 
 const LandingPageButton = ({ children, onClick, color = 'primary' }: LandingPageButtonProps) => {
   return (
-    <Button variant="contained" color={color} size="large" onClick={onClick}>
+    <Button variant="contained" color={color} size="large" onClick={onClick} sx={{ whiteSpace: 'nowrap', px: 3 }}>
       {children}
     </Button>
   );
@@ -25,6 +53,7 @@ const LandingPageButton = ({ children, onClick, color = 'primary' }: LandingPage
 export const LandingPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+  const isSmallScreen = useSmallScreen();
 
   const handleAuthClick = () => {
     if (isAuthenticated) {
@@ -41,50 +70,60 @@ export const LandingPage = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '90vh',
+        minHeight: '100vh',
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: 'background.default',
         color: 'text.primary',
         textAlign: 'center',
+        px: 2,
       }}
     >
-      <Box
-        sx={{
-          maxWidth: 400,
-          width: '100%',
-        }}
-      >
-        <img
-          src="/image.png"
-          alt="Logo"
-          style={{
-            width: '100%',
-            height: '80%',
-            display: 'block',
-            margin: '0 auto',
-            objectFit: 'contain',
-            borderRadius: 0.5,
-          }}
-        />
-      </Box>
-      <Typography variant="h1" color="text.primary" sx={{ mb: 4 }}>
+      <AnimatedHero />
+
+      <Typography variant={isSmallScreen ? 'h4' : 'h2'} sx={{ mb: 2, fontWeight: 700, letterSpacing: 2 }}>
         SwiftParcel
       </Typography>
-      <Typography variant="h5" color="text.secondary" sx={{ mb: 2 }}>
+
+      <Typography variant={isSmallScreen ? 'body1' : 'h5'} color="text.secondary" sx={{ mb: 4 }}>
         Welcome to the best parcel service provider!
       </Typography>
-      <Box display="flex" justifyContent="space-between" gap={2}>
+      {!isSmallScreen && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: 3,
+            mb: 4,
+          }}
+        >
+          {features.map((f) => (
+            <FeatureCard key={f.id} {...f} />
+          ))}
+        </Box>
+      )}
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: 2,
+          maxWidth: 400,
+        }}
+      >
         <LandingPageButton onClick={handleAuthClick} color={isAuthenticated ? 'error' : 'primary'}>
           {isAuthenticated ? (
             <>
-              <LogoutIcon />
+              <LogoutIcon sx={{ mr: 1 }} />
               Logout
             </>
           ) : (
             'Login'
           )}
         </LandingPageButton>
+
         <LandingPageButton
           onClick={() => {
             void navigate(ROUTES.TRACKING);
@@ -93,6 +132,15 @@ export const LandingPage = () => {
           Track parcel
         </LandingPageButton>
       </Box>
+      {!isAuthenticated && (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
+          New here?{' '}
+          <Button variant="text" onClick={() => void navigate(ROUTES.REGISTER)}>
+            Create an account
+          </Button>{' '}
+          and start sending parcels today!
+        </Typography>
+      )}
     </Box>
   );
 };

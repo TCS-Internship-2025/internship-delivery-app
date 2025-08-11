@@ -303,6 +303,26 @@ lsof -i :8080
 # If port is in use, use different port
 ```
 
+#### 5. Flyway Migration Issues
+1. **Edit pom.xml**: Add the following to the `<plugins>` section (fields in {} should be replaced with actual values):
+   ```xml
+     <plugin>
+         <groupId>org.flywaydb</groupId>
+         <artifactId>flyway-maven-plugin</artifactId>
+         <configuration>
+             <url>jdbc:postgresql://localhost:{PORT}/{DATABASE_NAME}</url>
+             <user>{DATABSE_USER}</user>
+             <password>{DATABASE_PASSWORD}</password>
+         </configuration>
+     </plugin>
+   ```
+2. **Run Flyway Repair**:
+   ```bash
+   mvn flyway:repair
+   ```
+3. **Remove plugin from pom.xml**: After successful migration, remove the Flyway plugin from `pom.xml` to avoid conflicts & data leaks.
+   
+
 ### Environment-Specific Issues
 
 #### Docker Issues
