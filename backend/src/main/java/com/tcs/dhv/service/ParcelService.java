@@ -155,13 +155,13 @@ public class ParcelService {
     }
 
     @Transactional
-    public void updateParcelStatus(final String trackingCode, final StatusUpdateDto statusDto) {
-
+    public ParcelDto updateParcelStatus(final String trackingCode, final StatusUpdateDto statusDto) {
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
 
-        parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
+        return parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
+
 
 
 }

@@ -36,7 +36,7 @@ public class PublicParcelsController {
     ) {
         log.info("Incoming status update request for: {}", trackingCode);
 
-        parcelService.updateParcelStatus(trackingCode, statusUpdateDto);
-        return ResponseEntity.ok().build();
+        final var updatedParcel = parcelService.updateParcelStatus(trackingCode, statusUpdateDto);
+        return ResponseEntity.ok(updatedParcel);
     }
 }
