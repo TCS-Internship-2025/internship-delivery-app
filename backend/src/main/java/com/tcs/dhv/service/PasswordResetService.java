@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
@@ -58,7 +57,7 @@ public class PasswordResetService {
                 resetTokenRepository.save(resetToken);
 
                 final var resetLink = "%s/reset-password?token=%s".formatted(clientUrl, token);
-                emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+                emailService.sendPasswordResetEmail(user.getEmail(), user.getName(), resetLink);
 
                 log.info("Password reset email sent to {}", user.getEmail());
             });

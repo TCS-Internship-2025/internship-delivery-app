@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { PARCEL_STATUS, QUERY_STATUS } from '@/constants';
+import { PARCEL_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,14 +12,17 @@ import EventIcon from '@mui/icons-material/Event';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import UpdateIcon from '@mui/icons-material/Update';
 import Box from '@mui/material/Box';
+
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
+import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
+import { QueryStates } from '@/components/QueryStates';
 import TimelineComponent from '@/components/Timeline';
 import TrackingDetails from '@/components/TrackingDetails';
 
@@ -45,22 +48,9 @@ function TrackingSlug() {
     return null;
   };
   const isSmallScreen = useSmallScreen();
-  if (timelineStatus === QUERY_STATUS.PENDING || trackingStatus === QUERY_STATUS.PENDING) {
-    return (
-      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (timelineStatus === QUERY_STATUS.ERROR || trackingStatus === QUERY_STATUS.ERROR) {
-    return (
-      <Box display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} flexDirection={'column'}>
-        <Typography variant="h4">Something went wrong.</Typography>
-        <Typography variant="subtitle1">Please try again later!</Typography>
-      </Box>
-    );
-  }
+
   return (
+     <QueryStates state={trackingStatus}>
     <Box display={'flex'} alignItems={'center'} flexDirection={'column'} marginTop={5}>
       <Box
         width={!isSmallScreen ? '50%' : '75%'}
@@ -216,6 +206,7 @@ function TrackingSlug() {
         {index === 1 && trackingData && <TrackingDetails trackingData={trackingData} />}
       </Box>
     </Box>
+          </QueryStates>
   );
 }
 

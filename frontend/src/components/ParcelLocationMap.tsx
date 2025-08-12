@@ -12,16 +12,18 @@ import { useGetAllPickupPoints, type DeliveryType, type PickupPoint } from '@/ap
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 
+import { ErrorPage } from '@/pages/Error';
+
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
+import { QueryStates } from './QueryStates';
 
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
   deliveryType: DeliveryType;
+  height?: string;
 }
 /**
  * Interactive map component displaying pickup points across Budapest.
@@ -31,33 +33,28 @@ interface ParcelLocationMapProps {
  * Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
-export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
+export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60vh' }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
 
   const { getPointId } = useFormContext();
 
+  const point_ = getPointId();
+
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
-  const {
-    data: pickupPoints,
-    isLoading: isPickupPointsLoading,
-    isError,
-  } = useGetAllPickupPoints({ deliveryType: deliveryType });
-  if (isPickupPointsLoading) {
-    return <CircularProgress />;
-  } else if (isError) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-        <Box maxWidth={400} textAlign="center">
-          <Alert severity="error" variant="filled">
-            Failed to load pickup points. Please check your connection or try again later.
-          </Alert>
-        </Box>
-      </Box>
-    );
-  } else if (pickupPoints) {
-    return (
-      <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
+  const { data: pickupPoints, status: pickupPointsStatus } = useGetAllPickupPoints({ deliveryType: deliveryType });
+
+  if (!pickupPoints) {
+    return <ErrorPage title="Could not fetch Pickup Points" />;
+  }
+
+  return (
+    <QueryStates
+      state={pickupPointsStatus}
+      errorTitle="Failed to load pickup points"
+      errorMessage="Please check your connection or try again later!"
+    >
+      <Box display="flex" justifyContent="center" width="90%" mt={2} height={height}>
         <Box width="80%" flexGrow={1}>
           <Map
             mapboxAccessToken={mapboxAccessToken}
@@ -80,7 +77,8 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
                   setSelectedMarker(point);
                 }}
               >
-                {getPointId() === point.id ? (
+                {point_.pointId === point.id ||
+                (point_.latitude === point.latitude && point_.longitude === point.longitude) ? (
                   <WhereToVoteIcon
                     color="inherit"
                     sx={{
@@ -114,6 +112,6 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
           </Map>
         </Box>
       </Box>
-    );
-  }
+    </QueryStates>
+  );
 };

@@ -6,9 +6,12 @@ import { useSmallScreen } from '@/hooks/useSmallScreen.ts';
 import { useAuth } from '@/contexts/AuthContext.tsx';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
+import { useGetProfileInfo } from '@/apis/profileInfo.ts';
+
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import HomeIcon from '@mui/icons-material/Home';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -26,7 +29,8 @@ import { Navigation } from './Navigation.tsx';
 import { NavItem } from './NavItem.tsx';
 
 export const Navbar = () => {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+  const { data: user, isError, isPending } = useGetProfileInfo();
 
   const navigate = useNavigate();
   const { mode, toggleTheme } = useTheme();
@@ -126,7 +130,7 @@ export const Navbar = () => {
                 disabled={isAuthenticated ? false : true}
               />
               <NavItem
-                icon={<LocalShippingIcon />}
+                icon={<InventoryIcon />}
                 label="My Parcels"
                 isActive={currentIndex === 3}
                 onClick={() => handleNavigation(3)}
@@ -170,7 +174,7 @@ export const Navbar = () => {
                 <PersonIcon />
                 {!isSmallScreen ? (
                   <Typography variant="caption" fontWeight={600} sx={{ ml: 1 }}>
-                    {user?.name}
+                    {isPending || isError ? 'Loading ...' : user?.name}
                   </Typography>
                 ) : (
                   user?.name && (

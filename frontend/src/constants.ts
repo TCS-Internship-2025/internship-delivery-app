@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import type { ParcelFormSchema, RecipientFormSchema } from './utils/parcelComposition';
+import type { AddressChangeSchema, ParcelFormSchema, RecipientFormSchema } from './utils/parcelComposition';
 
 // Zod enums
 export const TitleEnum = z.enum(['Mr', 'Mrs', 'Ms', 'Dr', 'Prof']);
@@ -16,6 +16,8 @@ export const ROUTES = {
   REGISTER: 'register',
   VERIFY: 'verify',
   VERIFIED: 'verified/:uid/:token',
+  PASSWORDRESET: 'password-reset',
+  NEWPASSWORD: 'reset-password',
   APP: 'app',
   RECIPIENT_FORM: 'recipient-form',
   PARCEL_FORM: 'parcel-form',
@@ -48,7 +50,7 @@ export const FIELD_PLACEHOLDERS: Record<string, string> = {
 };
 
 export const RECIPIENT_FORM_DEFAULT_VALUES: RecipientFormSchema = {
-  title: '',
+  title: TitleEnum.enum.Mr,
   name: '',
   phone: '',
   email: '',
@@ -61,13 +63,28 @@ export const PARCEL_FORM_DEFAULT_VALUES: ParcelFormSchema = {
   apartment: '',
   city: '',
   postalCode: '',
-  country: '',
+  country: 'Hungary',
   building: '',
   paymentType: '',
   deliveryType: 'Home',
   longitude: null,
   latitude: null,
   pointId: null,
+};
+
+export const ADDRESS_CHANGE_DEFAULT_VALUES: AddressChangeSchema = {
+  line1: '',
+  line2: '',
+  apartment: '',
+  city: '',
+  postalCode: '',
+  country: 'Hungary',
+  building: '',
+  deliveryType: 'Home',
+  longitude: null,
+  latitude: null,
+  pointId: null,
+  requestReason: '',
 };
 
 export const PAYMENT_TYPE_NAME_CONVERTER: Record<string, string> = {
@@ -82,11 +99,18 @@ export const DELIVERY_TYPE_NAME_CONVERTER: Record<string, string> = {
 };
 
 export const QUERY_STATUS = {
+  SUCCESS: 'success',
   PENDING: 'pending',
   ERROR: 'error',
+  IDLE: 'idle',
 };
 
 export const PARCEL_DELIVERY_STATUSES = {
   DELIVERED: 'DELIVERED',
   //add more if necessary
+};
+export const CHANGE_MODAL_TYPES = {
+  CHANGE_PASSWORD: 'changePassword',
+  CHANGE_ADDRESS: 'changeAddress',
+  CHANGE_PROFILE: 'changeProfile',
 };

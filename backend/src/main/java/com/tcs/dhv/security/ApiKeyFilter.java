@@ -16,9 +16,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class ApiKeyFilter extends OncePerRequestFilter {
 
     private final ApiKeyService apiKeyService;
@@ -27,15 +27,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     private String apiKeyHeaderName;
 
     @Override
-    protected void doFilterInternal(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
-        final FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
 
         final var path = request.getRequestURI();
 
-        if (!path.startsWith("/api/tracking")) {
+        if (!path.startsWith("/api/tracking") && !path.startsWith("/api/system")) {
             log.debug("Skipping API key filter for path: {}", path);
             filterChain.doFilter(request, response);
             return;
@@ -52,10 +48,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         if (apiKeyService.validate(rawKey).isPresent()) {
             log.info("API Key validated successfully");
-            final var authentication = new UsernamePasswordAuthenticationToken(
-                "apiKeyUser", null, Collections.emptyList()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            if (SecurityContextHolder.getContext().getAuthentication() == null || !SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                final var authentication = new UsernamePasswordAuthenticationToken("apiKeyUser", null, Collections.emptyList());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             filterChain.doFilter(request, response);
         } else {
             log.warn("Invalid API Key provided");
@@ -63,5 +60,4 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             response.getWriter().write("Unauthorized: Invalid API Key");
         }
     }
-
 }

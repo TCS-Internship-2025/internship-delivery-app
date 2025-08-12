@@ -14,19 +14,18 @@ const addressSchema = z.object({
   latitude: z.number().nullable(),
   longitude: z.number().nullable(),
 });
-
 export const recipientSchema = z.object({
   name: z.string(),
   email: z.email(),
   phone: z.string(),
   birthDate: z.string().nullable(),
-  address: addressSchema,
 });
 
 export const parcelSchema = z.object({
   id: z.string(),
   trackingCode: z.string(),
   recipient: recipientSchema,
+  address: addressSchema,
   currentStatus: z.string(),
   deliveryType: z.string(),
   paymentType: z.string(),
@@ -35,7 +34,7 @@ export const parcelSchema = z.object({
 });
 
 export const parcelListSchema = z.array(parcelSchema);
-
+export type AddressData = z.infer<typeof addressSchema>;
 export type ParcelData = z.infer<typeof parcelSchema>;
 export type ParcelListData = z.infer<typeof parcelListSchema>;
 

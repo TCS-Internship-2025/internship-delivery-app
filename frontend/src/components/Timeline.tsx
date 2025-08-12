@@ -1,4 +1,4 @@
-import { PARCEL_DELIVERY_STATUSES, PARCEL_STATUS } from '@/constants';
+import { PARCEL_DELIVERY_STATUSES } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
@@ -50,7 +50,7 @@ export default function TimelineComponent({ timeline }: { timeline: TimelineData
         <TimelineItem key={event.id}>
           <TimelineSeparator>
             <TimelineIcon status={event.status} />
-            {event.status !== PARCEL_DELIVERY_STATUSES.DELIVERED && <TimelineConnector />}
+            {event.status !== PARCEL_STATUS.DELIVERED && <TimelineConnector />}
           </TimelineSeparator>
           <TimelineContent variant="subtitle2" fontSize={12}>
             {event.description}

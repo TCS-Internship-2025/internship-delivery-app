@@ -1,132 +1,71 @@
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/constants';
+import { useState } from 'react';
 
-import { useGetAllParcels } from '@/apis/parcelGet';
+import { useSmallScreen } from '@/hooks/useSmallScreen';
+
 import { useGetProfileInfo } from '@/apis/profileInfo';
 
-import Avatar from '@mui/material/Avatar';
+import MenuIcon from '@mui/icons-material/Menu';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 
-import DeleteUserButton from '@/components/DeleteUserButton';
+import { ProfilePageContent } from '@/components/ProfilePageContent';
+import { ProfileSidebar } from '@/components/ProfileSidebar';
+import { QueryStates } from '@/components/QueryStates';
 
-const ProfileInfoButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
-  return (
-    <Button variant="contained" color="primary" onClick={onClick}>
-      {children}
-    </Button>
-  );
-};
-
-const Body2Typography = ({ children }: { children: React.ReactNode }) => {
-  return <Typography variant="body2">{children}</Typography>;
-};
+export type ProfileSettingPages = 'profile' | 'address' | 'password';
 
 export const ProfileInfo = () => {
-  const navigate = useNavigate();
+  const [selectedPage, setSelectedPage] = useState<ProfileSettingPages>('profile');
+  const { data: profileData, status: profileStatus } = useGetProfileInfo();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isSmallScreen = useSmallScreen();
 
-  const { data: parcels, isPending: parcelsLoading, isError: parcelsError } = useGetAllParcels();
-  const { data: profileData, isPending: profileLoading, isError: profileError } = useGetProfileInfo();
-
-  const profile = profileData;
-
-  const getFirstThreeInitials = (fullName: string) => {
-    return fullName
-      .split(' ')
-      .slice(0, 3)
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase();
-  };
-
-  const firstTwoParcels = parcels?.slice(0, 2) ?? [];
-
-  if (profileLoading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height={200}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (profileError || !profile) {
-    return (
-      <Typography color="error" align="center">
-        Failed to load profile information.
-      </Typography>
-    );
-  }
+  const closeDrawer = () => setDrawerOpen(false);
+  const openDrawer = () => setDrawerOpen(true);
 
   return (
-    <Box sx={{ p: 4, mx: 'auto' }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-        <Grid container spacing={3} alignItems="center">
-          <Grid>
-            <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: 28 }}>
-              {getFirstThreeInitials(profile.name)}
-            </Avatar>
-          </Grid>
+    <QueryStates
+      state={profileStatus}
+      pendingMessage="Loading profile information..."
+      errorTitle="Could not fetch profile data"
+    >
+      <Box display="flex" flexDirection="column" alignItems="center" gap={isSmallScreen ? 1 : 2}>
+        {isSmallScreen && (
+          <Button
+            variant="outlined"
+            startIcon={<MenuIcon />}
+            onClick={openDrawer}
+            sx={{
+              alignSelf: 'flex-start',
+              ml: 1,
+            }}
+          >
+            Profile Menu
+          </Button>
+        )}
 
-          <Grid>
-            <Typography variant="h5" fontWeight={600}>
-              {profile.name}
-            </Typography>
-            <Typography color="text.secondary">{profile.email}</Typography>
-          </Grid>
-        </Grid>
-
-        <Divider sx={{ my: 3 }} />
-
-        <Stack direction="column" spacing={2}>
-          <ProfileInfoButton onClick={() => void navigate(`/${ROUTES.PARCELS}`)}>My parcels</ProfileInfoButton>
-          <ProfileInfoButton>Edit password</ProfileInfoButton>
-          <ProfileInfoButton>Edit address</ProfileInfoButton>
-          <ProfileInfoButton>Edit user info</ProfileInfoButton>
-          <DeleteUserButton showDangerZone={false} buttonVariant="contained" buttonColor="error" />
-        </Stack>
-      </Paper>
-
-      <Box sx={{ mx: 'auto', mt: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          My last 2 packages
-        </Typography>
-
-        {(() => {
-          if (parcelsLoading) {
-            return (
-              <Box display="flex" justifyContent="center" alignItems="center" height={100}>
-                <CircularProgress />
-              </Box>
-            );
-          }
-          if (parcelsError) {
-            return <Typography color="error">Failed to load parcels.</Typography>;
-          }
-          return (
-            <Stack spacing={2}>
-              {firstTwoParcels?.map((parcel) => (
-                <Paper key={parcel.id} sx={{ p: 2 }} elevation={3}>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    Tracking: {parcel.trackingCode}
-                  </Typography>
-                  <Body2Typography>To: {parcel.recipient.name}</Body2Typography>
-                  <Body2Typography>Delivery: {parcel.deliveryType}</Body2Typography>
-                  <Body2Typography>Status: {parcel.currentStatus}</Body2Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Updated: {new Date(parcel.updatedAt).toLocaleDateString()}
-                  </Typography>
-                </Paper>
-              ))}
-            </Stack>
-          );
-        })()}
+        <Paper
+          elevation={2}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: isSmallScreen ? '100%' : '65%',
+            maxWidth: 10000,
+            p: isSmallScreen ? 0 : 2,
+            gap: isSmallScreen ? 0 : 2,
+          }}
+        >
+          <ProfileSidebar
+            selected={selectedPage}
+            onSelect={setSelectedPage}
+            drawerOpen={drawerOpen}
+            useDrawer={isSmallScreen}
+            closeDrawer={closeDrawer}
+          />
+          <ProfilePageContent page={selectedPage} profile={profileData} />
+        </Paper>
       </Box>
-    </Box>
+    </QueryStates>
   );
 };
