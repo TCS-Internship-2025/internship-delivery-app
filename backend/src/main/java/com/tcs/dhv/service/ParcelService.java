@@ -6,6 +6,7 @@ import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.domain.event.ParcelCreatedEvent;
+import com.tcs.dhv.domain.event.ParcelStatusUpdatedEvent;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,7 +39,6 @@ public class ParcelService {
     private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final RecipientService recipientService;
     private final UserService userService;
-    private final EmailService emailService;
     private final ParcelRepository parcelRepository;
     private final AddressRepository addressRepository;
     private final ParcelCacheService parcelCacheService;
@@ -86,8 +86,7 @@ public class ParcelService {
     public List<ParcelDto> getUserParcels(final UUID userId) {
         log.info("Retrieving parcels for user: {}", userId);
 
-        final var sender = userService.getUserById(userId);
-        final var parcels = parcelRepository.findAllBySenderId(sender.getId());
+        final var parcels = parcelRepository.findAllBySenderId(userId);
 
         return parcels.stream()
             .map(ParcelDto::fromEntity)
@@ -131,8 +130,8 @@ public class ParcelService {
 
     private String generateTrackingCode() {
         String code;
-        int attempts = 0;
-
+        var attempts = 0;
+        
         do {
             if (++attempts > MAX_TRACKING_CODE_ATTEMPTS) {
                 throw new IllegalStateException("Could not generate unique tracking code after " + MAX_TRACKING_CODE_ATTEMPTS + " attempts");
@@ -169,6 +168,7 @@ public class ParcelService {
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
 
+        applicationEventPublisher.publishEvent(new ParcelStatusUpdatedEvent(parcel));
         return parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
 

@@ -1,6 +1,8 @@
 package com.tcs.dhv.service;
 
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.domain.event.ParcelCreatedEvent;
+import com.tcs.dhv.domain.event.ParcelStatusUpdatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -37,5 +39,35 @@ public class ParcelEventHandler {
         } catch (final Exception e) {
             log.error("Error handling ParcelCreatedEvent for parcel ID: {}", parcel.getId(), e);
         }
+    }
+
+    @Async
+    @EventListener
+    public void handleParcelStatusUpdated(final ParcelStatusUpdatedEvent event) {
+        final var parcel = event.parcel();
+        log.info("Handling ParcelStatusUpdatedEvent for parcel ID: {}", parcel.getId());
+
+        try {
+            if (parcel.getCurrentStatus() == ParcelStatus.DELIVERED) {
+                emailService.sendDeliveryCompleteEmail(
+                    parcel.getRecipient().getEmail(),
+                    parcel.getRecipient().getName(),
+                    parcel.getTrackingCode()
+                );
+                log.info("Delivery complete email sent for tracking code: {}", parcel.getTrackingCode());
+            } else {
+                emailService.sendParcelStatusChangeNotification(
+                    parcel.getSender().getEmail(),
+                    parcel.getRecipient().getEmail(),
+                    parcel.getRecipient().getName(),
+                    parcel.getCurrentStatus(),
+                    parcel.getTrackingCode()
+                );
+                log.info("Parcel status change notification sent for tracking code: {}", parcel.getTrackingCode());
+            }
+        } catch (final Exception e) {
+            log.error("Error handling ParcelStatusUpdatedEvent for parcel ID: {}", parcel.getId(), e);
+        }
+
     }
 }
