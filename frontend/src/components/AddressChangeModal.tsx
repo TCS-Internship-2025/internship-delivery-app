@@ -118,8 +118,8 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
   });
 
   return (
-    <Box>
-      <Button onClick={handleOpen}>Open modal</Button>
+    <Box mr={{ xs: 1.5, md: 3 }} mt={{ xs: 1.5, md: 3 }} sx={{ float: 'right' }}>
+      <Button onClick={handleOpen}>Change address</Button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

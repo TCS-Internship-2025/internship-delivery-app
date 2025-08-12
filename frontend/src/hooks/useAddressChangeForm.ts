@@ -45,7 +45,6 @@ export const useAddressChangeForm = ({ parcelData }: UseAddressChangeFormProps) 
     const [country, postalCode, line1, city, line2, apartment, building, latitude, longitude] = watchedFields;
 
     const allEmpty =
-      !country &&
       !postalCode &&
       !line1 &&
       !city &&

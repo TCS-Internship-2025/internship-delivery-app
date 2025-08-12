@@ -29,10 +29,11 @@ export const QueryStates = ({
   children,
 }: QueryStatesProps) => {
   const isSmallScreen = useSmallScreen();
+
   return (
     <>
       {state ? (
-        state === QUERY_STATUS.SUCCESS ? (
+        state === QUERY_STATUS.SUCCESS || state === QUERY_STATUS.IDLE ? (
           children
         ) : (
           <Box

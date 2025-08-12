@@ -78,7 +78,7 @@ export const ADDRESS_CHANGE_DEFAULT_VALUES: AddressChangeSchema = {
   apartment: '',
   city: '',
   postalCode: '',
-  country: '',
+  country: 'Hungary',
   building: '',
   deliveryType: 'Home',
   longitude: null,
@@ -102,6 +102,7 @@ export const QUERY_STATUS = {
   SUCCESS: 'success',
   PENDING: 'pending',
   ERROR: 'error',
+  IDLE: 'idle',
 };
 
 export const PARCEL_DELIVERY_STATUSES = {

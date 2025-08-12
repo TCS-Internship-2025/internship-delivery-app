@@ -12,8 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { ErrorPage } from '@/pages/Error';
-
 import { ParcelDetailsContent } from '@/components/ParcelDetailsContent';
 import { QueryStates } from '@/components/QueryStates';
 
@@ -26,10 +24,6 @@ export const ParcelDetails = () => {
 
   function handleBack() {
     void navigate(`/${ROUTES.PARCELS}`);
-  }
-
-  if (!thisParcelData) {
-    return <ErrorPage title="Could not fetch parcel details" />;
   }
 
   return (

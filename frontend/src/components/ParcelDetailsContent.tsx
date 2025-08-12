@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { PARCEL_STATUS } from '@/constants';
 
 import { FormProvider } from '@/providers/FormProvider.tsx';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
@@ -78,7 +79,7 @@ interface Coordinates {
   longitude: number;
 }
 
-export const ParcelDetailsContent = ({ parcelData }: { parcelData: ParcelData }) => {
+export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }) => {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [isLoadingCoordinates, setIsLoadingCoordinates] = useState(false);
   const [geocodingError, setGeocodingError] = useState<string | null>(null);
@@ -179,11 +180,15 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData: ParcelData })
             {parcelData?.address.building && parcelData?.address.apartment && ', '}
             {parcelData?.address.building && `apartment ${parcelData?.address.apartment}`}
           </DataDisplay>
+          {parcelData?.currentStatus === PARCEL_STATUS.CREATED ||
+          parcelData?.currentStatus === PARCEL_STATUS.PICKED_UP ||
+          parcelData?.currentStatus === PARCEL_STATUS.IN_TRANSIT ? (
+            <FormProvider>
+              <AddressChangeModal parcelData={parcelData} />
+            </FormProvider>
+          ) : null}
         </CardDisplay>
       </Box>
-      <FormProvider>
-        <AddressChangeModal parcelData={parcelData} />
-      </FormProvider>
       <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'}>
         <QueryStates
           isPending={isLoadingCoordinates}
