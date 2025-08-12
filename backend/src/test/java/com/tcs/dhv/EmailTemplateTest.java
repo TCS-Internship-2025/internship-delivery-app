@@ -153,7 +153,6 @@ public class EmailTemplateTest {
         }
         assertTrue(output.contains("Password Changed:"));
         assertTrue(output.contains("Your password has been successfully updated"));
-
         assertTrue(output.contains("</html>"));
         assertTrue(output.contains("</body>"));
     }
@@ -173,7 +172,6 @@ public class EmailTemplateTest {
         ctxVars.put("newAddressLine1", "Test Road 96");
         ctxVars.put("newAddressLine2", "3. emelet");
         ctxVars.put("newAddressLine3", "Budapest 4321 Hungary");
-
         ctxVars.put("isPasswordChanged", false);
 
         final var context = new Context();
