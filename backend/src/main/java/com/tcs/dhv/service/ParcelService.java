@@ -16,10 +16,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 @Slf4j
@@ -43,7 +44,8 @@ public class ParcelService {
     private final ParcelCacheService parcelCacheService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    private final Random random = new Random();
+    private final SecureRandom secureRandom = new SecureRandom();
+    private static final int MAX_TRACKING_CODE_ATTEMPTS = 100;
 
     @Transactional
     public ParcelDto createParcel(
@@ -93,6 +95,7 @@ public class ParcelService {
     }
 
     @Cacheable(value = "parcels", key = "#userId.toString().concat('-').concat(#id.toString())")
+    @PreAuthorize("@parcelService.isParcelOwner(#id, #userId)")
     public ParcelDto getParcel(
         final UUID id,
         final UUID userId
@@ -110,6 +113,7 @@ public class ParcelService {
 
     @Transactional
     @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#id.toString())")
+    @PreAuthorize("@parcelService.isParcelOwner(#id, #userId)")
     public void deleteParcel(
         final UUID id,
         final UUID userId
@@ -127,14 +131,21 @@ public class ParcelService {
 
     private String generateTrackingCode() {
         String code;
+        int attempts = 0;
+
         do {
+            if (++attempts > MAX_TRACKING_CODE_ATTEMPTS) {
+                throw new IllegalStateException("Could not generate unique tracking code after " + MAX_TRACKING_CODE_ATTEMPTS + " attempts");
+            }
+
             final var letters = new StringBuilder();
             for (var i = 0; i < TRACKING_CODE_LETTER_COUNT; i++) {
-                letters.append((char) (ALPHABET_START + random.nextInt(ALPHABET_SIZE)));
+                letters.append((char) (ALPHABET_START + secureRandom.nextInt(ALPHABET_SIZE)));
             }
-            final var number = random.nextLong(TRACKING_NUMBER_MIN, TRACKING_NUMBER_MAX);
+            final var number = secureRandom.nextLong(TRACKING_NUMBER_MIN, TRACKING_NUMBER_MAX);
             code = TRACKING_CODE_COUNTRY_PREFIX + number + letters;
         } while (parcelRepository.existsByTrackingCode(code));
+
         return code;
     }
 
@@ -161,4 +172,13 @@ public class ParcelService {
         return parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
 
+    public boolean isParcelOwner(final UUID parcelId, final UUID userId) {
+        try {
+            final var parcel = parcelRepository.findById(parcelId);
+            return parcel.isPresent() && parcel.get().getSender().getId().equals(userId);
+        } catch (final Exception e) {
+            log.warn("Error checking parcel ownership for parcel {} and user {}: {}", parcelId, userId, e.getMessage());
+            return false;
+        }
+    }
 }
