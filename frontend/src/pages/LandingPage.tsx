@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import SecurityIcon from '@mui/icons-material/Security';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -30,9 +30,9 @@ const features = [
   },
   {
     id: 3,
-    icon: <SupportAgentIcon color="secondary" sx={{ fontSize: 40 }} />,
-    title: '24/7 Support',
-    desc: 'Our team is always here to help you.',
+    icon: <SecurityIcon color="primary" sx={{ fontSize: 40 }} />,
+    title: 'Secure Packaging',
+    desc: 'We ensure your parcels are packed safely to avoid any damage.',
   },
 ];
 
