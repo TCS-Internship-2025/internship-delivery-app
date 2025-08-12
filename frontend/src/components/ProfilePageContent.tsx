@@ -11,7 +11,7 @@ import { ChangeProfileTab } from './ChangeProfileTab';
 
 interface ProfilePageContentProps {
   page: ProfileSettingPages;
-  profile: Profile;
+  profile?: Profile;
 }
 
 export const ProfilePageContent = ({ page, profile }: ProfilePageContentProps) => {

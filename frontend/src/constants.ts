@@ -50,7 +50,7 @@ export const FIELD_PLACEHOLDERS: Record<string, string> = {
 };
 
 export const RECIPIENT_FORM_DEFAULT_VALUES: RecipientFormSchema = {
-  title: '',
+  title: TitleEnum.enum.Mr,
   name: '',
   phone: '',
   email: '',
@@ -63,7 +63,7 @@ export const PARCEL_FORM_DEFAULT_VALUES: ParcelFormSchema = {
   apartment: '',
   city: '',
   postalCode: '',
-  country: '',
+  country: 'Hungary',
   building: '',
   paymentType: '',
   deliveryType: 'Home',
@@ -78,7 +78,7 @@ export const ADDRESS_CHANGE_DEFAULT_VALUES: AddressChangeSchema = {
   apartment: '',
   city: '',
   postalCode: '',
-  country: '',
+  country: 'Hungary',
   building: '',
   deliveryType: 'Home',
   longitude: null,
@@ -102,6 +102,7 @@ export const QUERY_STATUS = {
   SUCCESS: 'success',
   PENDING: 'pending',
   ERROR: 'error',
+  IDLE: 'idle',
 };
 
 export const PARCEL_DELIVERY_STATUSES = {

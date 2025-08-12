@@ -9,8 +9,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
-import { ErrorPage } from '@/pages/Error';
-
 import { ProfilePageContent } from '@/components/ProfilePageContent';
 import { ProfileSidebar } from '@/components/ProfileSidebar';
 import { QueryStates } from '@/components/QueryStates';
@@ -25,10 +23,6 @@ export const ProfileInfo = () => {
 
   const closeDrawer = () => setDrawerOpen(false);
   const openDrawer = () => setDrawerOpen(true);
-
-  if (!profileData) {
-    return <ErrorPage title="Failed to load profile information." />;
-  }
 
   return (
     <QueryStates

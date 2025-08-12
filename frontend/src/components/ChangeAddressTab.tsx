@@ -17,7 +17,7 @@ import {
 } from '@/utils/changeDataComposition';
 
 interface ChangeProfileTabProps {
-  profile: Profile;
+  profile?: Profile;
 }
 export function ChangeAddressTab({ profile }: ChangeProfileTabProps) {
   const {
@@ -29,13 +29,13 @@ export function ChangeAddressTab({ profile }: ChangeProfileTabProps) {
     mode: 'onChange',
     defaultValues: {
       address: {
-        building: profile.address?.building ?? '',
-        postalCode: profile.address?.postalCode ?? '',
-        line1: profile.address?.line1 ?? '',
-        line2: profile.address?.line2 ?? '',
-        apartment: profile.address?.apartment ?? '',
-        city: profile.address?.city ?? '',
-        country: profile.address?.country ?? '',
+        building: profile?.address?.building ?? '',
+        postalCode: profile?.address?.postalCode ?? '',
+        line1: profile?.address?.line1 ?? '',
+        line2: profile?.address?.line2 ?? '',
+        apartment: profile?.address?.apartment ?? '',
+        city: profile?.address?.city ?? '',
+        country: profile?.address?.country ?? '',
       },
     },
   });

@@ -61,20 +61,18 @@ export const ParcelForm = () => {
       recipient: {
         ...recipientFormData,
         phone: recipientFormData.phone.replace(/ /g, ''),
-        address: {
-          ...addressData,
-        },
       },
+      address: addressData,
       paymentType: PAYMENT_TYPE_NAME_CONVERTER[paymentType],
       deliveryType: DELIVERY_TYPE_NAME_CONVERTER[deliveryType],
     };
 
     console.log('Form submitted with data:', submittedData);
     mutate(submittedData, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         reset({ ...PARCEL_FORM_DEFAULT_VALUES });
         enqueueSnackbar('Parcel created successfully!', { variant: 'success' });
-        void navigate(`/${ROUTES.RECIPIENT_FORM}`);
+        void navigate(`/${ROUTES.PARCELS}/${ROUTES.DETAILS}?parcelId=${data.id}`);
       },
     });
   };

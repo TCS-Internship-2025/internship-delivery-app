@@ -33,7 +33,7 @@ export const QueryStates = ({
   return (
     <>
       {state ? (
-        state === QUERY_STATUS.SUCCESS ? (
+        state === QUERY_STATUS.SUCCESS || state === QUERY_STATUS.IDLE ? (
           children
         ) : (
           <Box

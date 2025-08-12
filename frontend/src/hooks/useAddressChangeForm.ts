@@ -12,10 +12,10 @@ import { addressChangeSchema, type AddressChangeSchema } from '@/utils/parcelCom
 import { deliveryConverter } from '@/utils/parcelTypeConverter';
 
 interface UseAddressChangeFormProps {
-  data?: ParcelData;
+  parcelData?: ParcelData;
 }
 
-export const useAddressChangeForm = ({ data }: UseAddressChangeFormProps) => {
+export const useAddressChangeForm = ({ parcelData }: UseAddressChangeFormProps) => {
   const { updateFormData } = useFormContext();
   const { handleSubmit, control, watch, reset, getValues } = useForm<AddressChangeSchema>({
     resolver: zodResolver(addressChangeSchema),
@@ -24,8 +24,8 @@ export const useAddressChangeForm = ({ data }: UseAddressChangeFormProps) => {
   });
 
   const deliveryType = watch('deliveryType');
-  const address = data ? data.recipient.address : ADDRESS_CHANGE_DEFAULT_VALUES;
-  const initialDeliveryType = deliveryConverter(data?.deliveryType);
+  const address = parcelData ? parcelData.address : ADDRESS_CHANGE_DEFAULT_VALUES;
+  const initialDeliveryType = deliveryConverter(parcelData?.deliveryType);
 
   const watchedFields = watch([
     'country',
@@ -40,12 +40,11 @@ export const useAddressChangeForm = ({ data }: UseAddressChangeFormProps) => {
   ]);
 
   const hasFormChanged = useMemo(() => {
-    if (!data) return false;
+    if (!parcelData) return false;
 
     const [country, postalCode, line1, city, line2, apartment, building, latitude, longitude] = watchedFields;
 
     const allEmpty =
-      !country &&
       !postalCode &&
       !line1 &&
       !city &&
@@ -71,11 +70,11 @@ export const useAddressChangeForm = ({ data }: UseAddressChangeFormProps) => {
       longitude !== address.longitude;
 
     return addressFieldsChanged;
-  }, [data, address, deliveryType, watchedFields, initialDeliveryType]);
+  }, [parcelData, address, deliveryType, watchedFields, initialDeliveryType]);
 
   const handleCurrentAddressData = useCallback(
     (deliveryType?: DeliveryEnum, requestReason?: string | null) => {
-      if (data) {
+      if (parcelData) {
         reset({
           ...address,
           deliveryType: deliveryType ?? initialDeliveryType,
@@ -88,7 +87,7 @@ export const useAddressChangeForm = ({ data }: UseAddressChangeFormProps) => {
         });
       }
     },
-    [reset, data, updateFormData, address, initialDeliveryType]
+    [reset, parcelData, updateFormData, address, initialDeliveryType]
   );
 
   const handleAddressSelect = useCallback(
