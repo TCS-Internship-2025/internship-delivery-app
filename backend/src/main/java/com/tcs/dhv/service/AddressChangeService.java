@@ -4,6 +4,7 @@ import com.tcs.dhv.domain.dto.AddressChangeDto;
 import com.tcs.dhv.domain.dto.AddressDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.domain.event.ParcelAddressChangedEvent;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,6 +12,7 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,7 +40,7 @@ public class AddressChangeService {
     private final AddressRepository addressRepository;
     private final UserService userService;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     @CacheEvict(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
@@ -63,16 +65,6 @@ public class AddressChangeService {
             parcel.setAddress(savedAddress);
             parcelRepository.saveAndFlush(parcel);
 
-            emailService.sendAddressChangeNotification(
-                parcel.getRecipient().getEmail(),
-                parcel.getRecipient().getName(),
-                parcel.getTrackingCode(),
-                oldAddress,
-                newAddress,
-                requestDto.requestReason()
-            );
-            log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
-
             final var description = String.format(
                 "Address changed by %s%s",
                 sender.getEmail(),
@@ -80,6 +72,8 @@ public class AddressChangeService {
             parcelStatusHistoryService.addStatusHistory(parcelId, description);
 
             log.info("Address changed successfully for parcel: {} from {} to {}", parcelId, oldAddress.getCity(), savedAddress.getCity());
+
+            applicationEventPublisher.publishEvent(new ParcelAddressChangedEvent(oldAddress, savedAddress, parcel, requestDto.requestReason()));
 
             return AddressDto.fromEntity(savedAddress);
         } catch (final OptimisticLockException | ObjectOptimisticLockingFailureException e) {

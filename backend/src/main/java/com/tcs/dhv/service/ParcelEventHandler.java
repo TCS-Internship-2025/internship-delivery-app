@@ -1,6 +1,7 @@
 package com.tcs.dhv.service;
 
 import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.domain.event.ParcelAddressChangedEvent;
 import com.tcs.dhv.domain.event.ParcelCreatedEvent;
 import com.tcs.dhv.domain.event.ParcelStatusUpdatedEvent;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,29 @@ public class ParcelEventHandler {
         } catch (final Exception e) {
             log.error("Error handling ParcelStatusUpdatedEvent for parcel ID: {}", parcel.getId(), e);
         }
+    }
 
+    @Async
+    @EventListener
+    public void handleParcelAddressChanged(final ParcelAddressChangedEvent event) {
+        final var oldAddress = event.oldAddress();
+        final var newAddress = event.newAddress();
+        final var parcel = event.parcel();
+        final var reason = event.reason();
+        log.info("Handling ParcelAddressChangedEvent for parcel ID: {}", parcel.getId());
+
+        try {
+            emailService.sendAddressChangeNotification(
+                parcel.getRecipient().getEmail(),
+                parcel.getRecipient().getName(),
+                parcel.getTrackingCode(),
+                oldAddress,
+                newAddress,
+                reason
+            );
+            log.info("Address change notification email sent to email: {}", parcel.getRecipient().getEmail());
+        } catch (final Exception e) {
+            log.error("Error handling ParcelAddressChangedEvent for parcel ID: {}", parcel.getId(), e);
+        }
     }
 }
