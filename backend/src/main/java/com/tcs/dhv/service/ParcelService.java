@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class ParcelService {
     private final EmailService emailService;
     private final ParcelRepository parcelRepository;
     private final AddressRepository addressRepository;
-
+    private final ParcelCacheService parcelCacheService;
     private final Random random = new Random();
 
     @Transactional
@@ -164,41 +165,12 @@ public class ParcelService {
     }
 
     @Transactional
-    public void updateParcelStatus(final String trackingCode, final StatusUpdateDto statusDto){
+    public void updateParcelStatus(final String trackingCode, final StatusUpdateDto statusDto) {
 
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
 
-        if (!isValidStatusFlow(parcel, statusDto)) {
-            throw new IllegalArgumentException("Invalid status change from "
-                    + parcel.getCurrentStatus() + " to " + statusDto.status());
-        }
-
-        log.info("Parcel status allowed to update");
-
-        parcel.setCurrentStatus(statusDto.status());
-
-        final var savedParcel = parcelRepository.saveAndFlush(parcel);
-        log.info("Parcel status updated: {}", parcel.getCurrentStatus());
-
-        final var description = "Parcel Status Changed to : " + statusDto.status();
-
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
-        log.info("A new parcel status history added for id {}," +
-                " new status {}", savedParcel.getId(), savedParcel.getCurrentStatus());
-
-        if(savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED){
-            emailService.sendDeliveryCompleteEmail(
-                    savedParcel.getRecipient().getEmail(),
-                    savedParcel.getRecipient().getName(),
-                    savedParcel.getTrackingCode());
-        }else {
-            emailService.sendParcelStatusChangeNotification(savedParcel.getSender().getEmail(),
-                    savedParcel.getRecipient().getEmail(),
-                    savedParcel.getRecipient().getName(),
-                    savedParcel.getCurrentStatus(),
-                    savedParcel.getTrackingCode());
-        }
+        parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
 
     private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto){
