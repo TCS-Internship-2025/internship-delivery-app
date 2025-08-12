@@ -8,6 +8,7 @@ import com.tcs.dhv.config.TestAsyncConfig;
 import com.tcs.dhv.config.TestMailConfig;
 import com.tcs.dhv.domain.entity.Address;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.service.EmailService;
 import com.tcs.dhv.util.EmailConstants;
 import org.junit.jupiter.api.TestInstance;
@@ -54,10 +55,10 @@ public class EmailDeliveryTest {
 
     @Test
     void testShipmentEmailIsSent() throws Exception {
-        emailService.sendShipmentCreationEmail("test@gmail.com", "testName", "HU10digitsand2letters");
+        emailService.sendShipmentCreationEmail("test@gmail.com","test2@gmail.com", "testName", "HU10digitsand2letters");
 
         final var messages = greenMail.getReceivedMessages();
-       assertEquals(1, messages.length, "One email received");
+       assertEquals(2, messages.length, "Two emails received");
 
 
         final var received = messages[0];
@@ -143,9 +144,9 @@ public class EmailDeliveryTest {
 
     @Test
     void testParcelStatusNotificationIsSent() throws Exception {
-        emailService.sendParcelStatusChangeNotification("test@gmail.com", "testName", "DELIVERED", "HU10digitsand2letters");
+        emailService.sendParcelStatusChangeNotification("test@gmail.com","test2@gmail.com", "testName", ParcelStatus.CREATED, "HU10digitsand2letters");
         final var messages = greenMail.getReceivedMessages();
-        assertEquals(1, messages.length, "One email received");
+        assertEquals(2, messages.length, "Two email received");
 
         final var received = messages[0];
         assertEquals(EmailConstants.STATUS_UPDATE_MAIl_SUBJECT + "HU10digitsand2letters", received.getSubject());
