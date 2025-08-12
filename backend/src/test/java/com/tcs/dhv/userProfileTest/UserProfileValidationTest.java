@@ -48,7 +48,7 @@ public class UserProfileValidationTest {
                 assertThat(violations.stream()
                     .anyMatch(v -> v.getPropertyPath().toString().equals("email")))
                     .as("Email '%s' should be valid", email)
-                    .isFalse(); // Fixed: valid emails should have no violations
+                    .isFalse();
             }
         }
 
@@ -204,14 +204,14 @@ public class UserProfileValidationTest {
         @DisplayName("Should reject passwords missing required character types")
         void invalidPasswordsTest() {
             String[] invalidPasswords = {
-                "alllowercase123!",     // Missing uppercase
-                "ALLUPPERCASE123!",     // Missing lowercase
-                "NoDigitsHere!",        // Missing digits
-                "NoSpecialChars123",    // Missing special characters
-                "ValidPass123",         // Missing special characters
-                "validpass123!",        // Missing uppercase
-                "VALIDPASS123!",        // Missing lowercase
-                "ValidPass!"            // Missing digits
+                "alllowercase123!",
+                "ALLUPPERCASE123!",
+                "NoDigitsHere!",
+                "NoSpecialChars123",
+                "ValidPass123",
+                "validpass123!",
+                "INVALIDPASS123!",
+                "INValidPass!"
             };
 
             for (String password : invalidPasswords) {

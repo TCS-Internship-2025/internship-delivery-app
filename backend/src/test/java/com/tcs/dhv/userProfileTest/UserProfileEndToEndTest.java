@@ -5,8 +5,18 @@ import com.tcs.dhv.domain.dto.AddressDto;
 import com.tcs.dhv.domain.dto.LoginRequest;
 import com.tcs.dhv.domain.dto.RegisterRequest;
 import com.tcs.dhv.domain.dto.UserProfileDto;
+import com.tcs.dhv.domain.entity.Address;
+import com.tcs.dhv.domain.entity.Parcel;
+import com.tcs.dhv.domain.entity.Recipient;
 import com.tcs.dhv.domain.entity.User;
+import com.tcs.dhv.domain.enums.DeliveryType;
+import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.domain.enums.PaymentType;
+import com.tcs.dhv.repository.AddressRepository;
+import com.tcs.dhv.repository.ParcelRepository;
+import com.tcs.dhv.repository.RecipientRepository;
 import com.tcs.dhv.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,17 +24,16 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.Commit;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//@Transactional
-public class UserProfileRealEndToEndTest {
+public class UserProfileEndToEndTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -34,6 +43,15 @@ public class UserProfileRealEndToEndTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ParcelRepository parcelRepository;
+
+    @Autowired
+    private RecipientRepository recipientRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     @LocalServerPort
     private int port;
@@ -47,12 +65,27 @@ public class UserProfileRealEndToEndTest {
         baseUrl = "http://localhost:" + port;
     }
 
+    @AfterAll
+    static void cleanUpAfterAllTests(@Autowired ParcelRepository parcelRepository,
+                                     @Autowired RecipientRepository recipientRepository,
+                                     @Autowired AddressRepository addressRepository,
+                                     @Autowired UserRepository userRepository) {
+        try {
+            parcelRepository.deleteAll();
+            recipientRepository.deleteAll();
+            addressRepository.deleteAll();
+            userRepository.deleteAll();
+
+        } catch (Exception e) {
+            log.info("Cleanup failed: {}", e.getMessage());
+        }
+    }
+
     @Test
     @Order(1)
     @Commit
     @DisplayName("1. Register and verify user")
-    void registerAndVerifyUser() throws Exception {
-        // 1. Register user
+    void registerAndVerifyUser() {
         RegisterRequest registerRequest = RegisterRequest.builder()
             .name("Real Test User")
             .email(userEmail)
@@ -67,14 +100,10 @@ public class UserProfileRealEndToEndTest {
 
         assertThat(registerResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-        // 2. Manually verify user (simulate email verification)
         User user = userRepository.findByEmail(userEmail).orElseThrow();
         user.setIsVerified(true);
-        System.out.println(user.getIsVerified());
         userRepository.save(user);
-        System.out.println(user.getIsVerified());
         assertThat(user.getIsVerified()).isTrue();
-        System.out.println("✅ User registered and verified: " + userEmail);
     }
 
     @Test
@@ -91,13 +120,11 @@ public class UserProfileRealEndToEndTest {
 
         assertThat(loginResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Extract token from response
         String responseBody = loginResponse.getBody();
         var jsonNode = objectMapper.readTree(responseBody);
         accessToken = jsonNode.get("token").asText();
 
         assertThat(accessToken).isNotBlank();
-        System.out.println("✅ User logged in successfully, token obtained");
     }
 
     @Test
@@ -117,23 +144,64 @@ public class UserProfileRealEndToEndTest {
 
         assertThat(profileResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Parse and verify profile data
         String responseBody = profileResponse.getBody();
         var profileJson = objectMapper.readTree(responseBody);
 
         assertThat(profileJson.get("name").asText()).isEqualTo("Real Test User");
         assertThat(profileJson.get("email").asText()).isEqualTo(userEmail);
         assertThat(profileJson.get("isVerified").asBoolean()).isTrue();
+    }
 
-        System.out.println("✅ Profile retrieved successfully:");
-        System.out.println("   Name: " + profileJson.get("name").asText());
-        System.out.println("   Email: " + profileJson.get("email").asText());
-        System.out.println("   Verified: " + profileJson.get("isVerified").asBoolean());
+    @Test
+    @Order(4)
+    @Commit
+    @DisplayName("4. Update password")
+    void updatePassword() throws Exception {
+        String jsonPayload = """
+        {
+            "currentPassword": "RealTestPass123!",
+            "newPassword": "NewRealTestPass456!"
+        }
+        """;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(jsonPayload, headers);
+
+        ResponseEntity<String> updateResponse = restTemplate.exchange(
+            baseUrl + "/api/users/me",
+            HttpMethod.PUT,
+            entity,
+            String.class
+        );
+
+        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        userRepository.flush();
+        Thread.sleep(1000);
+    }
+
+
+    @Test
+    @Order(5)
+    @DisplayName("5. Verify login with new password")
+    void verifyLoginWithNewPassword() {
+        LoginRequest newLoginRequest = new LoginRequest(userEmail, "NewRealTestPass456!");
+
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity(
+            baseUrl + "/api/auth/login",
+            newLoginRequest,
+            String.class
+        );
+
+        assertThat(loginResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     @Order(6)
-    @DisplayName("4. Update basic profile information")
+    @DisplayName("6. Update basic profile information")
     void updateBasicProfile() throws Exception {
         UserProfileDto updateRequest = UserProfileDto.builder()
             .name("Updated Real Test User")
@@ -155,7 +223,6 @@ public class UserProfileRealEndToEndTest {
 
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Verify the update
         String responseBody = updateResponse.getBody();
         var updatedProfile = objectMapper.readTree(responseBody);
 
@@ -164,16 +231,11 @@ public class UserProfileRealEndToEndTest {
         assertThat(updatedProfile.get("phone").asText()).isEqualTo("+36201234567");
 
         userEmail = "updated.realtest@example.com";
-
-        System.out.println("✅ Basic profile updated successfully:");
-        System.out.println("   New Name: " + updatedProfile.get("name").asText());
-        System.out.println("   New Email: " + updatedProfile.get("email").asText());
-        System.out.println("   New Phone: " + updatedProfile.get("phone").asText());
     }
 
     @Test
     @Order(7)
-    @DisplayName("5. Update user address")
+    @DisplayName("7. Update user address")
     void updateUserAddress() throws Exception {
         AddressDto address = new AddressDto(
             "Fő utca 123",
@@ -205,7 +267,6 @@ public class UserProfileRealEndToEndTest {
 
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Verify address was updated
         String responseBody = updateResponse.getBody();
         var updatedProfile = objectMapper.readTree(responseBody);
         var addressNode = updatedProfile.get("address");
@@ -214,92 +275,13 @@ public class UserProfileRealEndToEndTest {
         assertThat(addressNode.get("line2").asText()).isEqualTo("2. emelet 5. ajtó");
         assertThat(addressNode.get("city").asText()).isEqualTo("Budapest");
         assertThat(addressNode.get("postalCode").asText()).isEqualTo("1053");
-
-        System.out.println("✅ Address updated successfully:");
-        System.out.println("   Address: " + addressNode.get("line1").asText());
-        System.out.println("   City: " + addressNode.get("city").asText());
-    }
-
-    @Test
-    @Order(4)
-    @Commit
-    @DisplayName("4. Update password")
-    void updatePassword() throws Exception {
-        User userBefore = userRepository.findByEmail(userEmail).orElseThrow();
-        String oldHash = userBefore.getPassword();
-        System.out.println("Password hash BEFORE update: " + oldHash.substring(0, 20) + "...");
-
-        // Create JSON string directly instead of using DTO
-        String jsonPayload = """
-        {
-            "currentPassword": "RealTestPass123!",
-            "newPassword": "NewRealTestPass456!"
-        }
-        """;
-
-        System.out.println("Sending JSON payload: " + jsonPayload);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // Send raw JSON string instead of DTO object
-        HttpEntity<String> entity = new HttpEntity<>(jsonPayload, headers);
-
-        ResponseEntity<String> updateResponse = restTemplate.exchange(
-            baseUrl + "/api/users/me",
-            HttpMethod.PUT,
-            entity,
-            String.class
-        );
-
-        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        // Force database synchronization
-        userRepository.flush();
-        Thread.sleep(1000);
-
-        User userAfter = userRepository.findByEmail(userEmail).orElseThrow();
-        String newHash = userAfter.getPassword();
-        System.out.println("Password hash AFTER update: " + newHash.substring(0, 20) + "...");
-
-        assertThat(newHash).isNotEqualTo(oldHash);
-        System.out.println("✅ Password hash successfully changed in database");
     }
 
 
+
     @Test
-    @Order(5)
-    @DisplayName("5. Verify login with new password")
-    void verifyLoginWithNewPassword() throws Exception {
-        // Verify password change by logging in with new password
-        LoginRequest newLoginRequest = new LoginRequest(userEmail, "NewRealTestPass456!");
-
-        ResponseEntity<String> loginResponse = restTemplate.postForEntity(
-            baseUrl + "/api/auth/login",
-            newLoginRequest,
-            String.class
-        );
-
-        if (loginResponse.getStatusCode() != HttpStatus.OK) {
-            System.err.println("Login failed - Status: " + loginResponse.getStatusCode());
-            System.err.println("Response: " + loginResponse.getBody());
-
-            // Additional debug info
-            User debugUser = userRepository.findByEmail(userEmail).orElse(null);
-            if (debugUser != null) {
-                System.err.println("User email: " + debugUser.getEmail());
-                System.err.println("User verified: " + debugUser.getIsVerified());
-            }
-        }
-
-        assertThat(loginResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        System.out.println("✅ Login with new password successful");
-    }
-    /*
-    @Test
-    @Order(7)
-    @DisplayName("7. Update all fields at once")
+    @Order(8)
+    @DisplayName("8. Update all fields at once")
     void updateAllFieldsAtOnce() throws Exception {
         AddressDto newAddress = new AddressDto(
             "Váci út 45",
@@ -322,6 +304,8 @@ public class UserProfileRealEndToEndTest {
             .newPassword("FinalRealTestPass789#")
             .build();
 
+        userEmail = "complete.realtest@example.com";
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -336,7 +320,6 @@ public class UserProfileRealEndToEndTest {
 
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Verify all updates
         String responseBody = updateResponse.getBody();
         var updatedProfile = objectMapper.readTree(responseBody);
 
@@ -344,17 +327,11 @@ public class UserProfileRealEndToEndTest {
         assertThat(updatedProfile.get("email").asText()).isEqualTo("complete.realtest@example.com");
         assertThat(updatedProfile.get("phone").asText()).isEqualTo("+36301234567");
         assertThat(updatedProfile.get("address").get("line1").asText()).isEqualTo("Váci út 45");
-
-        System.out.println("✅ Complete profile update successful:");
-        System.out.println("   Name: " + updatedProfile.get("name").asText());
-        System.out.println("   Email: " + updatedProfile.get("email").asText());
-        System.out.println("   Phone: " + updatedProfile.get("phone").asText());
-        System.out.println("   Address: " + updatedProfile.get("address").get("line1").asText());
     }
 
     @Test
-    @Order(8)
-    @DisplayName("8. Final profile verification")
+    @Order(9)
+    @DisplayName("9. Final profile verification")
     void finalProfileVerification() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
@@ -372,12 +349,125 @@ public class UserProfileRealEndToEndTest {
         String responseBody = profileResponse.getBody();
         var finalProfile = objectMapper.readTree(responseBody);
 
-        // Verify all final values
         assertThat(finalProfile.get("name").asText()).isEqualTo("Complete Update User");
         assertThat(finalProfile.get("email").asText()).isEqualTo("complete.realtest@example.com");
         assertThat(finalProfile.get("phone").asText()).isEqualTo("+36301234567");
+    }
 
-        System.out.println("✅ Final profile verification successful");
-        System.out.println("🎉 All user profile functionality tests completed successfully!");
-    }*/
+    @Test
+    @Order(10)
+    @DisplayName("10. Fail to delete user when user has active parcels")
+    void failToDeleteUserWhenUserHasActiveParcels() {
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+        Address address = Address.builder()
+            .line1("Test Street 123")
+            .city("Budapest")
+            .postalCode("1111")
+            .country("Hungary")
+            .build();
+
+        Address savedAddress = addressRepository.saveAndFlush(address);
+
+        Recipient recipient = Recipient.builder()
+            .name("Test Recipient")
+            .email("recipient@example.com")
+            .phone("+36301111111")
+            .address(savedAddress)
+            .build();
+
+        Recipient savedRecipient = recipientRepository.save(recipient);
+
+        Parcel parcel = Parcel.builder()
+            .sender(user)
+            .trackingCode("HU1234567890AB")
+            .currentStatus(ParcelStatus.CREATED)
+            .recipient(savedRecipient)
+            .paymentType(PaymentType.SENDER_PAYS)
+            .deliveryType(DeliveryType.HOME)
+            .build();
+
+        parcelRepository.saveAndFlush(parcel);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Void> deleteEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> deleteResponse = restTemplate.exchange(
+            baseUrl + "/api/users/me",
+            HttpMethod.DELETE,
+            deleteEntity,
+            String.class
+        );
+
+        assertThat(deleteResponse.getStatusCode().value()).isBetween(400, 499);
+
+        boolean userStillExists = userRepository.findByEmail(userEmail).isPresent();
+        assertThat(userStillExists).isTrue();
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("11. Clean up test data before user deletion")
+    void cleanupTestDataBeforeDeletion() {
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+
+        List<Parcel> userParcels = parcelRepository.findAllBySenderId(user.getId());
+
+        Set<Recipient> recipientsToDelete = new HashSet<>();
+        Set<Address> addressesToDelete = new HashSet<>();
+
+        for (Parcel parcel : userParcels) {
+            if (parcel.getRecipient() != null) {
+                recipientsToDelete.add(parcel.getRecipient());
+                if (parcel.getRecipient().getAddress() != null) {
+                    addressesToDelete.add(parcel.getRecipient().getAddress());
+                }
+            }
+        }
+
+        parcelRepository.deleteAll(userParcels);
+        parcelRepository.flush();
+
+        recipientRepository.deleteAll(recipientsToDelete);
+        recipientRepository.flush();
+
+        addressRepository.deleteAll(addressesToDelete);
+        addressRepository.flush();
+
+        parcelRepository.flush();
+        recipientRepository.flush();
+        addressRepository.flush();
+    }
+
+
+
+    @Test
+    @Order(12)
+    @DisplayName("12. Successfully delete user profile when no active parcels exist")
+    void successfullyDeleteUserProfileWithoutParcels() {
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+
+        List<Parcel> userParcels = parcelRepository.findAllBySenderId(user.getId());
+        for (Parcel parcel : userParcels) {
+            parcel.setCurrentStatus(ParcelStatus.DELIVERED);
+            parcelRepository.save(parcel);
+        }
+        parcelRepository.flush();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Void> deleteEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> deleteResponse = restTemplate.exchange(
+            baseUrl + "/api/users/me",
+            HttpMethod.DELETE,
+            deleteEntity,
+            String.class
+        );
+
+        assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        boolean userExists = userRepository.findByEmail(userEmail).isPresent();
+        assertThat(userExists).isFalse();
+    }
 }

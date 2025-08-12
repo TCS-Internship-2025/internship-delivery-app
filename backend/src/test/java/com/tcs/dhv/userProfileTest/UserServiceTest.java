@@ -18,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -65,7 +64,7 @@ public class UserServiceTest {
             .name("Test User")
             .email("test@example.com")
             .phone("+36201234567")
-            .password("encodedPassword") // **FIXED: Use consistent encoded password**
+            .password("encodedPassword")
             .address(testAddress)
             .isVerified(true)
             .createdAt(LocalDateTime.now())
@@ -127,7 +126,6 @@ public class UserServiceTest {
             when(userRepository.existsByEmail("updated@example.com")).thenReturn(false);
             when(userRepository.existsByPhone("+36301234568")).thenReturn(false);
 
-            // **FIXED: Return the actual user object, not null**
             when(userRepository.saveAndFlush(any(User.class))).thenReturn(testUser);
 
             final var result = userService.updateUserProfile(userId.toString(), updateRequest);
@@ -149,15 +147,15 @@ public class UserServiceTest {
             testUser.setAddress(null);
 
             final var addressDto = new AddressDto(
-                "New utca 2",     // line1
-                "5. emelet",      // line2
-                null,             // building
-                null,             // apartment
-                "Budapest",       // city
-                "1118",           // postalCode
-                "Hungary",        // country
-                null,             // latitude
-                null              // longitude
+                "New utca 2",
+                "5. emelet",
+                null,
+                null,
+                "Budapest",
+                "1118",
+                "Hungary",
+                null,
+                null
             );
 
             final var updateRequest = UserProfileDto.builder()
@@ -193,7 +191,6 @@ public class UserServiceTest {
                 .build();
 
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
-            // **FIXED: Use the actual encoded password from testUser**
             when(passwordEncoder.matches("currentPassword", "encodedPassword")).thenReturn(true);
             when(passwordEncoder.encode("newPassword123!")).thenReturn("newEncodedPassword");
             when(userRepository.saveAndFlush(any(User.class))).thenReturn(testUser);
@@ -210,15 +207,15 @@ public class UserServiceTest {
         @DisplayName("Should update all fields at once successfully")
         void updateAllFieldsAtOnce() {
             final var addressDto = new AddressDto(
-                "789 Complete Street", // line1
-                null,                  // line2
-                null,                  // building
-                null,                  // apartment
-                "Szeged",             // city
-                "6720",               // postalCode
-                "Hungary",            // country
-                null,                 // latitude
-                null                  // longitude
+                "789 Complete Street",
+                null,
+                null,
+                null,
+                "Szeged",
+                "6720",
+                "Hungary",
+                null,
+                null
             );
 
             final var updateRequest = UserProfileDto.builder()
@@ -233,7 +230,6 @@ public class UserServiceTest {
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
             when(userRepository.existsByEmail("complete@example.com")).thenReturn(false);
             when(userRepository.existsByPhone("36701234567")).thenReturn(false);
-            // **FIXED: Use the actual encoded password from testUser**
             when(passwordEncoder.matches("currentPassword", "encodedPassword")).thenReturn(true);
             when(passwordEncoder.encode("newCompletePassword123!")).thenReturn("newCompleteEncodedPassword");
             when(userRepository.saveAndFlush(any(User.class))).thenReturn(testUser);
@@ -271,7 +267,7 @@ public class UserServiceTest {
         @DisplayName("Should throw ValidationException when phone already exists")
         void phoneExists() {
             final var updateRequest = UserProfileDto.builder()
-                .phone("36301111111") // Different from testUser's phone
+                .phone("36301111111")
                 .build();
 
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -326,7 +322,7 @@ public class UserServiceTest {
                 .build();
 
             when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
-            // **FIXED: Use the actual encoded password from testUser**
+
             when(passwordEncoder.matches("wrongPassword", "encodedPassword")).thenReturn(false);
 
             assertThatThrownBy(() -> userService.updateUserProfile(userId.toString(), updateRequest))
