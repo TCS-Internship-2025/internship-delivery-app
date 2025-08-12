@@ -1,6 +1,7 @@
 package com.tcs.dhv.controller;
 
 
+import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.dto.StatusUpdateDto;
 import com.tcs.dhv.service.ParcelService;
 import com.tcs.dhv.validation.TrackingCode;
@@ -27,7 +28,7 @@ public class PublicParcelsController {
     private final ParcelService parcelService;
 
     @PostMapping("/{trackingCode}/status")
-    public ResponseEntity<?> updateParcelStatus(
+    public ResponseEntity<ParcelDto> updateParcelStatus(
         @PathVariable @TrackingCode @NotNull String trackingCode,
         @RequestBody StatusUpdateDto  statusUpdateDto
     ) {
