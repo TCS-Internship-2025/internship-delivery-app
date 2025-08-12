@@ -52,8 +52,7 @@ export const Footer = () => {
 
           <MuiLink
             component={Link}
-            // TODO:  TO BE ADDED
-            to="/faqs"
+            to="/faq"
             variant="body2"
             color="text.secondary"
             sx={{
