@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -57,12 +58,8 @@ public class TrackingController {
 
     @GetMapping("/{trackingCode}/timeline")
     public ResponseEntity<List<ParcelStatusHistoryDto>> getParcelTimeline(
-            @NotNull
-            @TrackingCode
-            @PathVariable final
-            String trackingCode
+        @NotNull @TrackingCode @PathVariable final String trackingCode
     ) {
-
         final var trackingResponse = trackingService.getPublicTrackingDetails(trackingCode);
         final var timeline = parcelStatusHistoryService.getParcelTimeline(trackingResponse.parcelId());
 

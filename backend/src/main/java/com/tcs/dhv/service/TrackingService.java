@@ -6,11 +6,11 @@ import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,7 +21,8 @@ public class TrackingService {
 
     private final ParcelRepository parcelRepository;
 
-    public TrackingDto getPublicTrackingDetails(String trackingCode){
+    @CacheEvict(value = "trackingDetails", key = "#trackingCode")
+    public TrackingDto getPublicTrackingDetails(final String trackingCode){
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
@@ -65,7 +66,7 @@ public class TrackingService {
                 .recipientName(recipient.getName())
                 .recipientEmail(recipient.getEmail())
                 .recipientPhone(recipient.getPhone())
-                .recipientAddress(recipient.getAddress() != null ? recipient.getAddress().toString() : null)
+                .recipientAddress(parcel.getAddress() != null ? parcel.getAddress().toString() : null)
                 .recipientBirthDate(Optional.ofNullable(recipient.getBirthDate()).map(LocalDate::atStartOfDay))
                 .currentStatus(parcel.getCurrentStatus())
                 .estimatedDelivery(calculateEstimatedDeliveryTime(parcel))
@@ -74,16 +75,14 @@ public class TrackingService {
                 .build();
     }
 
-    private Optional<LocalDateTime> calculateEstimatedDeliveryTime(Parcel parcel){
-
-        return switch(parcel.getCurrentStatus()){
+    private Optional<LocalDateTime> calculateEstimatedDeliveryTime(final Parcel parcel) {
+        return switch(parcel.getCurrentStatus()) {
             case CREATED -> Optional.of(parcel.getCreatedAt().plusDays(7));
-            case PICKED_UP -> Optional.of(parcel.getUpdatedAt().plusDays(5)); // the carier has it
+            case PICKED_UP -> Optional.of(parcel.getUpdatedAt().plusDays(5));
             case IN_TRANSIT -> Optional.of(parcel.getUpdatedAt().plusDays(4));
             case OUT_FOR_DELIVERY -> Optional.of(parcel.getUpdatedAt().plusDays(2));
-            case DELIVERY_ATTEMPTED -> Optional.of(parcel.getUpdatedAt().plusDays(1));// reattempt
+            case DELIVERY_ATTEMPTED -> Optional.of(parcel.getUpdatedAt().plusDays(1));
             case DELIVERED,CANCELLED,RETURNED_TO_SENDER-> Optional.empty();
         };
     }
-
 }

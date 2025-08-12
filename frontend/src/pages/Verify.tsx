@@ -11,13 +11,12 @@ import Typography from '@mui/material/Typography';
 
 interface LocationState {
   email?: string;
-  name?: string;
 }
 
 export const Verify = () => {
   const location = useLocation();
   const state = location.state as LocationState;
-  const { email, name } = state || {};
+  const { email } = state || {};
 
   const { resendEmail, isPending, cooldown, countdown } = useResendEmail();
 
@@ -52,9 +51,10 @@ export const Verify = () => {
           <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 600 }}>
             Verify Your Email
           </Typography>
-          {name && (
+          {email && (
             <Typography variant="body1" align="center" color="text.primary" sx={{ mt: 1 }}>
-              Dear {name}. We have sent an email to {email}. Please check your email for a verification link.
+              We have sent a verification email to {email}. Please check your email for a verification link to complete
+              your account setup.
             </Typography>
           )}
 

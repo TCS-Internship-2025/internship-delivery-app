@@ -15,12 +15,15 @@ import WhereToVoteIcon from '@mui/icons-material/WhereToVote';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 
+import { ErrorPage } from '@/pages/Error';
+
 import { MapMarkerPopup } from './MapMarkerPopup/MapMarkerPopup';
 import { QueryStates } from './QueryStates';
 
 interface ParcelLocationMapProps {
   setSelectedPoint: (point: PickupPoint | null) => void;
   deliveryType: DeliveryType;
+  height?: string;
 }
 /**
  * Interactive map component displaying pickup points across Budapest.
@@ -30,14 +33,20 @@ interface ParcelLocationMapProps {
  * Usage: in the parent component put: const [selectedPoint, setSelectedPoint] = useState<PickupPoint | null>(null);
  * @returns Mapbox map component with interactive pickup point markers and selection functionality
  */
-export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLocationMapProps) => {
+export const ParcelLocationMap = ({ setSelectedPoint, deliveryType, height = '60vh' }: ParcelLocationMapProps) => {
   const { mapboxStyle } = useMuiTheme();
   const theme = useTheme();
 
   const { getPointId } = useFormContext();
 
+  const point_ = getPointId();
+
   const [selectedMarker, setSelectedMarker] = useState<PickupPoint | null>(null);
   const { data: pickupPoints, status: pickupPointsStatus } = useGetAllPickupPoints({ deliveryType: deliveryType });
+
+  if (!pickupPoints) {
+    return <ErrorPage title="Could not fetch Pickup Points" />;
+  }
 
   return (
     <QueryStates
@@ -45,7 +54,7 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
       errorTitle="Failed to load pickup points"
       errorMessage="Please check your connection or try again later!"
     >
-      <Box display="flex" justifyContent="center" width="90%" mt={2} height="60vh">
+      <Box display="flex" justifyContent="center" width="90%" mt={2} height={height}>
         <Box width="80%" flexGrow={1}>
           <Map
             mapboxAccessToken={mapboxAccessToken}
@@ -57,7 +66,7 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
             style={{ width: '100%', height: '100%' }}
             mapStyle={mapboxStyle}
           >
-            {pickupPoints?.map((point) => (
+            {pickupPoints.map((point) => (
               <Marker
                 key={point.id}
                 longitude={point.longitude}
@@ -68,7 +77,8 @@ export const ParcelLocationMap = ({ setSelectedPoint, deliveryType }: ParcelLoca
                   setSelectedMarker(point);
                 }}
               >
-                {getPointId() === point.id ? (
+                {point_.pointId === point.id ||
+                (point_.latitude === point.latitude && point_.longitude === point.longitude) ? (
                   <WhereToVoteIcon
                     color="inherit"
                     sx={{

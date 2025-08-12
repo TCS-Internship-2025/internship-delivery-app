@@ -4,10 +4,37 @@ import { ROUTES } from '@/constants';
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useAuth } from '@/contexts/AuthContext';
 
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SecurityIcon from '@mui/icons-material/Security';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+
+import { AnimatedHero } from '@/components/AnimatedHero';
+import { FeatureCard } from '@/components/FeatureCard';
+
+const features = [
+  {
+    id: 1,
+    icon: <LocalShippingIcon color="primary" sx={{ fontSize: 40 }} />,
+    title: 'Fast Delivery',
+    desc: 'Get your parcels delivered swiftly and securely.',
+  },
+  {
+    id: 2,
+    icon: <TrackChangesIcon color="primary" sx={{ fontSize: 40 }} />,
+    title: 'Live Tracking',
+    desc: 'Track your parcel in real-time from pickup to delivery.',
+  },
+  {
+    id: 3,
+    icon: <SecurityIcon color="primary" sx={{ fontSize: 40 }} />,
+    title: 'Secure Packaging',
+    desc: 'We ensure your parcels are packed safely to avoid any damage.',
+  },
+];
 
 interface LandingPageButtonProps {
   children: React.ReactNode;
@@ -43,7 +70,7 @@ export const LandingPage = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '90vh',
+        minHeight: '100vh',
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: 'background.default',
@@ -52,34 +79,30 @@ export const LandingPage = () => {
         px: 2,
       }}
     >
-      <Box
-        sx={{
-          maxWidth: 400,
-          width: '100%',
-          mb: isSmallScreen ? 2 : 4,
-        }}
-      >
-        <img
-          src="/image.png"
-          alt="Logo"
-          style={{
-            width: '100%',
-            height: isSmallScreen ? 150 : 250,
-            objectFit: 'contain',
-            display: 'block',
-            margin: '0 auto',
-            borderRadius: 8,
-          }}
-        />
-      </Box>
+      <AnimatedHero />
 
-      <Typography variant={isSmallScreen ? 'h4' : 'h2'} sx={{ mb: 2 }}>
+      <Typography variant={isSmallScreen ? 'h4' : 'h2'} sx={{ mb: 2, fontWeight: 700, letterSpacing: 2 }}>
         SwiftParcel
       </Typography>
 
       <Typography variant={isSmallScreen ? 'body1' : 'h5'} color="text.secondary" sx={{ mb: 4 }}>
         Welcome to the best parcel service provider!
       </Typography>
+      {!isSmallScreen && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: 3,
+            mb: 4,
+          }}
+        >
+          {features.map((f) => (
+            <FeatureCard key={f.id} {...f} />
+          ))}
+        </Box>
+      )}
 
       <Box
         sx={{
@@ -109,6 +132,15 @@ export const LandingPage = () => {
           Track parcel
         </LandingPageButton>
       </Box>
+      {!isAuthenticated && (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
+          New here?{' '}
+          <Button variant="text" onClick={() => void navigate(ROUTES.REGISTER)}>
+            Create an account
+          </Button>{' '}
+          and start sending parcels today!
+        </Typography>
+      )}
     </Box>
   );
 };
