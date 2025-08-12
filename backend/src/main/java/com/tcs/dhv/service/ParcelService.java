@@ -5,6 +5,7 @@ import com.tcs.dhv.domain.dto.StatusUpdateDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.domain.event.ParcelCreatedEvent;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,8 @@ public class ParcelService {
     private final ParcelRepository parcelRepository;
     private final AddressRepository addressRepository;
     private final ParcelCacheService parcelCacheService;
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     private final Random random = new Random();
 
     @Transactional
@@ -48,6 +52,15 @@ public class ParcelService {
     ) {
         log.info("Creating parcel for user: {}", userId);
 
+        final var savedParcel = createAndSaveParcel(parcelDto, userId);
+        log.info("Parcel created with tracking code: {}", savedParcel.getTrackingCode());
+
+        applicationEventPublisher.publishEvent(new ParcelCreatedEvent(savedParcel));
+
+        return ParcelDto.fromEntity(savedParcel);
+    }
+
+    private Parcel createAndSaveParcel(final ParcelDto parcelDto, final UUID userId) {
         final var sender = userService.getUserById(userId);
         final var recipient = recipientService.createRecipient(parcelDto.recipient());
         final var trackingCode = generateTrackingCode();
@@ -65,17 +78,7 @@ public class ParcelService {
             .paymentType(parcelDto.paymentType())
             .build();
 
-        final var savedParcel = parcelRepository.saveAndFlush(parcel);
-        log.info("Parcel created with tracking code: {}", trackingCode);
-
-        emailService.sendShipmentCreationEmail(sender.getEmail(), recipient.getEmail(), recipient.getName(), savedParcel.getTrackingCode());
-        log.info("Parcel creation email sent to email: {}", savedParcel.getRecipient().getEmail());
-
-        final var description = String.format("Parcel created by %s", userService.getUserById(userId).getEmail());
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
-        log.info("Parcel status entry created: {}", savedParcel.getId());
-
-        return ParcelDto.fromEntity(savedParcel);
+        return parcelRepository.saveAndFlush(parcel);
     }
 
     public List<ParcelDto> getUserParcels(final UUID userId) {
