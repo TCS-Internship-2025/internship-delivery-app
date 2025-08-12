@@ -16,10 +16,17 @@ export function ChangePasswordTab() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<ChangePasswordFormData>();
+    reset,
+  } = useForm<ChangePasswordFormData>({
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
+  });
 
   const passwordValue = watch('newPassword');
-  const { mutateAsync } = useEditPassword();
+  const { mutateAsync } = useEditPassword(reset);
   const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
     const { currentPassword, newPassword } = data;
     await mutateAsync({ currentPassword, newPassword });

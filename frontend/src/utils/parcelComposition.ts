@@ -9,8 +9,8 @@ export const REGEX_PATTERNS = {
   HUNGARY_ONLY: /^hungary$/i,
   POSTAL_CODE: /^\d{4}$/,
   EMAIL: /^\S+@\S+\.\S+$/,
-  HUNGARIAN_TEXT_WITH_SYMBOLS: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/,
-  HUNGARIAN_TEXT_REQUIRED: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]+$/,
+  HUNGARIAN_TEXT_WITH_SYMBOLS: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-/]*$/,
+  HUNGARIAN_TEXT_REQUIRED: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-/]+$/,
   HUNGARIAN_CITY: /^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű]+$/,
 } as const;
 
