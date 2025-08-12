@@ -99,7 +99,7 @@ export const recipientFields: FieldConfig<RecipientFormSchema>[][] = [
 
 const addressFields = [
   [
-    { name: 'country', label: 'Country', required: true },
+    { name: 'country', label: 'Country', required: true, disabled: true },
     { name: 'line1', label: 'Address Line 1', required: true },
     { name: 'line2', label: 'Address Line 2' },
     { name: 'building', label: 'Building' },
