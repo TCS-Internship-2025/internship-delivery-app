@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -20,6 +22,16 @@ public class ParcelCacheService {
     private final ParcelRepository parcelRepository;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final EmailService emailService;
+    static final Map<ParcelStatus, Set<ParcelStatus>> STATUS_TRANSITIONS = Map.of(
+        ParcelStatus.CREATED, Set.of(ParcelStatus.PICKED_UP),
+        ParcelStatus.PICKED_UP, Set.of(ParcelStatus.IN_TRANSIT),
+        ParcelStatus.IN_TRANSIT, Set.of(ParcelStatus.OUT_FOR_DELIVERY, ParcelStatus.RETURNED_TO_SENDER),
+        ParcelStatus.OUT_FOR_DELIVERY, Set.of(ParcelStatus.DELIVERED, ParcelStatus.DELIVERY_ATTEMPTED),
+        ParcelStatus.DELIVERY_ATTEMPTED, Set.of(ParcelStatus.PICKED_UP,ParcelStatus.RETURNED_TO_SENDER),
+        ParcelStatus.RETURNED_TO_SENDER, Set.of(),
+        ParcelStatus.DELIVERED, Set.of(),
+        ParcelStatus.CANCELLED, Set.of()
+    );
 
     @Transactional
     @CachePut(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())")
@@ -29,24 +41,40 @@ public class ParcelCacheService {
         Parcel parcel,
         StatusUpdateDto statusDto
     ) {
+        if (!isValidStatusFlow(parcel, statusDto)) {
+            throw new IllegalArgumentException("Invalid status change from "
+                + parcel.getCurrentStatus() + " to " + statusDto.status());
+        }
+
+        log.info("Parcel status allowed to update");
+
         parcel.setCurrentStatus(statusDto.status());
+
         final var savedParcel = parcelRepository.saveAndFlush(parcel);
+        log.info("Parcel status updated: {}", parcel.getCurrentStatus());
 
         final var description = "Parcel Status Changed to : " + statusDto.status();
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
 
-        if (savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED) {
+        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
+        log.info("A new parcel status history added for id {}," +
+            " new status {}", savedParcel.getId(), savedParcel.getCurrentStatus());
+
+        if(savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED){
             emailService.sendDeliveryCompleteEmail(
                 savedParcel.getRecipient().getEmail(),
                 savedParcel.getRecipient().getName(),
                 savedParcel.getTrackingCode());
-        } else {
-            emailService.sendParcelStatusChangeNotification(
-                savedParcel.getSender().getEmail(),
+        }else {
+            emailService.sendParcelStatusChangeNotification(savedParcel.getSender().getEmail(),
                 savedParcel.getRecipient().getEmail(),
                 savedParcel.getRecipient().getName(),
                 savedParcel.getCurrentStatus(),
                 savedParcel.getTrackingCode());
         }
+    }
+
+    private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto){
+        final var allowedStatus = STATUS_TRANSITIONS.get(parcel.getCurrentStatus());
+        return allowedStatus.contains(statusDto.status());
     }
 }

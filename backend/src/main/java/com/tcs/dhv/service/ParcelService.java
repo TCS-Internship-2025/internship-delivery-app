@@ -34,16 +34,7 @@ public class ParcelService {
     private static final int ALPHABET_SIZE = 26;
     private static final long TRACKING_NUMBER_MIN = 1_000_000_000L;
     private static final long TRACKING_NUMBER_MAX = 10_000_000_000L;
-    private static final Map<ParcelStatus, Set<ParcelStatus>> STATUS_TRANSITIONS = Map.of(
-            ParcelStatus.CREATED, Set.of(ParcelStatus.PICKED_UP),
-            ParcelStatus.PICKED_UP, Set.of(ParcelStatus.IN_TRANSIT),
-            ParcelStatus.IN_TRANSIT, Set.of(ParcelStatus.OUT_FOR_DELIVERY, ParcelStatus.RETURNED_TO_SENDER),
-            ParcelStatus.OUT_FOR_DELIVERY, Set.of(ParcelStatus.DELIVERED, ParcelStatus.DELIVERY_ATTEMPTED),
-            ParcelStatus.DELIVERY_ATTEMPTED, Set.of(ParcelStatus.PICKED_UP,ParcelStatus.RETURNED_TO_SENDER),
-            ParcelStatus.RETURNED_TO_SENDER, Set.of(),
-            ParcelStatus.DELIVERED, Set.of(), 
-            ParcelStatus.CANCELLED, Set.of()
-    );
+   ;
 
     private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final RecipientService recipientService;
@@ -172,9 +163,5 @@ public class ParcelService {
         parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
 
-    private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto){
-        final var allowedStatus = STATUS_TRANSITIONS.get(parcel.getCurrentStatus());
-        return allowedStatus.contains(statusDto.status());
-    }
 
 }
