@@ -36,6 +36,7 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
     private final ParcelRepository parcelRepository;
+    private final EmailService emailService;
 
     @Cacheable(value = "users", key = "#userIdentifier")
     public UserProfileDto getUserProfile(final String userIdentifier) {
@@ -51,16 +52,18 @@ public class UserService {
         final String userIdentifier,
         final UserProfileDto updateRequest
     ) {
+        boolean isPasswordChanged = false;
         try {
             log.info("UserIdentifier: {}", userIdentifier);
             final var userId = UUID.fromString(userIdentifier);
             log.info("Retrieving this user's profile by ID: {}", userId);
             final var user = getUserById(userId);
+            final var originalUser = createUserCopy(user);
 
             if (updateRequest.currentPassword() != null ||
                 updateRequest.newPassword() != null
             ) {
-                handlePasswordUpdate(user, updateRequest);
+                isPasswordChanged = handlePasswordUpdate(user, updateRequest);
             }
 
             if (updateRequest.email() != null &&
@@ -98,8 +101,25 @@ public class UserService {
 
             final var savedUser = userRepository.saveAndFlush(user);
             log.info("3.Profile updated for user ID: {}", savedUser.getId());
+
+            emailService.sendUserUpdatedNotification(
+                originalUser.getEmail(),
+                originalUser,
+                savedUser,
+                isPasswordChanged
+            );
+            log.info("User update notification email sent to the original email address: {}", savedUser.getEmail());
+
+            emailService.sendUserUpdatedNotification(
+                user.getEmail(),
+                originalUser,
+                savedUser,
+                isPasswordChanged
+            );
+            log.info("User update notification email sent to  new email address: {}", savedUser.getEmail());
+
             return UserProfileDto.fromEntity(savedUser);
-        } catch(final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
+        } catch (final OptimisticLockException | ObjectOptimisticLockingFailureException e) {
             log.warn("Optimistic lock occurred while trying to update user's profile: {}", userIdentifier);
             throw new ConcurrencyFailureException("Profile was updated by another session");
         }
@@ -146,7 +166,7 @@ public class UserService {
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }
 
-    private void handlePasswordUpdate(
+    private boolean handlePasswordUpdate(
         final User user,
         final UserProfileDto updateRequest
     ) {
@@ -164,5 +184,31 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(updateRequest.newPassword()));
         log.info("Password updated for user ID: {}", user.getId());
+        return true;
+    }
+
+    private User createUserCopy(final User original){
+        User.UserBuilder builder = User.builder()
+            .name(original.getName())
+            .email(original.getEmail())
+            .phone(original.getPhone())
+            .address(original.getAddress())
+            .createdAt(original.getCreatedAt())
+            .updatedAt(original.getUpdatedAt())
+            .isVerified(original.getIsVerified());
+
+        if (original.getAddress() != null) {
+            Address addressCopy = Address.builder()
+                .id(original.getAddress().getId())
+                .line1(original.getAddress().getLine1())
+                .line2(original.getAddress().getLine2())
+                .city(original.getAddress().getCity())
+                .postalCode(original.getAddress().getPostalCode())
+                .country(original.getAddress().getCountry())
+                .build();
+            builder.address(addressCopy);
+        }
+
+        return builder.build();
     }
 }

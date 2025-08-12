@@ -25,8 +25,8 @@ export const CoordinatesMap = ({ longitude, latitude }: CoordinatesMapProps) => 
         <Map
           mapboxAccessToken={mapboxAccessToken}
           initialViewState={{
-            longitude: 19.0402,
-            latitude: 47.4979,
+            longitude: longitude,
+            latitude: latitude,
             zoom: 12,
           }}
           style={{ width: '100%', height: '100%' }}

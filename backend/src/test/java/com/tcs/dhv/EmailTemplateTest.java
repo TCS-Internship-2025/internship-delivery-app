@@ -10,6 +10,8 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.context.Context;
 import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -137,14 +139,56 @@ public class EmailTemplateTest {
         ctxVars.put("newAddressLine1", "Test Road 96");
         ctxVars.put("newAddressLine2", "3. emelet");
         ctxVars.put("newAddressLine3", "Budapest 4321 Hungary");
+        ctxVars.put("isPasswordChanged", true);
 
         final var context = new Context();
         for(var key : ctxVars.keySet())
             context.setVariable((String)key, ctxVars.get(key));
 
         final var output = templateEngine.process("UserUpdatedEmail.html", context);
+        for(var key : ctxVars.keySet()) {
+            if (!key.equals("isPasswordChanged")) {
+                assertTrue(output.contains((String)ctxVars.get(key)));
+            }
+        }
+        assertTrue(output.contains("Password Changed:"));
+        assertTrue(output.contains("Your password has been successfully updated"));
+        assertTrue(output.contains("</html>"));
+        assertTrue(output.contains("</body>"));
+    }
+
+    @Test
+    void testUserUpdatedEmailWithoutPasswordChange() {
+        final var ctxVars = new HashMap<>();
+        ctxVars.put("oldName", "testName");
+        ctxVars.put("oldEmail", "test1@gmail.com");
+        ctxVars.put("oldPhone", "06201234567");
+        ctxVars.put("oldAddressLine1", "Test Road 69");
+        ctxVars.put("oldAddressLine2", "2. emelet");
+        ctxVars.put("oldAddressLine3", "Budapest 1234 Hungary");
+        ctxVars.put("newName", "nameTest");
+        ctxVars.put("newEmail", "test2@gmail.com");
+        ctxVars.put("newPhone", "06207654321");
+        ctxVars.put("newAddressLine1", "Test Road 96");
+        ctxVars.put("newAddressLine2", "3. emelet");
+        ctxVars.put("newAddressLine3", "Budapest 4321 Hungary");
+        ctxVars.put("isPasswordChanged", false);
+
+        final var context = new Context();
         for(var key : ctxVars.keySet())
-            assertTrue(output.contains((String)ctxVars.get(key)));
+            context.setVariable((String)key, ctxVars.get(key));
+
+        final var output = templateEngine.process("UserUpdatedEmail.html", context);
+
+        for(var key : ctxVars.keySet()) {
+            if (!key.equals("isPasswordChanged")) {
+                assertTrue(output.contains((String)ctxVars.get(key)));
+            }
+        }
+
+        assertFalse(output.contains("Password Changed:"));
+        assertFalse(output.contains("Your password has been successfully updated"));
+
         assertTrue(output.contains("</html>"));
         assertTrue(output.contains("</body>"));
     }

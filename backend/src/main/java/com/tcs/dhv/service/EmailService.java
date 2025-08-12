@@ -252,27 +252,31 @@ public class EmailService {
     public void sendUserUpdatedNotification(
         final String email,
         final User oldUser,
-        final User newUser
+        final User newUser,
+        final boolean isPasswordChanged
     ) {
         final var context = new Context();
         context.setVariable("oldName", oldUser.getName());
         context.setVariable("oldEmail", oldUser.getEmail());
-        context.setVariable("oldPhone", oldUser.getPhone());
-        context.setVariable("oldAddressLine1", oldUser.getAddress().getLine1());
-        context.setVariable("oldAddressLine2", oldUser.getAddress().getLine2());
+        context.setVariable("oldPhone", oldUser.getPhone() != null ? oldUser.getPhone() : "Not Specified");
+        context.setVariable("oldAddressLine1", oldUser.getAddress() != null ? oldUser.getAddress().getLine1() : "Not specified");
+        context.setVariable("oldAddressLine2", oldUser.getAddress() != null ? oldUser.getAddress().getLine2() : "Not specified");
         context.setVariable("oldAddressLine3", getAddressLine3(
-            oldUser.getAddress().getCity(),
-            oldUser.getAddress().getCountry(),
-            oldUser.getAddress().getPostalCode()));
+            oldUser.getAddress() != null ? oldUser.getAddress().getCity() : "Not specified",
+            oldUser.getAddress() != null ? oldUser.getAddress().getCountry() : "Not specified",
+            oldUser.getAddress() != null ? oldUser.getAddress().getPostalCode(): "Not specified"
+        ));
         context.setVariable("newName", newUser.getName());
         context.setVariable("newEmail", newUser.getEmail());
-        context.setVariable("newPhone", newUser.getPhone());
-        context.setVariable("newAddressLine1", newUser.getAddress().getLine1());
-        context.setVariable("newAddressLine2", newUser.getAddress().getLine2());
+        context.setVariable("newPhone", newUser.getPhone() != null ? newUser.getPhone() : "Not specified");
+        context.setVariable("newAddressLine1", newUser.getAddress() != null ? newUser.getAddress().getLine1() : "Not specified");
+        context.setVariable("newAddressLine2", newUser.getAddress() != null ? newUser.getAddress().getLine2() : "Not specified");
         context.setVariable("newAddressLine3", getAddressLine3(
-                newUser.getAddress().getCity(),
-                newUser.getAddress().getCountry(),
-                newUser.getAddress().getPostalCode()));
+            newUser.getAddress() != null ? newUser.getAddress().getCity() : "Not specified",
+            newUser.getAddress() != null ? newUser.getAddress().getCountry() : "Not specified",
+            newUser.getAddress() != null ? newUser.getAddress().getPostalCode(): "Not specified"
+        ));
+        context.setVariable("isPasswordChanged", isPasswordChanged);
 
         final var htmlContext = this.templateEngine.process("UserUpdatedEmail.html", context);
 

@@ -5,12 +5,14 @@ import com.tcs.dhv.domain.dto.TrackingDto;
 import com.tcs.dhv.security.DhvUserDetails;
 import com.tcs.dhv.service.ParcelStatusHistoryService;
 import com.tcs.dhv.service.TrackingService;
+import com.tcs.dhv.service.UserService;
 import com.tcs.dhv.validation.TrackingCode;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Validated
@@ -28,15 +31,16 @@ import java.util.Optional;
 public class TrackingController {
     private final TrackingService trackingService;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
+    private final UserService userService;
 
     @GetMapping("/{trackingCode}")
     public ResponseEntity<TrackingDto> trackParcel(
-            @NotNull @TrackingCode @PathVariable final String trackingCode,
-            final Authentication authentication
+        @NotNull @TrackingCode @PathVariable final String trackingCode,
+        final Authentication authentication
     ) {
-        final var response = getCurrentUser(authentication)
-                .map(user -> trackingService.getTrackingDetailsForUser(trackingCode, user.getId(), user.getUsername()))
-                .orElseGet(() -> trackingService.getPublicTrackingDetails(trackingCode));
+        final var response = trackingService.getCurrentUser(authentication)
+            .map(user -> trackingService.getTrackingDetailsForUser(trackingCode, user.getId(), user.getUsername()))
+            .orElseGet(() -> trackingService.getPublicTrackingDetails(trackingCode));
 
         if (response == null) {
             log.info("Tracking request for code '{}' not found", trackingCode);
@@ -47,14 +51,6 @@ public class TrackingController {
         return ResponseEntity.ok(response);
     }
 
-    private Optional<DhvUserDetails> getCurrentUser(
-            final Authentication auth
-    ) {
-        if (auth != null && auth.isAuthenticated()) {
-            return Optional.of((DhvUserDetails) auth.getPrincipal());
-        }
-        return Optional.empty();
-    }
 
     @GetMapping("/{trackingCode}/timeline")
     public ResponseEntity<List<ParcelStatusHistoryDto>> getParcelTimeline(
