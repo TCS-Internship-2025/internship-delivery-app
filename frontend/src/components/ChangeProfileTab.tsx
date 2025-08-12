@@ -19,7 +19,7 @@ interface ChangeProfileTabProps {
     phoneNumber?: string;
   };
 
-  profile: Profile;
+  profile?: Profile;
 }
 
 export function ChangeProfileTab({ formData, profile }: ChangeProfileTabProps) {
@@ -31,9 +31,9 @@ export function ChangeProfileTab({ formData, profile }: ChangeProfileTabProps) {
     resolver: zodResolver(changeProfileSchema),
     mode: 'onChange',
     defaultValues: {
-      name: formData?.name ?? profile.name,
-      email: formData?.email ?? profile.email,
-      phone: formData?.phoneNumber ?? profile.phone ?? '',
+      name: formData?.name ?? profile?.name ?? '',
+      email: formData?.email ?? profile?.email ?? '',
+      phone: formData?.phoneNumber ?? profile?.phone ?? '',
     },
   });
 

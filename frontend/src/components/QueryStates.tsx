@@ -29,7 +29,6 @@ export const QueryStates = ({
   children,
 }: QueryStatesProps) => {
   const isSmallScreen = useSmallScreen();
-
   return (
     <>
       {state ? (

@@ -90,9 +90,9 @@ interface ParcelShortData {
   status: string;
 }
 
-export const ParcelGrid = ({ parcels }: { parcels: ParcelListData }) => {
+export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
   const shortParcels: ParcelShortData[] =
-    parcels.map((parcel) => ({
+    parcels?.map((parcel) => ({
       parcelId: parcel.id,
       address: parcel.address.line1,
       code: parcel.trackingCode,
