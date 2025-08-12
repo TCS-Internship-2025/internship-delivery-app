@@ -7,9 +7,19 @@ export const trackSchema = z.object({
   parcelId: z.string(),
   trackingCode: z.string(),
   senderName: z.string(),
-  recipientName: z.string(),
+  senderEmail: z.email().optional().nullable(),
+  senderPhone: z.string().optional().nullable(),
+  recipient: z.object({
+    title: z.string().optional().nullable(),
+    name: z.string(),
+    email: z.string().optional().nullable(),
+    phone: z.string().optional().nullable(),
+    birthDate: z.string().optional().nullable(),
+  }),
   currentStatus: z.string(),
-  estimatedDelivery: z.string(),
+  estimatedDelivery: z.string().optional().nullable(),
+  paymentType: z.string().optional(),
+  deliveryType: z.string().optional(),
 });
 export const timelineSchema = z.array(
   z.object({
@@ -26,17 +36,17 @@ export type TimelineData = z.infer<typeof timelineSchema>;
 export async function fetchTimelineData(trackingNumber: string | undefined): Promise<TimelineData> {
   return await httpService.request(`/tracking/${trackingNumber}/timeline`, timelineSchema, {
     method: 'GET',
-    // headers: {
-    //   'X-API-KEY': 'my-secret-api-key-1234',
-    // },
+    headers: {
+      'X-API-KEY': 'my-secret-api-key-1234',
+    },
   });
 }
 export async function fetchTrackingData(trackingNumber: string | undefined): Promise<TrackingData> {
   return await httpService.request(`/tracking/${trackingNumber}`, trackSchema, {
     method: 'GET',
-    // headers: {
-    //   'X-API-KEY': 'my-secret-api-key-1234',
-    // },
+    headers: {
+      'X-API-KEY': 'my-secret-api-key-1234',
+    },
   });
 }
 

@@ -39,6 +39,7 @@ export default function TimelineComponent({ timeline }: { timeline: TimelineData
   return (
     <Timeline
       sx={{
+        minHeight: 300,
         [`& .${timelineItemClasses.missingOppositeContent}:before`]: { display: 'none' },
         ...(isSmallScreen && {
           [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 },
