@@ -6,7 +6,6 @@ import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.entity.User;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.domain.event.ParcelCreatedEvent;
-import com.tcs.dhv.domain.event.ParcelStatusUpdatedEvent;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -168,7 +167,6 @@ public class ParcelService {
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
             .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
 
-        applicationEventPublisher.publishEvent(new ParcelStatusUpdatedEvent(parcel));
         return parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
 
