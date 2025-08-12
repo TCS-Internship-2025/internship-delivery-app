@@ -27,7 +27,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     private String apiKeyHeaderName;
 
     @Override
-    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final FilterChain filterChain
+    ) throws ServletException, IOException {
 
         final var path = request.getRequestURI();
 

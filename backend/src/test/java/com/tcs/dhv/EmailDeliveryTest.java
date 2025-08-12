@@ -49,7 +49,7 @@ public class EmailDeliveryTest {
 
     @AfterAll
     void stopGreenMail() {
-        if(greenMail != null)
+        if (greenMail != null)
             greenMail.stop();
     }
 

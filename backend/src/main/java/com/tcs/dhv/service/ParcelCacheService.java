@@ -54,7 +54,7 @@ public class ParcelCacheService {
         parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
         log.info("A new parcel status history added for id {}, new status {}", savedParcel.getId(), savedParcel.getCurrentStatus());
 
-        if(savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED){
+        if (savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED) {
             emailService.sendDeliveryCompleteEmail(
                 savedParcel.getRecipient().getEmail(),
                 savedParcel.getRecipient().getName(),
@@ -71,7 +71,7 @@ public class ParcelCacheService {
     }
 
 
-    private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto){
+    private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto) {
         final var allowedStatus = STATUS_TRANSITIONS.get(parcel.getCurrentStatus());
         return allowedStatus.contains(statusDto.status());
     }

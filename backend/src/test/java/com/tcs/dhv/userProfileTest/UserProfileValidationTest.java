@@ -26,7 +26,7 @@ public class UserProfileValidationTest {
 
         @Test
         @DisplayName("Should accept valid email addresses")
-        void validEmailsTest(){
+        void validEmailsTest() {
             final var validEmails = new String[]{
                 "user@example.com",
                 "test.email@domain.co.uk",
@@ -54,7 +54,7 @@ public class UserProfileValidationTest {
 
         @Test
         @DisplayName("Should reject emails with invalid characters")
-        void invalidEmailsTest(){
+        void invalidEmailsTest() {
             final var invalidEmails = new String[]{
                 "user@exam ple.com",
                 "us er@example.com",
@@ -106,7 +106,7 @@ public class UserProfileValidationTest {
 
         @Test
         @DisplayName("Should accept valid Hungarian phone numbers")
-        void correctNumbersTest(){
+        void correctNumbersTest() {
             final var validPhoneNumbers = new String[]{
                 "+36201234567",
                 "+36301234567",
@@ -135,7 +135,7 @@ public class UserProfileValidationTest {
 
         @Test
         @DisplayName("Should reject invalid phone numbers")
-        void invalidPhonesTest(){
+        void invalidPhonesTest() {
             final var invalidPhoneNumbers = new String[]{
                 "1234567890",
                 "00363012345678",
@@ -176,7 +176,7 @@ public class UserProfileValidationTest {
 
         @Test
         @DisplayName("Should accept valid passwords")
-        void correctPasswordsTest(){
+        void correctPasswordsTest() {
             final var validPasswords = new String[]{
                 "TestPass123!",
                 "MySecure@Pwd1",
