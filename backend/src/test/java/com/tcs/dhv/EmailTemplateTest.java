@@ -147,7 +147,7 @@ public class EmailTemplateTest {
 
         final var output = templateEngine.process("UserUpdatedEmail.html", context);
         for(var key : ctxVars.keySet()) {
-            if (!key.equals("isPasswordChanged")) { // Skip boolean check
+            if (!key.equals("isPasswordChanged")) {
                 assertTrue(output.contains((String)ctxVars.get(key)));
             }
         }
@@ -173,7 +173,7 @@ public class EmailTemplateTest {
         ctxVars.put("newAddressLine1", "Test Road 96");
         ctxVars.put("newAddressLine2", "3. emelet");
         ctxVars.put("newAddressLine3", "Budapest 4321 Hungary");
-        // ✅ Password was NOT changed
+
         ctxVars.put("isPasswordChanged", false);
 
         final var context = new Context();
@@ -182,18 +182,15 @@ public class EmailTemplateTest {
 
         final var output = templateEngine.process("UserUpdatedEmail.html", context);
 
-        // Test all the original variables
         for(var key : ctxVars.keySet()) {
-            if (!key.equals("isPasswordChanged")) { // Skip boolean check
+            if (!key.equals("isPasswordChanged")) {
                 assertTrue(output.contains((String)ctxVars.get(key)));
             }
         }
 
-        // ✅ Test password change notification does NOT appear
         assertFalse(output.contains("Password Changed:"));
         assertFalse(output.contains("Your password has been successfully updated"));
 
-        // Test HTML structure
         assertTrue(output.contains("</html>"));
         assertTrue(output.contains("</body>"));
     }
