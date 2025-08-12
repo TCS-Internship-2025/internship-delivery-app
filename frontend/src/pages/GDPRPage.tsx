@@ -1,5 +1,3 @@
-import React from 'react';
-
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import EditIcon from '@mui/icons-material/Edit';
@@ -10,10 +8,8 @@ import MessageIcon from '@mui/icons-material/Message';
 import PaymentIcon from '@mui/icons-material/Payment';
 import PersonIcon from '@mui/icons-material/Person';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-// MUI Icons
 import SecurityIcon from '@mui/icons-material/Security';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-// MUI Components
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -22,7 +18,6 @@ import Paper from '@mui/material/Paper';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-// Type Definitions
 interface DataType {
   readonly icon: React.ReactElement;
   readonly title: string;
@@ -47,7 +42,6 @@ interface LegalBasis {
   readonly description: string;
 }
 
-// Constants
 const ICON_SIZE = 30;
 const LARGE_ICON_SIZE = 40;
 const HEADER_ICON_SIZE = 80;
@@ -161,9 +155,9 @@ const GDPRPage: React.FC = (): React.ReactElement => {
   ] as const;
 
   const contactInfo = {
-    email: 'dpo@tcs-internship-demo.com',
+    email: 'tcsinternshipdeliveryapp@gmail.com',
     responseTime: 'Within 5 business days',
-    languages: 'Available in English, French, and Arabic',
+    languages: 'Available in English, Hungarian, Arabic and French',
   };
 
   const containerSx: SxProps<Theme> = {
