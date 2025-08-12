@@ -7,6 +7,7 @@ import com.tcs.dhv.domain.enums.ParcelStatus;
 import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.UserRepository;
+import com.tcs.dhv.util.PhoneNumberUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ValidationException;
@@ -64,14 +65,14 @@ public class UserService {
 
             if (updateRequest.email() != null &&
                 !user.getEmail().equals(updateRequest.email()) &&
-                userRepository.existsByEmail(updateRequest.email())
+            (userRepository.existsByEmail(updateRequest.email()))
             ) {
                 throw new ValidationException("Email already exists");
             }
 
             if (updateRequest.phone() != null &&
-                !updateRequest.phone().equals(user.getPhone()) &&
-                userRepository.existsByPhone(updateRequest.phone())
+                !PhoneNumberUtil.normalizePhone(updateRequest.phone()).equals(user.getPhone()) &&
+                userRepository.existsByPhone(PhoneNumberUtil.normalizePhone(updateRequest.phone()))
             ) {
                 throw new ValidationException("Phone number already in use by other user");
             }
