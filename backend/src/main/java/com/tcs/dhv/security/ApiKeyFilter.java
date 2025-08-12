@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 import java.util.Collections;
 
@@ -26,11 +27,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     private String apiKeyHeaderName;
 
     @Override
-    protected void doFilterInternal(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
-        final FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
 
         final var path = request.getRequestURI();
 
@@ -51,9 +48,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         if (apiKeyService.validate(rawKey).isPresent()) {
             log.info("API Key validated successfully");
-            final var authentication = new UsernamePasswordAuthenticationToken(
-                "apiKeyUser", null, Collections.emptyList());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            if (SecurityContextHolder.getContext().getAuthentication() == null || !SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                final var authentication = new UsernamePasswordAuthenticationToken("apiKeyUser", null, Collections.emptyList());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             filterChain.doFilter(request, response);
         } else {
             log.warn("Invalid API Key provided");
