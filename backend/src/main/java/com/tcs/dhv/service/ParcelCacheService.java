@@ -52,6 +52,8 @@ public class ParcelCacheService {
         }
         log.info("Parcel status updated to {} for tracking code: {}", statusDto.status(), parcel.getTrackingCode());
 
+        parcel.setCurrentStatus(statusDto.status());
+
         parcelStatusHistoryService.addStatusHistory(parcel.getId(), "Parcel Status Changed to : " + statusDto.status());
         log.info("A new parcel status history added for id {}, new status {}", parcel.getId(), parcel.getCurrentStatus());
 
