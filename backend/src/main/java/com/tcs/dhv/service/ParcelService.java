@@ -17,9 +17,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -33,16 +31,6 @@ public class ParcelService {
     private static final int ALPHABET_SIZE = 26;
     private static final long TRACKING_NUMBER_MIN = 1_000_000_000L;
     private static final long TRACKING_NUMBER_MAX = 10_000_000_000L;
-    private static final Map<ParcelStatus, Set<ParcelStatus>> STATUS_TRANSITIONS = Map.of(
-            ParcelStatus.CREATED, Set.of(ParcelStatus.PICKED_UP),
-            ParcelStatus.PICKED_UP, Set.of(ParcelStatus.IN_TRANSIT),
-            ParcelStatus.IN_TRANSIT, Set.of(ParcelStatus.OUT_FOR_DELIVERY, ParcelStatus.RETURNED_TO_SENDER),
-            ParcelStatus.OUT_FOR_DELIVERY, Set.of(ParcelStatus.DELIVERED, ParcelStatus.DELIVERY_ATTEMPTED),
-            ParcelStatus.DELIVERY_ATTEMPTED, Set.of(ParcelStatus.PICKED_UP,ParcelStatus.RETURNED_TO_SENDER),
-            ParcelStatus.RETURNED_TO_SENDER, Set.of(),
-            ParcelStatus.DELIVERED, Set.of(), 
-            ParcelStatus.CANCELLED, Set.of()
-    );
 
     private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final RecipientService recipientService;
@@ -50,7 +38,7 @@ public class ParcelService {
     private final EmailService emailService;
     private final ParcelRepository parcelRepository;
     private final AddressRepository addressRepository;
-
+    private final ParcelCacheService parcelCacheService;
     private final Random random = new Random();
 
     @Transactional
@@ -163,46 +151,11 @@ public class ParcelService {
     }
 
     @Transactional
-    public void updateParcelStatus(final String trackingCode, final StatusUpdateDto statusDto){
-
+    public ParcelDto updateParcelStatus(final String trackingCode, final StatusUpdateDto statusDto) {
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
-                .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
+            .orElseThrow(() -> new EntityNotFoundException("Parcel not found with tracking code: " + trackingCode));
 
-        if (!isValidStatusFlow(parcel, statusDto)) {
-            throw new IllegalArgumentException("Invalid status change from "
-                    + parcel.getCurrentStatus() + " to " + statusDto.status());
-        }
-
-        log.info("Parcel status allowed to update");
-
-        parcel.setCurrentStatus(statusDto.status());
-
-        final var savedParcel = parcelRepository.saveAndFlush(parcel);
-        log.info("Parcel status updated: {}", parcel.getCurrentStatus());
-
-        final var description = "Parcel Status Changed to : " + statusDto.status();
-
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
-        log.info("A new parcel status history added for id {}," +
-                " new status {}", savedParcel.getId(), savedParcel.getCurrentStatus());
-
-        if(savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED){
-            emailService.sendDeliveryCompleteEmail(
-                    savedParcel.getRecipient().getEmail(),
-                    savedParcel.getRecipient().getName(),
-                    savedParcel.getTrackingCode());
-        }else {
-            emailService.sendParcelStatusChangeNotification(savedParcel.getSender().getEmail(),
-                    savedParcel.getRecipient().getEmail(),
-                    savedParcel.getRecipient().getName(),
-                    savedParcel.getCurrentStatus(),
-                    savedParcel.getTrackingCode());
-        }
-    }
-
-    private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto){
-        final var allowedStatus = STATUS_TRANSITIONS.get(parcel.getCurrentStatus());
-        return allowedStatus.contains(statusDto.status());
+        return parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
 
 }
