@@ -89,13 +89,14 @@ export const useEditAddress = () => {
     },
   });
 };
-export const useEditPassword = () => {
+export const useEditPassword = (clearFields: () => void) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ChangePasswordData) => editPassword(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
       enqueueSnackbar('Password updated successfully', { variant: 'success' });
+      clearFields();
     },
   });
 };
