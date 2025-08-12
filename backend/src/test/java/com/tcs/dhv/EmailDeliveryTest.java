@@ -192,7 +192,7 @@ public class EmailDeliveryTest {
         newUser.setName("userTest");
         newUser.setPhone("06201234567");
         newUser.setAddress(newAddress);
-        emailService.sendUserUpdatedNotification("test@gmail.com", oldUser, newUser);
+        emailService.sendUserUpdatedNotification("test@gmail.com", oldUser, newUser,false);
         final var messages = greenMail.getReceivedMessages();
         assertEquals(1, messages.length, "One email received");
 
@@ -201,4 +201,6 @@ public class EmailDeliveryTest {
         final var body = GreenMailUtil.getBody(received).trim();
         assertTrue(body.contains("Dear userTest"));
     }
+
+
 }
