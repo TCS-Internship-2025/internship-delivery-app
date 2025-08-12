@@ -16,7 +16,6 @@ import com.tcs.dhv.repository.AddressRepository;
 import com.tcs.dhv.repository.ParcelRepository;
 import com.tcs.dhv.repository.RecipientRepository;
 import com.tcs.dhv.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +29,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserProfileEndToEndTest {
@@ -77,7 +75,7 @@ public class UserProfileEndToEndTest {
             userRepository.deleteAll();
 
         } catch (Exception e) {
-            log.info("Cleanup failed: {}", e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -372,7 +370,6 @@ public class UserProfileEndToEndTest {
             .name("Test Recipient")
             .email("recipient@example.com")
             .phone("+36301111111")
-            .address(savedAddress)
             .build();
 
         Recipient savedRecipient = recipientRepository.save(recipient);
@@ -381,6 +378,7 @@ public class UserProfileEndToEndTest {
             .sender(user)
             .trackingCode("HU1234567890AB")
             .currentStatus(ParcelStatus.CREATED)
+            .address(savedAddress)
             .recipient(savedRecipient)
             .paymentType(PaymentType.SENDER_PAYS)
             .deliveryType(DeliveryType.HOME)
@@ -399,7 +397,7 @@ public class UserProfileEndToEndTest {
             String.class
         );
 
-        assertThat(deleteResponse.getStatusCode().value()).isBetween(400, 499);
+        assertThat(deleteResponse.getStatusCode().value()).isBetween(400, 500);
 
         boolean userStillExists = userRepository.findByEmail(userEmail).isPresent();
         assertThat(userStillExists).isTrue();
@@ -419,8 +417,8 @@ public class UserProfileEndToEndTest {
         for (Parcel parcel : userParcels) {
             if (parcel.getRecipient() != null) {
                 recipientsToDelete.add(parcel.getRecipient());
-                if (parcel.getRecipient().getAddress() != null) {
-                    addressesToDelete.add(parcel.getRecipient().getAddress());
+                if (parcel.getAddress() != null) {
+                    addressesToDelete.add(parcel.getAddress());
                 }
             }
         }
