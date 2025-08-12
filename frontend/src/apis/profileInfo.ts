@@ -1,13 +1,12 @@
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { enqueueSnackbar } from 'notistack';
 import { z } from 'zod';
 
 import { httpService } from '@/services/httpService';
 
 import type { ChangeAddressFormSchema, ChangeProfileSchema } from '@/utils/changeDataComposition';
 
-const queryClient = new QueryClient();
 export const addressSchema = z.object({
-  addressName: z.string().nullable().optional(),
   line1: z.string(),
   line2: z.string(),
   building: z.string().nullable(),
@@ -43,7 +42,7 @@ export function useGetProfileInfo() {
 }
 const response = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string().nullable(),
   address: addressSchema.nullable(),
   isVerified: z.boolean(),
@@ -70,27 +69,34 @@ export const editPassword = (data: ChangePasswordData) => {
   return changeReq(data);
 };
 export const useEditProfile = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ChangeProfileSchema) => editProfile(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
+      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
     },
   });
 };
 
 export const useEditAddress = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ChangeAddressFormSchema) => editAddress(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
+      enqueueSnackbar('Address updated successfully', { variant: 'success' });
     },
   });
 };
-export const useEditPassword = () => {
+export const useEditPassword = (clearFields: () => void) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ChangePasswordData) => editPassword(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['profileInfo'] });
+      enqueueSnackbar('Password updated successfully', { variant: 'success' });
+      clearFields();
     },
   });
 };

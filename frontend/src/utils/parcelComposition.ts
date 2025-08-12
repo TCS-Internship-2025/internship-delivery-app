@@ -9,8 +9,8 @@ export const REGEX_PATTERNS = {
   HUNGARY_ONLY: /^hungary$/i,
   POSTAL_CODE: /^\d{4}$/,
   EMAIL: /^\S+@\S+\.\S+$/,
-  HUNGARIAN_TEXT_WITH_SYMBOLS: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]*$/,
-  HUNGARIAN_TEXT_REQUIRED: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-]+$/,
+  HUNGARIAN_TEXT_WITH_SYMBOLS: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-/]*$/,
+  HUNGARIAN_TEXT_REQUIRED: /^[a-zA-Z0-9ÁÉÍÓÚÜÖŐŰáéíóúüöőű .,-/]+$/,
   HUNGARIAN_CITY: /^[a-zA-ZÁÉÍÓÚÜÖŐŰáéíóúüöőű]+$/,
 } as const;
 
@@ -72,8 +72,20 @@ export const parcelFormSchema = z.object({
   pointId: z.string().optional().nullable(),
 });
 
+export const pointSchema = parcelFormSchema.pick({
+  latitude: true,
+  longitude: true,
+  pointId: true,
+});
+
+export const addressChangeSchema = parcelFormSchema.omit({ paymentType: true }).extend({
+  requestReason: z.string().optional().nullable(),
+});
+
 export type RecipientFormSchema = z.infer<typeof recipientFormSchema>;
 export type ParcelFormSchema = z.infer<typeof parcelFormSchema>;
+export type AddressChangeSchema = z.infer<typeof addressChangeSchema>;
+export type PointSchema = z.infer<typeof pointSchema>;
 
 export const recipientFields: FieldConfig<RecipientFormSchema>[][] = [
   [
@@ -85,9 +97,9 @@ export const recipientFields: FieldConfig<RecipientFormSchema>[][] = [
   ],
 ];
 
-export const parcelFields: FieldConfig<ParcelFormSchema>[][] = [
+const addressFields = [
   [
-    { name: 'country', label: 'Country', required: true },
+    { name: 'country', label: 'Country', required: true, disabled: true },
     { name: 'line1', label: 'Address Line 1', required: true },
     { name: 'line2', label: 'Address Line 2' },
     { name: 'building', label: 'Building' },
@@ -99,7 +111,18 @@ export const parcelFields: FieldConfig<ParcelFormSchema>[][] = [
   ],
 ];
 
+export const parcelFields = addressFields as FieldConfig<ParcelFormSchema>[][];
+export const addressChangeFields = addressFields as FieldConfig<AddressChangeSchema>[][];
+
 export const shippingOptionsField: FieldConfig<ParcelFormSchema>[][] = [
   [{ name: 'deliveryType', label: 'Delivery Type', type: 'select', options: DeliveryEnum, required: true }],
   [{ name: 'paymentType', label: 'Payment Type', type: 'select', options: PaymentEnum, required: true }],
+];
+
+export const deliveryOnlyField: FieldConfig<AddressChangeSchema>[][] = [
+  [{ name: 'deliveryType', label: 'Delivery Type', type: 'select', options: DeliveryEnum, required: true }],
+];
+
+export const requestReasonField: FieldConfig<AddressChangeSchema>[][] = [
+  [{ name: 'requestReason', label: 'Description', type: 'textarea' }],
 ];

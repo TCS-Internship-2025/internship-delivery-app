@@ -5,6 +5,31 @@ import { type CustomSnackbarOptions } from '@/providers/ToastProvider.tsx';
 
 import { handleHttpResponse, reduceZodError } from '@/utils/ErrorHandling.ts';
 
+function getErrorMessage(error: unknown): { message: string; header: string } {
+  if (error instanceof Error) {
+    // Check if it's an HTTP error with status code
+    if (error.message.includes('401')) {
+      return { message: 'Please check your credentials and try again', header: 'Invalid Credentials' };
+    }
+    if (error.message.includes('403')) {
+      return { message: 'You are not authorized to access this resource', header: 'Access Denied' };
+    }
+    if (error.message.includes('404')) {
+      return { message: 'The requested resource was not found', header: 'Not Found' };
+    }
+    if (error.message.includes('500')) {
+      return { message: 'Something went wrong on our end. Please try again later', header: 'Server Error' };
+    }
+    if (error.message.includes('Network')) {
+      return { message: 'Please check your internet connection', header: 'Connection Error' };
+    }
+
+    return { message: error.message, header: 'Error' };
+  }
+
+  return { message: String(error), header: 'Error' };
+}
+
 function notifyError(error: unknown): void {
   if (error instanceof z.ZodError) {
     const reduced = reduceZodError(error);
@@ -13,13 +38,14 @@ function notifyError(error: unknown): void {
       headerMessage: 'Invalid Data',
     } as CustomSnackbarOptions);
   } else {
-    const msg = error instanceof Error ? error.message : String(error);
-    enqueueSnackbar(msg, {
+    const { message, header } = getErrorMessage(error);
+    enqueueSnackbar(message, {
       variant: 'error',
-      headerMessage: 'Server Error',
+      headerMessage: header,
     } as CustomSnackbarOptions);
   }
 }
+
 class HttpService {
   public baseUrl: string;
   private defaultHeaders: Record<string, string>;
