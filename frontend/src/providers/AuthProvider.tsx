@@ -57,7 +57,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return false;
     }
 
-    console.log('AuthProvider: Starting token refresh...');
     setIsRefreshing(true);
 
     try {
@@ -65,7 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setToken(response.token);
       setRefreshToken(response.refreshToken);
-      console.log('AuthProvider: Token refresh successful - local state updated');
 
       return true;
     } catch (error) {
@@ -91,7 +89,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const expiryMs = payload.exp * 1000;
-      console.log(`AuthProvider: Token expires at ${new Date(expiryMs).toLocaleString()}`);
       return expiryMs;
     } catch (error) {
       console.error('AuthProvider: Error parsing JWT:', error);
