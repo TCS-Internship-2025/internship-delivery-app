@@ -15,7 +15,6 @@ public class RecipientService {
 
     private final RecipientRepository recipientRepository;
 
-    @Transactional
     public Recipient createRecipient(final RecipientDto recipientDto) {
         log.info("Creating recipient with email: {}", recipientDto.email());
 
@@ -27,6 +26,6 @@ public class RecipientService {
             .birthDate(recipientDto.birthDate())
             .build();
 
-        return recipientRepository.saveAndFlush(recipient);
+        return recipientRepository.save(recipient);
     }
 }
