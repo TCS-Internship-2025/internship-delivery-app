@@ -23,6 +23,7 @@ import { Verified } from '@/pages/Verified.tsx';
 import { Verify } from '@/pages/Verify.tsx';
 
 import { AppLayout } from '@/components/AppLayout.tsx';
+import Faq from './components/Faq.tsx';
 import { FormProgressBar } from './components/FormProgressBar.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
@@ -90,6 +91,7 @@ const router = createBrowserRouter([
             path: ROUTES.TRACKINGSLUG,
             element: <TrackingSlug />,
           },
+          { path: ROUTES.FAQ, element: <Faq categories={['delivery', 'tracking']} /> },
 
           {
             element: <ProtectedRoute />,
@@ -154,6 +156,7 @@ if (typeof window !== 'undefined') {
 
 export function setupApp() {
   const queryClient = new QueryClient();
+  document.documentElement.style.scrollBehavior = 'smooth';
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
