@@ -1,4 +1,4 @@
-import { PARCEL_DELIVERY_STATUSES } from '@/constants';
+import { PARCEL_STATUS } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
