@@ -12,15 +12,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -34,7 +31,6 @@ public class ParcelService {
     private static final int ALPHABET_SIZE = 26;
     private static final long TRACKING_NUMBER_MIN = 1_000_000_000L;
     private static final long TRACKING_NUMBER_MAX = 10_000_000_000L;
-   ;
 
     private final ParcelStatusHistoryService parcelStatusHistoryService;
     private final RecipientService recipientService;
@@ -161,7 +157,5 @@ public class ParcelService {
 
         return parcelCacheService.updateStatusAndCache(parcel.getId(), parcel.getSender().getId(), parcel, statusDto);
     }
-
-
 
 }
