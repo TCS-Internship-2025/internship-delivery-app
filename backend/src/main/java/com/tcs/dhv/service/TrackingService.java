@@ -1,5 +1,6 @@
 package com.tcs.dhv.service;
 
+import com.tcs.dhv.domain.dto.RecipientDto;
 import com.tcs.dhv.domain.dto.TrackingDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.repository.ParcelRepository;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,25 +26,37 @@ public class TrackingService {
          final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
-        log.info("Getting tracking data of parcel with id : {}", parcel.getId());
+        log.info("Getting PUBLIC tracking data of parcel with id : {}", parcel.getId());
 
-        final var estimatedDevilryTime = calculateEstimatedDeliveryTime(parcel);
+        final var recipient = parcel.getRecipient();
 
         return TrackingDto.builder()
-                .parcelId(parcel.getId())
-                .trackingCode(parcel.getTrackingCode())
-                .senderName(parcel.getSender().getName())
-                .recipientName(parcel.getRecipient().getName())
-                .currentStatus(parcel.getCurrentStatus())
-                .estimatedDelivery(estimatedDevilryTime)
-                .build();
+            .parcelId(parcel.getId())
+            .trackingCode(parcel.getTrackingCode())
+            .senderName(parcel.getSender().getName())
+            .currentStatus(parcel.getCurrentStatus())
+            .estimateDelivery(calculateEstimatedDeliveryTime(parcel))
+            .recipient(new RecipientDto(
+                recipient.getTitle(),
+                recipient.getName(),
+                null,
+                null,
+                null
+            ))
+            .paymentType(String.valueOf(parcel.getPaymentType()))
+            .deliveryType(String.valueOf(parcel.getDeliveryType()))
+            .build();
     }
 
-    public TrackingDto getTrackingDetailsForUser(String trackingCode, UUID userId, String userEmail) {
+    public TrackingDto getTrackingDetailsForUser(
+        final String trackingCode,
+        final UUID userId,
+        final String userEmail
+    ) {
         final var parcel = parcelRepository.findByTrackingCode(trackingCode)
                 .orElseThrow(() -> new EntityNotFoundException("Parcel not found for tracking code: " + trackingCode));
 
-        log.info("Getting tracking data of parcel with id: {} for user: {}", parcel.getId(), userId);
+        log.info("Getting PRIVATE tracking data of parcel with id: {} for user: {}", parcel.getId(), userId);
 
         final var isSender = parcel.getSender().getId().equals(userId);
         final var isRecipient = parcel.getRecipient().getEmail().equals(userEmail);
@@ -57,22 +69,17 @@ public class TrackingService {
         final var recipient = parcel.getRecipient();
 
         return TrackingDto.builder()
-                .parcelId(parcel.getId())
-                .trackingCode(parcel.getTrackingCode())
-                .senderName(sender.getName())
-                .senderEmail(sender.getEmail())
-                .senderPhone(sender.getPhone())
-                .senderAddress(sender.getAddress() != null ? sender.getAddress().toString() : null)
-                .recipientName(recipient.getName())
-                .recipientEmail(recipient.getEmail())
-                .recipientPhone(recipient.getPhone())
-                .recipientAddress(parcel.getAddress() != null ? parcel.getAddress().toString() : null)
-                .recipientBirthDate(Optional.ofNullable(recipient.getBirthDate()).map(LocalDate::atStartOfDay))
-                .currentStatus(parcel.getCurrentStatus())
-                .estimatedDelivery(calculateEstimatedDeliveryTime(parcel))
-                .paymentType(String.valueOf(parcel.getPaymentType()))
-                .deliveryType(String.valueOf(parcel.getDeliveryType()))
-                .build();
+            .parcelId(parcel.getId())
+            .trackingCode(parcel.getTrackingCode())
+            .senderName(sender.getName())
+            .senderEmail(sender.getEmail())
+            .senderPhone(sender.getPhone())
+            .currentStatus(parcel.getCurrentStatus())
+            .estimateDelivery(calculateEstimatedDeliveryTime(parcel))
+            .recipient(RecipientDto.fromEntity(recipient))
+            .paymentType(String.valueOf(parcel.getPaymentType()))
+            .deliveryType(String.valueOf(parcel.getDeliveryType()))
+            .build();
     }
 
     private Optional<LocalDateTime> calculateEstimatedDeliveryTime(final Parcel parcel) {
@@ -82,7 +89,7 @@ public class TrackingService {
             case IN_TRANSIT -> Optional.of(parcel.getUpdatedAt().plusDays(4));
             case OUT_FOR_DELIVERY -> Optional.of(parcel.getUpdatedAt().plusDays(2));
             case DELIVERY_ATTEMPTED -> Optional.of(parcel.getUpdatedAt().plusDays(1));
-            case DELIVERED,CANCELLED,RETURNED_TO_SENDER-> Optional.empty();
+            case DELIVERED,CANCELLED,RETURNED_TO_SENDER -> Optional.empty();
         };
     }
 }
