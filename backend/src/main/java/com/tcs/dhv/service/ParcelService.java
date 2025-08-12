@@ -68,7 +68,7 @@ public class ParcelService {
         final var trackingCode = generateTrackingCode();
 
         final var address = parcelDto.address().toEntity();
-        final var savedAddress = addressRepository.saveAndFlush(address);
+        final var savedAddress = addressRepository.save(address);
 
         final var parcel = Parcel.builder()
             .sender(sender)
@@ -80,7 +80,7 @@ public class ParcelService {
             .paymentType(parcelDto.paymentType())
             .build();
 
-        return parcelRepository.saveAndFlush(parcel);
+        return parcelRepository.save(parcel);
     }
 
     public List<ParcelDto> getUserParcels(final UUID userId) {

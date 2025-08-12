@@ -59,11 +59,11 @@ public class AddressChangeService {
 
             final var oldAddress = parcel.getAddress();
             final var newAddress = requestDto.newAddress().toEntity();
-            final var savedAddress = addressRepository.saveAndFlush(newAddress);
+            final var savedAddress = addressRepository.save(newAddress);
 
             parcel.setDeliveryType(requestDto.deliveryType());
             parcel.setAddress(savedAddress);
-            parcelRepository.saveAndFlush(parcel);
+            parcelRepository.save(parcel);
 
             final var description = String.format(
                 "Address changed by %s%s",
