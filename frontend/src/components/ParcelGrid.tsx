@@ -28,8 +28,22 @@ const StatusChipRenderer = (params: ICellRendererParams<ParcelShortData, string>
       {...chipData}
       sx={
         isSmallScreen
-          ? { alignSelf: 'center', py: 1, px: 0.5, fontSize: 12 }
-          : { alignSelf: 'center', py: 2.5, px: 1, fontSize: 20 }
+          ? {
+              alignSelf: 'center',
+              py: 1.5,
+              px: 1,
+              fontSize: 12,
+              fontWeight: 600,
+              borderRadius: 2,
+            }
+          : {
+              alignSelf: 'center',
+              py: 2.5,
+              px: 2,
+              fontSize: 14,
+              fontWeight: 600,
+              borderRadius: 2,
+            }
       }
     />
   );
@@ -137,36 +151,64 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
   return (
     <Box
       className={`ag-theme-quartz${mode === 'dark' ? '-dark' : ''}`}
-      width={isSmallScreen ? '100%' : '85%'}
-      height={685}
-      mt={isSmallScreen ? 2 : 5}
+      width={isSmallScreen ? '95%' : '90%'}
+      height={isSmallScreen ? 600 : 700}
+      mt={isSmallScreen ? 3 : 6}
       ml="auto"
       mr="auto"
-      sx={
-        isSmallScreen
+      sx={{
+        borderRadius: 3,
+        overflow: 'hidden',
+        boxShadow: mode === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.4)' : '0 4px 20px rgba(0, 0, 0, 0.08)',
+        border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
+        ...(isSmallScreen
           ? {
-              '--ag-row-height': '40px',
-              '--ag-font-size': '16px',
+              '--ag-row-height': '48px',
+              '--ag-font-size': '14px',
               '--ag-grid-size': '8px',
+              '--ag-header-height': '44px',
+              '--ag-font-family': '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
               ...(mode === 'dark' && {
-                '--ag-background-color': '#353b39',
-                '--ag-header-background-color': '#2e3331',
-                '--ag-row-hover-color': '#38423f',
-                '--ag-selected-row-background-color': '#43514c',
+                '--ag-background-color': '#1e2522',
+                '--ag-header-background-color': '#2a312d',
+                '--ag-row-hover-color': '#364039',
+                '--ag-selected-row-background-color': '#3d4b44',
+                '--ag-border-color': '#404940',
+                '--ag-header-foreground-color': '#e8f4f8',
+              }),
+              ...(mode === 'light' && {
+                '--ag-background-color': '#ffffff',
+                '--ag-header-background-color': '#f8fafc',
+                '--ag-row-hover-color': '#f1f5f9',
+                '--ag-selected-row-background-color': '#e2e8f0',
+                '--ag-border-color': '#e2e8f0',
+                '--ag-header-foreground-color': '#334155',
               }),
             }
           : {
-              '--ag-row-height': '56px',
-              '--ag-font-size': '22px',
-              '--ag-grid-size': '10px',
+              '--ag-row-height': '60px',
+              '--ag-font-size': '16px',
+              '--ag-grid-size': '12px',
+              '--ag-header-height': '56px',
+              '--ag-font-family': '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
               ...(mode === 'dark' && {
-                '--ag-background-color': '#353b39',
-                '--ag-header-background-color': '#2e3331',
-                '--ag-row-hover-color': '#38423f',
-                '--ag-selected-row-background-color': '#43514c',
+                '--ag-background-color': '#1e2522',
+                '--ag-header-background-color': '#2a312d',
+                '--ag-row-hover-color': '#364039',
+                '--ag-selected-row-background-color': '#3d4b44',
+                '--ag-border-color': '#404940',
+                '--ag-header-foreground-color': '#e8f4f8',
               }),
-            }
-      }
+              ...(mode === 'light' && {
+                '--ag-background-color': '#ffffff',
+                '--ag-header-background-color': '#f8fafc',
+                '--ag-row-hover-color': '#f1f5f9',
+                '--ag-selected-row-background-color': '#e2e8f0',
+                '--ag-border-color': '#e2e8f0',
+                '--ag-header-foreground-color': '#334155',
+              }),
+            }),
+      }}
     >
       <AgGridReact
         ref={gridRef}
@@ -177,10 +219,18 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
           sortable: true,
           filter: true,
           flex: 1,
+          headerClass: 'custom-header',
+          cellStyle: {
+            display: 'flex',
+            alignItems: 'center',
+            fontWeight: 500,
+          },
         }}
         theme="legacy"
         rowSelection={rowSelection}
         onRowSelected={handleSelection}
+        headerHeight={isSmallScreen ? 44 : 56}
+        rowHeight={isSmallScreen ? 48 : 60}
       />
     </Box>
   );

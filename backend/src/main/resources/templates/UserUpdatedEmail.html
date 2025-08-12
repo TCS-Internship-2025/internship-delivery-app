@@ -20,6 +20,10 @@
 <div class="container">
     <h2 th:text="'Dear ' +  ${newName}">Dear User!</h2>
     <p>Your user profile was successfully updated</p>
+
+    <div th:if="${isPasswordChanged}">
+        <strong>Password Changed:</strong> Your password has been successfully updated.
+    </div>
     <h3>Previous Profile:</h3>
     <h4>Name:</h4>
     <p th:text="${oldName}">default</p>

@@ -4,7 +4,6 @@ import { useLoginForm } from '../hooks/useLoginForm';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -24,7 +23,7 @@ export const LoginForm = ({ onRegisterClick, onForgotPasswordClick }: LoginFormP
   const {
     control,
     handleSubmit,
-    formState: { isValid, errors },
+    formState: { isValid },
   } = form;
 
   const togglePasswordVisibility = () => {
@@ -41,12 +40,6 @@ export const LoginForm = ({ onRegisterClick, onForgotPasswordClick }: LoginFormP
         }}
         sx={{ mt: 2 }}
       >
-        {errors.root && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {errors.root.message}
-          </Alert>
-        )}
-
         <Controller
           name="email"
           control={control}

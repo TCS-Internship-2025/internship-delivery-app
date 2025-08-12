@@ -1,12 +1,10 @@
 package com.tcs.dhv.controller;
 
 
+import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.dto.StatusUpdateDto;
 import com.tcs.dhv.service.ParcelService;
 import com.tcs.dhv.validation.TrackingCode;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +28,13 @@ public class PublicParcelsController {
     private final ParcelService parcelService;
 
     @PostMapping("/{trackingCode}/status")
-    public ResponseEntity<?> updateParcelStatus(
-            @PathVariable @TrackingCode @NotNull String trackingCode,
-            @RequestBody StatusUpdateDto  statusUpdateDto
+    public ResponseEntity<ParcelDto> updateParcelStatus(
+        @PathVariable @TrackingCode @NotNull String trackingCode,
+        @RequestBody StatusUpdateDto  statusUpdateDto
     ) {
         log.info("Incoming status update request for: {}", trackingCode);
 
-        parcelService.updateParcelStatus(trackingCode, statusUpdateDto);
-        return ResponseEntity.ok().build();
+        final var updatedParcel = parcelService.updateParcelStatus(trackingCode, statusUpdateDto);
+        return ResponseEntity.ok(updatedParcel);
     }
 }
