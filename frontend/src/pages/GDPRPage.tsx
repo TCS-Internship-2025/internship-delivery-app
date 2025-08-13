@@ -219,7 +219,7 @@ const GDPRPage: React.FC = (): React.ReactElement => {
   return (
     <Box sx={containerSx}>
       <Box sx={maxWidthContainerSx}>
-        {/* Header */}
+    
         <Box sx={headerSx}>
           <SecurityIcon color="primary" sx={headerIconStyle} />
           <Typography variant="h2" sx={{ mb: 2, fontWeight: 700, letterSpacing: 2 }}>
@@ -234,7 +234,7 @@ const GDPRPage: React.FC = (): React.ReactElement => {
           </Typography>
         </Box>
 
-        {/* Data We Collect */}
+        
         <Paper elevation={2} sx={paperSx}>
           <Typography variant="h4" sx={{ mb: 3, fontWeight: 600, textAlign: 'center' }}>
             What Data We Collect
@@ -264,7 +264,7 @@ const GDPRPage: React.FC = (): React.ReactElement => {
           </Box>
         </Paper>
 
-        {/* Your Rights */}
+   
         <Paper elevation={2} sx={paperSx}>
           <Typography variant="h4" sx={{ mb: 3, fontWeight: 600, textAlign: 'center' }}>
             Your GDPR Rights
@@ -288,7 +288,7 @@ const GDPRPage: React.FC = (): React.ReactElement => {
           </Box>
         </Paper>
 
-        {/* Legal Basis */}
+   
         <Paper elevation={2} sx={paperSx}>
           <Typography variant="h4" sx={{ mb: 3, fontWeight: 600, textAlign: 'center' }}>
             Legal Basis for Processing
@@ -330,7 +330,7 @@ const GDPRPage: React.FC = (): React.ReactElement => {
             )}
           </Box>
         </Paper>
-        {/* Contact DPO */}
+     
         <Paper elevation={2} sx={contactPaperSx}>
           <EmailIcon sx={dpoIconStyle} />
           <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>
@@ -359,7 +359,7 @@ const GDPRPage: React.FC = (): React.ReactElement => {
           </Box>
         </Paper>
 
-        {/* Footer */}
+        
         <Box sx={footerSx}>
           <Typography variant="body2" color="text.secondary">
             Last updated: {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })} • SwiftParcel GDPR
