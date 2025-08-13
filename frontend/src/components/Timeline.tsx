@@ -60,9 +60,9 @@ export default function TimelineComponent({ timeline }: { timeline: TimelineData
         <TimelineItem key={event.id}>
           <TimelineSeparator>
             <TimelineIcon status={event.status} />
-            {(event.status !== PARCEL_STATUS.DELIVERED ||
-              event.status !== PARCEL_STATUS.CANCELLED ||
-              event.status !== PARCEL_STATUS.RETURNED_TO_SENDER) && <TimelineConnector />}
+            {event.status !== PARCEL_STATUS.DELIVERED &&
+              event.status !== PARCEL_STATUS.CANCELLED &&
+              event.status !== PARCEL_STATUS.RETURNED_TO_SENDER && <TimelineConnector />}
           </TimelineSeparator>
           <TimelineContent variant="subtitle2" fontSize={12}>
             {event.description}
