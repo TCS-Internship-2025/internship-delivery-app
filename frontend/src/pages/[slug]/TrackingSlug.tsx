@@ -58,8 +58,6 @@ function TrackingSlug() {
     if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return PARCEL_STATUS.IN_TRANSIT.replace('_', ' ');
     if (trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY)
       return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
-    if (trackingData?.currentStatus === PARCEL_STATUS.DELIVERY_ATTEMPTED)
-      return PARCEL_STATUS.DELIVERY_ATTEMPTED.replace(/_/g, ' ');
     return null;
   };
   const uniqueTimelineEvents = timelineData?.filter(
@@ -161,9 +159,8 @@ function TrackingSlug() {
                 <Box paddingTop={1} alignItems={'center'} display={'flex'} gap={2}>
                   {uniqueTimelineEvents?.map((event) => {
                     if (
-                      (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY ||
-                        event.status === PARCEL_STATUS.DELIVERY_ATTEMPTED) &&
-                      uniqueTimelineEvents.length !== 5
+                      event.status === PARCEL_STATUS.OUT_FOR_DELIVERY ||
+                      event.status === PARCEL_STATUS.DELIVERY_ATTEMPTED
                     ) {
                       return (
                         <Box display="flex" alignItems="center" width="25%" key={event.id} gap={1}>
@@ -195,7 +192,8 @@ function TrackingSlug() {
                     return null;
                   })}
 
-                  {findNextStatus() !== null &&
+                  {trackingData?.currentStatus !== PARCEL_STATUS.DELIVERY_ATTEMPTED &&
+                    findNextStatus() !== null &&
                     trackingData?.currentStatus !== PARCEL_STATUS.RETURNED_TO_SENDER &&
                     trackingData?.currentStatus !== PARCEL_STATUS.CANCELLED && (
                       <Box display="flex" alignItems="center" width="25%" gap={1}>
