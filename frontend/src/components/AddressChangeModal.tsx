@@ -1,12 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { ADDRESS_CHANGE_DEFAULT_VALUES, DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum } from '@/constants';
+import { ADDRESS_CHANGE_DEFAULT_VALUES, DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum, PARCEL_STATUS } from '@/constants';
 import { enqueueSnackbar } from 'notistack';
 
 import { useAddressChangeForm } from '@/hooks/useAddressChangeForm';
 import { useFormContext } from '@/contexts/FormContext';
 
-import { useUpdateParcelAddress } from '@/apis/parcel';
-import { type ParcelData } from '@/apis/parcelGet';
+import { useUpdateParcelAddress, type ParcelData } from '@/apis/parcel';
 
 import CloseIcon from '@mui/icons-material/Close';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
@@ -15,6 +14,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { SectionFields } from '@/components/FormSectionFields';
@@ -40,9 +40,12 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
 
   const { mutate, status: addressStatus } = useUpdateParcelAddress();
 
-  const parcelId = parcelData?.id;
+  const addressChangeCondition =
+    parcelData?.currentStatus !== PARCEL_STATUS.CREATED &&
+    parcelData?.currentStatus !== PARCEL_STATUS.PICKED_UP &&
+    parcelData?.currentStatus !== PARCEL_STATUS.IN_TRANSIT;
 
-  console.log('data:', parcelData);
+  const parcelId = parcelData?.id;
 
   const {
     control,
@@ -89,7 +92,6 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
       deliveryType: DELIVERY_TYPE_NAME_CONVERTER[dT],
       requestReason,
     };
-    console.log('form Submitted with this data: ', requestData);
 
     mutate(
       { data: requestData, id: parcelId },
@@ -119,7 +121,18 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
 
   return (
     <Box mr={{ xs: 1.5, md: 3 }} mt={{ xs: 1.5, md: 3 }} sx={{ float: 'right' }}>
-      <Button onClick={handleOpen}>Change address</Button>
+      <Tooltip title={addressChangeCondition ? 'You cannot change address at this status' : undefined} arrow>
+        <span style={{ display: 'inline-flex' }}>
+          <Button
+            sx={{ fontSize: 20, borderRadius: 4 }}
+            variant="contained"
+            disabled={addressChangeCondition}
+            onClick={handleOpen}
+          >
+            Change address
+          </Button>
+        </span>
+      </Tooltip>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

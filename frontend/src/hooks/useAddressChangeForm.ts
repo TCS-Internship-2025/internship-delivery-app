@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useFormContext } from '@/contexts/FormContext';
 
-import type { ParcelData } from '@/apis/parcelGet';
+import type { ParcelData } from '@/apis/parcel';
 import type { PickupPoint } from '@/apis/pickupPoints';
 
 import { addressChangeSchema, type AddressChangeSchema } from '@/utils/parcelComposition';
