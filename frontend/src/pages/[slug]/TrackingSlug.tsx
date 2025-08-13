@@ -42,7 +42,12 @@ function TrackingSlug() {
     if (trackingData?.currentStatus === null) return 1.5;
     if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 26.5;
     if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return 52;
-    if (trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY) return 77.5;
+    if (
+      trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY ||
+      trackingData?.currentStatus === PARCEL_STATUS.DELIVERY_ATTEMPTED
+    )
+      return 77.5;
+
     if (trackingData?.currentStatus === PARCEL_STATUS.DELIVERED) return 100;
     return 0;
   };
@@ -53,6 +58,8 @@ function TrackingSlug() {
     if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return PARCEL_STATUS.IN_TRANSIT.replace('_', ' ');
     if (trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY)
       return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
+    if (trackingData?.currentStatus === PARCEL_STATUS.DELIVERY_ATTEMPTED)
+      return PARCEL_STATUS.DELIVERY_ATTEMPTED.replace(/_/g, ' ');
     return null;
   };
   const uniqueTimelineEvents = timelineData?.filter(
@@ -153,7 +160,11 @@ function TrackingSlug() {
               {!isSmallScreen ? (
                 <Box paddingTop={1} alignItems={'center'} display={'flex'} gap={2}>
                   {uniqueTimelineEvents?.map((event) => {
-                    if (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY && uniqueTimelineEvents.length !== 5) {
+                    if (
+                      (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY ||
+                        event.status === PARCEL_STATUS.DELIVERY_ATTEMPTED) &&
+                      uniqueTimelineEvents.length !== 5
+                    ) {
                       return (
                         <Box display="flex" alignItems="center" width="25%" key={event.id} gap={1}>
                           <CircularProgress size={12} />
