@@ -162,7 +162,8 @@ function TrackingSlug() {
                 <Box paddingTop={1} alignItems={'center'} display={'flex'} gap={2}>
                   {uniqueTimelineEvents?.map((event) => {
                     if (
-                      event.status === PARCEL_STATUS.OUT_FOR_DELIVERY ||
+                      (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY &&
+                        trackingData?.currentStatus !== PARCEL_STATUS.DELIVERED) ||
                       event.status === PARCEL_STATUS.DELIVERY_ATTEMPTED
                     ) {
                       return (
@@ -181,7 +182,8 @@ function TrackingSlug() {
                       );
                     }
                     if (
-                      event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY ||
+                      (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY &&
+                        trackingData?.currentStatus === PARCEL_STATUS.DELIVERED) ||
                       event.status !== PARCEL_STATUS.DELIVERY_ATTEMPTED
                     ) {
                       return (
