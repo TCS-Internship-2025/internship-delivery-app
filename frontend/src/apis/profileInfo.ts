@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { enqueueSnackbar } from 'notistack';
 import { z } from 'zod';
 
+import { useAuth } from '@/contexts/AuthContext';
+
 import { httpService } from '@/services/httpService';
 
 import type { ChangeAddressFormSchema, ChangeProfileSchema } from '@/utils/changeDataComposition';
@@ -35,9 +37,11 @@ export async function fetchProfileInfo(): Promise<Profile> {
 }
 
 export function useGetProfileInfo() {
+  const { isAuthenticated } = useAuth();
   return useQuery<Profile>({
     queryKey: ['profileInfo'],
     queryFn: () => fetchProfileInfo(),
+    enabled: isAuthenticated,
   });
 }
 const response = z.object({
