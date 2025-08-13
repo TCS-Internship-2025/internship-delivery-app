@@ -10,6 +10,7 @@ import { useTimeline, useTracking } from '@/apis/tracking';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EventIcon from '@mui/icons-material/Event';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import UpdateIcon from '@mui/icons-material/Update';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -33,18 +34,36 @@ function TrackingSlug() {
   const capitalizeFirstLetter = (input: string) => {
     return input.charAt(0).toUpperCase() + input.toLowerCase().slice(1);
   };
-  const timeLineValues = [1.5, 26.5, 52, 77.5, 100];
   const [index, setIndex] = useState<number>(0);
   const handleOnClick = (index: number) => {
     setIndex(index);
   };
+  const getTimeLineValues = () => {
+    if (trackingData?.currentStatus === null) return 1.5;
+    if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 1.5;
+    if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return 26.5;
+    if (trackingData?.currentStatus === PARCEL_STATUS.IN_TRANSIT) return 52;
+    if (
+      trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY ||
+      trackingData?.currentStatus === PARCEL_STATUS.DELIVERY_ATTEMPTED
+    )
+      return 77.5;
+
+    if (trackingData?.currentStatus === PARCEL_STATUS.DELIVERED) return 100;
+    return 0;
+  };
+
   const findNextStatus = () => {
-    if (timelineData?.length === 0) return 'CREATING';
-    if (timelineData?.length === 1) return 'WAITING FOR PICKUP';
-    if (timelineData?.length === 2) return PARCEL_STATUS.IN_TRANSIT.replace('_', ' ');
-    if (timelineData?.length === 3) return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
+    if (trackingData?.currentStatus === null) return 'CREATING';
+    if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 'WAITING FOR PICKUP';
+    if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return PARCEL_STATUS.IN_TRANSIT.replace('_', ' ');
+    if (trackingData?.currentStatus === PARCEL_STATUS.IN_TRANSIT)
+      return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
     return null;
   };
+  const uniqueTimelineEvents = timelineData?.filter(
+    (event, index, self) => index === self.findIndex((e) => e.status === event.status) // keep first occurrence
+  );
   const isSmallScreen = useSmallScreen();
 
   return (
@@ -96,7 +115,9 @@ function TrackingSlug() {
                   <LocalShippingIcon color="primary" />
                   <Typography fontSize={isSmallScreen ? 15 : 20}>Current Status:</Typography>
                   <Typography fontSize={isSmallScreen ? 15 : 20} fontWeight={'bold'}>
-                    {trackingData?.currentStatus ? capitalizeFirstLetter(trackingData.currentStatus) : 'Unknown'}
+                    {trackingData?.currentStatus
+                      ? capitalizeFirstLetter(trackingData.currentStatus).replace(/_/g, ' ')
+                      : 'Unknown'}
                   </Typography>
                 </Stack>
                 {trackingData?.estimatedDelivery && (
@@ -122,34 +143,69 @@ function TrackingSlug() {
             </Box>
 
             <Box>
-              <LinearProgress variant="determinate" value={timeLineValues[0]} sx={{ borderRadius: 2, height: 8 }} />
+              <LinearProgress
+                variant={
+                  trackingData?.currentStatus === PARCEL_STATUS.CANCELLED ||
+                  trackingData?.currentStatus === PARCEL_STATUS.RETURNED_TO_SENDER
+                    ? 'indeterminate'
+                    : 'determinate'
+                }
+                color={
+                  trackingData?.currentStatus === PARCEL_STATUS.CANCELLED ||
+                  trackingData?.currentStatus === PARCEL_STATUS.RETURNED_TO_SENDER
+                    ? 'error'
+                    : 'primary'
+                }
+                value={getTimeLineValues()}
+              />
               {!isSmallScreen ? (
                 <Box paddingTop={1} alignItems={'center'} display={'flex'} gap={2}>
-                  {timelineData?.map((event) => {
-                    if (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY && timelineData.length !== 5) {
+                  {uniqueTimelineEvents?.map((event) => {
+                    if (
+                      (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY &&
+                        trackingData?.currentStatus !== PARCEL_STATUS.DELIVERED) ||
+                      event.status === PARCEL_STATUS.DELIVERY_ATTEMPTED
+                    ) {
                       return (
-                        <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id} gap={1}>
+                        <Box display="flex" alignItems="center" width="25%" key={event.id} gap={1}>
                           <CircularProgress size={12} />
                           <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
                         </Box>
                       );
                     }
-                    if (event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY) {
+                    if (event.status === PARCEL_STATUS.CANCELLED || event.status === PARCEL_STATUS.RETURNED_TO_SENDER) {
                       return (
-                        <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id}>
+                        <Box display="flex" alignItems="center" width="25%" key={event.id}>
+                          <RemoveCircleIcon sx={{ height: 12 }} />
+                          <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
+                        </Box>
+                      );
+                    }
+                    if (
+                      (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY &&
+                        trackingData?.currentStatus === PARCEL_STATUS.DELIVERED) ||
+                      event.status !== PARCEL_STATUS.DELIVERY_ATTEMPTED
+                    ) {
+                      return (
+                        <Box display="flex" alignItems="center" width="25%" key={event.id}>
                           <CheckCircleIcon sx={{ height: 12 }} />
                           <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
                         </Box>
                       );
                     }
+
                     return null;
                   })}
-                  {findNextStatus() !== null && (
-                    <Box display={'flex'} alignItems={'center'} width={'25%'} gap={1}>
-                      <CircularProgress size={12} />
-                      <Typography fontSize={12}>{findNextStatus()}</Typography>
-                    </Box>
-                  )}
+
+                  {trackingData?.currentStatus !== PARCEL_STATUS.DELIVERY_ATTEMPTED &&
+                    findNextStatus() !== null &&
+                    trackingData?.currentStatus !== PARCEL_STATUS.RETURNED_TO_SENDER &&
+                    trackingData?.currentStatus !== PARCEL_STATUS.CANCELLED && (
+                      <Box display="flex" alignItems="center" width="25%" gap={1}>
+                        <CircularProgress size={12} />
+                        <Typography fontSize={12}>{findNextStatus()}</Typography>
+                      </Box>
+                    )}
                 </Box>
               ) : (
                 <Box display={'flex'} justifyContent={'center'} alignItems={'center'} paddingTop={1}>
@@ -183,27 +239,10 @@ function TrackingSlug() {
                   </Button>
                 </span>
               </Tooltip>
-
-              <Tooltip title={!isAuthenticated ? 'Login to use this feature' : undefined} arrow>
-                <span style={{ display: 'inline-flex' }}>
-                  <Button
-                    size={isSmallScreen ? 'small' : 'medium'}
-                    sx={{
-                      fontSize: isSmallScreen ? 12 : undefined,
-                      paddingY: isSmallScreen ? 0.5 : undefined,
-                    }}
-                    variant={index === 2 ? 'contained' : 'outlined'}
-                    disabled={trackingData?.recipient.email === null || (timelineData && timelineData?.length > 3)}
-                    onClick={() => handleOnClick(2)}
-                  >
-                    Change Address
-                  </Button>
-                </span>
-              </Tooltip>
             </Box>
             {index === 0 && timelineData && <TimelineComponent timeline={timelineData} />}
             {index === 1 && trackingData && <TrackingDetails trackingData={trackingData} />}
-            <Faq categories={['tracking']} />
+            <Faq categories={['tracking']} id={'faq'} />
           </Box>
         </Box>
       </QueryStates>

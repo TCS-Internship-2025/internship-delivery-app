@@ -9,6 +9,7 @@ import LocalPostOfficeIcon from '@mui/icons-material/LocalPostOffice';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import Timeline from '@mui/lab/Timeline';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
@@ -32,6 +33,15 @@ const TimelineIcon = ({ status }: { status: string }) => {
   if (status === PARCEL_STATUS.OUT_FOR_DELIVERY) {
     return <LocalShippingIcon />;
   }
+  if (status === PARCEL_STATUS.CANCELLED) {
+    return <RemoveCircleIcon />;
+  }
+  if (status === PARCEL_STATUS.DELIVERY_ATTEMPTED) {
+    return <LocalShippingIcon />;
+  }
+  if (status === PARCEL_STATUS.RETURNED_TO_SENDER) {
+    return <RemoveCircleIcon />;
+  }
 };
 export default function TimelineComponent({ timeline }: { timeline: TimelineData }) {
   const isSmallScreen = useSmallScreen();
@@ -50,7 +60,9 @@ export default function TimelineComponent({ timeline }: { timeline: TimelineData
         <TimelineItem key={event.id}>
           <TimelineSeparator>
             <TimelineIcon status={event.status} />
-            {event.status !== PARCEL_STATUS.DELIVERED && <TimelineConnector />}
+            {(event.status !== PARCEL_STATUS.DELIVERED ||
+              event.status !== PARCEL_STATUS.CANCELLED ||
+              event.status !== PARCEL_STATUS.RETURNED_TO_SENDER) && <TimelineConnector />}
           </TimelineSeparator>
           <TimelineContent variant="subtitle2" fontSize={12}>
             {event.description}
