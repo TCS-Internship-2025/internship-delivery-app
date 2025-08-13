@@ -47,7 +47,7 @@ export const ProfileSidebar = ({
         flexDirection: 'column',
       }}
     >
-      {/* Title */}
+  
       <Typography
         variant="h6"
         mb={2}
@@ -65,7 +65,7 @@ export const ProfileSidebar = ({
         )}
       </Typography>
 
-      {/* Pages list */}
+      
       <List sx={{ flexGrow: 1 }}>
         {pages.map((page) => (
           <ListItemButton key={page} selected={selected === page} onClick={() => selectPage(page)}>
@@ -79,7 +79,7 @@ export const ProfileSidebar = ({
         ))}
       </List>
 
-      {/* Button at the bottom */}
+ 
       <Box
         sx={{
           mt: 'auto',
