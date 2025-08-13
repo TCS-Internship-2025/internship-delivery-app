@@ -4,11 +4,14 @@ import com.tcs.dhv.domain.dto.ParcelDto;
 import com.tcs.dhv.domain.dto.StatusUpdateDto;
 import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
+import com.tcs.dhv.domain.event.ParcelStatusUpdatedEvent;
 import com.tcs.dhv.repository.ParcelRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -22,7 +25,7 @@ public class ParcelCacheService {
 
     private final ParcelRepository parcelRepository;
     private final ParcelStatusHistoryService parcelStatusHistoryService;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher applicationEventPublisher;
     static final Map<ParcelStatus, Set<ParcelStatus>> STATUS_TRANSITIONS = Map.of(
         ParcelStatus.CREATED, Set.of(ParcelStatus.PICKED_UP),
         ParcelStatus.PICKED_UP, Set.of(ParcelStatus.IN_TRANSIT),
@@ -36,42 +39,31 @@ public class ParcelCacheService {
 
     @Transactional
     @CachePut(value = "parcels", key = "#userId.toString().concat('-').concat(#parcelId.toString())", unless = "#result == null")
-    public ParcelDto updateStatusAndCache(UUID parcelId, UUID userId, Parcel parcel, StatusUpdateDto statusDto) {
+    public ParcelDto updateStatusAndCache(UUID parcelId, UUID userId, final Parcel parcel, final StatusUpdateDto statusDto) {
         if (!isValidStatusFlow(parcel, statusDto)) {
-            throw new IllegalArgumentException("Invalid status change from "
-                + parcel.getCurrentStatus() + " to " + statusDto.status());
+            throw new IllegalArgumentException("Invalid status change from " + parcel.getCurrentStatus() + " to " + statusDto.status());
         }
 
         log.info("Parcel status allowed to update");
 
+        final var updatedRows = parcelRepository.updateStatusByTrackingCode(parcel.getTrackingCode(), statusDto.status());
+        if (updatedRows == 0) {
+            throw new EntityNotFoundException("Parcel not found with tracking code: " + parcel.getTrackingCode());
+        }
+        log.info("Parcel status updated to {} for tracking code: {}", statusDto.status(), parcel.getTrackingCode());
+
         parcel.setCurrentStatus(statusDto.status());
 
-        final var savedParcel = parcelRepository.saveAndFlush(parcel);
-        log.info("Parcel status updated: {}", parcel.getCurrentStatus());
+        parcelStatusHistoryService.addStatusHistory(parcel.getId(), "Parcel Status Changed to : " + statusDto.status());
+        log.info("A new parcel status history added for id {}, new status {}", parcel.getId(), parcel.getCurrentStatus());
 
-        final var description = "Parcel Status Changed to : " + statusDto.status();
+        applicationEventPublisher.publishEvent(new ParcelStatusUpdatedEvent(parcel));
 
-        parcelStatusHistoryService.addStatusHistory(savedParcel.getId(), description);
-        log.info("A new parcel status history added for id {}, new status {}", savedParcel.getId(), savedParcel.getCurrentStatus());
-
-        if(savedParcel.getCurrentStatus() == ParcelStatus.DELIVERED){
-            emailService.sendDeliveryCompleteEmail(
-                savedParcel.getRecipient().getEmail(),
-                savedParcel.getRecipient().getName(),
-                savedParcel.getTrackingCode());
-        } else {
-            emailService.sendParcelStatusChangeNotification(savedParcel.getSender().getEmail(),
-                savedParcel.getRecipient().getEmail(),
-                savedParcel.getRecipient().getName(),
-                savedParcel.getCurrentStatus(),
-                savedParcel.getTrackingCode());
-        }
-
-        return ParcelDto.fromEntity(savedParcel);
+        return ParcelDto.fromEntity(parcel);
     }
 
 
-    private boolean isValidStatusFlow(Parcel parcel, StatusUpdateDto statusDto){
+    private boolean isValidStatusFlow(final Parcel parcel, final StatusUpdateDto statusDto){
         final var allowedStatus = STATUS_TRANSITIONS.get(parcel.getCurrentStatus());
         return allowedStatus.contains(statusDto.status());
     }
