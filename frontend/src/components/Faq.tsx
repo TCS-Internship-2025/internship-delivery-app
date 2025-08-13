@@ -49,7 +49,7 @@ const faqCategories: FAQCategories = {
     {
       question: 'Can I change my delivery address?',
       answer:
-        'Yes, you can change your address before the parcel is dispatched. You can access this feature when logged in, especially while tracking your parcel.',
+        'Yes, you can change your address before the parcel is dispatched. You can access this feature when logged in, especially in my parcels.',
     },
   ],
 };

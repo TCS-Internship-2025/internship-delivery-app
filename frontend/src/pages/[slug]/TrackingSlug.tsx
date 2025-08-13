@@ -10,6 +10,7 @@ import { useTimeline, useTracking } from '@/apis/tracking';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EventIcon from '@mui/icons-material/Event';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import UpdateIcon from '@mui/icons-material/Update';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -39,10 +40,11 @@ function TrackingSlug() {
     setIndex(index);
   };
   const findNextStatus = () => {
-    if (timelineData?.length === 0) return 'CREATING';
-    if (timelineData?.length === 1) return 'WAITING FOR PICKUP';
-    if (timelineData?.length === 2) return PARCEL_STATUS.IN_TRANSIT.replace('_', ' ');
-    if (timelineData?.length === 3) return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
+    if (trackingData?.currentStatus === null) return 'CREATING';
+    if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 'WAITING FOR PICKUP';
+    if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return PARCEL_STATUS.IN_TRANSIT.replace('_', ' ');
+    if (trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY)
+      return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
     return null;
   };
   const isSmallScreen = useSmallScreen();
@@ -134,7 +136,16 @@ function TrackingSlug() {
                         </Box>
                       );
                     }
-                    if (event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY) {
+                    if (event.status === PARCEL_STATUS.CANCELLED || event.status === PARCEL_STATUS.RETURNED_TO_SENDER) {
+                      <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id}>
+                        <RemoveCircleIcon sx={{ height: 12 }} />
+                        <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
+                      </Box>;
+                    }
+                    if (
+                      event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY ||
+                      event.status !== PARCEL_STATUS.DELIVERY_ATTEMPTED
+                    ) {
                       return (
                         <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id}>
                           <CheckCircleIcon sx={{ height: 12 }} />
@@ -142,6 +153,7 @@ function TrackingSlug() {
                         </Box>
                       );
                     }
+
                     return null;
                   })}
                   {findNextStatus() !== null && (
@@ -203,7 +215,7 @@ function TrackingSlug() {
             </Box>
             {index === 0 && timelineData && <TimelineComponent timeline={timelineData} />}
             {index === 1 && trackingData && <TrackingDetails trackingData={trackingData} />}
-            <Faq categories={['tracking']} />
+            <Faq categories={['tracking']} id={'faq'} />
           </Box>
         </Box>
       </QueryStates>
