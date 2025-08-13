@@ -56,7 +56,7 @@ function TrackingSlug() {
     if (trackingData?.currentStatus === null) return 'CREATING';
     if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 'WAITING FOR PICKUP';
     if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return PARCEL_STATUS.IN_TRANSIT.replace('_', ' ');
-    if (trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY)
+    if (trackingData?.currentStatus === PARCEL_STATUS.IN_TRANSIT)
       return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
     return null;
   };
@@ -114,7 +114,9 @@ function TrackingSlug() {
                   <LocalShippingIcon color="primary" />
                   <Typography fontSize={isSmallScreen ? 15 : 20}>Current Status:</Typography>
                   <Typography fontSize={isSmallScreen ? 15 : 20} fontWeight={'bold'}>
-                    {trackingData?.currentStatus ? capitalizeFirstLetter(trackingData.currentStatus) : 'Unknown'}
+                    {trackingData?.currentStatus
+                      ? capitalizeFirstLetter(trackingData.currentStatus).replace(/_/g, ' ')
+                      : 'Unknown'}
                   </Typography>
                 </Stack>
                 {trackingData?.estimatedDelivery && (
