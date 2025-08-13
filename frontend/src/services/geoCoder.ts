@@ -1,4 +1,4 @@
-import type { AddressData } from '@/apis/parcelGet';
+import type { AddressNullData } from '@/apis/parcel';
 
 interface GeocodingResponse {
   lat: number;
@@ -10,7 +10,7 @@ interface NominatimResult {
   lon: string;
 }
 
-export async function getLonLat(address: AddressData): Promise<GeocodingResponse | null> {
+export async function getLonLat(address: AddressNullData): Promise<GeocodingResponse | null> {
   try {
     if (address.latitude !== null && address.longitude !== null) {
       return {

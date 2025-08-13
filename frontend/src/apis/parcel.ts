@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod/v4';
 
 import { useFormContext } from '@/contexts/FormContext';
@@ -124,3 +124,49 @@ export const useUpdateParcelAddress = () => {
     },
   });
 };
+
+export const addressNullSchema = addressOnlySchema.extend({
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
+});
+
+export const parcelSchema = createParcelRequestSchema.extend({
+  id: z.string(),
+  recipient: z.object({
+    ...recipientFormSchema.shape,
+    birthDate: z.string().nullable(),
+  }),
+  address: addressNullSchema,
+  trackingCode: z.string(),
+  currentStatus: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const parcelListSchema = z.array(parcelSchema);
+export type AddressNullData = z.infer<typeof addressNullSchema>;
+export type ParcelData = z.infer<typeof parcelSchema>;
+export type ParcelListData = z.infer<typeof parcelListSchema>;
+
+export async function fetchAllParcelData(): Promise<ParcelListData> {
+  return await httpService.get('/parcels', parcelListSchema);
+}
+
+export function useGetAllParcels() {
+  return useQuery<ParcelListData>({
+    queryKey: ['parcels'],
+    queryFn: fetchAllParcelData,
+  });
+}
+
+export async function fetchParcelData(parcelId: string | undefined): Promise<ParcelData> {
+  return await httpService.get(`/parcels/${parcelId}`, parcelSchema);
+}
+
+export function useGetParcelById(id: string | undefined) {
+  return useQuery<ParcelData>({
+    queryKey: ['parcels', id],
+    queryFn: () => fetchParcelData(id),
+    enabled: !!id,
+  });
+}

@@ -5,8 +5,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useAddressChangeForm } from '@/hooks/useAddressChangeForm';
 import { useFormContext } from '@/contexts/FormContext';
 
-import { useUpdateParcelAddress } from '@/apis/parcel';
-import { type ParcelData } from '@/apis/parcelGet';
+import { useUpdateParcelAddress, type ParcelData } from '@/apis/parcel';
 
 import CloseIcon from '@mui/icons-material/Close';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';

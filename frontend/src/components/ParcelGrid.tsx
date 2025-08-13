@@ -11,7 +11,7 @@ import type { ICellRendererParams, RowSelectionOptions } from 'ag-grid-community
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useTheme } from '@/providers/ThemeProvider';
 
-import type { ParcelListData } from '@/apis/parcelGet';
+import type { ParcelListData } from '@/apis/parcel';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';

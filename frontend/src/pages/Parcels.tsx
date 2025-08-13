@@ -1,4 +1,4 @@
-import { useGetAllParcels } from '@/apis/parcelGet';
+import { useGetAllParcels } from '@/apis/parcel';
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';

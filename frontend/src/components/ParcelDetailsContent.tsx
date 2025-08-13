@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FormProvider } from '@/providers/FormProvider.tsx';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
 
-import type { ParcelData } from '@/apis/parcelGet.ts';
+import type { ParcelData } from '@/apis/parcel.ts';
 import { getLonLat } from '@/services/geoCoder.ts';
 
 import Box from '@mui/material/Box';
