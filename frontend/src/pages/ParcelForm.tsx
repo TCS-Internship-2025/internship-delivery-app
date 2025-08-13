@@ -67,7 +67,6 @@ export const ParcelForm = () => {
       deliveryType: DELIVERY_TYPE_NAME_CONVERTER[deliveryType],
     };
 
-    console.log('Form submitted with data:', submittedData);
     mutate(submittedData, {
       onSuccess: (data) => {
         reset({ ...PARCEL_FORM_DEFAULT_VALUES });

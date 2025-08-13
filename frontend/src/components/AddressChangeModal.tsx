@@ -47,8 +47,6 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
 
   const parcelId = parcelData?.id;
 
-  console.log('data:', parcelData);
-
   const {
     control,
     handleSubmit,
@@ -94,7 +92,6 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
       deliveryType: DELIVERY_TYPE_NAME_CONVERTER[dT],
       requestReason,
     };
-    console.log('form Submitted with this data: ', requestData);
 
     mutate(
       { data: requestData, id: parcelId },

@@ -24,7 +24,6 @@ export const useParcelForm = () => {
 
   const handleReset = useCallback(
     (deliveryType: DeliveryEnum, paymentType: PaymentEnum | '') => {
-      console.log('resetting');
       resetParcelForm({ deliveryType, paymentType });
       reset({
         ...PARCEL_FORM_DEFAULT_VALUES,

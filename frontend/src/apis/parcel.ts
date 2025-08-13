@@ -83,8 +83,7 @@ export const useCreateParcel = () => {
 
   return useMutation({
     mutationFn: (data: CreateParcelRequestSchema) => createParcel(data),
-    onSuccess: async (data) => {
-      console.log('Parcel created successfully:', data);
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['parcels'], type: 'all' });
       formContext.resetForm();
     },
@@ -111,8 +110,7 @@ export const useUpdateParcelAddress = () => {
 
   return useMutation({
     mutationFn: ({ data, id }: mutationProps) => updateParcelAddress(data, id),
-    onSuccess: async (data, variables) => {
-      console.log('Parcel address updated successfully:', data);
+    onSuccess: async (_data, variables) => {
       let queryKey = ['parcels', variables.id];
       if (variables.slug) {
         queryKey = ['parcels', variables.id, 'tracking', variables.slug];
