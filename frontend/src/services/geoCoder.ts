@@ -19,15 +19,9 @@ export async function getLonLat(address: AddressData): Promise<GeocodingResponse
       };
     }
 
-    const addressParts = [
-      address.building,
-      address.apartment,
-      address.line1,
-      address.line2,
-      address.city,
-      address.postalCode,
-      address.country,
-    ].filter((part) => part && part.trim() !== '');
+    const addressParts = [address.line1, address.line2, address.city, address.postalCode, address.country].filter(
+      (part) => part && part.trim() !== ''
+    );
 
     const addressString = addressParts.join(', ');
 
