@@ -8,6 +8,7 @@ import type {
   User,
 } from '@/types/auth';
 import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
+import { enqueueSnackbar } from 'notistack';
 import { z } from 'zod/v4';
 
 import { httpService } from '@/services/httpService';
@@ -196,25 +197,7 @@ export async function resetPasswordWithToken(token: string, newPassword: string)
 }
 
 export async function deleteUser(): Promise<void> {
-  const authData = getStoredAuthData();
-
-  // Use direct fetch for delete since we know it returns empty response (204 No Content)
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'}/users/me`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(authData?.token && { Authorization: `Bearer ${authData.token}` }),
-    },
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Delete user failed: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ''}`
-    );
-  }
-
-  clearAuthData();
+  await httpService.delete('/users/me', z.any(), { operation: 'deleteUser' });
 }
 
 export function useDeleteUser() {
@@ -225,6 +208,7 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
+      enqueueSnackbar('Account Deleted!', { variant: 'success' });
       queryClient.clear();
       void navigate('/login', { replace: true });
     },

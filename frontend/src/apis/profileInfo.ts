@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { useAuth } from '@/contexts/AuthContext';
 
+
 import { httpService } from '@/services/httpService';
 
 import type { ChangeAddressFormSchema, ChangeProfileSchema } from '@/utils/changeDataComposition';
@@ -33,7 +34,7 @@ export const profileSchema = z.object({
 export type Profile = z.infer<typeof profileSchema>;
 
 export async function fetchProfileInfo(): Promise<Profile> {
-  return await httpService.get(`/users/me`, profileSchema);
+  return await httpService.get(`/users/me`, profileSchema, { operation: 'fetchProfile' });
 }
 
 export function useGetProfileInfo() {
