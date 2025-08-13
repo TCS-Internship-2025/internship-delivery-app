@@ -18,6 +18,7 @@ export const ROUTES = {
   VERIFIED: 'verified/:uid/:token',
   PASSWORDRESET: 'password-reset',
   NEWPASSWORD: 'reset-password',
+  FAQ: 'faq',
   APP: 'app',
   RECIPIENT_FORM: 'recipient-form',
   PARCEL_FORM: 'parcel-form',
