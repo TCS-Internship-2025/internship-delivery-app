@@ -1,4 +1,6 @@
-import { useGetAllParcels } from '@/apis/parcelGet';
+import { useSmallScreen } from '@/hooks/useSmallScreen';
+
+import { useGetAllParcels } from '@/apis/parcel';
 
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -8,21 +10,22 @@ import { QueryStates } from '@/components/QueryStates';
 
 export const ParcelPage = () => {
   const { data: allParcelData, status: allParcelStatus } = useGetAllParcels();
+  const isSmallScreen = useSmallScreen();
 
   return (
     <QueryStates state={allParcelStatus} errorTitle="Could not fetch parcels data">
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
-          <Container
-            maxWidth={false}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <ParcelGrid parcels={allParcelData} />
-          </Container>
-        </Box>
+      <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Container
+          maxWidth={false}
+          disableGutters
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+          }}
+        >
+          <ParcelGrid parcels={allParcelData} />
+        </Container>
       </Box>
     </QueryStates>
   );

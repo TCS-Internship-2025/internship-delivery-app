@@ -101,6 +101,12 @@ export async function handleHttpResponse<Z extends z.ZodTypeAny>(response: Respo
           (errorJson as { error: string }).error !== statusText
         ) {
           errorMessage += `\n${(errorJson as { error: string }).error}`;
+        } else if (
+          'message' in errorJson &&
+          typeof (errorJson as { message: unknown }).message === 'string' &&
+          (errorJson as { message: string }).message !== statusText
+        ) {
+          errorMessage += `\n\n • ${(errorJson as { message: string }).message}`;
         }
       }
     } catch {
@@ -114,6 +120,7 @@ export async function handleHttpResponse<Z extends z.ZodTypeAny>(response: Respo
     }
     throw new Error(errorMessage);
   }
+
   /* Handle empty JSON responses (204 No Content) by checking headers and attempting schema validation with empty objects or text fallback.
   Otherwise the frontend displays an error when resending verification email, even though the backend actually sends it.*/
   const contentLength = response.headers.get('content-length');

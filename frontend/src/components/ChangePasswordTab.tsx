@@ -1,4 +1,4 @@
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 
 import { useEditPassword } from '@/apis/profileInfo';
 
@@ -23,51 +23,59 @@ export function ChangePasswordTab() {
       newPassword: '',
       confirmPassword: '',
     },
+    mode: 'onChange',
   });
 
-  const passwordValue = watch('newPassword');
   const { mutateAsync } = useEditPassword(reset);
+
   const onSubmit: SubmitHandler<ChangePasswordFormData> = async (data) => {
     const { currentPassword, newPassword } = data;
     await mutateAsync({ currentPassword, newPassword });
   };
 
+  const newPasswordValue = watch('newPassword');
+  const confirmPasswordValue = watch('confirmPassword');
+
   return (
     <Box
       component="form"
       onSubmit={(e) => {
+        e.preventDefault();
         void handleSubmit(onSubmit)(e);
       }}
+      noValidate
+      sx={{ mt: 2 }}
     >
       <Typography variant="h6" sx={{ mb: 2 }}>
         Change Password
       </Typography>
-      <PasswordField name="currentPassword" label="Old Password" control={control} error={errors.currentPassword} />
-      <PasswordField
+
+      <PasswordField<ChangePasswordFormData>
+        name="currentPassword"
+        label="Old Password"
+        control={control}
+        error={errors.currentPassword}
+        disabled={isSubmitting}
+        value={watch('currentPassword')}
+      />
+
+      <PasswordField<ChangePasswordFormData>
         name="newPassword"
         label="New Password"
         control={control}
         error={errors.newPassword}
+        disabled={isSubmitting}
         showStrengthIndicator
+        value={newPasswordValue}
       />
 
-      <Controller
+      <PasswordField<ChangePasswordFormData>
         name="confirmPassword"
+        label="Confirm Password"
         control={control}
-        rules={{
-          required: 'Confirm password is required',
-          validate: (value) => value === passwordValue || 'Passwords do not match',
-        }}
-        render={({ field }) => (
-          <PasswordField
-            {...field}
-            name="confirmPassword"
-            label="Confirm Password"
-            control={control}
-            error={errors.confirmPassword}
-            autoComplete="new-password"
-          />
-        )}
+        error={errors.confirmPassword}
+        disabled={isSubmitting}
+        value={confirmPasswordValue}
       />
 
       <Button
@@ -77,7 +85,8 @@ export function ChangePasswordTab() {
         disabled={isSubmitting}
         sx={{ width: 'auto', alignSelf: 'left' }}
       >
-        {isSubmitting ? 'Updating...' : 'Change Password'}
+        {' '}
+        {isSubmitting ? 'Updating...' : 'Change Password'}{' '}
       </Button>
     </Box>
   );

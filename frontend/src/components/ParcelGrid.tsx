@@ -11,7 +11,7 @@ import type { ICellRendererParams, RowSelectionOptions } from 'ag-grid-community
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 import { useTheme } from '@/providers/ThemeProvider';
 
-import type { ParcelListData } from '@/apis/parcelGet';
+import type { ParcelListData } from '@/apis/parcel';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -152,7 +152,7 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
     <Box
       className={`ag-theme-quartz${mode === 'dark' ? '-dark' : ''}`}
       width={isSmallScreen ? '95%' : '90%'}
-      height={isSmallScreen ? 600 : 700}
+      height={isSmallScreen ? 520 : 620}
       mt={isSmallScreen ? 3 : 6}
       ml="auto"
       mr="auto"

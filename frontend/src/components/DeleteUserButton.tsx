@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { enqueueSnackbar } from 'notistack';
 
 import { useDeleteUser } from '@/apis/authApi';
 
@@ -45,7 +44,6 @@ export default function DeleteUserButton({
   const handleConfirmDelete = () => {
     if (confirmText === 'DELETE') {
       deleteUserMutation.mutate();
-      enqueueSnackbar('Account Deleted!', { variant: 'info' });
     }
   };
 

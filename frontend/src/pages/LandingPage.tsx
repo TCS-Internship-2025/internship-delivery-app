@@ -70,7 +70,7 @@ export const LandingPage = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: 'background.default',

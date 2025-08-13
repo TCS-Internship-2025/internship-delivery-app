@@ -3,7 +3,7 @@ import { ROUTES } from '@/constants';
 
 import { useSmallScreen } from '@/hooks/useSmallScreen';
 
-import { useGetParcelById } from '@/apis/parcelGet';
+import { useGetParcelById } from '@/apis/parcel';
 
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import Box from '@mui/material/Box';

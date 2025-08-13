@@ -37,7 +37,6 @@ export const FormProvider = ({ children, initialData }: FormProviderProps) => {
         ...persistedData,
       };
 
-      console.log('formProvider: ', updatedParcelForm);
       updateFormData(updatedParcelForm);
     },
     [updateFormData]

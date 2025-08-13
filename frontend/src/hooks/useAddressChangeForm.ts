@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useFormContext } from '@/contexts/FormContext';
 
-import type { ParcelData } from '@/apis/parcelGet';
+import type { ParcelData } from '@/apis/parcel';
 import type { PickupPoint } from '@/apis/pickupPoints';
 
 import { addressChangeSchema, type AddressChangeSchema } from '@/utils/parcelComposition';
@@ -44,13 +44,17 @@ export const useAddressChangeForm = ({ parcelData }: UseAddressChangeFormProps) 
 
     const [country, postalCode, line1, city, line2, apartment, building, latitude, longitude] = watchedFields;
 
+    const isEmptyOrSpaces = (value: string | undefined | null) => {
+      return !value || value.trim() === '';
+    };
+
     const allEmpty =
-      !postalCode &&
-      !line1 &&
-      !city &&
-      !line2 &&
-      !apartment &&
-      !building &&
+      isEmptyOrSpaces(postalCode) &&
+      isEmptyOrSpaces(line1) &&
+      isEmptyOrSpaces(city) &&
+      isEmptyOrSpaces(line2) &&
+      isEmptyOrSpaces(apartment) &&
+      isEmptyOrSpaces(building) &&
       (latitude === null || latitude === undefined || !latitude) &&
       (longitude === null || longitude === undefined || !longitude);
 
@@ -58,14 +62,18 @@ export const useAddressChangeForm = ({ parcelData }: UseAddressChangeFormProps) 
       return false;
     }
 
+    const normalizeString = (value: string | undefined | null) => {
+      return (value ?? '').trim();
+    };
+
     const addressFieldsChanged =
       country !== address.country ||
-      postalCode !== address.postalCode ||
-      line1 !== address.line1 ||
-      city !== address.city ||
-      (line2 ?? '') !== (address.line2 ?? '') ||
-      (apartment ?? '') !== (address.apartment ?? '') ||
-      (building ?? '') !== (address.building ?? '') ||
+      normalizeString(postalCode) !== normalizeString(address.postalCode) ||
+      normalizeString(line1) !== normalizeString(address.line1) ||
+      normalizeString(city) !== normalizeString(address.city) ||
+      normalizeString(line2) !== normalizeString(address.line2) ||
+      normalizeString(apartment) !== normalizeString(address.apartment) ||
+      normalizeString(building) !== normalizeString(address.building) ||
       latitude !== address.latitude ||
       longitude !== address.longitude;
 

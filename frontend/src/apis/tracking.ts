@@ -7,9 +7,19 @@ export const trackSchema = z.object({
   parcelId: z.string(),
   trackingCode: z.string(),
   senderName: z.string(),
-  recipientName: z.string(),
+  senderEmail: z.email().optional().nullable(),
+  senderPhone: z.string().optional().nullable(),
+  recipient: z.object({
+    title: z.string().optional().nullable(),
+    name: z.string(),
+    email: z.email().optional().nullable(),
+    phone: z.string().optional().nullable(),
+    birthDate: z.string().optional().nullable(),
+  }),
   currentStatus: z.string(),
-  estimatedDelivery: z.string(),
+  estimatedDelivery: z.string().optional().nullable(),
+  paymentType: z.string().optional(),
+  deliveryType: z.string().optional(),
 });
 export const timelineSchema = z.array(
   z.object({
@@ -40,19 +50,19 @@ export async function fetchTrackingData(trackingNumber: string | undefined): Pro
   });
 }
 
-export function useTracking(slug: string | undefined) {
+export function useTracking(trackingNumber: string | undefined) {
   return useQuery<TrackingData>({
-    queryKey: ['tracking', slug],
-    queryFn: () => fetchTrackingData(slug),
-    enabled: !!slug,
+    queryKey: ['tracking', trackingNumber],
+    queryFn: () => fetchTrackingData(trackingNumber),
+    enabled: true,
   });
 }
 
-export function useTimeline(slug: string | undefined) {
+export function useTimeline(trackingNumber: string | undefined) {
   return useQuery<TimelineData>({
-    queryKey: ['timeline', slug],
-    queryFn: () => fetchTimelineData(slug),
-    enabled: !!slug,
+    queryKey: ['timeline', trackingNumber],
+    queryFn: () => fetchTimelineData(trackingNumber),
+    enabled: true,
   });
 }
 
