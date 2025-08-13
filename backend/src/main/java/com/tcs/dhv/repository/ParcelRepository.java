@@ -4,6 +4,9 @@ import com.tcs.dhv.domain.entity.Parcel;
 import com.tcs.dhv.domain.enums.ParcelStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,4 +26,8 @@ public interface ParcelRepository extends JpaRepository<Parcel, UUID> {
     boolean existsBySenderIdAndCurrentStatusIn(UUID senderId, Set<ParcelStatus> status);
 
     boolean existsByRecipientIdAndCurrentStatusIn(UUID recipientId, Set<ParcelStatus> status);
+
+    @Modifying
+    @Query("UPDATE Parcel p SET p.currentStatus = :status WHERE p.trackingCode = :trackingCode")
+    int updateStatusByTrackingCode(String trackingCode, ParcelStatus status);
 }
