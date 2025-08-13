@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { PARCEL_STATUS } from '@/constants';
 
 import { FormProvider } from '@/providers/FormProvider.tsx';
 import { useTheme } from '@/providers/ThemeProvider.tsx';
@@ -180,13 +179,9 @@ export const ParcelDetailsContent = ({ parcelData }: { parcelData?: ParcelData }
             {parcelData?.address.building && parcelData?.address.apartment && ', '}
             {parcelData?.address.building && `apartment ${parcelData?.address.apartment}`}
           </DataDisplay>
-          {parcelData?.currentStatus === PARCEL_STATUS.CREATED ||
-          parcelData?.currentStatus === PARCEL_STATUS.PICKED_UP ||
-          parcelData?.currentStatus === PARCEL_STATUS.IN_TRANSIT ? (
-            <FormProvider>
-              <AddressChangeModal parcelData={parcelData} />
-            </FormProvider>
-          ) : null}
+          <FormProvider>
+            <AddressChangeModal parcelData={parcelData} />
+          </FormProvider>
         </CardDisplay>
       </Box>
       <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'}>

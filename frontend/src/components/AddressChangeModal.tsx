@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ADDRESS_CHANGE_DEFAULT_VALUES, DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum } from '@/constants';
+import { ADDRESS_CHANGE_DEFAULT_VALUES, DELIVERY_TYPE_NAME_CONVERTER, DeliveryEnum, PARCEL_STATUS } from '@/constants';
 import { enqueueSnackbar } from 'notistack';
 
 import { useAddressChangeForm } from '@/hooks/useAddressChangeForm';
@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Modal from '@mui/material/Modal';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { SectionFields } from '@/components/FormSectionFields';
@@ -39,6 +40,11 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
   const { resetForm } = useFormContext();
 
   const { mutate, status: addressStatus } = useUpdateParcelAddress();
+
+  const addressChangeCondition =
+    parcelData?.currentStatus !== PARCEL_STATUS.CREATED &&
+    parcelData?.currentStatus !== PARCEL_STATUS.PICKED_UP &&
+    parcelData?.currentStatus !== PARCEL_STATUS.IN_TRANSIT;
 
   const parcelId = parcelData?.id;
 
@@ -119,7 +125,18 @@ export const AddressChangeModal = ({ parcelData }: AddressChangeModalProps) => {
 
   return (
     <Box mr={{ xs: 1.5, md: 3 }} mt={{ xs: 1.5, md: 3 }} sx={{ float: 'right' }}>
-      <Button onClick={handleOpen}>Change address</Button>
+      <Tooltip title={addressChangeCondition ? 'You cannot change address at this status' : undefined} arrow>
+        <span style={{ display: 'inline-flex' }}>
+          <Button
+            sx={{ fontSize: 20, borderRadius: 4 }}
+            variant="contained"
+            disabled={addressChangeCondition}
+            onClick={handleOpen}
+          >
+            Change address
+          </Button>
+        </span>
+      </Tooltip>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
