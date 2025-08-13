@@ -25,7 +25,7 @@ export const ProfileInfo = () => {
   const openDrawer = () => setDrawerOpen(true);
 
   return (
-    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '75vh' }}>
+    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column' }}>
       <QueryStates
         state={profileStatus}
         pendingMessage="Loading profile information..."
