@@ -34,11 +34,19 @@ function TrackingSlug() {
   const capitalizeFirstLetter = (input: string) => {
     return input.charAt(0).toUpperCase() + input.toLowerCase().slice(1);
   };
-  const timeLineValues = [1.5, 26.5, 52, 77.5, 100];
   const [index, setIndex] = useState<number>(0);
   const handleOnClick = (index: number) => {
     setIndex(index);
   };
+  const getTimeLineValues = () => {
+    if (trackingData?.currentStatus === null) return 1.5;
+    if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 26.5;
+    if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return 52;
+    if (trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY) return 77.5;
+    if (trackingData?.currentStatus === PARCEL_STATUS.DELIVERED) return 100;
+    return 0;
+  };
+
   const findNextStatus = () => {
     if (trackingData?.currentStatus === null) return 'CREATING';
     if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 'WAITING FOR PICKUP';
@@ -140,8 +148,7 @@ function TrackingSlug() {
                     ? 'error'
                     : 'primary'
                 }
-                value={timelineData ? timeLineValues[timelineData?.length] : 100}
-                sx={{ borderRadius: 2, height: 8 }}
+                value={getTimeLineValues()}
               />
               {!isSmallScreen ? (
                 <Box paddingTop={1} alignItems={'center'} display={'flex'} gap={2}>
@@ -163,7 +170,7 @@ function TrackingSlug() {
                       );
                     }
                     if (
-                      event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY &&
+                      event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY ||
                       event.status !== PARCEL_STATUS.DELIVERY_ATTEMPTED
                     ) {
                       return (
