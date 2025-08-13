@@ -152,7 +152,7 @@ export const ParcelGrid = ({ parcels }: { parcels?: ParcelListData }) => {
     <Box
       className={`ag-theme-quartz${mode === 'dark' ? '-dark' : ''}`}
       width={isSmallScreen ? '95%' : '90%'}
-      height={isSmallScreen ? 600 : 700}
+      height={isSmallScreen ? 520 : 620}
       mt={isSmallScreen ? 3 : 6}
       ml="auto"
       mr="auto"

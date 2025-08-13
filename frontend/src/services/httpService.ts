@@ -5,9 +5,8 @@ import { type CustomSnackbarOptions } from '@/providers/ToastProvider.tsx';
 
 import { handleHttpResponse, reduceZodError } from '@/utils/ErrorHandling.ts';
 
-function getErrorMessage(error: unknown): { message: string; header: string } {
+function getErrorMessage(error: unknown, context?: { operation?: string }): { message: string; header: string } {
   if (error instanceof Error) {
-    // Check if it's an HTTP error with status code
     if (error.message.includes('401')) {
       return { message: 'Please check your credentials and try again', header: 'Invalid Credentials' };
     }
@@ -17,7 +16,26 @@ function getErrorMessage(error: unknown): { message: string; header: string } {
     if (error.message.includes('404')) {
       return { message: 'The requested resource was not found', header: 'Not Found' };
     }
+    if (error.message.includes('409')) {
+      // Specific from backend
+      if (error.message.includes('Cannot delete user profile with undelivered parcels')) {
+        return {
+          message: 'Cannot delete account while you have undelivered parcels',
+          header: 'Account Deletion Blocked',
+        };
+      }
+      return { message: 'Cannot complete this action due to a conflict', header: 'Action Blocked' };
+    }
     if (error.message.includes('500')) {
+      // Handle specific 500 errors based on context and message content
+      if (context?.operation === 'deleteUser') {
+        if (error.message.includes('An unexpected error occurred')) {
+          return {
+            message: 'Cannot delete account while you have undelivered parcels',
+            header: 'Account Deletion Blocked',
+          };
+        }
+      }
       return { message: 'Something went wrong on our end. Please try again later', header: 'Server Error' };
     }
     if (error.message.includes('Network')) {
@@ -30,7 +48,7 @@ function getErrorMessage(error: unknown): { message: string; header: string } {
   return { message: String(error), header: 'Error' };
 }
 
-function notifyError(error: unknown): void {
+function notifyError(error: unknown, context?: { operation?: string }): void {
   if (error instanceof z.ZodError) {
     const reduced = reduceZodError(error);
     enqueueSnackbar(reduced, {
@@ -38,7 +56,7 @@ function notifyError(error: unknown): void {
       headerMessage: 'Invalid Data',
     } as CustomSnackbarOptions);
   } else {
-    const { message, header } = getErrorMessage(error);
+    const { message, header } = getErrorMessage(error, context);
     enqueueSnackbar(message, {
       variant: 'error',
       headerMessage: header,
@@ -85,16 +103,16 @@ class HttpService {
   async request<Z extends z.ZodTypeAny>(
     url: string,
     schema: Z,
-    options: RequestInit = { method: 'GET' }
+    options: RequestInit = { method: 'GET' },
+    context?: { operation?: string }
   ): Promise<z.infer<Z>> {
     const fullUrl = `${this.baseUrl}${url}`;
 
-    // All API requests have error handling, no need to handle them anywhere else
     try {
       const response = await this.executeRequest(fullUrl, options);
       return await handleHttpResponse(response, schema);
     } catch (error) {
-      notifyError(error);
+      notifyError(error, context);
       throw error;
     }
   }
@@ -112,20 +130,30 @@ class HttpService {
     return options;
   }
 
-  get<Z extends z.ZodTypeAny>(url: string, schema: Z): Promise<z.infer<Z>> {
-    return this.request(url, schema, { method: 'GET' });
+  get<Z extends z.ZodTypeAny>(url: string, schema: Z, context?: { operation?: string }): Promise<z.infer<Z>> {
+    return this.request(url, schema, { method: 'GET' }, context);
   }
 
-  delete<Z extends z.ZodTypeAny>(url: string, schema: Z): Promise<z.infer<Z>> {
-    return this.request(url, schema, { method: 'DELETE' });
+  delete<Z extends z.ZodTypeAny>(url: string, schema: Z, context?: { operation?: string }): Promise<z.infer<Z>> {
+    return this.request(url, schema, { method: 'DELETE' }, context);
   }
 
-  post<Z extends z.ZodTypeAny>(url: string, schema: Z, body?: BodyInit | object): Promise<z.infer<Z>> {
-    return this.request(url, schema, this.createBodyRequestOptions('POST', body));
+  post<Z extends z.ZodTypeAny>(
+    url: string,
+    schema: Z,
+    body?: BodyInit | object,
+    context?: { operation?: string }
+  ): Promise<z.infer<Z>> {
+    return this.request(url, schema, this.createBodyRequestOptions('POST', body), context);
   }
 
-  put<Z extends z.ZodTypeAny>(url: string, schema: Z, body?: BodyInit | object): Promise<z.infer<Z>> {
-    return this.request(url, schema, this.createBodyRequestOptions('PUT', body));
+  put<Z extends z.ZodTypeAny>(
+    url: string,
+    schema: Z,
+    body?: BodyInit | object,
+    context?: { operation?: string }
+  ): Promise<z.infer<Z>> {
+    return this.request(url, schema, this.createBodyRequestOptions('PUT', body), context);
   }
 }
 

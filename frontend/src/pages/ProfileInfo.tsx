@@ -25,47 +25,59 @@ export const ProfileInfo = () => {
   const openDrawer = () => setDrawerOpen(true);
 
   return (
-    <QueryStates
-      state={profileStatus}
-      pendingMessage="Loading profile information..."
-      errorTitle="Could not fetch profile data"
-    >
-      <Box display="flex" flexDirection="column" alignItems="center" gap={isSmallScreen ? 1 : 2}>
-        {isSmallScreen && (
-          <Button
-            variant="outlined"
-            startIcon={<MenuIcon />}
-            onClick={openDrawer}
-            sx={{
-              alignSelf: 'flex-start',
-              ml: 1,
-            }}
-          >
-            Profile Menu
-          </Button>
-        )}
-
-        <Paper
-          elevation={2}
+    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column' }}>
+      <QueryStates
+        state={profileStatus}
+        pendingMessage="Loading profile information..."
+        errorTitle="Could not fetch profile data"
+      >
+        <Box
           sx={{
             display: 'flex',
-            flexDirection: 'row',
-            width: isSmallScreen ? '100%' : '65%',
-            maxWidth: 10000,
-            p: isSmallScreen ? 0 : 2,
-            gap: isSmallScreen ? 0 : 2,
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: isSmallScreen ? 2 : 4,
+            justifyContent: 'flex-start',
+            width: '100%',
+            gap: isSmallScreen ? 1 : 2,
           }}
         >
-          <ProfileSidebar
-            selected={selectedPage}
-            onSelect={setSelectedPage}
-            drawerOpen={drawerOpen}
-            useDrawer={isSmallScreen}
-            closeDrawer={closeDrawer}
-          />
-          <ProfilePageContent page={selectedPage} profile={profileData} />
-        </Paper>
-      </Box>
-    </QueryStates>
+          {isSmallScreen && (
+            <Button
+              variant="outlined"
+              startIcon={<MenuIcon />}
+              onClick={openDrawer}
+              sx={{
+                alignSelf: 'flex-start',
+                ml: 1,
+              }}
+            >
+              Profile Menu
+            </Button>
+          )}
+
+          <Paper
+            elevation={2}
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: isSmallScreen ? '100%' : '70%',
+              maxWidth: 1000,
+              p: isSmallScreen ? 0 : 2,
+              gap: isSmallScreen ? 0 : 2,
+            }}
+          >
+            <ProfileSidebar
+              selected={selectedPage}
+              onSelect={setSelectedPage}
+              drawerOpen={drawerOpen}
+              useDrawer={isSmallScreen}
+              closeDrawer={closeDrawer}
+            />
+            <ProfilePageContent page={selectedPage} profile={profileData} />
+          </Paper>
+        </Box>
+      </QueryStates>
+    </Box>
   );
 };

@@ -20,6 +20,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import Faq from '@/components/Faq';
 import { QueryStates } from '@/components/QueryStates';
 import TimelineComponent from '@/components/Timeline';
 import TrackingDetails from '@/components/TrackingDetails';
@@ -202,6 +203,7 @@ function TrackingSlug() {
             </Box>
             {index === 0 && timelineData && <TimelineComponent timeline={timelineData} />}
             {index === 1 && trackingData && <TrackingDetails trackingData={trackingData} />}
+            <Faq categories={['tracking']} />
           </Box>
         </Box>
       </QueryStates>
