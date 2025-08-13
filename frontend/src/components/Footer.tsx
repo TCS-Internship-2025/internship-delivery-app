@@ -32,7 +32,6 @@ export const Footer = () => {
         >
           <MuiLink
             component={Link}
-            // TODO:  TO BE ADDED
             to="/gdpr"
             variant="body2"
             color="text.secondary"
@@ -52,7 +51,6 @@ export const Footer = () => {
 
           <MuiLink
             component={Link}
-            // TODO:  TO BE ADDED
             to="/faq"
             variant="body2"
             color="text.secondary"

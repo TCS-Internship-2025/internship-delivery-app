@@ -30,6 +30,7 @@ export const ROUTES = {
   PARCELS: 'my-parcels',
   DETAILS: 'details',
   PROFILE: 'profile',
+  GDPR: 'gdpr',
 };
 
 export const PARCEL_STATUS = {
