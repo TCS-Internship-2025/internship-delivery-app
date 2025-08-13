@@ -42,6 +42,7 @@ function TrackingSlug() {
     if (trackingData?.currentStatus === null) return 1.5;
     if (trackingData?.currentStatus === PARCEL_STATUS.CREATED) return 26.5;
     if (trackingData?.currentStatus === PARCEL_STATUS.PICKED_UP) return 52;
+    if (trackingData?.currentStatus === PARCEL_STATUS.IN_TRANSIT) return 67;
     if (
       trackingData?.currentStatus === PARCEL_STATUS.OUT_FOR_DELIVERY ||
       trackingData?.currentStatus === PARCEL_STATUS.DELIVERY_ATTEMPTED
