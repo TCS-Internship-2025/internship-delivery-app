@@ -194,7 +194,7 @@ public class EmailTemplateTest {
     }
 
     @Test
-    void testVerificationTokenEmail(){
+    void testVerificationTokenEmail() {
         final var ctxVars = new HashMap<>();
         ctxVars.put("name", "testName");
         ctxVars.put("verifyLink", "www.verify.org");

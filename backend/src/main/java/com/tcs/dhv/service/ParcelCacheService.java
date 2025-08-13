@@ -62,7 +62,6 @@ public class ParcelCacheService {
         return ParcelDto.fromEntity(parcel);
     }
 
-
     private boolean isValidStatusFlow(final Parcel parcel, final StatusUpdateDto statusDto){
         final var allowedStatus = STATUS_TRANSITIONS.get(parcel.getCurrentStatus());
         return allowedStatus.contains(statusDto.status());

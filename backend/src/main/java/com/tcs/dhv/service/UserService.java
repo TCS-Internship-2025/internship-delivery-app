@@ -187,7 +187,7 @@ public class UserService {
         return true;
     }
 
-    private User createUserCopy(final User original){
+    private User createUserCopy(final User original) {
         User.UserBuilder builder = User.builder()
             .name(original.getName())
             .email(original.getEmail())
