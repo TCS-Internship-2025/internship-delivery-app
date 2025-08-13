@@ -47,6 +47,9 @@ function TrackingSlug() {
       return PARCEL_STATUS.OUT_FOR_DELIVERY.replace(/_/g, ' ');
     return null;
   };
+  const uniqueTimelineEvents = timelineData?.filter(
+    (event, index, self) => index === self.findIndex((e) => e.status === event.status) // keep first occurrence
+  );
   const isSmallScreen = useSmallScreen();
 
   return (
@@ -124,30 +127,47 @@ function TrackingSlug() {
             </Box>
 
             <Box>
-              <LinearProgress variant="determinate" value={timeLineValues[0]} sx={{ borderRadius: 2, height: 8 }} />
+              <LinearProgress
+                variant={
+                  trackingData?.currentStatus === PARCEL_STATUS.CANCELLED ||
+                  trackingData?.currentStatus === PARCEL_STATUS.RETURNED_TO_SENDER
+                    ? 'indeterminate'
+                    : 'determinate'
+                }
+                color={
+                  trackingData?.currentStatus === PARCEL_STATUS.CANCELLED ||
+                  trackingData?.currentStatus === PARCEL_STATUS.RETURNED_TO_SENDER
+                    ? 'error'
+                    : 'primary'
+                }
+                value={timelineData ? timeLineValues[timelineData?.length] : 100}
+                sx={{ borderRadius: 2, height: 8 }}
+              />
               {!isSmallScreen ? (
                 <Box paddingTop={1} alignItems={'center'} display={'flex'} gap={2}>
-                  {timelineData?.map((event) => {
-                    if (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY && timelineData.length !== 5) {
+                  {uniqueTimelineEvents?.map((event) => {
+                    if (event.status === PARCEL_STATUS.OUT_FOR_DELIVERY && uniqueTimelineEvents.length !== 5) {
                       return (
-                        <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id} gap={1}>
+                        <Box display="flex" alignItems="center" width="25%" key={event.id} gap={1}>
                           <CircularProgress size={12} />
                           <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
                         </Box>
                       );
                     }
                     if (event.status === PARCEL_STATUS.CANCELLED || event.status === PARCEL_STATUS.RETURNED_TO_SENDER) {
-                      <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id}>
-                        <RemoveCircleIcon sx={{ height: 12 }} />
-                        <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
-                      </Box>;
+                      return (
+                        <Box display="flex" alignItems="center" width="25%" key={event.id}>
+                          <RemoveCircleIcon sx={{ height: 12 }} />
+                          <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
+                        </Box>
+                      );
                     }
                     if (
-                      event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY ||
+                      event.status !== PARCEL_STATUS.OUT_FOR_DELIVERY &&
                       event.status !== PARCEL_STATUS.DELIVERY_ATTEMPTED
                     ) {
                       return (
-                        <Box display={'flex'} alignItems={'center'} width={'25%'} key={event.id}>
+                        <Box display="flex" alignItems="center" width="25%" key={event.id}>
                           <CheckCircleIcon sx={{ height: 12 }} />
                           <Typography fontSize={12}>{event.status.replace(/_/g, ' ')}</Typography>
                         </Box>
@@ -156,12 +176,15 @@ function TrackingSlug() {
 
                     return null;
                   })}
-                  {findNextStatus() !== null && (
-                    <Box display={'flex'} alignItems={'center'} width={'25%'} gap={1}>
-                      <CircularProgress size={12} />
-                      <Typography fontSize={12}>{findNextStatus()}</Typography>
-                    </Box>
-                  )}
+
+                  {findNextStatus() !== null &&
+                    trackingData?.currentStatus !== PARCEL_STATUS.RETURNED_TO_SENDER &&
+                    trackingData?.currentStatus !== PARCEL_STATUS.CANCELLED && (
+                      <Box display="flex" alignItems="center" width="25%" gap={1}>
+                        <CircularProgress size={12} />
+                        <Typography fontSize={12}>{findNextStatus()}</Typography>
+                      </Box>
+                    )}
                 </Box>
               ) : (
                 <Box display={'flex'} justifyContent={'center'} alignItems={'center'} paddingTop={1}>
