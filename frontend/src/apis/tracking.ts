@@ -12,7 +12,7 @@ export const trackSchema = z.object({
   recipient: z.object({
     title: z.string().optional().nullable(),
     name: z.string(),
-    email: z.string().optional().nullable(),
+    email: z.email().optional().nullable(),
     phone: z.string().optional().nullable(),
     birthDate: z.string().optional().nullable(),
   }),

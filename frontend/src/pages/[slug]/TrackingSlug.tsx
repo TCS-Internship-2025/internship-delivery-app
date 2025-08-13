@@ -26,8 +26,7 @@ import TrackingDetails from '@/components/TrackingDetails';
 
 function TrackingSlug() {
   const { slug } = useParams();
-  const authContext = useAuth();
-  const isLoggedIn = authContext.isAuthenticated;
+  const { isAuthenticated } = useAuth();
   const { data: trackingData, status: trackingStatus } = useTracking(slug);
   const { data: timelineData, status: timelineStatus } = useTimeline(slug);
   const capitalizeFirstLetter = (input: string) => {
@@ -167,7 +166,7 @@ function TrackingSlug() {
               >
                 Progress
               </Button>
-              <Tooltip title={!isLoggedIn ? 'Login to use this feature' : undefined} arrow>
+              <Tooltip title={!isAuthenticated ? 'Login to use this feature' : undefined} arrow>
                 <span style={{ display: 'inline-flex' }}>
                   <Button
                     size={isSmallScreen ? 'small' : 'medium'}
@@ -184,7 +183,7 @@ function TrackingSlug() {
                 </span>
               </Tooltip>
 
-              <Tooltip title={!isLoggedIn ? 'Login to use this feature' : undefined} arrow>
+              <Tooltip title={!isAuthenticated ? 'Login to use this feature' : undefined} arrow>
                 <span style={{ display: 'inline-flex' }}>
                   <Button
                     size={isSmallScreen ? 'small' : 'medium'}
