@@ -27,6 +27,7 @@ import { FormProgressBar } from './components/FormProgressBar.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import TrackingSlug from './pages/[slug]/TrackingSlug.tsx';
 import { ErrorPage } from './pages/Error.tsx';
+import GDPRPage from './pages/GDPRPage.tsx';
 import { LandingPage } from './pages/LandingPage.tsx';
 import { Login } from './pages/Login.tsx';
 import { NewPassword } from './pages/NewPassword.tsx';
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <LandingPage />,
+          },
+          {
+            path: ROUTES.GDPR,
+            element: <GDPRPage />,
           },
           {
             path: ROUTES.TRACKING,
