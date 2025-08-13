@@ -236,23 +236,6 @@ function TrackingSlug() {
                   </Button>
                 </span>
               </Tooltip>
-
-              <Tooltip title={!isAuthenticated ? 'Login to use this feature' : undefined} arrow>
-                <span style={{ display: 'inline-flex' }}>
-                  <Button
-                    size={isSmallScreen ? 'small' : 'medium'}
-                    sx={{
-                      fontSize: isSmallScreen ? 12 : undefined,
-                      paddingY: isSmallScreen ? 0.5 : undefined,
-                    }}
-                    variant={index === 2 ? 'contained' : 'outlined'}
-                    disabled={trackingData?.recipient.email === null || (timelineData && timelineData?.length > 3)}
-                    onClick={() => handleOnClick(2)}
-                  >
-                    Change Address
-                  </Button>
-                </span>
-              </Tooltip>
             </Box>
             {index === 0 && timelineData && <TimelineComponent timeline={timelineData} />}
             {index === 1 && trackingData && <TrackingDetails trackingData={trackingData} />}
