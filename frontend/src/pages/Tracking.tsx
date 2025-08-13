@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { useSmallScreen } from '@/hooks/useSmallScreen';
+
 import { TrackingFormSchema, type TrackingFormValues } from '@/apis/tracking';
 
 import SendIcon from '@mui/icons-material/Send';
@@ -14,6 +16,7 @@ import Typography from '@mui/material/Typography';
 
 export const Tracking = () => {
   const navigate = useNavigate();
+  const isSmallScreen = useSmallScreen();
 
   const {
     register,
@@ -31,42 +34,44 @@ export const Tracking = () => {
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: '90vh',
-        }}
-      >
-        <TextField
-          sx={{ width: '70%', marginBottom: 3 }}
-          placeholder="HU1234567890AA"
-          {...register('trackNumber')}
-          error={!!errors.trackNumber}
-          helperText={errors.trackNumber?.message}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton {...register('trackNumber')} type="submit">
-                    <SendIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
+    <Box px={isSmallScreen ? 0 : 20} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <form onSubmit={handleFormSubmit}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: 20,
+            justifyContent: 'center',
+            width: '100%',
           }}
-        />
-        <Typography variant="h5" align="center">
-          Track Your Parcel!
-        </Typography>
-        <Typography variant="subtitle2" color="textSecondary" align="center">
-          Enter the parcel tracking number
-        </Typography>
-      </Box>
-    </form>
+        >
+          <TextField
+            sx={{ width: '70%', marginBottom: 3 }}
+            placeholder="HU1234567890AA"
+            {...register('trackNumber')}
+            error={!!errors.trackNumber}
+            helperText={errors.trackNumber?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton {...register('trackNumber')} type="submit">
+                      <SendIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <Typography variant="h5" align="center">
+            Track Your Parcel!
+          </Typography>
+          <Typography variant="subtitle2" color="textSecondary" align="center">
+            Enter the parcel tracking number
+          </Typography>
+        </Box>
+      </form>
+    </Box>
   );
 };
