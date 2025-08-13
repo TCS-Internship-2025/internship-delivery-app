@@ -20,7 +20,7 @@ MAX_BIRTH_DATE.setFullYear(MAX_BIRTH_DATE.getFullYear() - 18);
 
 export const recipientFormSchema = z.object({
   // Section 1 fields
-  title: z.string().optional(),
+  title: z.string().optional().nullable(),
   name: z
     .string()
     .min(1, 'Full name is required')
